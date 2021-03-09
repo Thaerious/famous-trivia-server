@@ -1,0 +1,25 @@
+#game-board-container {
+  position: absolute;
+  bottom: 0%;
+  left: 50%;
+  width: 75%;
+  width: 100px;
+  height: 100px;
+  --nidget-height-ratio: 0.9;
+  transform: translateX(-50%);
+  background-color: #1117d9;
+  color: #f2e7c1;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@font-face {
+  font-family: "OPTIKorinna-Agency";
+  src: url("font/OPTIKorinna-Agency.ttf.woff") format("woff"), url("font/OPTIKorinna-Agency.ttf.svg#OPTIKorinna-Agency") format("svg"), url("font/OPTIKorinna-Agency.ttf.eot"), url("font/OPTIKorinna-Agency.ttf.eot?#iefix") format("embedded-opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/*# sourceMappingURL=editor.css.map */

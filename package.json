@@ -4,10 +4,11 @@
   "description": "Creator and Luancher for Online Trivia",
   "main": "src/server/server.js",
   "scripts": {
-    "build-js": "browserify src/client/home.js -o public/scripts/home.js -d",
-    "watch-js": "watchify src/client/home.js -o public/scripts/home.js -dv",
-    "build-css": "sass src/styles/mobile/main.scss:public/styles/mobile.css src/styles/desktop/main.scss:public/styles/desktop.css src/styles/contestant.scss:public/styles/contestant.css",
-    "watch-css": "sass --watch src/styles/mobile/main.scss:public/styles/mobile.css src/styles/desktop/main.scss:public/styles/desktop.css src/styles/contestant.scss:public/styles/contestant.css"
+    "editor-build-js": "browserify src/client/home.js -o public/scripts/home.js -d",
+    "editor-watch-js": "watchify src/client/home.js -o public/scripts/home.js -dv",
+    "editor-build-css": "dart-sass src/styles/editor.scss:public/styles/editor.css",
+    "editor-watch-css": "dart-sass --watch src/styles/editor.scss:public/styles/editor.css",
+    "editor-watch": "npm run editor-watch-js; npm run editor-watch-css"
   },
   "repository": {
     "type": "git",

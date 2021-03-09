@@ -1,0 +1,20 @@
+// editor.scss
+
+//@import './shared/game_board';
+@import 'layout.scss';
+//@import '../../node_modules/@thaerious/nidget/styles/nidget';
+
+
+* {
+    box-sizing: border-box;
+}
+
+@font-face {
+    font-family: 'OPTIKorinna-Agency';
+    src: url('font/OPTIKorinna-Agency.ttf.woff') format('woff'),
+    url('font/OPTIKorinna-Agency.ttf.svg#OPTIKorinna-Agency') format('svg'),
+    url('font/OPTIKorinna-Agency.ttf.eot'),
+    url('font/OPTIKorinna-Agency.ttf.eot?#iefix') format('embedded-opentype');
+    font-weight: normal;
+    font-style: normal;
+}
