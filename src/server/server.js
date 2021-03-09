@@ -14,9 +14,34 @@ app.use(helmet()); // automatic security settings
 app.use(UserAgent.express()); // use to determine what the connection is using (phone,browser etc)
 
 app.use("*.html", function (req, res, next) {
-    res.set("Content-Security-Policy", "connect-src 'self' accounts.google.com");
+    let csp = extractCSP(res);
+    csp["default-src"] = "'self' *.google.com";
+    csp["style-src"] = "'self' *.google.com 'unsafe-inline'";
+    delete csp["script-src"];
+    console.log(csp);
+    res.set("Content-Security-Policy", concatCSP(res, csp));
     next();
 });
+
+function extractCSP(res){
+    let csp = res.get("Content-Security-Policy").split(";");
+    let dict = {};
+
+    for (let policy of  csp) {
+        let kv = policy.split(/ /);
+        dict[kv[0]] = kv[1] ?? "";
+    }
+
+    return dict;
+}
+
+function concatCSP(res, csp){
+    let policyString = "";
+    for (let key in csp){
+        policyString = policyString + key + " " + csp[key] + ";"
+    }
+    return policyString;
+}
 
 app.use(Express.static('public'));
 
