@@ -15,9 +15,10 @@ app.use(UserAgent.express()); // use to determine what the connection is using (
 
 app.use("*.html", function (req, res, next) {
     let csp = extractCSP(res);
-    csp["default-src"] = "'self' *.google.com";
+    csp["default-src"] = "'self' *.google.com *.googleapis.com 'unsafe-inline'";
     csp["style-src"] = "'self' *.google.com 'unsafe-inline'";
     delete csp["script-src"];
+    delete csp["script-src-attr"];
     console.log(csp);
     res.set("Content-Security-Policy", concatCSP(res, csp));
     next();

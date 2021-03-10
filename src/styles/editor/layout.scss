@@ -1,13 +1,83 @@
 
 #game-board-container {
     position: absolute;
-    bottom: 0%;
+    top: 15vh;
     left: 50%;
-    //width: 75%;
-    width: 100px;
-    height: 100px;
-    --nidget-height-ratio: 0.9;
+    width: calc(75 * 1.11vh);
+    height: 75vh;
     transform: translateX(-50%);
-    background-color: #1117d9;
-    color: #f2e7c1;
 }
+
+#top-bar {
+    position: absolute;
+    top: 4vh;
+    left: 50%;
+    width: calc(75 * 1.11vh);
+    height: 5vh;
+    transform: translateX(-50%);
+
+    #game-name {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 80%;
+        height: 5vh;
+        transform: translateX(-50%);
+        background-color: #060ce9;
+        color: whitesmoke;
+        font-family: Arial Black, serif;
+        font-size: 4vh;
+        line-height: 4.2vh;
+        text-align: center;
+        border-radius: 5vh;
+        border: 0.33vh solid black;
+
+        &:focus {
+            outline: none;
+            border: 0.33vh solid;
+            border-color: #44b3ff;
+        }
+    }
+
+    #menu-icon {
+        position: absolute;
+        right: 0px;
+        width: 5vh;
+    }
+}
+
+.triangle-indicator{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5vh;
+    transform: translateY(-50%);
+    z-index: 100;
+    cursor: pointer;
+
+    &#triangle-left{
+        transform: translateX(-47.625vh);
+    }
+
+    &#triangle-right{
+        transform: translateX(42.625vh);
+    }
+}
+
+#round-number{
+    position: absolute;
+    top: 9vh;
+    left: 50%;
+    width: calc(75 * 1.11vh);
+    height: 5vh;
+    transform: translateX(-50%);
+    font-family: Arial Black, serif;
+    font-size: 4vh;
+    color: black;
+    text-align: center;
+}
+
+.menu-area{
+    width: 200px;
+}
+

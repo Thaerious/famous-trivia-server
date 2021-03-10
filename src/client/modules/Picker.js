@@ -41,6 +41,8 @@ class Picker {
         if (authResult && !authResult.error) {
             this.oauthToken = authResult.access_token;
             this.createPicker();
+        } else {
+            console.log(authResult);
         }
     }
 
@@ -67,9 +69,9 @@ class Picker {
     // A simple callback implementation.
     // Override this method on use.
     pickerCallback(data) {
-        if (data.action == google.picker.Action.PICKED) {
+        if (data.action === google.picker.Action.PICKED) {
             var fileId = data.docs[0].id;
-            alert('The user selected: ' + fileId);
+            window.location = `editor.html?action=new&fileId=${fileId}`;
         }
     }
 }

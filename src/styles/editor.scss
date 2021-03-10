@@ -1,9 +1,13 @@
 // editor.scss
 
-//@import './shared/game_board';
-@import 'layout.scss';
+@import 'shared/game_board.scss';
+@import 'editor/layout.scss';
+@import 'shared/menu.scss';
 //@import '../../node_modules/@thaerious/nidget/styles/nidget';
 
+body{
+    background-color: #dcf3fe;
+}
 
 * {
     box-sizing: border-box;
