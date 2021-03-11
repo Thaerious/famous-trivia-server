@@ -1,0 +1,39 @@
+
+.nav-button{
+    position: absolute;
+    bottom: 4vh;
+    width: 20vh;
+    height: 5vh;
+    border: 0.33vh solid black;
+    background-color: white;
+    border-radius: 1vh;
+    text-align: center;
+    font-family: "Arial Black", serif;
+    font-weight: bold;
+    line-height: 4vh;
+    font-size: 3vh;
+    left: 50%;
+    cursor: pointer;
+
+    &.hidden{
+        display: none;
+    }
+
+    &:hover{
+        background-color: #ffffc8;
+    }
+
+    &.selected{
+        background-color: yellow;
+    }
+
+    &#show-board{
+        transform: translateX(-152%);
+    }
+    &#show-question{
+        transform: translateX(-50%);
+    }
+    &#show-answer{
+        transform: translateX(52%);
+    }
+}

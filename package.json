@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/Thaerious/trivia-server#readme",
   "dependencies": {
-    "@thaerious/nidget": "file:../nidget",
+    "@thaerious/nidget": "file:..\\..\\nidget",
     "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
     "express-useragent": "^1.0.15",

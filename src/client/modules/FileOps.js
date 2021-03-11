@@ -16,9 +16,6 @@ class FileOps {
 
         // Scope to use to access user's Drive items.
         this.scope = 'https://www.googleapis.com/auth/drive.file';
-
-        this.fileApiLoaded = false;
-        this.oauthToken = null;
     }
 
     loadClient() {
@@ -48,6 +45,41 @@ class FileOps {
             }).then(res=>{
                 resolve(JSON.parse(res.body));
             }, function (error) {
+                reject(error.message);
+            });
+        });
+    }
+
+    async get(fileId){
+        return new Promise((resolve, reject)=> {
+            gapi.client.drive.files.get({
+                fileId: fileId,
+                alt: 'media'
+            }).then(res=>{
+                resolve(res);
+            }, function (error) {
+                console.log(error);
+                reject(error.message);
+            });
+        });
+    }
+
+    async setBody(fileId, body){
+        return new Promise((resolve, reject)=> {
+            gapi.client.request({
+                path : "upload/drive/v3/files/" + fileId,
+                method : "PATCH",
+                params : {
+                    uploadType : "media"
+                },
+                headers : {
+                    "Content-Type" : "application/json"
+                },
+                body : body
+            }).then(res=>{
+                resolve(JSON.parse(res.body));
+            }, function (error) {
+                console.log(error);
                 reject(error.message);
             });
         });

@@ -1,8 +1,10 @@
 // editor.scss
 
-@import 'shared/game_board.scss';
 @import 'editor/layout.scss';
+@import 'editor/buttons.scss';
+@import 'shared/game_board.scss';
 @import 'shared/menu.scss';
+@import 'shared/text_question.scss';
 //@import '../../node_modules/@thaerious/nidget/styles/nidget';
 
 body{

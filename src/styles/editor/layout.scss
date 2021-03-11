@@ -6,6 +6,7 @@
     width: calc(75 * 1.11vh);
     height: 75vh;
     transform: translateX(-50%);
+    z-index: 5;
 }
 
 #top-bar {
@@ -54,6 +55,10 @@
     transform: translateY(-50%);
     z-index: 100;
     cursor: pointer;
+
+    &.hidden{
+        display: none;
+    }
 
     &#triangle-left{
         transform: translateX(-47.625vh);

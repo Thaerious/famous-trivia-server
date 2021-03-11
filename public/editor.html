@@ -14,9 +14,9 @@
     <div class="menu" id="menu">
         <img class="menu-icon" id="menu-icon" src="assets/images/menu.png"/>
         <div class="menu-area">
-            <div class="menu-item">Add Round</div>
-            <div class="menu-item">Remove Round</div>
-            <div class="menu-item">Home Screen</div>
+            <div class="menu-item" id="menu-add-round">Add Round</div>
+            <div class="menu-item" id="menu-remove-round">Remove Round</div>
+            <div class="menu-item" id="menu-home-screen">Home Screen</div>
         </div>
     </div>
 </div>
@@ -25,129 +25,137 @@
 <img class="triangle-indicator" id="triangle-right" src="assets/images/right_triangle.png"/>
 <img class="triangle-indicator" id="triangle-left" src="assets/images/left_triangle.png"/>
 
+<div id="text-question" class="hidden">
+    <nidget-text class="text-contents" contenteditable="true"></nidget-text>
+</div>
+
+<div class="nav-button hidden" id="show-board">Board</div>
+<div class="nav-button hidden" id="show-answer">Answer</div>
+<div class="nav-button hidden" id="show-question">Question</div>
+
 <div id="game-board-container">
-    <div id="game-board">
+    <game-board id="game-board">
         <div class="row">
             <div class="column" data-row="h" data-col="0">
-                <nidget-text>100</nidget-text>
+                <nidget-text class="value" contenteditable="true"></nidget-text>
             </div>
             <div class="column" data-row="h" data-col="1">
-                <nidget-text></nidget-text>
+                <nidget-text class="value" contenteditable="true"></nidget-text>
             </div>
             <div class="column" data-row="h" data-col="2">
-                <nidget-text></nidget-text>
+                <nidget-text class="value" contenteditable="true"></nidget-text>
             </div>
             <div class="column" data-row="h" data-col="3">
-                <nidget-text></nidget-text>
+                <nidget-text class="value" contenteditable="true"></nidget-text>
             </div>
             <div class="column" data-row="h" data-col="4">
-                <nidget-text></nidget-text>
+                <nidget-text class="value" contenteditable="true"></nidget-text>
             </div>
             <div class="column" data-row="h" data-col="5">
-                <nidget-text></nidget-text>
+                <nidget-text class="value" contenteditable="true"></nidget-text>
             </div>
         </div>
         <div class="row">
             <div class="column question" data-row="0" data-col="0">
-                <nidget-text>100</nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
             <div class="column question" data-row="0" data-col="1">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
             <div class="column question" data-row="0" data-col="2">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
             <div class="column question" data-row="0" data-col="3">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
             <div class="column question" data-row="0" data-col="4">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
             <div class="column question" data-row="0" data-col="5">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
         </div>
         <div class="row">
             <div class="column question" data-row="1" data-col="0">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
             <div class="column question" data-row="1" data-col="1">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
             <div class="column question" data-row="1" data-col="2">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
             <div class="column question" data-row="1" data-col="3">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
             <div class="column question" data-row="1" data-col="4">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
             <div class="column question" data-row="1" data-col="5">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
         </div>
         <div class="row">
             <div class="column question" data-row="2" data-col="0">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
             <div class="column question" data-row="2" data-col="1">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
             <div class="column question" data-row="2" data-col="2">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
             <div class="column question" data-row="2" data-col="3">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
             <div class="column question" data-row="2" data-col="4">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
             <div class="column question" data-row="2" data-col="5">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
         </div>
         <div class="row">
             <div class="column question" data-row="3" data-col="0">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
             <div class="column question" data-row="3" data-col="1">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
             <div class="column question" data-row="3" data-col="2">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
             <div class="column question" data-row="3" data-col="3">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
             <div class="column question" data-row="3" data-col="4">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
             <div class="column question" data-row="3" data-col="5">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
         </div>
         <div class="row">
             <div class="column question" data-row="4" data-col="0">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
             <div class="column question" data-row="4" data-col="1">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
             <div class="column question" data-row="4" data-col="2">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
             <div class="column question" data-row="4" data-col="3">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
             <div class="column question" data-row="4" data-col="4">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
             <div class="column question" data-row="4" data-col="5">
-                <nidget-text></nidget-text>
+                <nidget-text class="value"></nidget-text>
             </div>
         </div>
-    </div>
+    </game-board>
 </div>
 
 </body>

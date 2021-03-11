@@ -18,7 +18,7 @@ class Picker {
 
     // Use the Google API Loader script to load the google.picker script.
     loadPicker() {
-        gapi.load('auth', {'callback': ()=>this.onAuthApiLoad()});
+        gapi.load('auth2', {'callback': ()=>this.onAuthApiLoad()});
         gapi.load('picker', {'callback': ()=>this.onPickerApiLoad()});
     }
 
@@ -29,7 +29,7 @@ class Picker {
             'immediate': false
         }
 
-        window.gapi.auth.authorize(param, (authResult)=>this.handleAuthResult(authResult));
+        window.gapi.auth2.authorize(param, (authResult)=>this.handleAuthResult(authResult));
     }
 
     onPickerApiLoad() {
@@ -71,7 +71,7 @@ class Picker {
     pickerCallback(data) {
         if (data.action === google.picker.Action.PICKED) {
             var fileId = data.docs[0].id;
-            window.location = `editor.html?action=new&fileId=${fileId}`;
+            window.location = `editor.html?action=new&dirId=${fileId}`;
         }
     }
 }
