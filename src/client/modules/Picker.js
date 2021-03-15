@@ -12,43 +12,48 @@ class Picker {
         // Scope to use to access user's Drive items.
         this.scope = ['https://www.googleapis.com/auth/drive.file'];
 
-        this.pickerApiLoaded = false;
         this.oauthToken = null;
     }
 
     // Use the Google API Loader script to load the google.picker script.
     loadPicker() {
-        gapi.load('auth2', {'callback': ()=>this.onAuthApiLoad()});
-        gapi.load('picker', {'callback': ()=>this.onPickerApiLoad()});
+        return new Promise((resolve, reject) => {
+            if (this.oauthToken === null) {
+                console.log("authorize");
+                gapi.load('picker', {
+                    'callback': () => {
+                        gapi.load('auth2', {'callback': () => this.onAuthApiLoad(resolve, reject)});
+                    }
+                });
+            } else {
+                resolve();
+            }
+        });
     }
 
-    onAuthApiLoad() {
+    onAuthApiLoad(resolve, reject) {
         const param = {
             'client_id': this.clientId,
             'scope': this.scope,
             'immediate': false
         }
 
-        window.gapi.auth2.authorize(param, (authResult)=>this.handleAuthResult(authResult));
+        window.gapi.auth2.authorize(param, (authResult) => this.handleAuthResult(authResult, resolve, reject));
     }
 
-    onPickerApiLoad() {
-        this.pickerApiLoaded = true;
-        this.createPicker();
-    }
-
-    handleAuthResult(authResult) {
+    handleAuthResult(authResult, resolve, reject) {
         if (authResult && !authResult.error) {
             this.oauthToken = authResult.access_token;
-            this.createPicker();
+            resolve();
         } else {
-            console.log(authResult);
+            reject(authResult);
         }
     }
 
     // Create and render a Picker object for searching images.
-    createPicker() {
-        if (this.pickerApiLoaded && this.oauthToken) {
+    dirPicker() {
+        console.log("createPicker");
+        if (this.oauthToken) {
             let view = new google.picker.DocsView(google.picker.ViewId.FOLDERS)
                 .setIncludeFolders(true)
                 .setSelectFolderEnabled(true)
@@ -66,13 +71,31 @@ class Picker {
         }
     }
 
-    // A simple callback implementation.
+    // Create and render a Picker object for searching images.
+    filePicker() {
+        let view = new google.picker.DocsView(google.picker.ViewId.FOLDERS)
+            .setIncludeFolders(true)
+            .setParent('root')
+            .setMimeTypes("json");
+        ;
+
+        if (this.pickerApiLoaded && this.oauthToken) {
+            let picker = new google.picker.PickerBuilder()
+                .enableFeature(google.picker.Feature.NAV_HIDDEN)
+                .addView(view)
+                .setAppId(this.appId)
+                .setOAuthToken(this.oauthToken)
+                .setDeveloperKey(this.developerKey)
+                .setCallback(this.pickerCallback)
+                // .addView(new google.picker.DocsUploadView())
+                .build();
+            picker.setVisible(true);
+        }
+    }
+
+
     // Override this method on use.
     pickerCallback(data) {
-        if (data.action === google.picker.Action.PICKED) {
-            var fileId = data.docs[0].id;
-            window.location = `editor.html?action=new&dirId=${fileId}`;
-        }
     }
 }
 

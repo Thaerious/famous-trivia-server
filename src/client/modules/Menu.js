@@ -3,6 +3,24 @@ class Menu{
         this.menuSelector = menuSelector;
         this.menuButton.addEventListener("click", ()=>this.toggleMenu());
         this.positionMenu();
+
+        this.menuArea.addEventListener("mouseleave", ()=> this.mouseLeave());
+        this.menuButton.addEventListener("mouseleave", ()=> this.mouseLeave());
+        this.menuArea.addEventListener("mouseenter", ()=> this.mouseEnter());
+    }
+
+    mouseLeave(){
+        if (this.timeout) return;
+        this.timeout = setTimeout(()=>{
+            this.menuArea.classList.add("hidden")
+            this.timeout = null;
+        }, 500);
+    }
+
+    mouseEnter(){
+        if (!this.timeout) return;
+        clearTimeout(this.timeout);
+        this.timeout = null;
     }
 
     toggleMenu(){

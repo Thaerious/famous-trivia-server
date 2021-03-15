@@ -10,6 +10,7 @@
     "editor-watch-js": "watchify src/client/editor.js -o public/scripts/editor.js -dv",
     "editor-build-css": "sass src/styles/editor.scss:public/styles/editor.css",
     "editor-watch-css": "sass --watch src/styles/editor.scss:public/styles/editor.css",
+    "watch-js": "npm run home-watch-js; npm run editor-watch-js",
     "editor-watch": "npm run editor-watch-js; npm run editor-watch-css"
   },
   "repository": {

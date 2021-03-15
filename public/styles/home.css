@@ -1,12 +1,39 @@
 *{
+    box-sizing: border-box;
+    user-select: none;
+}
+
+body{
     background-color: #a3f3ff;
+}
+
+.busy-box{
+    position: absolute;
+    left: -5%;
+    top: -5%;
+    width: 110%;
+    height: 110%;
+    border-radius: 20px;
+    background-color: rgba(128, 128, 128, 0.3);
+}
+
+.busy-box.hidden{
+    display: none;
+}
+
+.busy-box > img{
+    position: absolute;
+    width: 50%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
 }
 
 .home-options{
     position: absolute;
     left: 50%;
     top: 50%;
-    transform-origin: ;
     transform: translate(-50%, -50%);
     border: 3px solid;
     border-color: #44b3ff;

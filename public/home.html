@@ -6,12 +6,22 @@
     <link rel="stylesheet" href="styles/home.css">
     <script src="scripts/home.js"></script>
     <script type="text/javascript" src="https://apis.google.com/js/api.js"></script>
+    <link rel="stylesheet" href="styles/file-list.css">
 </head>
 <body>
     <div class="home-options">
-        <div class="home-option" id="create">Create New Trivia</div>
-        <div class="home-option" id="load">Load Trivia</div>
-        <div class="home-option" id="launch">Launch Trivia Session</div>
+        <div class="home-option" id="create">New</div>
+        <div class="home-option" id="load">Edit</div>
+        <div class="home-option" id="launch">Launch</div>
+        <div class="busy-box hidden">
+            <img src="assets\images\busy.gif"/>
+        </div>
     </div>
+
+    <file-list class="hidden">
+        <div id="inner-list"></div>
+        <img id="file-list-busy" class="hidden" src="assets\images\busy.gif"/>
+        <div class="close">Close</div>
+    </file-list>
 </body>
 </html>

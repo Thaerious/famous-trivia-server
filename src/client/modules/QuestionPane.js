@@ -5,14 +5,16 @@ class QuestionPane{
      * Call constructor after window has loaded
      * @param (function) savecb callback to save model
      */
-    constructor(savecb) {
+    constructor() {
         this.textQuestion = document.querySelector("#text-question");
+        this.textContents = this.textQuestion.querySelector(".text-contents");
         this.navBoard = document.querySelector("#show-board");
         this.navQuestion = document.querySelector("#show-question");
         this.navAnswer = document.querySelector("#show-answer");
 
         document.querySelector("#show-board").addEventListener("click", ()=>{
             this.hideAll();
+            this.onClose();
         });
 
         document.querySelector("#show-question").addEventListener("click", ()=>{
@@ -23,10 +25,15 @@ class QuestionPane{
             this.showAnswer();
         });
 
-        this.textQuestion.querySelector(".text-contents").addEventListener("blur", async ()=>{
-           this.cell[this.status] = this.textQuestion.querySelector(".text-contents").text;
-           await savecb();
+        this.textQuestion.addEventListener("click", ()=>this.textContents.focus());
+
+        this.textContents.addEventListener("blur", async ()=>{
+           this.cell[this.status] = this.textContents.text.trim();
+           await this.onSave();
         });
+
+        this.onSave = function(){}; // set this in main to save .json model
+        this.onClose = function(){}; // called when this panel is hidden.
     }
 
     hideAll(){

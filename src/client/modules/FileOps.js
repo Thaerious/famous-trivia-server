@@ -1,49 +1,47 @@
+"use strict";
 // see https://developers.google.com/drive/api/v3/quickstart/js?hl=en
 
-class FileOps {
+const AbstractFiles = require("./AbstractFile.js");
+
+class FileOps extends AbstractFiles{
     constructor(){
-        // The Browser API key obtained from the Google API Console.
-        this.developerKey = 'AIzaSyABcdLmT6HH_7Go82q_IBGI3jm6UL4w4Q0';
-
-        // The Client ID obtained from the Google API Console. Replace with your own Client ID.
-        this.clientId = "158823134681-98bgkangoltk636ukf8pofeis7pa7jbk.apps.googleusercontent.com"
-
-        // Replace with your own project number from console.developers.google.com.
-        this.appId = "158823134681";
-
-        // Array of API discovery doc URLs for APIs used by the quickstart
-        this.discoveryDocs = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"];
-
-        // Scope to use to access user's Drive items.
-        this.scope = 'https://www.googleapis.com/auth/drive.file';
+        super();
     }
 
-    loadClient() {
-        return new Promise((resolve, reject)=> {
-            gapi.load('client:auth2', ()=>this.initClient(resolve, reject));
-        });
-    }
-
-    initClient(resolve, reject) {
-        gapi.client.init({
-            apiKey: this.developerKey,
-            clientId: this.clientId,
-            discoveryDocs: this.discoveryDocs,
-            scope: this.scope
-        }).then(function () {
-            resolve();
-        }, function(error) {
-            reject(error);
-        });
-    }
-
-    async create(dirToken, filename){
+    async create(){
         return new Promise((resolve, reject)=> {
             gapi.client.drive.files.create({
-                name: filename,
-                parents: [dirToken]
+                name : FileOps.filename,
+                parents: ['appDataFolder'],
+                fields: "id"
             }).then(res=>{
-                resolve(JSON.parse(res.body));
+                resolve(res.result.id);
+            }, function (error) {
+                reject(error.message);
+            });
+        });
+    }
+
+    async delete(fileId){
+        return new Promise((resolve, reject)=> {
+            gapi.client.drive.files.delete({
+                fileId : fileId
+            }).then(res=>{
+                resolve(res.result);
+            }, function (error) {
+                reject(error.message);
+            });
+        });
+    }
+
+    async list(){
+        return new Promise((resolve, reject)=> {
+            gapi.client.drive.files.list({
+                // q: `name contains '.json'`,
+                spaces: 'appDataFolder',
+                fields: 'files/name,files/id,files/modifiedTime'
+            }).then(res=>{
+                resolve(res.result.files);
             }, function (error) {
                 reject(error.message);
             });
@@ -99,5 +97,7 @@ class FileOps {
         });
     }
 }
+
+FileOps.filename = "Game Name.json";
 
 module.exports = FileOps;
