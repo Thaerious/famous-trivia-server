@@ -48,9 +48,22 @@ class Model {
         if (this.currentRound >= this.roundCount) this.currentRound = this.roundCount - 1;
     }
 
-    addRound() {
+    addMultipleChoiceRound(){
         let round = {
-            type: "choice",
+            type: Model.questionType.MULTIPLE_CHOICE,
+            question : "",
+            answers : [
+                // value : {true, false}, text
+            ]
+        };
+
+        this.gameModel.rounds.push(round);
+        return round;
+    }
+
+    addCategoryRound() {
+        let round = {
+            type: Model.questionType.CATEGORY,
             column: []
         };
 
@@ -98,5 +111,10 @@ class Model {
         }
     }
 }
+
+Model.questionType = {
+    CATEGORY : "choice",
+    MULTIPLE_CHOICE : "multiple_choice"
+};
 
 module.exports = Model;

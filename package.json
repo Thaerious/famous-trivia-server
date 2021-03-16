@@ -11,7 +11,11 @@
     "editor-build-css": "sass src/styles/editor.scss:public/styles/editor.css",
     "editor-watch-css": "sass --watch src/styles/editor.scss:public/styles/editor.css",
     "watch-js": "npm run home-watch-js; npm run editor-watch-js",
-    "editor-watch": "npm run editor-watch-js; npm run editor-watch-css"
+    "editor-watch": "npm run editor-watch-js; npm run editor-watch-css",
+    "game-board-build-css": "sass src/styles/game_board.scss:public/styles/game_board.css",
+    "game-board-watch-css": "sass --watch src/styles/game_board.scss:public/styles/game_board.css",
+    "mc-build-css": "sass src/styles/multiple_choice_pane.scss:public/styles/multiple_choice_pane.css",
+    "mc-watch-css": "sass --watch src/styles/multiple_choice_pane.scss:public/styles/multiple_choice_pane.css"
   },
   "repository": {
     "type": "git",

@@ -6,6 +6,7 @@ const Model = require("./modules/Model");
 
 require("@thaerious/nidget")
 require("./modules/GameBoard.js");
+require("./modules/MultipleChoicePane.js");
 
 let fileOps = new FileOps();
 let model = null;
@@ -13,7 +14,7 @@ let questionPane = null;
 let editorPane = null;
 
 window.onload = async () => {
-    window.menu = new Menu("#menu");
+    new Menu().init("#menu");
     parseURLParameters();
 
     try {
@@ -37,8 +38,12 @@ window.onload = async () => {
     editorPane.updateName = renameModel;
     editorPane.updateView();
 
-    document.querySelector("game-board").setQuestionPane(questionPane);
-    document.querySelector("game-board").setEditorPane(editorPane);
+    document.querySelector("game-board").addEventListener("cell-select", (event)=>{
+        let row = event.detail.row;
+        let col = event.detail.col;
+        questionPane.showQuestion(window.model.getCell(row, col));
+        editorPane.hideAll();
+    });
 }
 
 function saveModel() {

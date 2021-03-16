@@ -1,8 +1,10 @@
 "use strict";
 
-/** View-Controller for the HTML game board element              **/
+/** View-Controller for the HTML game board element             **/
+/** This is the classical "Jeopardy" type board                 **/
 /** This is model agnostic, see EditorPane.js for model methods **/
 
+const NidgetElement = require("@Thaerious/nidget").NidgetElement;
 const FileOps = require("./FileOps.js");
 let fileOps = new FileOps();
 
@@ -19,8 +21,16 @@ async function headerFocusListener(event) {
     await fileOps.setBody(window.parameters.fileId, JSON.stringify(window.model.get(), null, 2));
 }
 
-class GameBoard extends HTMLElement {
-    constructor(questionPane) {
+class CellSelectEvent extends  CustomEvent{
+    constructor(row, col) {
+        super('cell-select',
+              {detail : {row : row, col : col }}
+        );
+    }
+}
+
+class GameBoard extends NidgetElement {
+    constructor() {
         super();
         window.addEventListener("load", async ()=>{
             try {
@@ -33,12 +43,8 @@ class GameBoard extends HTMLElement {
         });
     }
 
-    setQuestionPane(pane){
-        this.questionPane = pane;
-    }
+    setModel(model){
 
-    setEditorPane(pane){
-        this.editorPane = pane;
     }
 
     addListeners() {
@@ -49,8 +55,7 @@ class GameBoard extends HTMLElement {
 
             for (let row = 0; row < 5; row++) {
                 gameBoard.getCell(row, col).addEventListener("click", () => {
-                    this.questionPane.showQuestion(window.model.getCell(row, col));
-                    this.editorPane.hideAll();
+                    this.dispatchEvent(new CellSelectEvent(row, col));
                 });
             }
         }

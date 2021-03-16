@@ -1,5 +1,5 @@
 class Menu{
-    constructor(menuSelector) {
+    init(menuSelector){
         this.menuSelector = menuSelector;
         this.menuButton.addEventListener("click", ()=>this.toggleMenu());
         this.positionMenu();
@@ -7,12 +7,38 @@ class Menu{
         this.menuArea.addEventListener("mouseleave", ()=> this.mouseLeave());
         this.menuButton.addEventListener("mouseleave", ()=> this.mouseLeave());
         this.menuArea.addEventListener("mouseenter", ()=> this.mouseEnter());
+        this.menuButton.addEventListener("mouseenter", ()=> this.mouseEnter());
+
+        document.querySelectorAll("[data-autoclose='true'").forEach((ele)=> {
+            ele.addEventListener("click", ()=>this.close());
+        });
+
+        document.querySelectorAll(".sub-menu").forEach((ele)=>{
+            ele.querySelector(".menu-label").addEventListener("click", ()=>{
+                this.toggleMenu(ele);
+            });
+        });
+
+        return this;
+    }
+
+    close(){
+        this.menuArea.classList.add("hidden");
+
+        document.querySelectorAll(".sub-menu > .menu-area").forEach((ele)=>{
+            ele.classList.add("hidden");
+        });
+    }
+
+    open(){
+        this.menuArea.classList.remove("hidden");
+        this.positionMenu();
     }
 
     mouseLeave(){
         if (this.timeout) return;
         this.timeout = setTimeout(()=>{
-            this.menuArea.classList.add("hidden")
+            this.close();
             this.timeout = null;
         }, 500);
     }
@@ -23,12 +49,23 @@ class Menu{
         this.timeout = null;
     }
 
-    toggleMenu(){
-        if (this.menuArea.classList.contains("hidden")){
-            this.menuArea.classList.remove("hidden");
-            this.positionMenu();
+    toggleMenu(element){
+        element = element ?? this.menuArea;
+        if (!element.classList.contains("menu-area")){
+            element = element.querySelector(".menu-area");
+        }
+
+        if (element.classList.contains("hidden")){
+            element.classList.remove("hidden");
         } else {
-            this.menuArea.classList.add("hidden");
+            if (element.classList.contains("menu-area")){
+                element.classList.add("hidden");
+            }
+            element.querySelectorAll(".menu-area").forEach(
+                (ele) => {
+                    ele.classList.add("hidden");
+                }
+            );
         }
     }
 

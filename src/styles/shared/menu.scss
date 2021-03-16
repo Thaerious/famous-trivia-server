@@ -1,3 +1,7 @@
+.menu{
+    user-select: none;
+}
+
 .menu-icon {
     cursor: pointer;
 }
@@ -21,5 +25,32 @@
     .menu-item:hover {
         position: static;
         color: blue;
+    }
+}
+
+.sub-menu {
+    position: relative;
+    cursor: pointer;
+
+    .menu-label:hover {
+        position: static;
+        color: #126b9f;
+    }
+
+    .sub-menu-indicator{
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+
+    .menu-area{
+        position: relative;
+        left: 25px;
+    }
+
+    .menu-item{
+        &.hidden {
+            display: none;
+        }
     }
 }

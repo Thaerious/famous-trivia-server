@@ -1,3 +1,4 @@
+const Model = require("./Model.js");
 
 class EditorPane{
     constructor(gameModel) {
@@ -9,11 +10,23 @@ class EditorPane{
 
         this.updateTriangleView();
 
-        document.querySelector("#menu-add-round").addEventListener("click", ()=>this.menuAdd());
+        document.querySelector("#menu-add-category").addEventListener("click", ()=>{
+            this.gameModel.addCategoryRound();
+            this.updateTriangleView();
+            this.onSave();
+        });
+
+        document.querySelector("#menu-add-multiple-choice").addEventListener("click", ()=>{
+            this.gameModel.addMultipleChoiceRound();
+            this.updateTriangleView();
+            this.onSave();
+        });
+
         document.querySelector("#menu-remove-round").addEventListener("click", ()=>this.menuRemove());
         document.querySelector("#menu-home-screen").addEventListener("click", ()=>this.menuHome());
         document.querySelector("#menu-value-plus").addEventListener("click", ()=>this.menuPlus());
         document.querySelector("#menu-value-minus").addEventListener("click", ()=>this.menuMinus());
+
         this.triangleRight.addEventListener("click", ()=> this.nextRound());
         this.triangleLeft.addEventListener("click", ()=> this.prevRound());
         // this.gameName.addEventListener("blur", ()=> this.updateName());
@@ -50,19 +63,29 @@ class EditorPane{
     updateView(model) {
         model = model ?? this.gameModel;
         this.updateTriangleView();
-
-        let gameBoard = document.getElementById("game-board");
-        if (!gameBoard) throw new Error("Game board not found");
         model = model ?? window.model;
 
-        let round = model.getRound();
+        document.getElementById("game-board").hide();
+        document.getElementById("multiple-choice-pane").hide();
+
+        if (model.getRound().type === Model.questionType.CATEGORY) this.categoryView(model);
+        if (model.getRound().type === Model.questionType.MULTIPLE_CHOICE) this.multipleChoiceView(model);
+    }
+
+    multipleChoiceView(){
+
+    }
+
+    categoryView(model){
+        let gameBoard = document.getElementById("game-board");
+        if (!gameBoard) throw new Error("Game board not found");
+        gameBoard.show();
 
         for (let col = 0; col < 6; col++) {
             let column = model.getColumn(col);
 
             gameBoard.getHeader(col).initFitText("vh");
             gameBoard.setHeader(col, column.category, column.fontsize);
-            gameBoard.getHeader(col).fitText.delayResize(1, 1);
 
             for (let row = 0; row < 5; row++) {
                 gameBoard.setCell(row, col, column.cell[row].value);
@@ -95,12 +118,6 @@ class EditorPane{
         this.gameModel.decreaseValue();
         this.onSave();
         this.updateView();
-    }
-
-    menuAdd(){
-        this.gameModel.addRound();
-        this.updateTriangleView();
-        this.onSave();
     }
 
     menuRemove(){
