@@ -1,4 +1,4 @@
-#game-board {
+#game-board, #multiple-choice-pane {
   position: absolute;
   top: 15vh;
   left: 50%;

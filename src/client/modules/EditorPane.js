@@ -73,7 +73,8 @@ class EditorPane{
     }
 
     multipleChoiceView(){
-
+        let pane = document.getElementById("multiple-choice-pane");
+        pane.show();
     }
 
     categoryView(model){

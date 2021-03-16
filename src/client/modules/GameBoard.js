@@ -5,8 +5,6 @@
 /** This is model agnostic, see EditorPane.js for model methods **/
 
 const NidgetElement = require("@Thaerious/nidget").NidgetElement;
-const FileOps = require("./FileOps.js");
-let fileOps = new FileOps();
 
 function headerChangeListener(event) {
     event.target.fitText.notify(1, 1);
@@ -14,11 +12,11 @@ function headerChangeListener(event) {
     window.model.getColumn(col).category = event.target.text;
 }
 
-async function headerFocusListener(event) {
+async function headerBlurListener(event) {
     let col = parseInt(event.target.parentElement.getAttribute("data-col"));
     event.target.text = window.model.getColumn(col).category;
     window.model.getColumn(col).fontsize = event.target.style["font-size"];
-    await fileOps.setBody(window.parameters.fileId, JSON.stringify(window.model.get(), null, 2));
+    // await fileOps.setBody(window.parameters.fileId, JSON.stringify(window.model.get(), null, 2));
 }
 
 class CellSelectEvent extends  CustomEvent{
@@ -33,25 +31,15 @@ class GameBoard extends NidgetElement {
     constructor() {
         super();
         window.addEventListener("load", async ()=>{
-            try {
-                await fileOps.loadClient();
-            } catch (err) {
-                console.log(err);
-            }
-
-            this.addListeners();
+            // this.addListeners();
         });
-    }
-
-    setModel(model){
-
     }
 
     addListeners() {
         let gameBoard = document.getElementById("game-board");
         for (let col = 0; col < 6; col++) {
             gameBoard.getHeader(col).addEventListener("input", headerChangeListener);
-            gameBoard.getHeader(col).addEventListener("blur", headerFocusListener);
+            gameBoard.getHeader(col).addEventListener("blur", headerBlurheader);
 
             for (let row = 0; row < 5; row++) {
                 gameBoard.getCell(row, col).addEventListener("click", () => {

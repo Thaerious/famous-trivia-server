@@ -6,7 +6,8 @@ const Model = require("./modules/Model");
 
 require("@thaerious/nidget")
 require("./modules/GameBoard.js");
-require("./modules/MultipleChoicePane.js");
+// require("./modules/MultipleChoicePane.js");
+// require("./modules/CheckBox.js");
 
 let fileOps = new FileOps();
 let model = null;
