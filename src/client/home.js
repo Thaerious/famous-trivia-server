@@ -5,12 +5,17 @@ const FileOps = require("./modules/FileOps.js");
 const Parameters = require("./modules/Parameters.js");
 require("./modules/FileList.js");
 
+window.FileOps = FileOps;
+
 let folderId = null;
 let fileOps = new FileOps();
+window.fileOps = fileOps;
 
-window.onload = async ()=> {
-    let busyBox = document.querySelector(".busy-box");
-    await fileOps.loadClient();
+window.addEventListener("load", async ()=>{
+
+});
+
+function setupFileList(){
     let fileList = document.querySelector("file-list");
 
     fileList.del = async (id) => {
@@ -20,8 +25,12 @@ window.onload = async ()=> {
         fileList.busy = false;
     }
     fileList.cb = (id) => window.location = `editor.html?action=load&fileId=${id}`;
+}
 
+function addMenuListeners(){
+    let busyBox = document.querySelector(".busy-box");
     document.querySelector("#create").addEventListener("click", async (e) => {
+        console.log("click");
         busyBox.classList.remove("hidden");
         let model = new Model().init("Game Name");
         let fp = await fileOps.create();

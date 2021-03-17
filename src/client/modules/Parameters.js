@@ -1,5 +1,5 @@
 "use strict";
-const AbstractFiles = require("./AbstractFile.js");
+const AbstractFiles = require("./Authenticate.js");
 
 class Parameters extends AbstractFiles{
     constructor() {
