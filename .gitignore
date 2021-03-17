@@ -2,3 +2,4 @@
 node_modules/
 scripts/home.js
 scripts/editor.js
+styles/generated/*
