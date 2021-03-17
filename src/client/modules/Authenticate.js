@@ -1,13 +1,13 @@
 // see https://developers.google.com/drive/api/v3/quickstart/js?hl=en
 
-class AbstractFile {
+class Authenticate {
     constructor(){
         Object.assign(this, require("./googleFields.js"));
     }
 
     loadClient() {
-        return new Promise((resolve, reject)=> {
-            gapi.load('client:auth2', ()=>this.__initClient(resolve, reject));
+        return new Promise((resolve, reject) => {
+            gapi.load('client:auth2', () => this.__initClient(resolve, reject));
         });
     }
 
@@ -17,13 +17,28 @@ class AbstractFile {
             clientId: this.clientId,
             discoveryDocs: this.discoveryDocs,
             scope: this.scope
-        }).then(function () {
+        }).then(function (result) {
             resolve();
         }, function(error) {
+            console.log("ERROR INIT");
             console.log(error);
             reject(error);
         });
     }
+
+    isAuthorized(){
+        var user = gapi.auth2.getAuthInstance().currentUser.get();
+        return user.hasGrantedScopes(this.scope);
+    }
+
+    signIn(){
+        gapi.auth2.getAuthInstance().signIn();
+    }
+
+    signOut(){
+        gapi.auth2.getAuthInstance().signOut();
+    }
+
 }
 
-module.exports = AbstractFile;
+module.exports = Authenticate;

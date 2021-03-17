@@ -13,5 +13,5 @@ module.exports = {
     discoveryDocs : ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
 
     // Scope to use to access user's Drive items.
-    scope : 'https://www.googleapis.com/auth/drive.file'
+    scope: "https://www.googleapis.com/auth/drive.file"
 }

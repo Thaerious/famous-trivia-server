@@ -19,7 +19,6 @@ app.use("*.html", function (req, res, next) {
     csp["style-src"] = "'self' *.google.com 'unsafe-inline'";
     delete csp["script-src"];
     delete csp["script-src-attr"];
-    console.log(csp);
     res.set("Content-Security-Policy", concatCSP(res, csp));
     next();
 });

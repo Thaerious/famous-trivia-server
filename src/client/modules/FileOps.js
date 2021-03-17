@@ -1,11 +1,23 @@
 "use strict";
 // see https://developers.google.com/drive/api/v3/quickstart/js?hl=en
 
-const AbstractFiles = require("./AbstractFile.js");
+class FileOps {
 
-class FileOps extends AbstractFiles{
-    constructor(){
-        super();
+    async load(){
+        await this.loadClient();
+        await this.loadDrive();
+    }
+
+    loadClient() {
+        return new Promise((resolve, reject) => {
+            gapi.load('client', () => resolve());
+        });
+    }
+
+    loadDrive() {
+        return new Promise((resolve, reject) => {
+            gapi.client.load('drive', 'v3', resolve());
+        });
     }
 
     async create(){
@@ -17,7 +29,7 @@ class FileOps extends AbstractFiles{
             }).then(res=>{
                 resolve(res.result.id);
             }, function (error) {
-                reject(error.message);
+                reject(error);
             });
         });
     }
@@ -43,7 +55,7 @@ class FileOps extends AbstractFiles{
             }).then(res=>{
                 resolve(res.result.files);
             }, function (error) {
-                reject(error.message);
+                reject(error);
             });
         });
     }

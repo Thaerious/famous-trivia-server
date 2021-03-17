@@ -1,4 +1,5 @@
 const FileOps = require("./modules/FileOps.js");
+const Authenticate = require("./modules/Authenticate.js");
 const Menu = require("./modules/Menu.js");
 const QuestionPane = require("./modules/QuestionPane.js");
 const EditorPane = require("./modules/EditorPane.js");
@@ -15,6 +16,8 @@ let questionPane = null;
 let editorPane = null;
 
 window.onload = async () => {
+    await new Authenticate().loadClient();
+
     new Menu().init("#menu");
     parseURLParameters();
 
