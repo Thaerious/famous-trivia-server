@@ -11,12 +11,22 @@ function onSuccess(googleUser) {
         googleUser = gapi.auth2.getAuthInstance().currentUser.get();
         googleUser.grant(options).then(
             function (success) {
-                console.log(JSON.stringify({message: "success", value: success}));
+                enableButtons();
             },
             function (fail) {
                 alert(JSON.stringify({message: "fail", value: fail}));
             });
+    } else {
+        enableButtons();
     }
+}
+
+function enableButtons(){
+    document.querySelectorAll(".home-option").forEach(e=>e.classList.remove("disabled"));
+}
+
+function disableButtons(){
+    document.querySelectorAll(".home-option").forEach(e=>e.classList.add("disabled"));
 }
 
 function onFailure(error) {
@@ -36,5 +46,6 @@ function renderButton() {
 }
 
 function signOut(){
+    disableButtons();
     gapi.auth2.getAuthInstance().signOut();
 }

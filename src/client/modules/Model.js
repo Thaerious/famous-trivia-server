@@ -7,7 +7,7 @@ class Model {
             rounds: []
         };
 
-        this.addRound();
+        this.addCategoryRound();
         return this;
     }
 

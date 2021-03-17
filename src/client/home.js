@@ -12,7 +12,9 @@ let fileOps = new FileOps();
 window.fileOps = fileOps;
 
 window.addEventListener("load", async ()=>{
-
+    await fileOps.load();
+    addMenuListeners();
+    setupFileList();
 });
 
 function setupFileList(){
