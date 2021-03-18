@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" href="styles/generated/editor.css">
+    <link rel="stylesheet" href="styles/generated/editor.css"/>
     <script type="text/javascript" src="scripts/editor.js"></script>
     <script type="text/javascript" src="https://apis.google.com/js/api.js"></script>
 </head>
@@ -17,9 +17,9 @@
         <div class="menu-area hidden" id="outer">
             <div class="sub-menu">
                 <div class="menu-label">Add Round</div>
-                <div class="menu-area hidden"  id="inner">
-                    <div class="menu-item" data-autoclose = "true" id="menu-add-category">Category</div>
-                    <div class="menu-item" data-autoclose = "true" id="menu-add-multiple-choice">Multiple Choice</div>
+                <div class="menu-area hidden" id="inner">
+                    <div class="menu-item" data-autoclose="true" id="menu-add-category">Category</div>
+                    <div class="menu-item" data-autoclose="true" id="menu-add-multiple-choice">Multiple Choice</div>
                 </div>
                 <div class="sub-menu-indicator">&#5125;</div>
             </div>
@@ -36,16 +36,9 @@
 <img class="triangle-indicator" id="triangle-right" src="assets/images/right_triangle.png"/>
 <img class="triangle-indicator" id="triangle-left" src="assets/images/left_triangle.png"/>
 
-<div id="text-question" class="hidden">
-    <nidget-text class="text-contents" contenteditable="true"></nidget-text>
-</div>
-
-<div class="nav-button hidden" id="show-board">Board</div>
-<div class="nav-button hidden" id="show-answer">Answer</div>
-<div class="nav-button hidden" id="show-question">Question</div>
-
-<game-board id="game-board" template-src="snippets/game-board.html"></game-board>
-<multiple-choice-pane id="multiple-choice-pane" template-src="snippets/multiple-choice-pane.html"></multiple-choice-pane>
+<question-pane id="question-pane" class="hidden" template-src="snippets/question-pane.html"></question-pane>
+<game-board id="game-board" class="hidden" template-src="snippets/game-board.html"></game-board>
+<multiple-choice-pane id="multiple-choice-pane" class="hidden" template-src="snippets/multiple-choice-pane.html"></multiple-choice-pane>
 
 </body>
 </html>

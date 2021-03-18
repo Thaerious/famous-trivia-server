@@ -1,0 +1,87 @@
+.nav-button {
+  position: absolute;
+  width: 20vh;
+  height: 5vh;
+  border: 0.33vh solid black;
+  background-color: white;
+  border-radius: 1vh;
+  text-align: center;
+  font-family: "Arial Black", serif;
+  font-weight: bold;
+  line-height: 4vh;
+  font-size: 3vh;
+  cursor: pointer;
+  bottom: 2vh;
+}
+.nav-button.hidden {
+  display: none;
+}
+.nav-button:hover {
+  background-color: #ffffc8;
+}
+.nav-button.selected {
+  background-color: yellow;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+:host(multiple-choice-pane.hidden) {
+  display: none;
+}
+
+.nav-button {
+  left: 50%;
+}
+.nav-button#show-question {
+  transform: translateX(-101%);
+}
+.nav-button#show-answer {
+  transform: translateX(1%);
+}
+
+.outer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  font-family: Arial Black, serif;
+  background-color: #1117d9;
+  z-index: 0;
+  font-size: 6vh;
+  font-family: OPTIKorinna-Agency, serif;
+  text-transform: uppercase;
+  color: #eee;
+  text-shadow: 4px 4px #000;
+  text-align: left;
+  white-space: pre-line;
+}
+.outer check-box {
+  position: absolute;
+  width: 5%;
+  --nidget-aspect-ratio: 1-1;
+  top: calc((var(--index) * 12%) + 15.75%);
+  left: 4%;
+}
+.outer .answer {
+  position: absolute;
+  width: 85%;
+  right: 4%;
+  border: 2px dotted;
+  border-color: var(--ui-border-color);
+  height: 10%;
+  top: calc((var(--index) * 12%) + 14%);
+  white-space: nowrap;
+}
+.outer .answer nidget-text {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  white-space: pre;
+}
+.outer .answer:focus {
+  outline: none;
+  border-color: #e0f2ff;
+}
+
+/*# sourceMappingURL=multiple_choice_pane.css.map */

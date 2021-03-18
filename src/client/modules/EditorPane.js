@@ -1,23 +1,25 @@
 const Model = require("./Model.js");
 
 class EditorPane{
-    constructor(gameModel) {
-        this.gameModel = gameModel;
+    constructor(model) {
+        this.model = model;
         this.triangleRight = document.querySelector("#triangle-right");
-        this.triangleLeft = document.querySelector("#triangle-left");
-        this.roundLabel = document.querySelector("#round-number");
-        this.gameName = document.querySelector("#game-name");
+        this.triangleLeft  = document.querySelector("#triangle-left");
+        this.roundLabel    = document.querySelector("#round-number");
+        this.gameName      = document.querySelector("#game-name");
 
-        this.updateTriangleView();
+        this.multipleChoicePane = document.getElementById("multiple-choice-pane");
+        this.gameBoard          = document.getElementById("game-board");
+        this.questionPane       = document.getElementById("question-pane");
 
         document.querySelector("#menu-add-category").addEventListener("click", ()=>{
-            this.gameModel.addCategoryRound();
+            this.model.addCategoryRound();
             this.updateTriangleView();
             this.onSave();
         });
 
         document.querySelector("#menu-add-multiple-choice").addEventListener("click", ()=>{
-            this.gameModel.addMultipleChoiceRound();
+            this.model.addMultipleChoiceRound();
             this.updateTriangleView();
             this.onSave();
         });
@@ -29,19 +31,33 @@ class EditorPane{
 
         this.triangleRight.addEventListener("click", ()=> this.nextRound());
         this.triangleLeft.addEventListener("click", ()=> this.prevRound());
-        // this.gameName.addEventListener("blur", ()=> this.updateName());
         this.gameName.addEventListener("keydown", (event)=>this.inputName(event));
 
-        this.onSave = function(){}; // set this in main to save .json model
-        this.updateName = function(){}; // called to change the file name
+        this.gameBoard.addEventListener("header-update", event =>{
+            let col = event.detail.col;
+            this.model.getColumn(col).category = event.detail.value;
+            this.model.getColumn(col).fontSize = event.detail.fontSize;
+            this.onSave();
+        });
+
+        this.linkPanes();
+        this.updateView();
+    }
+
+    onSave(){}
+    updateName(){}
+
+    linkPanes(){
+        let multipleChoice = document.getElementById("multiple-choice-pane");
+        let gameBoard = document.getElementById("game-board");
+        let questionPane = document.getElementById("question-pane");
     }
 
     inputName(event){
-        window.e = event;
         if (event.which === 13){
             this.updateName();
-            e.stopPropagation();
-            e.preventDefault();
+            event.stopPropagation();
+            event.preventDefault();
             document.querySelector("#game-board-container").focus();
             return false;
         }
@@ -52,24 +68,23 @@ class EditorPane{
         this.triangleRight.classList.add("hidden");
     }
 
-    updateTriangleView(){
-        this.triangleLeft.classList.remove("hidden");
-        this.triangleRight.classList.remove("hidden");
-        if (this.gameModel.currentRound === 0) this.triangleLeft.classList.add("hidden");
-        if (this.gameModel.currentRound >= this.gameModel.roundCount - 1) this.triangleRight.classList.add("hidden");
-        this.roundLabel.textContent = "Round " + (this.gameModel.currentRound + 1);
-    }
-
     updateView(model) {
-        model = model ?? this.gameModel;
+        model = model ?? this.model;
         this.updateTriangleView();
-        model = model ?? window.model;
 
         document.getElementById("game-board").hide();
         document.getElementById("multiple-choice-pane").hide();
 
         if (model.getRound().type === Model.questionType.CATEGORY) this.categoryView(model);
         if (model.getRound().type === Model.questionType.MULTIPLE_CHOICE) this.multipleChoiceView(model);
+    }
+
+    updateTriangleView(){
+        this.triangleLeft.classList.remove("hidden");
+        this.triangleRight.classList.remove("hidden");
+        if (this.model.currentRound === 0) this.triangleLeft.classList.add("hidden");
+        if (this.model.currentRound >= this.model.roundCount - 1) this.triangleRight.classList.add("hidden");
+        this.roundLabel.textContent = "Round " + (this.model.currentRound + 1);
     }
 
     multipleChoiceView(){
@@ -79,14 +94,13 @@ class EditorPane{
 
     categoryView(model){
         let gameBoard = document.getElementById("game-board");
-        if (!gameBoard) throw new Error("Game board not found");
         gameBoard.show();
 
         for (let col = 0; col < 6; col++) {
             let column = model.getColumn(col);
 
-            gameBoard.getHeader(col).initFitText("vh");
-            gameBoard.setHeader(col, column.category, column.fontsize);
+            gameBoard.getHeader(col).fitText.lock = "vh";
+            gameBoard.setHeader(col, column.category, column.fontSize);
 
             for (let row = 0; row < 5; row++) {
                 gameBoard.setCell(row, col, column.cell[row].value);
@@ -98,31 +112,29 @@ class EditorPane{
     }
 
     nextRound(){
-        this.gameModel.currentRound++;
-        this.updateTriangleView();
+        this.model.currentRound++;
         this.updateView();
     }
 
     prevRound(){
-        this.gameModel.currentRound--;
-        this.updateTriangleView();
+        this.model.currentRound--;
         this.updateView();
     }
 
     menuPlus(){
-        this.gameModel.increaseValue();
+        this.model.increaseValue();
         this.onSave();
         this.updateView();
     }
 
     menuMinus(){
-        this.gameModel.decreaseValue();
+        this.model.decreaseValue();
         this.onSave();
         this.updateView();
     }
 
     menuRemove(){
-        this.gameModel.removeRound();
+        this.model.removeRound();
         this.updateTriangleView();
         this.onSave();
         this.updateView();

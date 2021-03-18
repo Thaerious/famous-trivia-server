@@ -1,5 +1,27 @@
 
-#game-board, #multiple-choice-pane {
+.nav-button{
+    bottom: 4vh;
+    left: 50%;
+
+    &#show-board{
+        transform: translateX(-152%);
+    }
+    &#show-question{
+        transform: translateX(-50%);
+    }
+    &#show-answer{
+        transform: translateX(52%);
+    }
+}
+
+check-box{
+    position: absolute;
+    width: 5%;
+    height: 5%;
+    left: 2%;
+}
+
+#game-board, #multiple-choice-pane, #question-pane {
     position: absolute;
     top: 15vh;
     left: 50%;

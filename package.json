@@ -8,15 +8,11 @@
     "home-watch-js": "watchify src/client/home.js -o public/scripts/home.js -dv",
     "editor-build-js": "browserify src/client/editor.js -o public/scripts/editor.js -d",
     "editor-watch-js": "watchify src/client/editor.js -o public/scripts/editor.js -dv",
-    "editor-build-css": "sass src/styles/editor.scss:public/styles/generated/editor.css",
-    "editor-watch-css": "sass --watch src/styles/editor.scss:public/styles/generated/editor.css",
-    "build-js": "npm run home-build-js; npm run editor-build-js",
-    "watch-js": "npm run home-watch-js; npm run editor-watch-js",
+    "build-js": "npm run home-build-js && npm run editor-build-js",
+    "watch-js": "start npm run home-watch-js && start npm run editor-watch-js",
     "editor-watch": "npm run editor-watch-js; npm run editor-watch-css",
-    "game-board-build-css": "sass src/styles/game_board.scss:public/styles/generated/game_board.css",
-    "game-board-watch-css": "sass --watch src/styles/game_board.scss:public/styles/generated/game_board.css",
-    "mc-build-css": "sass src/styles/multiple_choice_pane.scss:public/styles/generated/multiple_choice_pane.css",
-    "mc-watch-css": "sass --watch src/styles/multiple_choice_pane.scss:public/styles/generated/multiple_choice_pane.css"
+    "build-css": "sass src/styles:public/styles/generated/,",
+    "watch-css": "sass --watch src/styles:public/styles/generated/"
   },
   "repository": {
     "type": "git",

@@ -5,10 +5,10 @@ const QuestionPane = require("./modules/QuestionPane.js");
 const EditorPane = require("./modules/EditorPane.js");
 const Model = require("./modules/Model");
 
-require("@thaerious/nidget")
+const Nidget = require("@thaerious/nidget")
 require("./modules/GameBoard.js");
-// require("./modules/MultipleChoicePane.js");
-// require("./modules/CheckBox.js");
+require("./modules/MultipleChoicePane.js");
+require("./modules/CheckBox.js");
 
 let fileOps = new FileOps();
 let model = null;
@@ -16,44 +16,47 @@ let questionPane = null;
 let editorPane = null;
 
 window.onload = async () => {
-    await new Authenticate().loadClient();
+    Nidget.NidgetElement.loadTemplateSnippet("snippets/check-box.html", "check-box");
+    Nidget.NidgetElement.loadTemplateSnippet("snippets/game-board.html", "game-board");
+    Nidget.NidgetElement.loadTemplateSnippet("snippets/multiple-choice-pane.html", "multiple-choice-pane");
+    Nidget.NidgetElement.loadTemplateSnippet("snippets/question-pane.html", "question-pane");
 
-    new Menu().init("#menu");
     parseURLParameters();
+    new Menu().init("#menu");
 
     try {
+        await new Authenticate().loadClient();
         await fileOps.loadClient();
-        questionPane = new QuestionPane();
     } catch (err) {
         console.log(err);
     }
 
-    if (window.parameters.action === "load") {
-        let file = await fileOps.get(window.parameters.fileId);
-        let model = JSON.parse(file.body);
-        window.model = model = new Model(fileOps).set(model);
-    }
+    let file = await fileOps.get(window.parameters.fileId);
+    let model = new Model(fileOps).set(JSON.parse(file.body));
+    window.model = model;
 
-    document.querySelector("#game-name").textContent = window.model.name;
-    editorPane = new EditorPane(window.model);
+    document.querySelector("#game-name").textContent = model.name;
+    editorPane = new EditorPane(model);
     editorPane.onSave = saveModel;
-    questionPane.onSave = saveModel;
-    questionPane.onClose = () => editorPane.updateView();
-    editorPane.updateName = renameModel;
-    editorPane.updateView();
 
-    document.querySelector("game-board").addEventListener("cell-select", (event)=>{
-        let row = event.detail.row;
-        let col = event.detail.col;
-        questionPane.showQuestion(window.model.getCell(row, col));
-        editorPane.hideAll();
-    });
+    // document.querySelector("game-board").addEventListener("cell-select", (event)=>{
+    //     let row = event.detail.row;
+    //     let col = event.detail.col;
+    //     questionPane.showQuestion(window.model.getCell(row, col));
+    //     editorPane.hideAll();
+    // });
 }
 
+/**
+ * Save the model to the google app data folder.
+ */
 function saveModel() {
     fileOps.setBody(window.parameters.fileId, JSON.stringify(window.model.get(), null, 2));
 }
 
+/**
+ * Change the name of the file in google's app data folder.
+ */
 function renameModel() {
     let name = document.querySelector("#game-name").textContent;
     fileOps.rename(window.parameters.fileId, name + ".json");
@@ -61,6 +64,9 @@ function renameModel() {
     saveModel();
 }
 
+/**
+ * Extract value from the URL string, store in 'window.parameters'.
+ */
 function parseURLParameters() {
     window.parameters = {};
     const parameters = window.location.search.substr(1).split("&");

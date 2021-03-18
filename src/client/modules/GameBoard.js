@@ -1,23 +1,14 @@
 "use strict";
 
-/** View-Controller for the HTML game board element             **/
-/** This is the classical "Jeopardy" type board                 **/
-/** This is model agnostic, see EditorPane.js for model methods **/
+/** View-Controller for the HTML game board element
+    This is the classical "Jeopardy" type board
+    This is model agnostic, see EditorPane.js for model methods
+    generates the following events:
+        cell-select (row, col): when a user clicks a cell
+        header-update (value, col, fontsize) : when the header text changes (and blurs)
+ **/
 
 const NidgetElement = require("@Thaerious/nidget").NidgetElement;
-
-function headerChangeListener(event) {
-    event.target.fitText.notify(1, 1);
-    let col = parseInt(event.target.parentElement.getAttribute("data-col"));
-    window.model.getColumn(col).category = event.target.text;
-}
-
-async function headerBlurListener(event) {
-    let col = parseInt(event.target.parentElement.getAttribute("data-col"));
-    event.target.text = window.model.getColumn(col).category;
-    window.model.getColumn(col).fontsize = event.target.style["font-size"];
-    // await fileOps.setBody(window.parameters.fileId, JSON.stringify(window.model.get(), null, 2));
-}
 
 class CellSelectEvent extends  CustomEvent{
     constructor(row, col) {
@@ -27,22 +18,31 @@ class CellSelectEvent extends  CustomEvent{
     }
 }
 
+class HeaderUpdateEvent extends  CustomEvent{
+    constructor(col, value, fontSize) {
+        super('header-update',
+            {detail : {value : value, col : col, fontSize : fontSize}}
+        );
+    }
+}
+
 class GameBoard extends NidgetElement {
     constructor() {
         super();
-        window.addEventListener("load", async ()=>{
-            // this.addListeners();
-        });
     }
 
-    addListeners() {
-        let gameBoard = document.getElementById("game-board");
+    async ready(){
+        await super.ready();
         for (let col = 0; col < 6; col++) {
-            gameBoard.getHeader(col).addEventListener("input", headerChangeListener);
-            gameBoard.getHeader(col).addEventListener("blur", headerBlurheader);
+            this.getHeader(col).addEventListener("input", (event)=>event.target.fitText.notify(1, 1));
+
+            this.getHeader(col).addEventListener("blur", (event)=>{
+                let fontSize = window.getComputedStyle(event.target)["font-size"];
+                this.dispatchEvent(new HeaderUpdateEvent(col, event.target.text, fontSize));
+            });
 
             for (let row = 0; row < 5; row++) {
-                gameBoard.getCell(row, col).addEventListener("click", () => {
+                this.getCell(row, col).addEventListener("click", () => {
                     this.dispatchEvent(new CellSelectEvent(row, col));
                 });
             }

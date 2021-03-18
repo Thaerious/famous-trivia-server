@@ -1,10 +1,16 @@
 // editor.scss
 
-@import 'editor/layout.scss';
-@import 'editor/buttons.scss';
-@import 'shared/menu.scss';
-@import 'shared/text_question.scss';
-//@import '../../node_modules/@thaerious/nidget/styles/nidget';
+@import 'editor/layout';
+@import 'editor/buttons';
+@import 'shared/menu';
+
+:root{
+    --ui-border-color : #44d1dc;
+    --ui-background-hover : #3f43d8;
+    --ui-background : #1117d9;
+    --ui-background-selected : #3f43d8;
+    --ui-background-disabled : #808080;
+}
 
 body{
     background-color: #dcf3fe;
@@ -16,10 +22,10 @@ body{
 
 @font-face {
     font-family: 'OPTIKorinna-Agency';
-    src: url('font/OPTIKorinna-Agency.ttf.woff') format('woff'),
-    url('font/OPTIKorinna-Agency.ttf.svg#OPTIKorinna-Agency') format('svg'),
-    url('font/OPTIKorinna-Agency.ttf.eot'),
-    url('font/OPTIKorinna-Agency.ttf.eot?#iefix') format('embedded-opentype');
+    src: url('../font/OPTIKorinna-Agency.ttf.woff') format('woff'),
+    url('../font/OPTIKorinna-Agency.ttf.svg#OPTIKorinna-Agency') format('svg'),
+    url('../font/OPTIKorinna-Agency.ttf.eot'),
+    url('../font/OPTIKorinna-Agency.ttf.eot?#iefix') format('embedded-opentype');
     font-weight: normal;
     font-style: normal;
 }

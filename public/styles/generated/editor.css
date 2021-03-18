@@ -1,0 +1,201 @@
+.nav-button {
+  bottom: 4vh;
+  left: 50%;
+}
+.nav-button#show-board {
+  transform: translateX(-152%);
+}
+.nav-button#show-question {
+  transform: translateX(-50%);
+}
+.nav-button#show-answer {
+  transform: translateX(52%);
+}
+
+check-box {
+  position: absolute;
+  width: 5%;
+  height: 5%;
+  left: 2%;
+}
+
+#game-board, #multiple-choice-pane, #question-pane {
+  position: absolute;
+  top: 15vh;
+  left: 50%;
+  width: calc(75 * 1.11vh);
+  height: 75vh;
+  transform: translateX(-50%);
+  z-index: 5;
+}
+
+#top-bar {
+  position: absolute;
+  top: 4vh;
+  left: 50%;
+  width: calc(75 * 1.11vh);
+  height: 5vh;
+  transform: translateX(-50%);
+  z-index: 100;
+}
+#top-bar #game-name {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 80%;
+  height: 5vh;
+  transform: translateX(-50%);
+  background-color: #060ce9;
+  color: whitesmoke;
+  font-family: Arial Black, serif;
+  font-size: 4vh;
+  line-height: 4.2vh;
+  text-align: center;
+  border-radius: 5vh;
+  border: 0.33vh solid black;
+}
+#top-bar #game-name:focus {
+  outline: none;
+  border: 0.33vh solid;
+  border-color: #44b3ff;
+}
+#top-bar #menu-icon {
+  position: absolute;
+  right: 0px;
+  width: 5vh;
+}
+
+.triangle-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5vh;
+  transform: translateY(-50%);
+  z-index: 100;
+  cursor: pointer;
+}
+.triangle-indicator.hidden {
+  display: none;
+}
+.triangle-indicator#triangle-left {
+  transform: translateX(-47.625vh);
+}
+.triangle-indicator#triangle-right {
+  transform: translateX(42.625vh);
+}
+
+#round-number {
+  position: absolute;
+  top: 9vh;
+  left: 50%;
+  width: calc(75 * 1.11vh);
+  height: 5vh;
+  transform: translateX(-50%);
+  font-family: Arial Black, serif;
+  font-size: 4vh;
+  color: black;
+  text-align: center;
+}
+
+.menu-area {
+  width: 200px;
+}
+
+.nav-button {
+  position: absolute;
+  width: 20vh;
+  height: 5vh;
+  border: 0.33vh solid black;
+  background-color: white;
+  border-radius: 1vh;
+  text-align: center;
+  font-family: "Arial Black", serif;
+  font-weight: bold;
+  line-height: 4vh;
+  font-size: 3vh;
+  cursor: pointer;
+  bottom: 2vh;
+}
+.nav-button.hidden {
+  display: none;
+}
+.nav-button:hover {
+  background-color: #ffffc8;
+}
+.nav-button.selected {
+  background-color: yellow;
+}
+
+.menu {
+  user-select: none;
+}
+
+.menu-icon {
+  cursor: pointer;
+}
+
+.menu-area {
+  position: fixed;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid black;
+  padding: 2px;
+  border-radius: 5px;
+  font-family: Arial Black, serif;
+  font-size: 2vh;
+  text-align: left;
+  cursor: pointer;
+  z-index: 100;
+}
+.menu-area.hidden {
+  display: none;
+}
+.menu-area .menu-item:hover {
+  position: static;
+  color: blue;
+}
+
+.sub-menu {
+  position: relative;
+  cursor: pointer;
+}
+.sub-menu .menu-label:hover {
+  position: static;
+  color: #126b9f;
+}
+.sub-menu .sub-menu-indicator {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.sub-menu .menu-area {
+  position: relative;
+  left: 25px;
+}
+.sub-menu .menu-item.hidden {
+  display: none;
+}
+
+:root {
+  --ui-border-color: #44d1dc;
+  --ui-background-hover: #3f43d8;
+  --ui-background: #1117d9;
+  --ui-background-selected: #3f43d8;
+  --ui-background-disabled: #808080;
+}
+
+body {
+  background-color: #dcf3fe;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@font-face {
+  font-family: "OPTIKorinna-Agency";
+  src: url("../font/OPTIKorinna-Agency.ttf.woff") format("woff"), url("../font/OPTIKorinna-Agency.ttf.svg#OPTIKorinna-Agency") format("svg"), url("../font/OPTIKorinna-Agency.ttf.eot"), url("../font/OPTIKorinna-Agency.ttf.eot?#iefix") format("embedded-opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/*# sourceMappingURL=editor.css.map */

@@ -1,0 +1,28 @@
+
+.nav-button{
+    position: absolute;
+    width: 20vh;
+    height: 5vh;
+    border: 0.33vh solid black;
+    background-color: white;
+    border-radius: 1vh;
+    text-align: center;
+    font-family: "Arial Black", serif;
+    font-weight: bold;
+    line-height: 4vh;
+    font-size: 3vh;
+    cursor: pointer;
+    bottom: 2vh;
+
+    &.hidden{
+        display: none;
+    }
+
+    &:hover{
+        background-color: #ffffc8;
+    }
+
+    &.selected{
+        background-color: yellow;
+    }
+}
