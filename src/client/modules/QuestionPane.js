@@ -1,68 +1,72 @@
 const NidgetElement = require("@Thaerious/nidget").NidgetElement;
 
+class TextUpdate extends  CustomEvent{
+    constructor(text) {
+        super('text-update',
+            {detail : {text : text}}
+        );
+    }
+}
+
+class BoardClick extends  CustomEvent{
+    constructor() {
+        super('button-board');
+    }
+}
+
+class QuestionClick extends  CustomEvent{
+    constructor() {
+        super('button-question');
+    }
+}
+
+class AnswerClick extends  CustomEvent{
+    constructor() {
+        super('button-answer');
+    }
+}
+
 class QuestionPane extends NidgetElement{
 
     async ready(){
         await super.ready();
 
         this.querySelector("#show-board").addEventListener("click", ()=>{
-            this.showBoard();
+            this.dispatchEvent(new BoardClick());
         });
 
         this.querySelector("#show-question").addEventListener("click", ()=>{
-            this.showQuestion();
+            this.dispatchEvent(new QuestionClick());
         });
 
         this.querySelector("#show-answer").addEventListener("click", ()=>{
-            this.showAnswer();
+            this.dispatchEvent(new AnswerClick());
         });
 
-        this.addEventListener("click", ()=>this.textContents.focus());
+        // this.addEventListener("click", ()=>this.querySelector(".text-contents").focus());
 
         this.querySelector("#text-contents").addEventListener("blur", async ()=>{
-            this.cell[this.status] = this.textContents.text.trim();
-            await this.onUpdate();
+            let text = this.querySelector(".text-contents").text;
+            this.dispatchEvent(new TextUpdate(text.trim()));
         });
     }
 
-    onUpdate(){}
-    showBoard(){}
-    showQuestion(){}
-    showAnswer(){}
+    clear(){
+        this.querySelector(".text-contents").text = "";
+    }
 
-    // showQuestion(cell){
-    //     if (cell) this.cell = cell;
-    //     cell = cell ?? this.cell;
-    //
-    //     this.navAnswer.classList.remove("selected");
-    //     this.navQuestion.classList.add("selected");
-    //
-    //     this.status = "q";
-    //
-    //     this.navBoard.classList.remove("hidden");
-    //     this.navQuestion.classList.remove("hidden");
-    //     this.navAnswer.classList.remove("hidden");
-    //
-    //     this.textQuestion.classList.remove("hidden");
-    //     this.textQuestion.querySelector(".text-contents").text = cell.q;
-    // }
-    //
-    // showAnswer(cell){
-    //     if (cell) this.cell = cell;
-    //     cell = cell ?? this.cell;
-    //
-    //     this.navAnswer.classList.add("selected");
-    //     this.navQuestion.classList.remove("selected");
-    //
-    //     this.status = "a";
-    //
-    //     this.navBoard.classList.remove("hidden");
-    //     this.navQuestion.classList.remove("hidden");
-    //     this.navAnswer.classList.remove("hidden");
-    //
-    //     this.textQuestion.classList.remove("hidden");
-    //     this.textQuestion.querySelector(".text-contents").text = cell.a;
-    // }
+    setText(text){
+        this.querySelector(".text-contents").text = text;
+    }
+
+    /**
+     *
+     * @param button {'question', 'answer'}
+     */
+    highlight(button){
+        for (let ele of this.querySelectorAll(`.selected`)) ele.classList.remove("selected");
+        this.querySelector(`#show-${button}`).classList.add("selected");
+    }
 }
 
 window.customElements.define('question-pane', QuestionPane);

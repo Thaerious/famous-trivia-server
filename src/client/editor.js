@@ -16,10 +16,14 @@ let questionPane = null;
 let editorPane = null;
 
 window.onload = async () => {
-    Nidget.NidgetElement.loadTemplateSnippet("snippets/check-box.html", "check-box");
-    Nidget.NidgetElement.loadTemplateSnippet("snippets/game-board.html", "game-board");
-    Nidget.NidgetElement.loadTemplateSnippet("snippets/multiple-choice-pane.html", "multiple-choice-pane");
-    Nidget.NidgetElement.loadTemplateSnippet("snippets/question-pane.html", "question-pane");
+    setTimeout(setup, 2000);
+}
+
+async function setup(){
+    await Nidget.NidgetElement.loadTemplateSnippet("snippets/check-box.html", "check-box");
+    await Nidget.NidgetElement.loadTemplateSnippet("snippets/multiple-choice-pane.html", "multiple-choice-pane");
+    await Nidget.NidgetElement.loadTemplateSnippet("snippets/game-board.html", "game-board");
+    await Nidget.NidgetElement.loadTemplateSnippet("snippets/question-pane.html", "question-pane");
 
     parseURLParameters();
     new Menu().init("#menu");
@@ -38,13 +42,6 @@ window.onload = async () => {
     document.querySelector("#game-name").textContent = model.name;
     editorPane = new EditorPane(model);
     editorPane.onSave = saveModel;
-
-    // document.querySelector("game-board").addEventListener("cell-select", (event)=>{
-    //     let row = event.detail.row;
-    //     let col = event.detail.col;
-    //     questionPane.showQuestion(window.model.getCell(row, col));
-    //     editorPane.hideAll();
-    // });
 }
 
 /**

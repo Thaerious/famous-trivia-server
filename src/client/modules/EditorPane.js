@@ -1,5 +1,98 @@
 const Model = require("./Model.js");
 
+// showQuestion(cell){
+//     if (cell) this.cell = cell;
+//     cell = cell ?? this.cell;
+//
+//     this.navAnswer.classList.remove("selected");
+//     this.navQuestion.classList.add("selected");
+//
+//     this.status = "q";
+//
+//     this.navBoard.classList.remove("hidden");
+//     this.navQuestion.classList.remove("hidden");
+//     this.navAnswer.classList.remove("hidden");
+//
+//     this.textQuestion.classList.remove("hidden");
+//     this.textQuestion.querySelector(".text-contents").text = cell.q;
+// }
+//
+// showAnswer(cell){
+//     if (cell) this.cell = cell;
+//     cell = cell ?? this.cell;
+//
+//     this.navAnswer.classList.add("selected");
+//     this.navQuestion.classList.remove("selected");
+//
+//     this.status = "a";
+//
+//     this.navBoard.classList.remove("hidden");
+//     this.navQuestion.classList.remove("hidden");
+//     this.navAnswer.classList.remove("hidden");
+//
+//     this.textQuestion.classList.remove("hidden");
+//     this.textQuestion.querySelector(".text-contents").text = cell.a;
+// }
+
+class EditQuestionPane{
+    /**
+     * @param gameBoard
+     * @param questionPane
+     * @param model - the question model object
+     * @param field - which model field to read/write from {'a', 'q'}
+     * @param saveCB - call this method to save the model
+     */
+    constructor(gameBoard, questionPane, model, field, saveCB, closeCB) {
+        this.questionPane = questionPane;
+
+        questionPane.setText(model[field]);
+
+        this.textList = (event)=>{
+            model[field] = event.detail.text;
+            saveCB();
+        }
+
+        this.boardList = (event)=>{
+            questionPane.hide();
+            this.cleanup();
+            gameBoard.show();
+            closeCB();
+        }
+
+        this.answerList = (event)=>{
+            this.cleanup();
+            new EditQuestionPane(gameBoard, questionPane, model, 'a', saveCB, closeCB);
+        }
+
+        this.questionList = (event)=>{
+            this.cleanup();
+            new EditQuestionPane(gameBoard, questionPane, model, 'q', saveCB, closeCB);
+        }
+
+        questionPane.addEventListener("text-update", this.textList);
+        questionPane.addEventListener("button-board", this.boardList);
+
+        if (field === 'a'){
+            questionPane.addEventListener("button-question", this.questionList);
+            questionPane.highlight('answer');
+        }
+        else if (field === 'q'){
+            questionPane.addEventListener("button-answer", this.answerList);
+            questionPane.highlight('question');
+        }
+    }
+
+    cleanup(){
+        this.questionPane.removeEventListener("text-update", this.textList);
+        this.questionPane.removeEventListener("button-board", this.boardList);
+        this.questionPane.removeEventListener("button-answer", this.answerList);
+        this.questionPane.removeEventListener("question-answer", this.questionList);
+    }
+
+    onSave(){}
+    onClose(){}
+}
+
 class EditorPane{
     constructor(model) {
         this.model = model;
@@ -33,11 +126,22 @@ class EditorPane{
         this.triangleLeft.addEventListener("click", ()=> this.prevRound());
         this.gameName.addEventListener("keydown", (event)=>this.inputName(event));
 
+        // game-board change category text
         this.gameBoard.addEventListener("header-update", event =>{
             let col = event.detail.col;
             this.model.getColumn(col).category = event.detail.value;
             this.model.getColumn(col).fontSize = event.detail.fontSize;
             this.onSave();
+        });
+
+        // game-board select cell
+        this.gameBoard.addEventListener("cell-select", event =>{
+            let row = event.detail.row;
+            let col = event.detail.col;
+            this.gameBoard.hide();
+            this.questionPane.show();
+            this.hideNavigation();
+            new EditQuestionPane(this.gameBoard, this.questionPane, this.model.getCell(row, col), 'q', ()=>this.onSave(), ()=>this.updateView());
         });
 
         this.linkPanes();
@@ -63,7 +167,7 @@ class EditorPane{
         }
     }
 
-    hideAll(){
+    hideNavigation(){
         this.triangleLeft.classList.add("hidden");
         this.triangleRight.classList.add("hidden");
     }
@@ -80,6 +184,7 @@ class EditorPane{
     }
 
     updateTriangleView(){
+        console.log("update triangle view");
         this.triangleLeft.classList.remove("hidden");
         this.triangleRight.classList.remove("hidden");
         if (this.model.currentRound === 0) this.triangleLeft.classList.add("hidden");
