@@ -70,28 +70,6 @@ check-box{
     }
 }
 
-.triangle-indicator{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 5vh;
-    transform: translateY(-50%);
-    z-index: 100;
-    cursor: pointer;
-
-    &.hidden{
-        display: none;
-    }
-
-    &#triangle-left{
-        transform: translateX(-47.625vh);
-    }
-
-    &#triangle-right{
-        transform: translateX(42.625vh);
-    }
-}
-
 #round-number{
     position: absolute;
     top: 9vh;
@@ -99,10 +77,37 @@ check-box{
     width: calc(75 * 1.11vh);
     height: 5vh;
     transform: translateX(-50%);
-    font-family: Arial Black, serif;
-    font-size: 4vh;
-    color: black;
-    text-align: center;
+
+    .text{
+        position: absolute;
+        font-family: Arial Black, serif;
+        font-size: 4vh;
+        color: black;
+        text-align: center;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .triangle-indicator{
+        position: absolute;
+        top: 50%;
+        width: 5vh;
+        transform: translateY(-50%);
+        z-index: 100;
+        cursor: pointer;
+
+        &.hidden{
+            display: none;
+        }
+
+        &#triangle-left{
+            left: 15%;
+        }
+
+        &#triangle-right{
+            right: 15%;
+        }
+    }
 }
 
 .menu-area{

@@ -37,10 +37,13 @@
   height: 100%;
   background-color: var(--ui-background);
   z-index: 0;
+  cursor: text;
 }
 #outer .text-contents {
   position: absolute;
   width: 100%;
+  top: 50%;
+  transform: translateY(-50%);
   word-spacing: 30px;
   font-size: 7vh;
   font-family: OPTIKorinna-Agency, serif;
@@ -55,10 +58,11 @@
   outline: none;
 }
 #outer #buttons {
-  position: absolute;
+  position: relative;
+  display: inline-block;
   left: 50%;
-  transform: translateX(-50%);
-  bottom: 1vh;
+  transform: translate(-50%, -110%);
+  top: 100%;
 }
 
 /*# sourceMappingURL=question_pane.css.map */

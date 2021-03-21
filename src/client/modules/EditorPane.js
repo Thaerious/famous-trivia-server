@@ -95,19 +95,20 @@ class QuestionPaneCtrl {
         QuestionPaneCtrl.saveCB  = saveCB ?? QuestionPaneCtrl.saveCB;
         QuestionPaneCtrl.closeCB = closeCB ?? QuestionPaneCtrl.closeCB;
 
-        DOM.questionPane.setText(QuestionPaneCtrl.model[QuestionPaneCtrl.field]);
+        DOM.questionPane.setText(QuestionPaneCtrl.model[QuestionPaneCtrl.field.substr(0, 1)]);
         DOM.questionPane.boardButton = true;
         DOM.questionPane.show();
         DOM.gameBoard.hide();
 
         DOM.questionPane.addEventListener("text-update", QuestionPaneCtrl.textList);
         DOM.questionPane.addEventListener("button-board", QuestionPaneCtrl.boardList);
-        DOM.questionPane.addEventListener(`button-${QuestionPaneCtrl.field}`, QuestionPaneCtrl.questionList);
+        DOM.questionPane.addEventListener(`button-question`, QuestionPaneCtrl.questionList);
+        DOM.questionPane.addEventListener(`button-answer`, QuestionPaneCtrl.answerList);
         DOM.questionPane.highlight(QuestionPaneCtrl.field);
     }
 
     static textList(event) {
-        QuestionPaneCtrl.model[QuestionPaneCtrl.field] = event.detail.text;
+        QuestionPaneCtrl.model[QuestionPaneCtrl.field.substr(0, 1)] = event.detail.text;
         QuestionPaneCtrl.saveCB();
     }
 
@@ -141,10 +142,12 @@ class EditorPane {
         DOM.multipleChoicePane = document.querySelector("#multiple-choice-pane");
         DOM.triangleRight = document.querySelector("#triangle-right");
         DOM.triangleLeft = document.querySelector("#triangle-left");
-        DOM.roundLabel = document.querySelector("#round-number");
+        DOM.roundLabel = document.querySelector("#round-number > .text");
         DOM.gameName = document.querySelector("#game-name");
         DOM.gameBoard = document.querySelector("#game-board");
         DOM.questionPane = document.querySelector("#question-pane")
+        DOM.menuIncreaseValue = document.querySelector("#menu-value-plus")
+        DOM.menuDecreaseValue = document.querySelector("#menu-value-minus")
 
         document.querySelector("#menu-remove-round").addEventListener("click", () => {
             this.model.removeRound();
@@ -157,13 +160,13 @@ class EditorPane {
             location.href = "home.html";
         });
 
-        document.querySelector("#menu-value-plus").addEventListener("click", () => {
+        DOM.menuIncreaseValue.addEventListener("click", () => {
             this.model.increaseValue();
             this.onSave();
             this.updateView();
         });
 
-        document.querySelector("#menu-value-minus").addEventListener("click", () => {
+        DOM.menuDecreaseValue.addEventListener("click", () => {
             this.model.decreaseValue();
             this.onSave();
             this.updateView();
@@ -260,6 +263,9 @@ class EditorPane {
     }
 
     multipleChoiceView(model) {
+        DOM.menuDecreaseValue.hide();
+        DOM.menuIncreaseValue.hide();
+
         MCQuestionCtrl.run(
             this.model.getRound(),
             () => this.onSave()
@@ -267,6 +273,8 @@ class EditorPane {
     }
 
     categoryView(model) {
+        DOM.menuDecreaseValue.show();
+        DOM.menuIncreaseValue.show();
         DOM.gameBoard.show();
 
         for (let col = 0; col < 6; col++) {

@@ -43,7 +43,7 @@ class QuestionPane extends NidgetElement{
             this.dispatchEvent(new AnswerClick());
         });
 
-        // this.addEventListener("click", ()=>this.querySelector(".text-contents").focus());
+        this.addEventListener("click", ()=>this.querySelector(".text-contents").focus());
 
         this.querySelector("#text-contents").addEventListener("blur", async ()=>{
             let text = this.querySelector(".text-contents").text;

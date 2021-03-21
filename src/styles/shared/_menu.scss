@@ -1,5 +1,9 @@
 .menu{
     user-select: none;
+
+    *.hidden {
+        display: none;
+    }
 }
 
 .menu-icon {
@@ -17,10 +21,6 @@
     text-align: left;
     cursor: pointer;
     z-index: 100;
-
-    &.hidden {
-        display: none;
-    }
 
     .menu-item:hover {
         position: static;

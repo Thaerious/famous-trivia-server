@@ -18,23 +18,25 @@
             <div class="sub-menu">
                 <div class="menu-label">Add Round</div>
                 <div class="menu-area hidden" id="inner">
-                    <div class="menu-item" data-autoclose="true" id="menu-add-category">Category</div>
-                    <div class="menu-item" data-autoclose="true" id="menu-add-multiple-choice">Multiple Choice</div>
+                    <nidget-element  class="menu-item" data-autoclose="true" id="menu-add-category">Category</nidget-element >
+                    <nidget-element  class="menu-item" data-autoclose="true" id="menu-add-multiple-choice">Multiple Choice</nidget-element >
                 </div>
                 <div class="sub-menu-indicator">&#5125;</div>
             </div>
-            <div class="menu-item" id="menu-remove-round">Remove Round</div>
-            <div class="menu-item" id="menu-home-screen">Home Screen</div>
-            <div class="menu-item" id="menu-value-plus">Increase Value</div>
-            <div class="menu-item" id="menu-value-minus">Decrease Value</div>
+            <nidget-element class="menu-item" id="menu-remove-round">Remove Round</nidget-element>
+            <nidget-element  class="menu-item" id="menu-home-screen">Home Screen</nidget-element >
+            <nidget-element  class="menu-item" id="menu-value-plus">Increase Value</nidget-element >
+            <nidget-element  class="menu-item" id="menu-value-minus">Decrease Value</nidget-element >
         </div>
     </div>
 
 </div>
 
-<div class="round-number" id="round-number">Round 1</div>
-<img class="triangle-indicator" id="triangle-right" src="assets/images/right_triangle.png"/>
-<img class="triangle-indicator" id="triangle-left" src="assets/images/left_triangle.png"/>
+<div class="round-number" id="round-number">
+    <img class="triangle-indicator" id="triangle-right" src="assets/images/right_triangle.png"/>
+    <nidget-text class="text">Round 1</nidget-text>
+    <img class="triangle-indicator" id="triangle-left" src="assets/images/left_triangle.png"/>
+</div>
 
 <question-pane id="question-pane" class="hidden" template-src="snippets/question-pane.html"></question-pane>
 <game-board id="game-board" class="hidden" template-src="snippets/game-board.html"></game-board>

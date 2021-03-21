@@ -65,25 +65,6 @@ check-box {
   width: 5vh;
 }
 
-.triangle-indicator {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 5vh;
-  transform: translateY(-50%);
-  z-index: 100;
-  cursor: pointer;
-}
-.triangle-indicator.hidden {
-  display: none;
-}
-.triangle-indicator#triangle-left {
-  transform: translateX(-47.625vh);
-}
-.triangle-indicator#triangle-right {
-  transform: translateX(42.625vh);
-}
-
 #round-number {
   position: absolute;
   top: 9vh;
@@ -91,10 +72,32 @@ check-box {
   width: calc(75 * 1.11vh);
   height: 5vh;
   transform: translateX(-50%);
+}
+#round-number .text {
+  position: absolute;
   font-family: Arial Black, serif;
   font-size: 4vh;
   color: black;
   text-align: center;
+  left: 50%;
+  transform: translateX(-50%);
+}
+#round-number .triangle-indicator {
+  position: absolute;
+  top: 50%;
+  width: 5vh;
+  transform: translateY(-50%);
+  z-index: 100;
+  cursor: pointer;
+}
+#round-number .triangle-indicator.hidden {
+  display: none;
+}
+#round-number .triangle-indicator#triangle-left {
+  left: 15%;
+}
+#round-number .triangle-indicator#triangle-right {
+  right: 15%;
 }
 
 .menu-area {
@@ -129,6 +132,9 @@ check-box {
 .menu {
   user-select: none;
 }
+.menu *.hidden {
+  display: none;
+}
 
 .menu-icon {
   cursor: pointer;
@@ -145,9 +151,6 @@ check-box {
   text-align: left;
   cursor: pointer;
   z-index: 100;
-}
-.menu-area.hidden {
-  display: none;
 }
 .menu-area .menu-item:hover {
   position: static;
