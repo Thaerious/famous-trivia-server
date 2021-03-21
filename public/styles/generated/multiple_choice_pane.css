@@ -1,5 +1,6 @@
 .nav-button {
-  position: absolute;
+  position: relative;
+  display: inline-block;
   width: 20vh;
   height: 5vh;
   border: 0.33vh solid black;
@@ -11,7 +12,6 @@
   line-height: 4vh;
   font-size: 3vh;
   cursor: pointer;
-  bottom: 2vh;
 }
 .nav-button.hidden {
   display: none;
@@ -31,14 +31,11 @@
   display: none;
 }
 
-.nav-button {
+#buttons {
+  position: absolute;
   left: 50%;
-}
-.nav-button#show-question {
-  transform: translateX(-101%);
-}
-.nav-button#show-answer {
-  transform: translateX(1%);
+  transform: translateX(-50%);
+  bottom: 1vh;
 }
 
 .outer {
@@ -48,13 +45,6 @@
   font-family: Arial Black, serif;
   background-color: #1117d9;
   z-index: 0;
-  font-size: 6vh;
-  font-family: OPTIKorinna-Agency, serif;
-  text-transform: uppercase;
-  color: #eee;
-  text-shadow: 4px 4px #000;
-  text-align: left;
-  white-space: pre-line;
 }
 .outer check-box {
   position: absolute;
@@ -78,6 +68,13 @@
   width: 100%;
   height: 100%;
   white-space: pre;
+  color: #eee;
+  font-size: 6vh;
+  font-family: OPTIKorinna-Agency, serif;
+  text-transform: uppercase;
+  text-shadow: 4px 4px #000;
+  text-align: left;
+  white-space: pre-line;
 }
 .outer .answer:focus {
   outline: none;

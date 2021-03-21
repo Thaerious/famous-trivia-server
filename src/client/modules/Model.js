@@ -52,10 +52,15 @@ class Model {
         let round = {
             type: Model.questionType.MULTIPLE_CHOICE,
             question : "",
-            answers : [
-                // value : {true, false}, text
-            ]
+            answers : []
         };
+
+        for (let i = 0; i < 6; i++){
+            round.answers[i] = {
+                text : "",
+                isTrue : false
+            }
+        }
 
         this.gameModel.rounds.push(round);
         return round;
@@ -89,6 +94,16 @@ class Model {
 
     get roundCount() {
         return this.gameModel.rounds.length;
+    }
+
+    incrementRound(){
+        this.currentRound++;
+        if (this.currentRound >= this.roundCount) this.currentRound = this.roundCount - 1;
+    }
+
+    decrementRound(){
+        this.currentRound--;
+        if (this.currentRound < 0) this.currentRound = 0
     }
 
     increaseValue() {

@@ -60,12 +60,19 @@ class QuestionPane extends NidgetElement{
     }
 
     /**
-     *
      * @param button {'question', 'answer'}
      */
     highlight(button){
         for (let ele of this.querySelectorAll(`.selected`)) ele.classList.remove("selected");
         this.querySelector(`#show-${button}`).classList.add("selected");
+    }
+
+    set boardButton(value){
+        if (value){
+            this.querySelector("#show-board").show();
+        }else{
+            this.querySelector("#show-board").hide();
+        }
     }
 }
 

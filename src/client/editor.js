@@ -16,10 +16,11 @@ let questionPane = null;
 let editorPane = null;
 
 window.onload = async () => {
-    setTimeout(setup, 2000);
+    setup();
 }
 
 async function setup(){
+    let start = new Date();
     await Nidget.NidgetElement.loadTemplateSnippet("snippets/check-box.html", "check-box");
     await Nidget.NidgetElement.loadTemplateSnippet("snippets/multiple-choice-pane.html", "multiple-choice-pane");
     await Nidget.NidgetElement.loadTemplateSnippet("snippets/game-board.html", "game-board");
@@ -42,6 +43,10 @@ async function setup(){
     document.querySelector("#game-name").textContent = model.name;
     editorPane = new EditorPane(model);
     editorPane.onSave = saveModel;
+
+    let end = new Date();
+    let time = end - start;
+    console.log("Load Time " + time + " ms");
 }
 
 /**

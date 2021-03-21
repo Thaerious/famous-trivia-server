@@ -1,6 +1,7 @@
 
 .nav-button{
-    position: absolute;
+    position: relative;
+    display: inline-block;
     width: 20vh;
     height: 5vh;
     border: 0.33vh solid black;
@@ -12,7 +13,6 @@
     line-height: 4vh;
     font-size: 3vh;
     cursor: pointer;
-    bottom: 2vh;
 
     &.hidden{
         display: none;

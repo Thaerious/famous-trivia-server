@@ -1,133 +1,208 @@
 const Model = require("./Model.js");
+const DOM = {/* see EditorPane.constructor */};
 
-// showQuestion(cell){
-//     if (cell) this.cell = cell;
-//     cell = cell ?? this.cell;
-//
-//     this.navAnswer.classList.remove("selected");
-//     this.navQuestion.classList.add("selected");
-//
-//     this.status = "q";
-//
-//     this.navBoard.classList.remove("hidden");
-//     this.navQuestion.classList.remove("hidden");
-//     this.navAnswer.classList.remove("hidden");
-//
-//     this.textQuestion.classList.remove("hidden");
-//     this.textQuestion.querySelector(".text-contents").text = cell.q;
-// }
-//
-// showAnswer(cell){
-//     if (cell) this.cell = cell;
-//     cell = cell ?? this.cell;
-//
-//     this.navAnswer.classList.add("selected");
-//     this.navQuestion.classList.remove("selected");
-//
-//     this.status = "a";
-//
-//     this.navBoard.classList.remove("hidden");
-//     this.navQuestion.classList.remove("hidden");
-//     this.navAnswer.classList.remove("hidden");
-//
-//     this.textQuestion.classList.remove("hidden");
-//     this.textQuestion.querySelector(".text-contents").text = cell.a;
-// }
+class MCAnswerCtrl {
+    static run(model, saveCB) {
+        MCAnswerCtrl.model  = model;
+        MCAnswerCtrl.saveCB = saveCB;
 
-class EditQuestionPane{
+        DOM.multipleChoicePane.show();
+
+        for (let i = 0; i < 6; i++) {
+            DOM.multipleChoicePane.setText(i, model.answers[i].text);
+            DOM.multipleChoicePane.setChecked(i, model.answers[i].isTrue);
+        }
+
+        DOM.triangleRight.addEventListener("click", MCAnswerCtrl.cleanup);
+        DOM.triangleLeft.addEventListener("click", MCAnswerCtrl.cleanup);
+        DOM.multipleChoicePane.addEventListener("text-update", MCAnswerCtrl.textList);
+        DOM.multipleChoicePane.addEventListener("value-update", MCAnswerCtrl.valueList);
+        DOM.multipleChoicePane.addEventListener("button-question", MCAnswerCtrl.questList);
+    }
+
+    static textList(event) {
+        let index = parseInt(event.detail.index);
+        MCAnswerCtrl.model.answers[index].text = event.detail.text;
+        MCAnswerCtrl.saveCB();
+    }
+
+    static valueList(event) {
+        let index = parseInt(event.detail.index);
+        MCAnswerCtrl.model.answers[index].isTrue = event.detail.value;
+        MCAnswerCtrl.saveCB();
+    }
+
+    static questList(event) {
+        MCAnswerCtrl.saveCB();
+        MCAnswerCtrl.cleanup();
+        MCQuestionCtrl.run(MCAnswerCtrl.model, MCAnswerCtrl.saveCB);
+    }
+
+    static cleanup() {
+        DOM.multipleChoicePane.hide();
+        DOM.multipleChoicePane.removeEventListener("text-update", MCAnswerCtrl.textList);
+        DOM.multipleChoicePane.removeEventListener("value-update", MCAnswerCtrl.valueList);
+        DOM.multipleChoicePane.removeEventListener("button-question", MCAnswerCtrl.questList);
+        DOM.triangleRight.removeEventListener("click", MCAnswerCtrl.cleanup);
+        DOM.triangleLeft.removeEventListener("click", MCAnswerCtrl.cleanup);
+    }
+}
+
+class MCQuestionCtrl {
+    static run(model, saveCB) {
+        MCQuestionCtrl.model  = model;
+        MCQuestionCtrl.saveCB = saveCB;
+
+        DOM.questionPane.setText(model.question);
+        DOM.questionPane.show();
+        DOM.questionPane.boardButton = false;
+        DOM.questionPane.highlight('question')
+
+        DOM.triangleRight.addEventListener("click", MCQuestionCtrl.cleanup);
+        DOM.triangleLeft.addEventListener("click", MCQuestionCtrl.cleanup);
+        DOM.questionPane.addEventListener("text-update", MCQuestionCtrl.textList);
+        DOM.questionPane.addEventListener("button-answer", MCQuestionCtrl.answerList);
+    }
+
+    static textList(event) {
+        MCQuestionCtrl.model.question = event.detail.text;
+        MCQuestionCtrl.saveCB();
+    }
+
+    static answerList() {
+        MCQuestionCtrl.cleanup();
+        MCAnswerCtrl.run(MCQuestionCtrl.model, MCQuestionCtrl.saveCB);
+    }
+
+    static cleanup() {
+        DOM.questionPane.hide();
+        DOM.questionPane.removeEventListener("text-update", MCQuestionCtrl.textList);
+        DOM.questionPane.removeEventListener("button-answer", MCQuestionCtrl.answerList);
+        DOM.triangleRight.removeEventListener("click", MCQuestionCtrl.cleanup);
+        DOM.triangleLeft.removeEventListener("click", MCQuestionCtrl.cleanup);
+    }
+}
+
+class QuestionPaneCtrl {
     /**
-     * @param gameBoard
-     * @param questionPane
      * @param model - the question model object
      * @param field - which model field to read/write from {'a', 'q'}
      * @param saveCB - call this method to save the model
      */
-    constructor(gameBoard, questionPane, model, field, saveCB, closeCB) {
-        this.questionPane = questionPane;
+    static run(field, model, saveCB, closeCB) {
+        QuestionPaneCtrl.model   = model ?? QuestionPaneCtrl.model;
+        QuestionPaneCtrl.field   = field ?? QuestionPaneCtrl.field;
+        QuestionPaneCtrl.saveCB  = saveCB ?? QuestionPaneCtrl.saveCB;
+        QuestionPaneCtrl.closeCB = closeCB ?? QuestionPaneCtrl.closeCB;
 
-        questionPane.setText(model[field]);
+        DOM.questionPane.setText(QuestionPaneCtrl.model[QuestionPaneCtrl.field]);
+        DOM.questionPane.boardButton = true;
+        DOM.questionPane.show();
+        DOM.gameBoard.hide();
 
-        this.textList = (event)=>{
-            model[field] = event.detail.text;
-            saveCB();
-        }
-
-        this.boardList = (event)=>{
-            questionPane.hide();
-            this.cleanup();
-            gameBoard.show();
-            closeCB();
-        }
-
-        this.answerList = (event)=>{
-            this.cleanup();
-            new EditQuestionPane(gameBoard, questionPane, model, 'a', saveCB, closeCB);
-        }
-
-        this.questionList = (event)=>{
-            this.cleanup();
-            new EditQuestionPane(gameBoard, questionPane, model, 'q', saveCB, closeCB);
-        }
-
-        questionPane.addEventListener("text-update", this.textList);
-        questionPane.addEventListener("button-board", this.boardList);
-
-        if (field === 'a'){
-            questionPane.addEventListener("button-question", this.questionList);
-            questionPane.highlight('answer');
-        }
-        else if (field === 'q'){
-            questionPane.addEventListener("button-answer", this.answerList);
-            questionPane.highlight('question');
-        }
+        DOM.questionPane.addEventListener("text-update", QuestionPaneCtrl.textList);
+        DOM.questionPane.addEventListener("button-board", QuestionPaneCtrl.boardList);
+        DOM.questionPane.addEventListener(`button-${QuestionPaneCtrl.field}`, QuestionPaneCtrl.questionList);
+        DOM.questionPane.highlight(QuestionPaneCtrl.field);
     }
 
-    cleanup(){
-        this.questionPane.removeEventListener("text-update", this.textList);
-        this.questionPane.removeEventListener("button-board", this.boardList);
-        this.questionPane.removeEventListener("button-answer", this.answerList);
-        this.questionPane.removeEventListener("question-answer", this.questionList);
+    static textList(event) {
+        QuestionPaneCtrl.model[QuestionPaneCtrl.field] = event.detail.text;
+        QuestionPaneCtrl.saveCB();
     }
 
-    onSave(){}
-    onClose(){}
+    static boardList(event) {
+        QuestionPaneCtrl.cleanup();
+        QuestionPaneCtrl.closeCB();
+    }
+
+    static answerList(event) {
+        QuestionPaneCtrl.cleanup();
+        QuestionPaneCtrl.run('answer');
+    }
+
+    static questionList(vent) {
+        QuestionPaneCtrl.cleanup();
+        QuestionPaneCtrl.run('question');
+    }
+
+    static cleanup() {
+        DOM.questionPane.removeEventListener("text-update", QuestionPaneCtrl.textList);
+        DOM.questionPane.removeEventListener("button-board", QuestionPaneCtrl.boardList);
+        DOM.questionPane.removeEventListener("button-answer", QuestionPaneCtrl.answerList);
+        DOM.questionPane.removeEventListener("button-question", QuestionPaneCtrl.questionList);
+    }
 }
 
-class EditorPane{
+class EditorPane {
     constructor(model) {
         this.model = model;
-        this.triangleRight = document.querySelector("#triangle-right");
-        this.triangleLeft  = document.querySelector("#triangle-left");
-        this.roundLabel    = document.querySelector("#round-number");
-        this.gameName      = document.querySelector("#game-name");
 
-        this.multipleChoicePane = document.getElementById("multiple-choice-pane");
-        this.gameBoard          = document.getElementById("game-board");
-        this.questionPane       = document.getElementById("question-pane");
+        DOM.multipleChoicePane = document.querySelector("#multiple-choice-pane");
+        DOM.triangleRight = document.querySelector("#triangle-right");
+        DOM.triangleLeft = document.querySelector("#triangle-left");
+        DOM.roundLabel = document.querySelector("#round-number");
+        DOM.gameName = document.querySelector("#game-name");
+        DOM.gameBoard = document.querySelector("#game-board");
+        DOM.questionPane = document.querySelector("#question-pane")
 
-        document.querySelector("#menu-add-category").addEventListener("click", ()=>{
+        document.querySelector("#menu-remove-round").addEventListener("click", () => {
+            this.model.removeRound();
+            this.updateTriangleView();
+            this.onSave();
+            this.updateView();
+        });
+
+        document.querySelector("#menu-home-screen").addEventListener("click", () => {
+            location.href = "home.html";
+        });
+
+        document.querySelector("#menu-value-plus").addEventListener("click", () => {
+            this.model.increaseValue();
+            this.onSave();
+            this.updateView();
+        });
+
+        document.querySelector("#menu-value-minus").addEventListener("click", () => {
+            this.model.decreaseValue();
+            this.onSave();
+            this.updateView();
+        });
+
+        DOM.triangleRight.addEventListener("click", () => {
+            this.model.incrementRound();
+            this.updateView();
+        });
+
+        DOM.triangleLeft.addEventListener("click", () => {
+            this.model.decrementRound();
+            this.updateView();
+        });
+
+        DOM.gameName.addEventListener("keydown", (event) => {
+            if (event.which === 13) {
+                this.updateName();
+                event.stopPropagation();
+                event.preventDefault();
+                document.querySelector("#game-board-container").focus();
+                return false;
+            }
+        });
+
+        document.querySelector("#menu-add-category").addEventListener("click", () => {
             this.model.addCategoryRound();
-            this.updateTriangleView();
+            this.updateView();
             this.onSave();
         });
 
-        document.querySelector("#menu-add-multiple-choice").addEventListener("click", ()=>{
+        document.querySelector("#menu-add-multiple-choice").addEventListener("click", () => {
             this.model.addMultipleChoiceRound();
-            this.updateTriangleView();
+            this.updateView();
             this.onSave();
         });
-
-        document.querySelector("#menu-remove-round").addEventListener("click", ()=>this.menuRemove());
-        document.querySelector("#menu-home-screen").addEventListener("click", ()=>this.menuHome());
-        document.querySelector("#menu-value-plus").addEventListener("click", ()=>this.menuPlus());
-        document.querySelector("#menu-value-minus").addEventListener("click", ()=>this.menuMinus());
-
-        this.triangleRight.addEventListener("click", ()=> this.nextRound());
-        this.triangleLeft.addEventListener("click", ()=> this.prevRound());
-        this.gameName.addEventListener("keydown", (event)=>this.inputName(event));
 
         // game-board change category text
-        this.gameBoard.addEventListener("header-update", event =>{
+        DOM.gameBoard.addEventListener("header-update", event => {
             let col = event.detail.col;
             this.model.getColumn(col).category = event.detail.value;
             this.model.getColumn(col).fontSize = event.detail.fontSize;
@@ -135,118 +210,78 @@ class EditorPane{
         });
 
         // game-board select cell
-        this.gameBoard.addEventListener("cell-select", event =>{
+        DOM.gameBoard.addEventListener("cell-select", event => {
             let row = event.detail.row;
             let col = event.detail.col;
-            this.gameBoard.hide();
-            this.questionPane.show();
             this.hideNavigation();
-            new EditQuestionPane(this.gameBoard, this.questionPane, this.model.getCell(row, col), 'q', ()=>this.onSave(), ()=>this.updateView());
+
+            QuestionPaneCtrl.run(
+                'question',
+                this.model.getCell(row, col),
+                () => this.onSave(),
+                () => this.updateView()
+            );
         });
 
-        this.linkPanes();
         this.updateView();
     }
 
-    onSave(){}
-    updateName(){}
-
-    linkPanes(){
-        let multipleChoice = document.getElementById("multiple-choice-pane");
-        let gameBoard = document.getElementById("game-board");
-        let questionPane = document.getElementById("question-pane");
+    onSave() {
+        // override me
     }
 
-    inputName(event){
-        if (event.which === 13){
-            this.updateName();
-            event.stopPropagation();
-            event.preventDefault();
-            document.querySelector("#game-board-container").focus();
-            return false;
-        }
+    updateName() {
+        // override me
     }
 
-    hideNavigation(){
-        this.triangleLeft.classList.add("hidden");
-        this.triangleRight.classList.add("hidden");
+    hideNavigation() {
+        DOM.triangleLeft.classList.add("hidden");
+        DOM.triangleRight.classList.add("hidden");
     }
 
     updateView(model) {
         model = model ?? this.model;
         this.updateTriangleView();
 
-        document.getElementById("game-board").hide();
-        document.getElementById("multiple-choice-pane").hide();
+        DOM.questionPane.hide();
+        DOM.gameBoard.hide();
+        DOM.multipleChoicePane.hide();
 
         if (model.getRound().type === Model.questionType.CATEGORY) this.categoryView(model);
         if (model.getRound().type === Model.questionType.MULTIPLE_CHOICE) this.multipleChoiceView(model);
     }
 
-    updateTriangleView(){
-        console.log("update triangle view");
-        this.triangleLeft.classList.remove("hidden");
-        this.triangleRight.classList.remove("hidden");
-        if (this.model.currentRound === 0) this.triangleLeft.classList.add("hidden");
-        if (this.model.currentRound >= this.model.roundCount - 1) this.triangleRight.classList.add("hidden");
-        this.roundLabel.textContent = "Round " + (this.model.currentRound + 1);
+    updateTriangleView() {
+        DOM.triangleLeft.classList.remove("hidden");
+        DOM.triangleRight.classList.remove("hidden");
+        if (this.model.currentRound === 0) DOM.triangleLeft.classList.add("hidden");
+        if (this.model.currentRound >= this.model.roundCount - 1) DOM.triangleRight.classList.add("hidden");
+        DOM.roundLabel.textContent = "Round " + (this.model.currentRound + 1);
     }
 
-    multipleChoiceView(){
-        let pane = document.getElementById("multiple-choice-pane");
-        pane.show();
+    multipleChoiceView(model) {
+        MCQuestionCtrl.run(
+            this.model.getRound(),
+            () => this.onSave()
+        );
     }
 
-    categoryView(model){
-        let gameBoard = document.getElementById("game-board");
-        gameBoard.show();
+    categoryView(model) {
+        DOM.gameBoard.show();
 
         for (let col = 0; col < 6; col++) {
             let column = model.getColumn(col);
 
-            gameBoard.getHeader(col).fitText.lock = "vh";
-            gameBoard.setHeader(col, column.category, column.fontSize);
+            DOM.gameBoard.getHeader(col).fitText.lock = "vh";
+            DOM.gameBoard.setHeader(col, column.category, column.fontSize);
 
             for (let row = 0; row < 5; row++) {
-                gameBoard.setCell(row, col, column.cell[row].value);
-                if (column.cell[row].q === "") gameBoard.setComplete(row, col, "false");
-                else if (column.cell[row].a === "") gameBoard.setComplete(row, col, "partial");
-                else gameBoard.setComplete(row, col, "true");
+                DOM.gameBoard.setCell(row, col, column.cell[row].value);
+                if (column.cell[row].q === "") DOM.gameBoard.setComplete(row, col, "false");
+                else if (column.cell[row].a === "") DOM.gameBoard.setComplete(row, col, "partial");
+                else DOM.gameBoard.setComplete(row, col, "true");
             }
         }
-    }
-
-    nextRound(){
-        this.model.currentRound++;
-        this.updateView();
-    }
-
-    prevRound(){
-        this.model.currentRound--;
-        this.updateView();
-    }
-
-    menuPlus(){
-        this.model.increaseValue();
-        this.onSave();
-        this.updateView();
-    }
-
-    menuMinus(){
-        this.model.decreaseValue();
-        this.onSave();
-        this.updateView();
-    }
-
-    menuRemove(){
-        this.model.removeRound();
-        this.updateTriangleView();
-        this.onSave();
-        this.updateView();
-    }
-
-    menuHome(){
-        location.href = "home.html";
     }
 }
 

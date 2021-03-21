@@ -18,7 +18,6 @@
     .text-contents {
         position: absolute;
         width: 100%;
-        height: 100%;
         word-spacing: 30px;
         font-size: 7vh;
         font-family: OPTIKorinna-Agency, serif;
@@ -33,19 +32,11 @@
             outline: none;
         }
     }
-    .nav-button{
+
+    #buttons{
         position: absolute;
         left: 50%;
-        z-index: 10;
-
-        &#show-board{
-            transform: translateX(-152%);
-        }
-        &#show-question{
-            transform: translateX(-50%);
-        }
-        &#show-answer{
-            transform: translateX(52%);
-        }
+        transform: translateX(-50%);
+        bottom: 1vh;
     }
 }
