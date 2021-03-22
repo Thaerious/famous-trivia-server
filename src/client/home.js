@@ -17,22 +17,42 @@ window.addEventListener("load", async ()=>{
     setupFileList();
 });
 
+function onLoad(event){
+    let id = event.detail.id;
+    window.location = `editor.html?action=load&fileId=${id}`;
+}
+
+async function onLaunch(event){
+    let id = event.detail.id;
+
+    let file = await fileOps.get(id);
+
+    console.log(file.body);
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.addEventListener("load", (event)=>{
+        console.log(event)
+        console.log(JSON.parse(xhttp.responseText));
+    });
+    xhttp.open("POST", "launch");
+    xhttp.setRequestHeader("Content-type", "application/json");
+    xhttp.send(file.body);
+}
+
 function setupFileList(){
     let fileList = document.querySelector("file-list");
 
-    fileList.del = async (id) => {
+    fileList.addEventListener("delete-file", async (id) => {
         fileList.busy = true;
         await fileOps.delete(id);
         populateFileList();
         fileList.busy = false;
-    }
-    fileList.cb = (id) => window.location = `editor.html?action=load&fileId=${id}`;
+    });
 }
 
 function addMenuListeners(){
     let busyBox = document.querySelector(".busy-box");
     document.querySelector("#create").addEventListener("click", async (e) => {
-        console.log("click");
         busyBox.classList.remove("hidden");
         let model = new Model().init("Game Name");
         let fp = await fileOps.create();
@@ -42,6 +62,14 @@ function addMenuListeners(){
 
     document.querySelector("#load").addEventListener("click", async (e) => {
         populateFileList();
+        let fileList = document.querySelector("file-list");
+        fileList.addEventListener("select-file", onLoad, {once : true});
+    });
+
+    document.querySelector("#launch").addEventListener("click", async (e) => {
+        populateFileList();
+        let fileList = document.querySelector("file-list");
+        fileList.addEventListener("select-file", onLaunch, {once : true});
     });
 }
 

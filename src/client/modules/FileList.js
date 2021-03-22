@@ -1,6 +1,17 @@
 
-class FileList extends HTMLElement{
+class DeleteFileEvent extends  CustomEvent{
+    constructor(id) {
+        super('delete-file', {detail : {id : id}});
+    }
+}
 
+class SelectFileEvent extends  CustomEvent{
+    constructor(id) {
+        super('select-file', {detail : {id : id}});
+    }
+}
+
+class FileList extends HTMLElement{
     constructor(props) {
         super(props);
         window.addEventListener("load", (event)=>this.load());
@@ -29,14 +40,14 @@ class FileList extends HTMLElement{
         ele.innerText = filename;
         meta.appendChild(ele);
 
-        ele.addEventListener("click", ()=>this.cb(id));
+        ele.addEventListener("click", ()=>this.dispatchEvent(new SelectFileEvent(id)));
 
         ele = document.createElement("span");
         ele.classList.add("delete");
         ele.innerText = "Delete";
         meta.appendChild(ele);
 
-        ele.addEventListener("click", ()=>this.del(id));
+        ele.addEventListener("click", ()=>this.dispatchEvent(new DeleteFileEvent(id)));
     }
 
     show(){
