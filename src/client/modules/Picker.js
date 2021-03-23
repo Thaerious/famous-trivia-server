@@ -99,5 +99,5 @@ class Picker {
     }
 }
 
-module.exports = Picker;
+export default Picker;
 

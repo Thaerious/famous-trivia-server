@@ -1,50 +1,69 @@
 import fs from 'fs';
 import constants from './constants.js';
 
-class GameModel{
-    constructor(questions) {
-        this.questions = questions;
-        this.players = {}; // buzzer (enabled, disabled), name, role, score
-        this.active_player = 0; // the player that chose the question
-        this.current_player = -1; // the player currently answering
-        this.attempts = 0;
-        this.lastValue = 0;
-        this.stateIndex = -1;
-        this._state = "show_board";
-    }
-
-    save(filepath){
-        fs.writeFileSync(filepath, JSON.stringify(this));
-    }
-
-    load(filepath){
-        let json = fs.readFileSync(filepath);
-        let obj = JSON.parse(json);
-        for (let field in obj){
-            this[field] = obj[field];
-        }
+class JeopardyModel{
+    constructor(questions){
+        this.model = model;
+        this.state_data = {}
     }
 
     /**
-     * Set the point value for a question cell.
-     * Set to zero length string ("") to indicate question is not available.
-     * If row and column are omitted, use the row/col from the
-     * most recent previous setQuestionState.
+     * Set the state data for the specified question question.
      * @param col
      * @param row
-     * @param value
-     * @rteurn game state update object
+     * @returns question text
      */
-    setValue(value, col, row){
+    setQuestionState(col, row){
+        this.state_data.assign({
+            state    : GameModel.STATES.QUESTION,
+            col      : col,
+            row      : row,
+            type     : this.getType(col, row),
+            question : this.getQuestion(col, row)
+        });
+
+        return this.state_data.text;
+    }
+
+    getQuestion(col, row){
         col = col ?? this.state_data.col;
         row = row ?? this.state_data.row;
-        this.questionSet[col].questions[row].value = value;
+        return this.model[col].questions[row].q;
+    }
+
+    /**
+     *
+     * Set the game model state to "show answer".
+     * The setQuestionState must be called first.
+     * @param col
+     * @param row
+     * @returns game state update object
+     */
+    setAnswerState(){
+        this.state_data.assign = {
+            state  : GameModel.STATES.ANSWER,
+            answer : this.getAnswer()
+        };
+    }
+
+    /**
+     * Retrieve the answer for the current question.
+     * If row and column are omitted, use the row/col from the
+     * most recent previous getQuestion.
+     * @param col
+     * @param row
+     * @returns game state update object
+     */
+    getAnswer(col, row){
+        col = col ?? this.state_data.col;
+        row = row ?? this.state_data.row;
+        return this.model[col].questions[row].a;
     }
 
     /**
      * Retrieve the point value for the specified question.
      * If row and column are omitted, use the row/col from the
-     * most recent previous setQuestionState.
+     * most recent previous getQuestion.
      * @param col
      * @param row
      * @returns {*}
@@ -53,35 +72,6 @@ class GameModel{
         col = col ?? this.state_data.col;
         row = row ?? this.state_data.row;
         return this.questionSet[col].questions[row].value;
-    }
-
-    /**
-     * Set the state data for the specified question question.
-     * @param col
-     * @param row
-     * @returns game state update object
-     */
-    setQuestionState(col, row){
-        this.state_data = {
-            col: col,
-            row: row,
-            type: this.getQuestionType(col, row),
-            text: this.getQuestion(col, row)
-        }
-    }
-
-    /**
-     * Retrieve the answer for the current question.
-     * If row and column are omitted, use the row/col from the
-     * most recent previous setQuestionState.
-     * @param col
-     * @param row
-     * @returns game state update object
-     */
-    getAnswer(col, row){
-        col = col ?? this.state_data.col;
-        row = row ?? this.state_data.row;
-        return this.questionSet[col].questions[row].a;
     }
 
     /**
@@ -98,6 +88,90 @@ class GameModel{
         return this.questionSet[col].questions[row].type;
     }
 
+    getUpdate(){
+        let sanitized = JSON.parse(JSON.stringify(this));
+        sanitized.action = "update_model";
+        delete sanitized.model;
+        return sanitized;
+    }
+}
+
+class MultipleChoiceModel{
+    constructor(model){
+        this.model = model;
+    }
+
+    /**
+     * Set the state data for the specified question question.
+     * @param col
+     * @param row
+     * @returns question text
+     */
+    setQuestionState(){
+        this.state_data.assign({
+            state    : GameModel.STATES.QUESTION,
+            question : this.getQuestion()
+        });
+
+        return this.state_data.question;
+    }
+
+    getQuestion(){
+        return this.model.question;
+    }
+
+    getAnswers(){
+        let answers = [];
+        for (let i in this.model.answers){
+            answers[i] = this.model.answers[i].text;
+        }
+    }
+
+    getValue(index){
+        return this.model.answers[index].isTrue;
+    }
+
+    /**
+     * Set the state data for the specified question question.
+     * @param col
+     * @param row
+     * @returns question text
+     */
+    setAnswerState(){
+        this.state_data.assign({
+            state    : GameModel.STATES.ANSWER,
+            answers : this.getAnswers()
+        });
+
+        return this.state_data.question;
+    }
+}
+
+class GameModel{
+    constructor(questionSet) {
+        this.questionSet = questionSet;
+        this.currentQuestion = null;
+
+        this.players = {}; // buzzer (enabled, disabled), name, role, score
+        this.active_player = 0; // the player that chose the question
+        this.current_player = -1; // the player currently answering
+        this.attempts = 0;
+        this.lastValue = 0;
+        this.stateIndex = -1;
+    }
+
+    save(filepath){
+        fs.writeFileSync(filepath, JSON.stringify(this));
+    }
+
+    load(filepath){
+        let json = fs.readFileSync(filepath);
+        let obj = JSON.parse(json);
+        for (let field in obj){
+            this[field] = obj[field];
+        }
+    }
+
     /**
      * Set the buzzer state for player to value.
      * If player is omitted set it for the current player.
@@ -108,36 +182,6 @@ class GameModel{
         if (this.playerCount() <= 0) return;
         player = player ?? this.current_player;
         this.players[player].buzzer = value;
-    }
-
-    /**
-     * Retrieve the answer for the current question.
-     * If row and column are omitted, use the row/col from the
-     * previous setQuestionState or setAnswerState.
-     * @param col
-     * @param row
-     * @returns game state update object
-     */
-    getQuestion(col, row){
-        col = col ?? this.state_data.col;
-        row = row ?? this.state_data.row;
-        return this.questionSet[col].questions[row].q;
-    }
-
-    /**
-     *
-     * Set the game model state to "show answer"
-     * @param col
-     * @param row
-     * @returns game state update object
-     */
-    setAnswerState(){
-        this.state = "show_answer";
-        this.state_data = {
-            col    : this.state.col,
-            row    : this.state.row,
-            text   : this.getAnswer()
-        };
     }
 
     /**
@@ -335,6 +379,11 @@ class GameModel{
     get state(){
         return this._state;
     }
+}
+
+GameModel.STATES = {
+    QUESTION : "question",
+    ANSWER : "answer"
 }
 
 export default GameModel;

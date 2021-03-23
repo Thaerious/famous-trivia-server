@@ -1,11 +1,9 @@
-const Picker = require("./modules/Picker.js");
-const FilePicker = require("./modules/FilePicker.js");
-const Model = require("./modules/Model.js");
-const FileOps = require("./modules/FileOps.js");
-const Parameters = require("./modules/Parameters.js");
-require("./modules/FileList.js");
-
-window.FileOps = FileOps;
+import Picker from "./modules/Picker.js";
+import FilePicker from "./modules/FilePicker.js";
+import Model from "./modules/Model.js";
+import FileOps from "./modules/FileOps.js";
+import Parameters from "./modules/Parameters.js";
+import FileList from "./modules/FileList.js";
 
 let folderId = null;
 let fileOps = new FileOps();

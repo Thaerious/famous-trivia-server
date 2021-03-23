@@ -1,14 +1,14 @@
-const FileOps = require("./modules/FileOps.js");
-const Authenticate = require("./modules/Authenticate.js");
-const Menu = require("./modules/Menu.js");
-const QuestionPane = require("./modules/QuestionPane.js");
-const EditorPane = require("./modules/EditorPane.js");
-const Model = require("./modules/Model");
-
+import FileOps from "./modules/FileOps.js";
+import Authenticate from "./modules/Authenticate.js";
+import Menu from "./modules/Menu.js";
+import QuestionPane from "./modules/QuestionPane.js";
+import EditorPane from "./modules/EditorPane.js";
+import Model from "./modules/Model";
 const Nidget = require("@thaerious/nidget")
-require("./modules/GameBoard.js");
-require("./modules/MultipleChoicePane.js");
-require("./modules/CheckBox.js");
+
+import "./modules/GameBoard.js";
+import "./modules/MultipleChoicePane.js";
+import "./modules/CheckBox.js";
 
 let fileOps = new FileOps();
 let model = null;

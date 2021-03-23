@@ -1,4 +1,4 @@
-const Model = require("./Model.js");
+import Model from "./Model.js";
 const DOM = {/* see EditorPane.constructor */};
 
 class MCAnswerCtrl {
@@ -148,6 +148,16 @@ class EditorPane {
         DOM.questionPane = document.querySelector("#question-pane")
         DOM.menuIncreaseValue = document.querySelector("#menu-value-plus")
         DOM.menuDecreaseValue = document.querySelector("#menu-value-minus")
+
+        document.querySelector("#menu-download").addEventListener("click", ()=>{
+            const json = JSON.stringify(this.model.gameModel, null, 2);
+            const blob = new Blob([json], {type: "application/json"});
+            const url = window.URL.createObjectURL(blob);
+            const anchor = document.querySelector("#download-anchor");
+            anchor.href = url;
+            anchor.download = this.model.name;
+            anchor.click();
+        });
 
         document.querySelector("#menu-remove-round").addEventListener("click", () => {
             this.model.removeRound();

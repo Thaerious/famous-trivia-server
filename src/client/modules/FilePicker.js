@@ -1,4 +1,4 @@
-const Picker = require("./Picker.js");
+import Picker from "./Picker.js";
 
 class FilePicker extends Picker{
     // Create and render a Picker object for searching images.
@@ -33,5 +33,5 @@ class FilePicker extends Picker{
     }
 }
 
-module.exports = FilePicker;
+export default FilePicker;
 

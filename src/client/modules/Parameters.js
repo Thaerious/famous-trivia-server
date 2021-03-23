@@ -80,4 +80,4 @@ class Parameters extends AbstractFiles{
 }
 
 Parameters.filename = "settings.json";
-module.exports = Parameters;
+export default Parameters;

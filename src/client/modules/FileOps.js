@@ -112,4 +112,4 @@ class FileOps {
 
 FileOps.filename = "Game Name.json";
 
-module.exports = FileOps;
+export default FileOps;

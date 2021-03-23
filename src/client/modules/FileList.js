@@ -65,4 +65,4 @@ class FileList extends HTMLElement{
 }
 
 window.customElements.define('file-list', FileList);
-module.exports = FileList;
+export default FileList;

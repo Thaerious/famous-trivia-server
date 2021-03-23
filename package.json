@@ -10,7 +10,6 @@
     "editor-watch-js": "watchify -t babelify src/client/editor.js -o public/scripts/editor.js -dv",
     "build-js": "npm run home-build-js && npm run editor-build-js",
     "watch-js": "start npm run home-watch-js && start npm run editor-watch-js",
-    "editor-watch": "npm run editor-watch-js; npm run editor-watch-css",
     "build-css": "sass src/styles:public/styles/generated/,",
     "watch-css": "sass --watch src/styles:public/styles/generated/"
   },
