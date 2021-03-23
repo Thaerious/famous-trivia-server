@@ -4,10 +4,10 @@
   "description": "Creator and Luancher for Online Trivia",
   "main": "src/server/server.js",
   "scripts": {
-    "home-build-js": "browserify src/client/home.js -o public/scripts/home.js -d",
-    "home-watch-js": "watchify src/client/home.js -o public/scripts/home.js -dv",
-    "editor-build-js": "browserify src/client/editor.js -o public/scripts/editor.js -d",
-    "editor-watch-js": "watchify src/client/editor.js -o public/scripts/editor.js -dv",
+    "home-build-js": "browserify -t babelify src/client/home.js -o public/scripts/home.js -d",
+    "home-watch-js": "watchify -t babelify src/client/home.js -o public/scripts/home.js -dv",
+    "editor-build-js": "browserify -t babelify src/client/editor.js -o public/scripts/editor.js -d",
+    "editor-watch-js": "watchify -t babelify src/client/editor.js -o public/scripts/editor.js -dv",
     "build-js": "npm run home-build-js && npm run editor-build-js",
     "watch-js": "start npm run home-watch-js && start npm run editor-watch-js",
     "editor-watch": "npm run editor-watch-js; npm run editor-watch-css",
@@ -32,6 +32,12 @@
     "express": "^4.17.1",
     "express-useragent": "^1.0.15",
     "helmet": "^4.4.1",
-    "http": "^0.0.1-security"
+    "http": "^0.0.1-security",
+    "@babel/runtime": "^7.13.10"
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-runtime": "^7.13.10",
+    "@babel/preset-env": "^7.13.12",
+    "babelify": "^10.0.0"
   }
 }

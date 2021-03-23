@@ -13,13 +13,6 @@ class GameModel{
         this._state = "show_board";
     }
 
-    loadQuestions(filepath){
-        this.filepath = filepath;
-        let data = fs.readFileSync(filepath);
-        this.questionSet = JSON.parse(data);
-        this.saveState();
-    }
-
     save(filepath){
         fs.writeFileSync(filepath, JSON.stringify(this));
     }

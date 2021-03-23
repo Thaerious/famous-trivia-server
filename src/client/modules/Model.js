@@ -132,4 +132,4 @@ Model.questionType = {
     MULTIPLE_CHOICE : "multiple_choice"
 };
 
-module.exports = Model;
+export default Model;
