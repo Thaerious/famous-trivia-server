@@ -72,7 +72,7 @@
           "fontSize": "16px"
         },
         {
-          "category": "CATEGORY\n2 ",
+          "category": "CATEGORY\n2",
           "cell": [
             {
               "value": 100,
@@ -105,10 +105,10 @@
               "a": ""
             }
           ],
-          "fontSize": "16.9964px"
+          "fontSize": "16px"
         },
         {
-          "category": "CATEGORY\n3 ",
+          "category": "CATEGORY\n3",
           "cell": [
             {
               "value": 100,
@@ -142,7 +142,7 @@
               "a": ""
             }
           ],
-          "fontSize": "16.9964px"
+          "fontSize": "16px"
         },
         {
           "category": "CATEGORY \n4",

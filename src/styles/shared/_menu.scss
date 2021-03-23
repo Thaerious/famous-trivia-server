@@ -22,6 +22,11 @@
     cursor: pointer;
     z-index: 100;
 
+    .menu-item {
+        cursor: pointer;
+        display: block;
+    }
+
     .menu-item:hover {
         position: static;
         color: blue;
@@ -48,9 +53,8 @@
         left: 25px;
     }
 
-    .menu-item{
-        &.hidden {
-            display: none;
-        }
+    .menu-item {
+        cursor: pointer;
+        display: block;
     }
 }

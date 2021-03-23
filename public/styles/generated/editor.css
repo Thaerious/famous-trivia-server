@@ -152,6 +152,10 @@ check-box {
   cursor: pointer;
   z-index: 100;
 }
+.menu-area .menu-item {
+  cursor: pointer;
+  display: block;
+}
 .menu-area .menu-item:hover {
   position: static;
   color: blue;
@@ -174,8 +178,9 @@ check-box {
   position: relative;
   left: 25px;
 }
-.sub-menu .menu-item.hidden {
-  display: none;
+.sub-menu .menu-item {
+  cursor: pointer;
+  display: block;
 }
 
 :root {
