@@ -2,7 +2,7 @@ import fs from 'fs';
 import constants from './constants.js';
 
 class JeopardyModel{
-    constructor(questions){
+    constructor(model){
         this.model = model;
         this.state_data = {}
     }
@@ -150,14 +150,8 @@ class MultipleChoiceModel{
 class GameModel{
     constructor(questionSet) {
         this.questionSet = questionSet;
-        this.currentQuestion = null;
-
-        this.players = {}; // buzzer (enabled, disabled), name, role, score
-        this.active_player = 0; // the player that chose the question
-        this.current_player = -1; // the player currently answering
-        this.attempts = 0;
-        this.lastValue = 0;
-        this.stateIndex = -1;
+        this._roundIndex = 0;
+        this.players = []; // buzzer (enabled, disabled), name, role, score
     }
 
     save(filepath){
@@ -172,25 +166,87 @@ class GameModel{
         }
     }
 
-    /**
-     * Set the buzzer state for player to value.
-     * If player is omitted set it for the current player.
-     * @param value
-     * @param player
-     */
-    setBuzzer(value, player){
-        if (this.playerCount() <= 0) return;
-        player = player ?? this.current_player;
-        this.players[player].buzzer = value;
+    get round(){
+        return this._roundIndex;
+    }
+
+    set round(value){
+        if (value < 0) value = 0;
+        if (value >= this.questionSet.rounds.length) value = this.questionSet.rounds.length - 1;
+        this._roundIndex = value;
     }
 
     /**
-     * Retrieve the current player (last buzzed/chose question).
+     * Get the current round or the round by index.
+     * @param index
+     * @returns {*}
+     */
+    getRound(index){
+        index = index ?? this.round;
+        const round = this.questionSet.rounds[index];
+
+        if (round.type === "multiple_choice"){
+            return new MultipleChoiceModel(round);
+        }
+        else if (round.type ==="choice"){
+            return new JeopardyModel(round);
+        }
+    }
+
+    /**
+     * Add a new player to the model
+     * If the name already exists, make no change
+     * @param name
+     * @returns {number} index of the player
+     */
+    addPlayer(name){
+        if (this.hasPlayer(name)){
+            return this.getPlayer(name);
+        }
+
+        const player = {
+            name: name,
+            score: 0,
+            buzzer: "enabled",
+            enabled: true
+        };
+
+        this.players.push(player);
+        return player;
+    }
+
+    /**
+     * Return a count of enabled players.
+     * @returns {number}
+     */
+    playerCount(){
+        return this.players.length;
+    }
+
+    /**
+     * Retrieve the current player object
      * @returns {null|*}
      */
-    currentPlayer(){
-        if (this.current_player === -1) return null;
-        return this.players[this.current_player];
+    get currentPlayer(){
+        return this.current_player;
+    }
+
+    /**
+     * Retrieve the active player object.
+     * @returns {null|*}
+     */
+    get activePlayer(){
+        if (this.players.length === 0) return null;
+        return this.players[0];
+    }
+
+    getPlayer(name){
+        for (let player of this.players) if (player.name === name) return player;
+        return null;
+    }
+
+    hasPlayer(name){
+        return this.getPlayer(name) !== null;
     }
 
     /**
@@ -199,12 +255,54 @@ class GameModel{
      */
     countEnabledBuzzers(){
         let r = 0;
-        for (let i in this.players){
-            let player = this.players[i];
+        for (let player of this.players){
             if (player.buzzer === "enabled") r = r + 1;
         }
         return r;
     }
+
+    /**
+     * Enable all buzzers.
+     */
+    enableAllBuzzers(){
+        for (let i in this.players) this.players[i].buzzer = "enabled";
+    }
+
+    /**
+     * Set the current player choosing the question.
+     * Setting active player out of range will set it to -1
+     * Returns, JSON object to broadcast
+     */
+    setActivePlayer(name){
+        let player = this.getPlayer(name);
+        let index = this.players.indexOf(player);
+        if (index === -1) return false;
+        let splice = this.players.splice(index, 1);
+        this.players.unshift(splice[0]);
+        return true;
+    }
+
+    removePlayer(name){
+        let player = this.getPlayer(name);
+        let index = this.players.indexOf(player);
+        if (index === -1) return null;
+        let splice = this.players.splice(index, 1);
+        return splice[0];
+    }
+
+    /**
+     * Set the current player choosing the question.
+     * Setting active player out of range will set it to -1
+     * Returns, JSON object to broadcast
+     */
+    nextActivePlayer(name){
+        if (this.players.length === 0) return null;
+        let player = this.players.shift();
+        this.players.push(player);
+        return this.players[0];
+    }
+
+// ------------------ //
 
     /**
      * Retrieve the game state of the game (without questions & answers).
@@ -229,155 +327,6 @@ class GameModel{
         delete sanitized._state;
 
         return sanitized;
-    }
-
-    /***
-     * Set the score of a player.
-     * @param index
-     * @param value
-     */
-    setScore(value, index){
-        index = index  ?? this.current_player;
-        if (typeof index === "string") index = parseInt(index);
-        console.log("set score " + index + " " + value);
-        this.players[index].score = value;
-    }
-
-    /***
-     * Set the score of a player.
-     * @param index
-     * @param value
-     */
-    getScore(index){
-        index = index  ?? this.current_player;
-        if (typeof index === "string") index = parseInt(index);
-        console.log(`get score ${index}`);
-        return this.players[index].score;
-    }
-
-    /**
-     * Set the current player choosing the question.
-     * Setting active player out of range will set it to -1
-     * Returns, JSON object to broadcast
-     */
-    setActivePlayer(index){
-        if (typeof index === "string") index = this.playerIndex(index);
-        if (index < 0 || index> this.players.length) this.active_player = -1;
-        this.active_player = index;
-        return index;
-    }
-
-    /**
-     * Return a count of enabled players.
-     * @returns {number}
-     */
-    playerCount(){
-        return Object.keys(this.players).length;
-    }
-
-    /**
-     * return true if player exists and is enabled.
-     * @param index
-     */
-    isEnabled(i){
-        if (this.players[i] === undefined) return false;
-        return this.players[i].enabled;
-    }
-
-    advanceActivePlayer(){
-        this.active_player = this.active_player + 1;
-        if (this.active_player >= this.playerCount()) this.active_player = 0;
-    }
-
-    getActivePlayer(){
-        return this.active_player;
-    }
-
-    /**
-     * Add a new player to the model
-     * @param name
-     * @param role
-     * @returns {number} index of the player
-     */
-    addPlayer(name, role){
-        if (role === "host") return -1;
-        if (this.hasPlayer(name)){
-            let index =  this.playerIndex(name);
-            this.players[index].enabled = true;
-            return index;
-        }
-
-        /* Get the next empty player slot, and fill it */
-        for (let i = 0; i < 10; i = i + 1){
-            if (this.players[i] === undefined){
-                this.players[i] = {
-                    name: name,
-                    score: 0,
-                    buzzer: "enabled",
-                    role: role,
-                    enabled: true
-                }
-                if (this.getActivePlayer() === -1) this.setActivePlayer(0);
-                this.saveState();
-                return i;
-            }
-        }
-        return -1
-    }
-
-    disablePlayer(index){
-        if (!this.players[index]) return;
-        this.players[index].enabled = false;
-    }
-
-    /**
-     * Enable all buzzers.
-     */
-    clearBuzzers(){
-        for (let i in this.players) this.players[i].buzzer = "enabled";
-    }
-
-    hasPlayer(name){
-        for (let i in this.players){
-            if (this.players[i].name === name) return true;
-        }
-        return false;
-    }
-
-    playerIndex(name){
-        for (let i in this.players){
-            if (this.players[i].name === name) return i;
-        }
-        return -1;
-    }
-
-    getPlayer(index){
-        return this.players[index];
-    }
-
-    removePlayer(index){
-        if (typeof index === "string") index = this.playerIndex(index);
-        delete this.players[index];
-        if (this.active_player === index) this.advanceActivePlayer();
-    }
-
-    set state(value){
-        this._state = value;
-        if (value === "show_board"){
-            this.saveState();
-        }
-    }
-
-    saveState(){
-        if (!fs.existsSync(constants.savePath)){
-            fs.mkdirSync(constants.savePath, {recursive : true})
-        };
-        this.stateIndex = this.stateIndex + 1;
-        this.save(`${constants.savePath}/prev_state.${this.stateIndex}.json`);
-    }
-
-    get state(){
-        return this._state;
     }
 }
 
