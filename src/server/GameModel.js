@@ -4,16 +4,26 @@ import constants from './constants.js';
 class JeopardyModel{
     constructor(model, players){
         this.model = model;
-        this.players = [...players];
+        this._players = [...players];
         this.currentPlayer = null;
 
+        this.spent = [];
+        for (let col of this.model.column){
+            let cells = [];
+            this.spent.push(cells);
+            for (let cell of col.cell){
+                cells.push(false);
+            }
+        }
+
         this.stateData = {
+            style    : GameModel.STYLE.JEOPARDY,
             state    : GameModel.NOT_SET
         };
     }
 
     get countPlayers(){
-        return this.players.length;
+        return this._players.length;
     }
 
     hasPlayer(name){
@@ -21,7 +31,7 @@ class JeopardyModel{
     }
 
     getPlayer(name){
-        for (let player of this.players){
+        for (let player of this._players){
             if (player.name === name){
                 return player;
             }
@@ -32,11 +42,11 @@ class JeopardyModel{
     removePlayer(name){
         let i = 0;
         while(i <= this.countPlayers){
-            if (this.players[i].name === name) break;
+            if (this._players[i].name === name) break;
             i = i + 1;
             if (i >= this.countPlayers) return false;
         }
-        this.players.splice(i, 1);
+        this._players.splice(i, 1);
         return true;
     }
 
@@ -125,7 +135,7 @@ class JeopardyModel{
 
         this.setQuestionState(col, row);
         Object.assign(this.stateData, {
-            state  : GameModel.STATES.ANSWER,
+            state  : GameModel.STATES.REVEAL,
             answer : this.getAnswer()
         });
         return this.stateData;
@@ -187,7 +197,9 @@ class JeopardyModel{
 class MultipleChoiceModel{
     constructor(model){
         this.model = model;
-        this.stateData = {};
+        this.stateData = {
+            style    : GameModel.STYLE.MULTIPLE_CHOICE,
+        };
         this.setQuestionState();
     }
 
@@ -268,8 +280,8 @@ class MultipleChoiceModel{
 class GameModel{
     constructor(model) {
         this.model = model;
-        this._roundIndex = 0;
-        this.players = []; // name, score, enabled
+        this._roundIndex = -1;
+        this._players = []; // name, score, enabled
     }
 
     getUpdate(){
@@ -314,8 +326,13 @@ class GameModel{
             return new MultipleChoiceModel(round);
         }
         else if (round.type ==="choice"){
-            return new JeopardyModel(round, this.players);
+            return new JeopardyModel(round, this._players);
         }
+    }
+
+    nextRound(){
+        this.round = this.round + 1;
+        return this.getRound();
     }
 
     /**
@@ -335,8 +352,12 @@ class GameModel{
             enabled: true
         };
 
-        this.players.push(player);
+        this._players.push(player);
         return player;
+    }
+
+    get players(){
+        return [...this._players];
     }
 
     /**
@@ -344,7 +365,7 @@ class GameModel{
      * @returns {number}
      */
     playerCount(){
-        return this.players.length;
+        return this._players.length;
     }
 
     /**
@@ -352,12 +373,12 @@ class GameModel{
      * @returns {null|*}
      */
     get activePlayer(){
-        if (this.players.length === 0) return null;
-        return this.players[0];
+        if (this._players.length === 0) return null;
+        return this._players[0];
     }
 
     getPlayer(name){
-        for (let player of this.players) if (player.name === name) return player;
+        for (let player of this._players) if (player.name === name) return player;
         return null;
     }
 
@@ -372,18 +393,18 @@ class GameModel{
      */
     setActivePlayer(name){
         let player = this.getPlayer(name);
-        let index = this.players.indexOf(player);
+        let index = this._players.indexOf(player);
         if (index === -1) return false;
-        let splice = this.players.splice(index, 1);
-        this.players.unshift(splice[0]);
+        let splice = this._players.splice(index, 1);
+        this._players.unshift(splice[0]);
         return true;
     }
 
     removePlayer(name){
         let player = this.getPlayer(name);
-        let index = this.players.indexOf(player);
+        let index = this._players.indexOf(player);
         if (index === -1) return null;
-        let splice = this.players.splice(index, 1);
+        let splice = this._players.splice(index, 1);
         return splice[0];
     }
 
@@ -393,10 +414,10 @@ class GameModel{
      * Returns, JSON object to broadcast
      */
     nextActivePlayer(name){
-        if (this.players.length === 0) return null;
-        let player = this.players.shift();
-        this.players.push(player);
-        return this.players[0];
+        if (this._players.length === 0) return null;
+        let player = this._players.shift();
+        this._players.push(player);
+        return this._players[0];
     }
 }
 
@@ -404,6 +425,7 @@ GameModel.STATES = {
     NOT_SET : "notset",
     QUESTION : "question",
     ANSWER : "answer",
+    REVEAL : "reveal",
     BOARD : "board"
 }
 

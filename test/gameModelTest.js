@@ -13,10 +13,21 @@ describe('GameModel', function () {
             new GameModel(data);
         });
     });
+
+    describe('players', function(){
+        const gameModel = new GameModel(data);
+        gameModel.addPlayer('a');
+        gameModel.addPlayer('b');
+        gameModel.addPlayer('c');
+        gameModel.addPlayer('d');
+        it('has the length of player count', function () {
+            assert.equal(gameModel.players.length, 4);
+        });
+    });
     describe('round', function () {
         const gameModel = new GameModel(data);
-        it('starts on round #0', function () {
-            assert.equal(gameModel.round, 0);
+        it('starts on round -1 (no round)', function () {
+            assert.equal(gameModel.round, -1);
         });
         it('set round to #1', function () {
             gameModel.round = 1;
@@ -34,6 +45,7 @@ describe('GameModel', function () {
     describe('getRound', function () {
         const gameModel = new GameModel(data);
         it('get the current round', function () {
+            gameModel.round = 0;
             assert.equal(gameModel.getRound().constructor.name, "MultipleChoiceModel");
         });
         it('get the first round', function () {
@@ -41,6 +53,19 @@ describe('GameModel', function () {
         });
         it('get the second round', function () {
             assert.equal(gameModel.getRound(1).constructor.name, "JeopardyModel");
+        });
+    });
+    describe('#nextRound()', function () {
+        const gameModel = new GameModel(data);
+        it('first call gets first round', function () {
+            assert.equal(gameModel.nextRound().constructor.name, "MultipleChoiceModel");
+        });
+        it('second call gets second round', function () {
+            assert.equal(gameModel.nextRound().constructor.name, "JeopardyModel");
+        });
+        it('gets next index if get round was called', function () {
+            assert.equal(gameModel.getRound(0).constructor.name, "MultipleChoiceModel");
+            assert.equal(gameModel.nextRound().constructor.name, "JeopardyModel");
         });
     });
     describe('addPlayer', function () {
@@ -432,7 +457,7 @@ describe('JeopardyModel', function () {
         it('sets correct state data from file', function () {
             let round = gameModel.getRound(1);
             let state = round.setRevealState(0, 0);
-            assert.equal(state.state, GameModel.STATES.ANSWER);
+            assert.equal(state.state, GameModel.STATES.REVEAL);
             assert.equal(state.col, 0);
             assert.equal(state.row, 0);
             assert.equal(state.type, "text");
@@ -443,7 +468,7 @@ describe('JeopardyModel', function () {
             let round = gameModel.getRound(1);
             round.setQuestionState(1, 0);
             let state = round.setRevealState();
-            assert.equal(state.state, GameModel.STATES.ANSWER);
+            assert.equal(state.state, GameModel.STATES.REVEAL);
             assert.equal(state.col, 1);
             assert.equal(state.row, 0);
             assert.equal(state.type, "text");
@@ -477,7 +502,7 @@ describe('JeopardyModel', function () {
             assert.equal(round.getType(), "text");
         });
         it("state", function () {
-            assert.equal(round.getState(), GameModel.STATES.ANSWER);
+            assert.equal(round.getState(), GameModel.STATES.REVEAL);
         });
     });
 });
