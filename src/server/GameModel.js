@@ -2,9 +2,88 @@ import fs from 'fs';
 import constants from './constants.js';
 
 class JeopardyModel{
-    constructor(model){
+    constructor(model, players){
         this.model = model;
-        this.state_data = {}
+        this.players = [...players];
+        this.currentPlayer = null;
+
+        this.stateData = {
+            state    : GameModel.NOT_SET
+        };
+    }
+
+    get countPlayers(){
+        return this.players.length;
+    }
+
+    hasPlayer(name){
+        return this.getPlayer(name) !== null;
+    }
+
+    getPlayer(name){
+        for (let player of this.players){
+            if (player.name === name){
+                return player;
+            }
+        }
+        return null;
+    }
+
+    removePlayer(name){
+        let i = 0;
+        while(i <= this.countPlayers){
+            if (this.players[i].name === name) break;
+            i = i + 1;
+            if (i >= this.countPlayers) return false;
+        }
+        this.players.splice(i, 1);
+        return true;
+    }
+
+    hasCurrent(){
+        return this.currentPlayer !== null;
+    }
+
+    getCurrent(){
+        return this.currentPlayer;
+    }
+
+    /**
+     * @param name if name exists, make name current, else do nothing.
+     * @param remove Remove the current player from the list
+     */
+    setCurrent(name, remove = true){
+        if (!this.hasPlayer(name)) return false;
+
+        if (remove && this.currentPlayer){
+            this.removePlayer(this.currentPlayer.name);
+        }
+        this.currentPlayer = this.getPlayer(name);
+        return true;
+    }
+
+    clearCurrent(remove = true){
+        if (this.currentPlayer === null) return false;
+        if (remove){
+            this.removePlayer(this.currentPlayer.name);
+        }
+        this.currentPlayer = null;
+        return true;
+    }
+
+    /**
+     * Set the state data for the specified question question.
+     * @param col
+     * @param row
+     * @returns question text
+     */
+    setBoardState(col, row){
+        this.stateData = {
+            style    : GameModel.STYLE.JEOPARDY,
+            state    : GameModel.STATES.BOARD
+        };
+
+        return this.stateData;
     }
 
     /**
@@ -14,21 +93,22 @@ class JeopardyModel{
      * @returns question text
      */
     setQuestionState(col, row){
-        this.state_data.assign({
+        this.stateData = {
+            style    : GameModel.STYLE.JEOPARDY,
             state    : GameModel.STATES.QUESTION,
             col      : col,
             row      : row,
             type     : this.getType(col, row),
             question : this.getQuestion(col, row)
-        });
+        };
 
-        return this.state_data.text;
+        return this.stateData;
     }
 
     getQuestion(col, row){
-        col = col ?? this.state_data.col;
-        row = row ?? this.state_data.row;
-        return this.model[col].questions[row].q;
+        col = col ?? this.stateData.col;
+        row = row ?? this.stateData.row;
+        return this.model.column[col].cell[row].q;
     }
 
     /**
@@ -39,11 +119,16 @@ class JeopardyModel{
      * @param row
      * @returns game state update object
      */
-    setAnswerState(){
-        this.state_data.assign = {
+    setRevealState(col, row){
+        col = col ?? this.stateData.col;
+        row = row ?? this.stateData.row;
+
+        this.setQuestionState(col, row);
+        Object.assign(this.stateData, {
             state  : GameModel.STATES.ANSWER,
             answer : this.getAnswer()
-        };
+        });
+        return this.stateData;
     }
 
     /**
@@ -55,9 +140,9 @@ class JeopardyModel{
      * @returns game state update object
      */
     getAnswer(col, row){
-        col = col ?? this.state_data.col;
-        row = row ?? this.state_data.row;
-        return this.model[col].questions[row].a;
+        col = col ?? this.stateData.col;
+        row = row ?? this.stateData.row;
+        return this.model.column[col].cell[row].a;
     }
 
     /**
@@ -69,9 +154,9 @@ class JeopardyModel{
      * @returns {*}
      */
     getValue(col, row){
-        col = col ?? this.state_data.col;
-        row = row ?? this.state_data.row;
-        return this.questionSet[col].questions[row].value;
+        col = col ?? this.stateData.col;
+        row = row ?? this.stateData.row;
+        return this.model.column[col].cell[row].value;
     }
 
     /**
@@ -82,15 +167,18 @@ class JeopardyModel{
      * @param row
      * @returns game state update object
      */
-    getQuestionType(col, row){
-        col = col ?? this.state_data.col;
-        row = row ?? this.state_data.row;
-        return this.questionSet[col].questions[row].type;
+    getType(col, row){
+        col = col ?? this.stateData.col;
+        row = row ?? this.stateData.row;
+        return this.model.column[col].cell[row].type;
+    }
+
+    getState(){
+        return this.stateData.state;
     }
 
     getUpdate(){
         let sanitized = JSON.parse(JSON.stringify(this));
-        sanitized.action = "update_model";
         delete sanitized.model;
         return sanitized;
     }
@@ -99,6 +187,12 @@ class JeopardyModel{
 class MultipleChoiceModel{
     constructor(model){
         this.model = model;
+        this.stateData = {};
+        this.setQuestionState();
+    }
+
+    get state (){
+        return Object.assign({}, this.stateData);
     }
 
     /**
@@ -108,16 +202,12 @@ class MultipleChoiceModel{
      * @returns question text
      */
     setQuestionState(){
-        this.state_data.assign({
-            state    : GameModel.STATES.QUESTION,
-            question : this.getQuestion()
-        });
+        this.stateData = {
+            name     : GameModel.STATES.QUESTION,
+            question : this.model.question
+        };
 
-        return this.state_data.question;
-    }
-
-    getQuestion(){
-        return this.model.question;
+        return this.state;
     }
 
     getAnswers(){
@@ -125,6 +215,15 @@ class MultipleChoiceModel{
         for (let i in this.model.answers){
             answers[i] = this.model.answers[i].text;
         }
+        return answers;
+    }
+
+    getValues(){
+        let values = [];
+        for (let i in this.model.answers){
+            values[i] = this.model.answers[i].isTrue === 'true';
+        }
+        return values;
     }
 
     getValue(index){
@@ -132,28 +231,54 @@ class MultipleChoiceModel{
     }
 
     /**
-     * Set the state data for the specified question question.
+     * Set the state showing the players the answers.
      * @param col
      * @param row
      * @returns question text
      */
     setAnswerState(){
-        this.state_data.assign({
+        Object.assign(this.stateData, {
             state    : GameModel.STATES.ANSWER,
             answers : this.getAnswers()
         });
 
-        return this.state_data.question;
+        return this.stateData;
+    }
+
+    /**
+     * Set the state revealing the correct answer to the player
+     */
+    setResultState(){
+        this.setAnswerState();
+        Object.assign(this.stateData, {
+            state    : GameModel.STATES.RESULT,
+            values : this.getValues()
+        });
+
+        return this.stateData;
+    }
+
+    getUpdate(){
+        let sanitized = JSON.parse(JSON.stringify(this));
+        delete sanitized.model;
+        return sanitized;
     }
 }
 
 class GameModel{
-    constructor(questionSet) {
-        this.questionSet = questionSet;
+    constructor(model) {
+        this.model = model;
         this._roundIndex = 0;
-        this.players = []; // buzzer (enabled, disabled), name, role, score
+        this.players = []; // name, score, enabled
     }
 
+    getUpdate(){
+        let sanitized = JSON.parse(JSON.stringify(this));
+        delete sanitized.model;
+        delete sanitized._roundIndex;
+        return sanitized;
+    }
+    
     save(filepath){
         fs.writeFileSync(filepath, JSON.stringify(this));
     }
@@ -172,7 +297,7 @@ class GameModel{
 
     set round(value){
         if (value < 0) value = 0;
-        if (value >= this.questionSet.rounds.length) value = this.questionSet.rounds.length - 1;
+        if (value >= this.model.rounds.length) value = this.model.rounds.length - 1;
         this._roundIndex = value;
     }
 
@@ -183,13 +308,13 @@ class GameModel{
      */
     getRound(index){
         index = index ?? this.round;
-        const round = this.questionSet.rounds[index];
+        const round = this.model.rounds[index];
 
         if (round.type === "multiple_choice"){
             return new MultipleChoiceModel(round);
         }
         else if (round.type ==="choice"){
-            return new JeopardyModel(round);
+            return new JeopardyModel(round, this.players);
         }
     }
 
@@ -207,7 +332,6 @@ class GameModel{
         const player = {
             name: name,
             score: 0,
-            buzzer: "enabled",
             enabled: true
         };
 
@@ -221,14 +345,6 @@ class GameModel{
      */
     playerCount(){
         return this.players.length;
-    }
-
-    /**
-     * Retrieve the current player object
-     * @returns {null|*}
-     */
-    get currentPlayer(){
-        return this.current_player;
     }
 
     /**
@@ -247,25 +363,6 @@ class GameModel{
 
     hasPlayer(name){
         return this.getPlayer(name) !== null;
-    }
-
-    /**
-     * Retrieve the number of players permitted to buzz in.
-     * @returns {number}
-     */
-    countEnabledBuzzers(){
-        let r = 0;
-        for (let player of this.players){
-            if (player.buzzer === "enabled") r = r + 1;
-        }
-        return r;
-    }
-
-    /**
-     * Enable all buzzers.
-     */
-    enableAllBuzzers(){
-        for (let i in this.players) this.players[i].buzzer = "enabled";
     }
 
     /**
@@ -301,38 +398,18 @@ class GameModel{
         this.players.push(player);
         return this.players[0];
     }
-
-// ------------------ //
-
-    /**
-     * Retrieve the game state of the game (without questions & answers).
-     * Used to send a full update to clients.
-     * @returns {{}}
-     */
-    getFullUpdate(){
-        let sanitized = JSON.parse(JSON.stringify(this));
-        sanitized.action = "update_model";
-        delete sanitized.filepath;
-
-        for (let category in sanitized.questionSet){
-            for (let j in sanitized.questionSet[category].questions){
-                let question = sanitized.questionSet[category].questions[j];
-                delete question.a;
-                delete question.q;
-                delete question.type;
-            }
-        }
-
-        sanitized.state = sanitized._state;
-        delete sanitized._state;
-
-        return sanitized;
-    }
 }
 
 GameModel.STATES = {
+    NOT_SET : "notset",
     QUESTION : "question",
-    ANSWER : "answer"
+    ANSWER : "answer",
+    BOARD : "board"
+}
+
+GameModel.STYLE = {
+    MULTIPLE_CHOICE : "mc",
+    JEOPARDY : "j"
 }
 
 export default GameModel;
