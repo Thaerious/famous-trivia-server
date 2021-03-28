@@ -97,7 +97,7 @@ class Game {
     }
 
     startRound() {
-        this.round = this.model.nextRound()
+        this.round = this.model.nextRound();
         if (this.round.stateData.style === GameModel.STYLE.MULTIPLE_CHOICE) {
             this.round.setQuestionState();
             this.playersData = this.createPlayerData();
@@ -223,11 +223,8 @@ class Game {
 
     [5](input) { // waiting for host to read question and click continue
         switch (input.action) {
-            case "join":
-                this.model.addPlayer(input.data.name);
-                break;
-            case "select":
-                this.timer.start(Timer.times.ANSWER);
+            case "continue":
+                this.timer.start(Timer.TIMES.ANSWER);
                 this.state = 6;
                 break;
         }

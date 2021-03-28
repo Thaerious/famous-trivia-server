@@ -115,8 +115,86 @@ describe('Game', function () {
         });
         it('in reveal state', function(){
             let update = game.getUpdate();
-            console.log(update);
             assert.equal(update.round.state, GameModel.STATES.REVEAL);
         });
     });
+
+    describe('host presses continue', function(){
+        it('state changes', function(){
+            game.onInput({action : "continue"});
+            let update = game.getUpdate();
+            console.log(update);
+            assert.equal(update.state, 4);
+        });
+        it('loads correct (jeop) round', function(){
+            let update = game.getUpdate();
+            assert.equal(update.round.style, GameModel.STYLE.JEOPARDY);
+        });
+        it('jeopardy starts in board state', function(){
+            let update = game.getUpdate();
+            assert.equal(update.round.state, GameModel.STATES.BOARD);
+        });
+        it('no options blanked', function(){
+            let update = game.getUpdate();
+            update.round.spent.forEach(c=>c.forEach(r=>assert.equal(r, false)));
+        });
+        it('current player is \'active player\'', function(){
+            let update = game.getUpdate();
+            assert.equal(update.round.current_player, "robin");
+        });
+        it('player list doesn\'t contain current player', function(){
+            let update = game.getUpdate();
+            assert.equal(update.round.players.indexOf("robin"), -1);
+        });
+    });
+
+    describe('select question (first cat, $200)', function(){
+        it('state changes', function(){
+            game.onInput({action : "select", data : {col : 0, row : 1}});
+            let update = game.getUpdate();
+            assert.equal(update.state, 5);
+        });
+        it('loads correct (jeop) round', function(){
+            let update = game.getUpdate();
+            assert.equal(update.round.style, GameModel.STYLE.JEOPARDY);
+        });
+        it('jeopardy starts in question state', function(){
+            let update = game.getUpdate();
+            assert.equal(update.round.state, GameModel.STATES.QUESTION);
+        });
+        it('column set to 0', function(){
+            let update = game.getUpdate();
+            assert.equal(update.round.col, 0);
+        });
+        it('row set to 1', function(){
+            let update = game.getUpdate();
+            assert.equal(update.round.row, 1);
+        });
+        it('type is text', function(){
+            let update = game.getUpdate();
+            assert.equal(update.round.type, "text");
+        });
+        it('question is Q 1.2', function(){
+            let update = game.getUpdate();
+            assert.equal(update.round.question, "Q 1.2");
+        });
+    });
+
+    describe('host presses continue', function(){
+        it('state changes', function(){
+            game.onInput({action : "continue"});
+            let update = game.getUpdate();
+            // console.log(JSON.stringify(update, null, 2));
+            assert.equal(update.state, 6);
+        });
+    });
+
+    // describe('accept before expire', function(){
+    //     it('state changes', function(){
+    //         game.onInput({action : "accept"});
+    //         let update = game.getUpdate();
+    //         console.log(update);
+    //         assert.equal(update.state, 9);
+    //     });
+    // });
 });

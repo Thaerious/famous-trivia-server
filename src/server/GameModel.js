@@ -4,8 +4,10 @@ import constants from './constants.js';
 class JeopardyModel{
     constructor(model, players){
         this.model = model;
-        this._players = [...players];
-        this.currentPlayer = null;
+
+        this._players = [];
+        for (let p of players) this._players.push(p.name);
+        this.setCurrent(this._players[0]);
 
         /** matrix of which questions have already been answered **/
         this.spent = [];
@@ -19,7 +21,8 @@ class JeopardyModel{
 
         this.stateData = {
             style    : GameModel.STYLE.JEOPARDY,
-            state    : GameModel.NOT_SET
+            state    : GameModel.NOT_SET,
+            spent    : this.spent
         };
     }
 
@@ -53,25 +56,15 @@ class JeopardyModel{
     }
 
     hasPlayer(name){
-        return this.getPlayer(name) !== null;
-    }
-
-    getPlayer(name){
-        for (let player of this._players){
-            if (player.name === name){
-                return player;
-            }
-        }
-        return null;
+        console.log(name);
+        console.log("has player " + this._players.indexOf(name));
+        console.log(this._players);
+        return this._players.indexOf(name) != -1;
     }
 
     removePlayer(name){
-        let i = 0;
-        while(i <= this.countPlayers){
-            if (this._players[i].name === name) break;
-            i = i + 1;
-            if (i >= this.countPlayers) return false;
-        }
+        let i = this._players.indexOf(name);
+        if (i === -1) return false;
         this._players.splice(i, 1);
         return true;
     }
@@ -91,10 +84,11 @@ class JeopardyModel{
     setCurrent(name, remove = true){
         if (!this.hasPlayer(name)) return false;
 
-        if (remove && this.currentPlayer){
-            this.removePlayer(this.currentPlayer.name);
+        if (remove){
+            this.removePlayer(name);
         }
-        this.currentPlayer = this.getPlayer(name);
+
+        this.currentPlayer = name;
         return true;
     }
 
@@ -116,7 +110,8 @@ class JeopardyModel{
     setBoardState(col, row){
         this.stateData = {
             style    : GameModel.STYLE.JEOPARDY,
-            state    : GameModel.STATES.BOARD
+            state    : GameModel.STATES.BOARD,
+            spent    : this.spent
         };
 
         return this.stateData;
@@ -214,7 +209,11 @@ class JeopardyModel{
     }
 
     getUpdate(){
-        return JSON.parse(JSON.stringify(this.stateData));
+        let r = Object.assign({}, this.stateData);
+        r.players = [];
+        for (let p of this._players) r.players.push(p.name);
+        r.current_player = this.currentPlayer;
+        return r;
     }
 }
 
@@ -224,7 +223,7 @@ class MultipleChoiceModel{
         this.stateData = {
             style    : GameModel.STYLE.MULTIPLE_CHOICE,
         };
-        this.setQuestionState("A");
+        this.setQuestionState();
     }
 
     get state (){
@@ -237,8 +236,7 @@ class MultipleChoiceModel{
      * @param row
      * @returns question text
      */
-    setQuestionState(tag){
-        console.warn(`------ setQuestionState ${tag} ----------`);
+    setQuestionState(){
         Object.assign(this.stateData, {
             state    : GameModel.STATES.QUESTION,
             question : this.model.question
@@ -291,13 +289,10 @@ class MultipleChoiceModel{
             state    : GameModel.STATES.REVEAL,
             values : this.getValues()
         });
-        console.log("------ set reveal state ----------");
-        console.log(this.stateData);
         return this.stateData;
     }
 
     getUpdate(){
-        console.log(this.stateData);
         return JSON.parse(JSON.stringify(this.stateData));
     }
 }
@@ -355,6 +350,7 @@ class GameModel{
 
     setRound(index){
         this.round = index;
+
         const roundModel = this.model.rounds[index];
         if (roundModel.type === "multiple_choice"){
             this._currentRound = new MultipleChoiceModel(roundModel);
@@ -368,8 +364,7 @@ class GameModel{
 
     nextRound(){
         this.round = this.round + 1;
-        this.setRound(this.round);
-        return this.getRound();
+        return this.setRound(this.round);
     }
 
     /**

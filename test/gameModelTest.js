@@ -289,9 +289,9 @@ describe('JeopardyModel', function () {
             let round = gameModel.setRound(1);
             assert.notEqual(round, null);
         });
-        it('constructor starts with no current player', function () {
+        it('constructor starts with current player', function () {
             let round = gameModel.setRound(1);
-            assert.equal(round.hasCurrent(), false);
+            assert.equal(round.hasCurrent(), true);
         });
         it('has state style set to jeopardy', function(){
             let state = new GameModel(data).setRound(1).state;
@@ -300,16 +300,16 @@ describe('JeopardyModel', function () {
     });
 
     describe('#countPlayers()', function () {
-        it('starts with all players', function () {
+        it('starts with all players - 1', function () {
             let round = gameModel.setRound(1);
-            assert.equal(round.countPlayers, 3);
+            assert.equal(round.countPlayers, 2);
         });
     });
 
     describe('#hasPlayer()', function () {
         it('true if has player', function () {
             let round = gameModel.setRound(1);
-            assert.equal(round.hasPlayer('a'), true);
+            assert.equal(round.hasPlayer('b'), true);
         });
         it('false if not has player', function () {
             let round = gameModel.setRound(1);
@@ -325,29 +325,10 @@ describe('JeopardyModel', function () {
         });
     });
 
-    describe('#getPLayer()', function () {
-        it('has player', function () {
-            let round = gameModel.setRound(1);
-            assert.equal(round.getPlayer('a').name, 'a');
-        });
-        it('null if not has player', function () {
-            let round = gameModel.setRound(1);
-            assert.equal(round.getPlayer('d'), null);
-        });
-        it('null if null', function () {
-            let round = gameModel.setRound(1);
-            assert.equal(round.getPlayer(null), null);
-        });
-        it('null if undefined', function () {
-            let round = gameModel.setRound(1);
-            assert.equal(round.getPlayer(), null);
-        });
-    });
-
     describe('#removePlayer()', function () {
         it('has player, returns true', function () {
             let round = gameModel.setRound(1);
-            assert.equal(round.removePlayer('a'), true);
+            assert.equal(round.removePlayer('b'), true);
         });
         it('not has player, returns false', function () {
             let round = gameModel.setRound(1);
@@ -361,37 +342,30 @@ describe('JeopardyModel', function () {
             let round = gameModel.setRound(1);
             assert.equal(round.removePlayer(), false);
         });
-        it("can't get player after it's removed", function () {
-            let round = gameModel.setRound(1);
-            assert.equal(round.removePlayer('a'), true);
-            assert.equal(round.hasPlayer('a'), false);
-            assert.equal(round.getPlayer('a'), null);
-        });
         it("new round will create new player list", function () {
             let round = gameModel.setRound(1);
-            assert.equal(round.removePlayer('a'), true);
+            assert.equal(round.removePlayer('b'), true);
             round = gameModel.setRound(1);
-            assert.equal(round.hasPlayer('a'), true);
+            assert.equal(round.hasPlayer('b'), true);
         });
     });
 
     describe('current player functions', function () {
-        it('starts with no curent player', function () {
+        it('starts with current player', function () {
             let round = gameModel.setRound(1);
-            assert.equal(round.hasCurrent(), false);
-            assert.equal(round.getCurrent(), null);
+            assert.equal(round.hasCurrent(), true);
         });
         it('set current => has current', function () {
             let round = gameModel.setRound(1);
-            round.setCurrent('a')
+            round.setCurrent('b')
             assert.equal(round.hasCurrent(), true);
-            assert.equal(round.getCurrent().name, 'a');
+            assert.equal(round.getCurrent(), 'b');
         });
 
         describe('#setCurrent', function () {
             it('returns true if new value set', function () {
                 let round = gameModel.setRound(1);
-                assert.equal(round.setCurrent('a'), true);
+                assert.equal(round.setCurrent('b'), true);
             });
             it("returns false if new value not set (can't unknown name)", function () {
                 let round = gameModel.setRound(1);
@@ -411,7 +385,7 @@ describe('JeopardyModel', function () {
             it("setCurrent(x) => getCurrent(x)", function () {
                 let round = gameModel.setRound(1);
                 round.setCurrent('a');
-                assert.equal(round.getCurrent().name, 'a');
+                assert.equal(round.getCurrent(), 'a');
             });
         });
         describe('#clearCurrent', function () {
@@ -422,6 +396,7 @@ describe('JeopardyModel', function () {
             });
             it('returns false if a current was not set', function () {
                 let round = gameModel.setRound(1);
+                assert.equal(round.clearCurrent(), true);
                 assert.equal(round.clearCurrent(), false);
             });
             it('removes player if remove set (default)', function () {
@@ -440,7 +415,7 @@ describe('JeopardyModel', function () {
                 let round = gameModel.setRound(1);
                 round.setCurrent('a');
                 round.clearCurrent(false);
-                assert.equal(round.hasPlayer('a'), true);
+                assert.equal(round.hasPlayer('b'), true);
             });
             it('clears current if remove set to false', function () {
                 let round = gameModel.setRound(1);
