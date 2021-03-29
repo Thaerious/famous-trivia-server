@@ -2,12 +2,10 @@ import fs from 'fs';
 import constants from './constants.js';
 
 class JeopardyModel{
-    constructor(model, players){
+    constructor(game, model){
+        this.game = game;
         this.model = model;
-
-        this._players = [];
-        for (let p of players) this._players.push(p.name);
-        this.setCurrent(this._players[0]);
+        this.resetCurrentPlayers()
 
         /** matrix of which questions have already been answered **/
         this.spent = [];
@@ -21,9 +19,15 @@ class JeopardyModel{
 
         this.stateData = {
             style    : GameModel.STYLE.JEOPARDY,
-            state    : GameModel.NOT_SET,
+            state    : GameModel.STATES.BOARD,
             spent    : this.spent
         };
+    }
+
+    resetCurrentPlayers(){
+        this._players = [];
+        for (let p of this.game.players) this._players.push(p.name);
+        this.setCurrent(this._players[0]);
     }
 
     get state (){
@@ -56,9 +60,6 @@ class JeopardyModel{
     }
 
     hasPlayer(name){
-        console.log(name);
-        console.log("has player " + this._players.indexOf(name));
-        console.log(this._players);
         return this._players.indexOf(name) != -1;
     }
 
@@ -70,7 +71,7 @@ class JeopardyModel{
     }
 
     hasCurrent(){
-        return this.currentPlayer !== null;
+        return this.currentPlayer !== '';
     }
 
     getCurrent(){
@@ -93,11 +94,8 @@ class JeopardyModel{
     }
 
     clearCurrent(remove = true){
-        if (this.currentPlayer === null) return false;
-        if (remove){
-            this.removePlayer(this.currentPlayer.name);
-        }
-        this.currentPlayer = null;
+        if (this.currentPlayer === '') return false;
+        this.currentPlayer = '';
         return true;
     }
 
@@ -124,6 +122,8 @@ class JeopardyModel{
      * @returns question text
      */
     setQuestionState(col, row){
+        this.setSpent(col, row);
+
         this.stateData = {
             style    : GameModel.STYLE.JEOPARDY,
             state    : GameModel.STATES.QUESTION,
@@ -211,7 +211,9 @@ class JeopardyModel{
     getUpdate(){
         let r = Object.assign({}, this.stateData);
         r.players = [];
-        for (let p of this._players) r.players.push(p.name);
+        for (let p of this._players){
+            r.players.unshift(p);
+        }
         r.current_player = this.currentPlayer;
         return r;
     }
@@ -356,7 +358,7 @@ class GameModel{
             this._currentRound = new MultipleChoiceModel(roundModel);
         }
         else if (roundModel.type ==="choice"){
-            this._currentRound = new JeopardyModel(roundModel, this._players);
+            this._currentRound = new JeopardyModel(this, roundModel);
         }
 
         return this._currentRound;

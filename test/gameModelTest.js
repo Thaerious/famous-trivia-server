@@ -297,6 +297,10 @@ describe('JeopardyModel', function () {
             let state = new GameModel(data).setRound(1).state;
             assert.equal(state.style, GameModel.STYLE.JEOPARDY);
         });
+        it('starts in board state', function(){
+            let state = new GameModel(data).setRound(1).state;
+            assert.equal(state.state, GameModel.STATES.BOARD);
+        });
     });
 
     describe('#countPlayers()', function () {
@@ -421,7 +425,7 @@ describe('JeopardyModel', function () {
                 let round = gameModel.setRound(1);
                 round.setCurrent('a');
                 round.clearCurrent(false);
-                assert.equal(round.getCurrent(), null);
+                assert.equal(round.getCurrent(), '');
                 assert.equal(round.hasCurrent(), false);
             });
         });
@@ -483,8 +487,8 @@ describe('JeopardyModel', function () {
     describe('#getState', function () {
         let round = gameModel.setRound(1);
 
-        it("is NOT_SET if no state has been set", function () {
-            assert.equal(round.getState(), GameModel.NOT_SET);
+        it("is board if no state has been set", function () {
+            assert.equal(round.getState(), GameModel.STATES.BOARD);
         });
     });
 
@@ -519,12 +523,27 @@ describe('JeopardyModel', function () {
             assert.equal(round.isSpent(0, 0), true);
         });
     });
+
     describe('#setSpent()', function () {
         let round = gameModel.setRound(1);
         it("sets last question col/row when parameters omitted", function () {
             round.setQuestionState(3, 1);
             round.setSpent();
             assert.equal(round.isSpent(3, 1), true);
+        });
+    });
+
+    describe ('#getUpdate()', function (){
+        let round = gameModel.setRound(1);
+        let update = round.getUpdate();
+
+        it("has the same state as the model", function () {
+            assert.equal(round.stateData.state, update.state)
+        });
+
+        it("has player data", function () {
+            assert.equal(update.players[0], 'b');
+            assert.equal(update.players[1], 'c');
         });
     });
 });

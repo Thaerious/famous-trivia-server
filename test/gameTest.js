@@ -123,7 +123,6 @@ describe('Game', function () {
         it('state changes', function(){
             game.onInput({action : "continue"});
             let update = game.getUpdate();
-            console.log(update);
             assert.equal(update.state, 4);
         });
         it('loads correct (jeop) round', function(){
@@ -178,23 +177,209 @@ describe('Game', function () {
             let update = game.getUpdate();
             assert.equal(update.round.question, "Q 1.2");
         });
+        it('answer text not provided', function(){
+            game.onInput({action : "accept"});
+            let update = game.getUpdate();
+            assert.equal(update.round.answer, undefined);
+        });
     });
 
     describe('host presses continue', function(){
         it('state changes', function(){
             game.onInput({action : "continue"});
             let update = game.getUpdate();
-            // console.log(JSON.stringify(update, null, 2));
+            assert.equal(update.state, 6);
+        });
+        it('answer text not provided', function(){
+            let update = game.getUpdate();
+            assert.equal(update.round.answer, undefined);
+        });
+    });
+
+    describe('host accepts answer before timer expires', function(){
+        it('state changes', function(){
+            game.onInput({action : "accept"});
+            let update = game.getUpdate();
+            assert.equal(update.state, 9);
+        });
+        it('score for current player increases by 200', function(){
+            game.onInput({action : "accept"});
+            let update = game.getUpdate();
+            assert.equal(update.players[0].score, 800);
+        });
+        it('round state becomes reveal', function(){
+            game.onInput({action : "accept"});
+            let update = game.getUpdate();
+            assert.equal(update.round.state, GameModel.STATES.REVEAL);
+        });
+        it('answer text provided', function(){
+            game.onInput({action : "accept"});
+            let update = game.getUpdate();
+            assert.equal(update.round.answer, "A 1.2");
+        });
+    });
+
+    describe('host presses continue', function(){
+        it('state changes', function(){
+            game.onInput({action : "continue"});
+            let update = game.getUpdate();
+            assert.equal(update.state, 4);
+        });
+        it('loads correct (jeop) round', function(){
+            let update = game.getUpdate();
+            assert.equal(update.round.style, GameModel.STYLE.JEOPARDY);
+        });
+        it('jeopardy starts in board state', function(){
+            let update = game.getUpdate();
+            assert.equal(update.round.state, GameModel.STATES.BOARD);
+        });
+        it('one option spent', function(){
+            let update = game.getUpdate();
+            update.round.spent[0][1] === true;
+        });
+        it('active player order updates', function(){
+            let update = game.getUpdate();
+            assert.equal(update.players[0].name, "alex");
+            assert.equal(update.players[1].name, "pat");
+            assert.equal(update.players[2].name, "robin");
+        });
+        it('current player is \'active player\'', function(){
+            let update = game.getUpdate();
+            assert.equal(update.round.current_player, "alex");
+        });
+        it('player list doesn\'t contain current player', function(){
+            let update = game.getUpdate();
+            assert.equal(update.round.players.indexOf("alex"), -1);
+        });
+    });
+
+    describe('select previously selected question (first cat, $200)', function(){
+        it('state does not change', function(){
+            game.onInput({action : "select", data : {col : 0, row : 1}});
+            let update = game.getUpdate();
+            assert.equal(update.state, 4);
+        });
+        it('current player does not change', function(){
+            let update = game.getUpdate();
+            assert.equal(update.round.current_player, "alex");
+        });
+    });
+
+    describe('select question (first cat, $400)', function(){
+        it('state changes', function(){
+            game.onInput({action : "select", data : {col : 0, row : 3}});
+            let update = game.getUpdate();
+            assert.equal(update.state, 5);
+        });
+        it('loads correct (jeop) round', function(){
+            let update = game.getUpdate();
+            assert.equal(update.round.style, GameModel.STYLE.JEOPARDY);
+        });
+        it('jeopardy starts in question state', function(){
+            let update = game.getUpdate();
+            assert.equal(update.round.state, GameModel.STATES.QUESTION);
+        });
+        it('column set to 0', function(){
+            let update = game.getUpdate();
+            assert.equal(update.round.col, 0);
+        });
+        it('row set to 3', function(){
+            let update = game.getUpdate();
+            assert.equal(update.round.row, 3);
+        });
+        it('type is text', function(){
+            let update = game.getUpdate();
+            assert.equal(update.round.type, "text");
+        });
+        it('question is Q 1.4', function(){
+            let update = game.getUpdate();
+            assert.equal(update.round.question, "Q 1.4");
+        });
+        it('answer text not provided', function(){
+            game.onInput({action : "accept"});
+            let update = game.getUpdate();
+            assert.equal(update.round.answer, undefined);
+        });
+    });
+
+    describe('timer expires', function(){
+        it('state does not change', function(done){
+            game.addListener("test", msg =>{
+                if (msg.input === 'expire') {
+                    assert.equal(msg.state, 6);
+                    game.removeListener("test");
+                    done();
+                }
+            });
+
+            game.onInput({action : "continue"});
+            let update = game.getUpdate();
             assert.equal(update.state, 6);
         });
     });
 
-    // describe('accept before expire', function(){
-    //     it('state changes', function(){
-    //         game.onInput({action : "accept"});
-    //         let update = game.getUpdate();
-    //         console.log(update);
-    //         assert.equal(update.state, 9);
-    //     });
-    // });
+    describe('host rejects answer after timer expires', function(){
+        it('state changes', function(){
+            game.onInput({action : "reject"});
+            let update = game.getUpdate();
+            assert.equal(update.state, 7);
+        });
+        it('clear current player', function(){
+            let update = game.getUpdate();
+            assert.equal(update.round.current_player, '');
+        });
+    });
+
+    describe('player buzzes in', function(){
+        describe('player has already answered', function(){
+            it('no state change', function(){
+                game.onInput({action : "buzz", data:{name : "alex"}});
+                let update = game.getUpdate();
+                assert.equal(update.state, 7);
+            });
+        });
+        describe('player has not already answered', function(){
+            it('change state', function(){
+                game.onInput({action : "buzz", data:{name : "pat"}});
+                let update = game.getUpdate();
+                assert.equal(update.state, 8);
+            });
+            it('change current player', function(){
+                let update = game.getUpdate();
+                assert.equal(update.round.current_player, "pat");
+            });
+            it('player is not longer in unanswered list', function(){
+                let update = game.getUpdate();
+                assert.equal(update.round.players.indexOf("pat"), -1);
+            });
+        });
+    });
+    describe('answer rejected (not active player)', function(){
+        it('state changes', function(){
+            game.onInput({action : "reject"});
+            let update = game.getUpdate();
+            assert.equal(update.state, 7);
+        });
+        it('score decreases', function(){
+            let update = game.getUpdate();
+            let score = update.players.find(p=>p.name === 'pat').score;
+            assert.equal(score, -100);
+        });
+    });
+    describe('timer expires no buzz in', function(){
+        it('state changes', function(done){
+            game.addListener("test", msg =>{
+                if (msg.input === 'expire') {
+                    assert.equal(msg.state, 9);
+                    console.log(msg);
+                    game.removeListener("test");
+                    done();
+                }
+            });
+        });
+        it('round state set to reveal changes', function(){
+            let update = game.getUpdate();
+            assert.equal(update.round.state, 'reveal');
+        });
+    });
 });
