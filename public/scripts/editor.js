@@ -3558,7 +3558,7 @@ var EditorPane = /*#__PURE__*/function () {
       _this.updateView();
     });
     document.querySelector("#menu-home-screen").addEventListener("click", function () {
-      location.href = "home.html";
+      location.href = "host.html";
     });
     DOM.menuIncreaseValue.addEventListener("click", function () {
       _this.model.increaseValue();

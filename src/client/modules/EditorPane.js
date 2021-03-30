@@ -167,7 +167,7 @@ class EditorPane {
         });
 
         document.querySelector("#menu-home-screen").addEventListener("click", () => {
-            location.href = "home.html";
+            location.href = "host.html";
         });
 
         DOM.menuIncreaseValue.addEventListener("click", () => {

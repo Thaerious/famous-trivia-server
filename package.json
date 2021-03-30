@@ -4,12 +4,12 @@
   "description": "Creator and Luancher for Online Trivia",
   "main": "src/server/server.js",
   "scripts": {
-    "home-build-js": "browserify -t babelify src/client/home.js -o public/scripts/home.js -d",
-    "home-watch-js": "watchify -t babelify src/client/home.js -o public/scripts/home.js -dv",
+    "host-build-js": "browserify -t babelify src/client/host.js -o public/scripts/host.js -d",
+    "host-watch-js": "watchify -t babelify src/client/host.js -o public/scripts/host.js -dv",
     "editor-build-js": "browserify -t babelify src/client/editor.js -o public/scripts/editor.js -d",
     "editor-watch-js": "watchify -t babelify src/client/editor.js -o public/scripts/editor.js -dv",
-    "build-js": "npm run home-build-js && npm run editor-build-js",
-    "watch-js": "start npm run home-watch-js && start npm run editor-watch-js",
+    "build-js": "npm run host-build-js && npm run editor-build-js",
+    "watch-js": "start npm run host-watch-js && start npm run editor-watch-js",
     "build-css": "sass src/styles:public/styles/generated/,",
     "watch-css": "sass --watch src/styles:public/styles/generated/"
   },

@@ -16,7 +16,7 @@ app.use(UserAgent.express()); // use to determine what the connection is using (
 app.use("/launch", BodyParser.json());
 app.use("/launch", Launcher);
 
-app.use("/home.html", CatchDesignPage);
+app.use("/host.html", CatchDesignPage);
 app.use("/editor.html", CatchDesignPage);
 app.use(Express.static('public'));
 
