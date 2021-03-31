@@ -5,16 +5,18 @@ import cookieParser from "cookie-parser";
 import UserAgent from 'express-useragent';
 import CatchDesignPage from './catchDesignPage.js';
 import BodyParser from 'body-parser';
-import Launcher from './launcher.js';
+import launcher from './launcher.js';
+import GameManager from "./GameManager.js";
 
 const port = 8000;
 const app = Express();
 const server = http.createServer(app);
+const gameManager = new GameManager();
 
 app.use(helmet()); // automatic security settings
 app.use(UserAgent.express()); // use to determine what the connection is using (phone,browser etc)
 app.use("/launch", BodyParser.json());
-app.use("/launch", Launcher);
+app.use("/launch", launcher(gameManager));
 
 app.use("/host.html", CatchDesignPage);
 app.use("/editor.html", CatchDesignPage);

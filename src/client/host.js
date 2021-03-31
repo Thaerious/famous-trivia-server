@@ -24,17 +24,18 @@ async function onLaunch(event){
     let id = event.detail.id;
 
     let file = await fileOps.get(id);
-
-    console.log(file.body);
+    let model = JSON.parse(file.body);
+    let profile = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile();
+    model.host = profile.getId();
 
     var xhttp = new XMLHttpRequest();
     xhttp.addEventListener("load", (event)=>{
-        console.log(event)
-        console.log(JSON.parse(xhttp.responseText));
+        let response = JSON.parse(xhttp.responseText);
+        window.location = `launch_console.html?host=${response.host_hash}&cont=${response.contestant_hash}`;
     });
     xhttp.open("POST", "launch");
     xhttp.setRequestHeader("Content-type", "application/json");
-    xhttp.send(file.body);
+    xhttp.send(JSON.stringify(model));
 }
 
 function setupFileList(){
