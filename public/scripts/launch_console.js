@@ -7,12 +7,14 @@
 window.addEventListener("load", ()=>{
     parseURLParameters();
 
-    document.querySelector("#host").addEventListener("click", ()=>{
+    document.querySelector("#contestant_link").innerText = `${window.location.host}/contestant_portal.html?hash=${window.parameters.cont}`;
 
+    document.querySelector("#host").addEventListener("click", ()=>{
+        window.open(`host_portal.html?hash=${window.parameters.host}`, '_blank').focus();
     });
 
     document.querySelector("#contestant").addEventListener("click", ()=>{
-
+        copyLink();
     });
 
     document.querySelector("#terminate").addEventListener("click", ()=>{
@@ -33,16 +35,12 @@ function parseURLParameters() {
 }
 
 function copyLink() {
-    /* Get the text field */
-    var copyText = document.getElementById("myInput");
-
-    /* Select the text field */
-    copyText.select();
-    copyText.setSelectionRange(0, 99999); /* For mobile devices */
-
-    /* Copy the text inside the text field */
+    let range = document.createRange();
+    range.selectNode(document.getElementById("contestant_link"));
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+    window.range = range;
     document.execCommand("copy");
-
-    /* Alert the copied text */
-    alert("Copied the text: " + copyText.value);
+    document.querySelector("#message").classList.remove("flash");
+    setTimeout(()=>document.querySelector("#message").classList.add("flash"), 0);
 }

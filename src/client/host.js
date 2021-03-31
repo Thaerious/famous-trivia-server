@@ -87,5 +87,3 @@ async function populateFileList(){
     }
     fileList.busy = false;
 }
-
-window.populateFileList = populateFileList;
