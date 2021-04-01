@@ -8,23 +8,33 @@ class GameManager{
 
     constructor() {
         this.games = {};
+        this.hostHashes = {};
+        this.contestantHashes = {};
     }
 
-    newGame(model) {
-        if (this.games[model.host] !== undefined) return false;
-
-        let game = new Game(model);
-        this.games[model.host] = {
-            game: game,
-            contestant_hash: crypto.randomBytes(20).toString('hex'),
-            host_hash: crypto.randomBytes(20).toString('hex')
-        };
-
+    /**
+     * Create a new game if a game doesn't already exit.
+     * @param userId
+     * @param model
+     * @returns {boolean} true if a new game was created.
+     */
+    newGame(userId, model) {
+        if (this.games[userId] !== undefined) return false;
+        this.games[userId] = new Game(model);
+        this.hostHashes[userId] = crypto.randomBytes(20).toString('hex');
+        this.contestantHashes[userId] = crypto.randomBytes(20).toString('hex');
         return true;
     }
 
-    getInfo(hostID){
-        return this.games[hostID];
+    getGame(userId){
+        return this.games[userId];
+    }
+
+    getHashes(userId){
+        return {
+            host_hash : this.hostHashes[userId],
+            contestant_hash : this.contestantHashes[userId]
+        }
     }
 }
 

@@ -25,18 +25,44 @@ async function onLaunch(event){
 
     let file = await fileOps.get(id);
     let model = JSON.parse(file.body);
-    let profile = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile();
-    model.host = profile.getId();
+    let token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
 
     var xhttp = new XMLHttpRequest();
     xhttp.addEventListener("load", (event)=>{
         let response = JSON.parse(xhttp.responseText);
-        window.location = `launch_console.html?host=${response.host_hash}&cont=${response.contestant_hash}`;
+
+        if (response.result === "success") {
+            window.location = `launch_console.html?host=${response.host_hash}&cont=${response.contestant_hash}`;
+        } else {
+            window.alert("Error launching game");
+            console.log(response);
+        }
     });
+
     xhttp.open("POST", "launch");
     xhttp.setRequestHeader("Content-type", "application/json");
-    xhttp.send(JSON.stringify(model));
+    xhttp.send(JSON.stringify({
+        model : model,
+        token : token
+    }));
 }
+
+async function launchVerify(){
+    let token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.open('POST', 'verify');
+    xhttp.setRequestHeader('Content-Type', 'application/json');
+    xhttp.onload = function() {
+        console.log('response text');
+        console.log(xhttp.responseText);
+    };
+
+    let json = JSON.stringify({token:token});
+    xhttp.send(json);
+}
+
+window.verify = launchVerify;
 
 function setupFileList(){
     let fileList = document.querySelector("file-list");

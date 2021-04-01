@@ -1,28 +1,41 @@
-import crypto from 'crypto';
-
-function link(req, res, next) {
-    let gameModel = req.body;
-    console.log(req);
-    console.log(gameModel);
-
-    let connectHashes = {
-        contestant : crypto.randomBytes(20).toString('hex'),
-        host : crypto.randomBytes(20).toString('hex')
-    };
-
-    res.json(JSON.stringify(connectHashes, null, 2));
-    res.end();
-}
+import {OAuth2Client} from "google-auth-library";
 
 function launcher(gameManager) {
-    return (req, res, next) => {
-        let gameModel = req.body;
-        gameManager.newGame(gameModel)
-        let info = gameManager.getInfo(gameModel.host);
-        delete info.game;
-        res.json(info);
-        res.end();
+    return async (req, res, next) => {
+        let model = req.body.model;
+        let token = req.body.token;
+
+        try {
+            let userId = await verify(token);
+            gameManager.newGame(userId, model)
+            let hashes = gameManager.getHashes(userId);
+            hashes.result = "success";
+            res.json(hashes);
+            res.end();
+        } catch (err) {
+            res.json({
+                result : "error",
+                text : err.toString()
+            });
+        }
     }
+}
+
+async function verify(token){
+    const client = new OAuth2Client(token);
+    let s = 0;
+    for (let i = 0; i < token.length; i++){
+        s = ((s * 10) + token.charCodeAt(i)) % 10000000;
+    }
+
+    const ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: "158823134681-98bgkangoltk636ukf8pofeis7pa7jbk.apps.googleusercontent.com"
+    });
+
+    const payload = ticket.getPayload();
+    const userId = payload['sub'];
+    return userId;
 }
 
 export default launcher;
