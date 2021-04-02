@@ -28,14 +28,9 @@ describe('class GameManager', function () {
         });
     });
 
-    describe(`#addGame()`, function () {
-        it("returns true is game added", async function () {
-            let r = await gameManager.addGame({userId : "test-user"}, game);
-            assert.equal(r, true);
-        });
-        it("returns false is game already exists", async function () {
-            let r = await gameManager.addGame({userId : "test-user"}, game);
-            assert.equal(r, false);
+    describe(`#setGame()`, function () {
+        it("doesn't throw error", async function () {
+            await gameManager.setGame({userId : "test-user"}, game);
         });
     });
 
@@ -82,4 +77,12 @@ describe('class GameManager', function () {
             assert.equal(r, undefined);
         });
     });
+
+    after(async function(){
+        setTimeout(async ()=> {
+            await gameManager.disconnect();
+            await fs.unlinkSync('./assets/test.db');
+        }, 250);
+    });
 });
+
