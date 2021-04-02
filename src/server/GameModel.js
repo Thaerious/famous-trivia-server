@@ -1,11 +1,10 @@
 import fs from 'fs';
-import constants from './constants.js';
+import getPrototypeOf from "@babel/runtime/helpers/esm/getPrototypeOf";
 
 class JeopardyModel{
-    constructor(game, model){
-        this.game = game;
+    constructor(players, model){
         this.model = model;
-        this.resetCurrentPlayers()
+        this.resetCurrentPlayers(players);
 
         /** matrix of which questions have already been answered **/
         this.spent = [];
@@ -24,9 +23,9 @@ class JeopardyModel{
         };
     }
 
-    resetCurrentPlayers(){
+    resetCurrentPlayers(players){
         this._players = [];
-        for (let p of this.game.players) this._players.push(p.name);
+        for (let p of players) this._players.push(p.name);
         this.setCurrent(this._players[0]);
     }
 
@@ -307,6 +306,27 @@ class GameModel{
         this._currentRound = null;
     }
 
+    static fromJSON(json){
+        if (typeof json === "string") {
+            json = JSON.parse(json);
+        }
+
+        let gameModel = new GameModel()
+        Object.assign(gameModel, json);
+
+        if (gameModel._currentRound) {
+
+            let type = gameModel._currentRound.model.type;
+            if (type === "multiple_choice") {
+                Object.setPrototypeOf(gameModel._currentRound, MultipleChoiceModel.prototype);
+            } else if (type === "choice") {
+                Object.setPrototypeOf(gameModel._currentRound, JeopardyModel.prototype);
+            }
+        }
+
+        return gameModel;
+    }
+
     getUpdate(){
         let result = {
             players : this._players
@@ -358,7 +378,7 @@ class GameModel{
             this._currentRound = new MultipleChoiceModel(roundModel);
         }
         else if (roundModel.type ==="choice"){
-            this._currentRound = new JeopardyModel(this, roundModel);
+            this._currentRound = new JeopardyModel(this.players, roundModel);
         }
 
         return this._currentRound;

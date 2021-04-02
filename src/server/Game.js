@@ -58,10 +58,33 @@ Timer.TIMES = {
 
 class Game {
     constructor(model) {
-        this.model = model;
         this.timer = new Timer(this);
-        this.state = 0;
         this.listeners = {};
+        if (model) this.model = model;
+        this.state = 0;
+    }
+
+    /**
+     * Create JSON representation for saving.
+     * Use fromJSON to restore the objects state.
+     */
+    toJSON(){
+        let sanitized = Object.assign({}, this);
+        delete sanitized.timer;
+        delete sanitized.listeners;
+        return sanitized;
+    }
+
+    static fromJSON(json){
+        if (typeof json === "string") {
+            json = JSON.parse(json);
+        }
+
+        let game = new Game();
+        Object.assign(game, json);
+        game.model = GameModel.fromJSON(game.model);
+
+        return game;
     }
 
     /**
@@ -103,29 +126,29 @@ class Game {
     }
 
     startRound() {
-        this.round = this.model.nextRound();
-        if (this.round.stateData.style === GameModel.STYLE.MULTIPLE_CHOICE) {
-            this.round.setQuestionState();
+        this.model.nextRound();
+        if (this.model.getRound().stateData.style === GameModel.STYLE.MULTIPLE_CHOICE) {
+            this.model.getRound().setQuestionState();
             this.playersData = this.createPlayerData();
             this.state = 1;
-        } else if (this.round.stateData.style === GameModel.STYLE.JEOPARDY) {
-            this.round.setBoardState();
+        } else if (this.model.getRound().stateData.style === GameModel.STYLE.JEOPARDY) {
+            this.model.getRound().setBoardState();
             this.state = 4;
         }
     }
 
     isQuestionDone() {
-        if (this.round.hasUnspent()) {
+        if (this.model.getRound().hasUnspent()) {
             this.timer.start(Timer.TIMES.BUZZ);
             this.state = 7;
         } else {
-            this.round.setRevealState();
+            this.model.getRound().setRevealState();
             this.state = 9;
         }
     }
 
     updateMCScores(){
-        let values = this.round.getValues();
+        let values = this.model.getRound().getValues();
         for (let name in this.playersData){
             for (let index = 0; index < this.playersData[name].length; index++){
                 if (values[index]){
@@ -174,9 +197,9 @@ class Game {
                 break;
             case "continue":
                 this.state = 2;
-                this.round.setAnswerState();
+                this.model.getRound().setAnswerState();
                 this.timer.start(Timer.TIMES.MULTIPLE_CHOICE);
-                this.roundData = {}
+                this.roundData = {};
                 break;
         }
     }
@@ -188,7 +211,7 @@ class Game {
                 break;
             case "expire":
                 this.state = 3;
-                this.round.setRevealState();
+                this.model.getRound().setRevealState();
                 this.updateMCScores();
                 break;
             case "update":
@@ -221,8 +244,8 @@ class Game {
                 this.model.addPlayer(input.data.name);
                 break;
             case "select":
-                if (!this.round.isSpent(input.data.col, input.data.row)) {
-                    this.round.setQuestionState(input.data.col, input.data.row);
+                if (!this.model.getRound().isSpent(input.data.col, input.data.row)) {
+                    this.model.getRound().setQuestionState(input.data.col, input.data.row);
                     this.state = 5;
                 }
                 break;
@@ -244,14 +267,14 @@ class Game {
                 this.model.addPlayer(input.data.name);
                 break;
             case "reject":
-                this.round.clearCurrent();
+                this.model.getRound().clearCurrent();
                 this.isQuestionDone();
                 break;
             case "expire":
                 break;
             case "accept":
-                this.model.getPlayer(this.round.getCurrent()).score  += this.round.getValue();
-                this.round.setRevealState();
+                this.model.getPlayer(this.model.getRound().getCurrent()).score  += this.model.getRound().getValue();
+                this.model.getRound().setRevealState();
                 this.state = 9;
                 break;
 
@@ -264,14 +287,14 @@ class Game {
                 this.model.addPlayer(input.data.name);
                 break;
             case "buzz":
-                if (this.round.hasPlayer(input.data.name)) {
-                    this.round.setCurrent(input.data.name);
+                if (this.model.getRound().hasPlayer(input.data.name)) {
+                    this.model.getRound().setCurrent(input.data.name);
                     this.timer.start(Timer.TIMES.ANSWER);
                     this.state = 8;
                 }
                 break;
             case "expire":
-                this.round.setRevealState();
+                this.model.getRound().setRevealState();
                 this.state = 9;
                 break;
         }
@@ -283,15 +306,15 @@ class Game {
                 this.model.addPlayer(input.data.name);
                 break;
             case "reject":
-                let player = this.model.getPlayer(this.round.getCurrent());
-                player.score -= (this.round.getValue() / 2);
+                let player = this.model.getPlayer(this.model.getRound().getCurrent());
+                player.score -= (this.model.getRound().getValue() / 2);
                 this.isQuestionDone();
                 break;
             case "expire":
                 break;
             case "accept":
-                this.round.getCurrent().score += this.round.getValue();
-                this.round.setRevealState();
+                this.model.getRound().getCurrent().score += this.model.getRound().getValue();
+                this.model.getRound().setRevealState();
                 this.state = 9;
                 break;
         }
@@ -303,10 +326,10 @@ class Game {
                 this.model.addPlayer(input.data.name);
                 break;
             case "continue":
-                if (this.round.hasUnspent()){
+                if (this.model.getRound().hasUnspent()){
                     this.model.nextActivePlayer();
-                    this.round.setBoardState();
-                    this.round.resetCurrentPlayers();
+                    this.model.getRound().setBoardState();
+                    this.model.getRound().resetCurrentPlayers(this.model.players);
                     this.state = 4;
                 } else {
                     this.startRound();
@@ -315,5 +338,7 @@ class Game {
         }
     }
 }
+
+
 
 export {Game, Timer};

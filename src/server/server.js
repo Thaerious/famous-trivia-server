@@ -6,11 +6,13 @@ import CatchDesignPage from './catchDesignPage.js';
 import BodyParser from 'body-parser';
 import launcher from './launcher.js';
 import GameManager from "./GameManager.js";
+import CLI from './CLI.js';
 
 const port = 8000;
 const app = Express();
 const server = http.createServer(app);
 const gameManager = new GameManager();
+new CLI(gameManager);
 
 app.use(helmet()); // automatic security settings
 app.use(UserAgent.express()); // use to determine what the connection is using (phone,browser etc)

@@ -6,9 +6,9 @@ function launcher(gameManager) {
         let token = req.body.token;
 
         try {
-            let userId = await verify(token);
-            gameManager.newGame(userId, model)
-            let hashes = gameManager.getHashes(userId);
+            let user = await verify(token);
+            gameManager.newGame(user, model)
+            let hashes = gameManager.getHashes(user.userId);
             hashes.result = "success";
             res.json(hashes);
             res.end();
@@ -34,8 +34,12 @@ async function verify(token){
     });
 
     const payload = ticket.getPayload();
+    console.log(payload);
     const userId = payload['sub'];
-    return userId;
+    return {
+        userId : payload['sub'],
+        userName : payload['name']
+    };
 }
 
 export default launcher;
