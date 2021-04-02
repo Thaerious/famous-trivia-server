@@ -15,10 +15,9 @@ class ParseError extends Error{
 }
 
 class Connection{
-    constructor(ws, req, game, sessionManager){
+    constructor(ws, req, game){
         this.game = game;
         this.ws = ws;
-        this.sessionManager = sessionManager;
 
         ws.on('message', (message) => {
             try {
@@ -50,10 +49,7 @@ class Connection{
      * @param name
      */
     join(name){
-        let r = this.game.connect(name, (message) => this.ws.send(message));
-        this.role = r.role;
-        this.index = r.index;
-        this.name = name;
+        let r = this.game.addListener(name, (message) => this.ws.send(message));
     }
 
     parseMessage(json){
@@ -62,28 +58,26 @@ class Connection{
 
         switch (msg.action){
             case "request_model":
-                this.game.notify(this.name);
+                let update = this.getUpdate();
+                update.action = "update_model";
+                update.input = input.action;
+                this.ws.send(update);
             break;
             case "buzz":
-                this.game.onAction(msg);
+                this.game.onInput(msg);
             break;
             case "logout":
                 if (this.index >= 0) this.game.disablePlayer(this.index);
-                this.sessionManager.deleteName(this.name);
                 this.ws.close();
             break;
             case "load_questions":
                 if (this.role !== "host") throw new ParseError("Non-Host attempting host op");
                 this.game.onCommand(msg);
             break;
-            case "select_question":
-            case "accept_answer":
-            case "reject_answer":
-            case "start_timer":
-            case "time_out":
+            case "select":
+            case "accept":
+            case "reject":
             case "continue":
-            case "back":
-                if (this.role !== "host") throw new ParseError("Non-Host attempting host op");
                 this.game.onAction(msg);
             break;
          }
