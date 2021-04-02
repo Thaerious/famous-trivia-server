@@ -410,6 +410,21 @@ class GameModel{
         return player;
     }
 
+    disablePlayer(name){
+        if (!this.hasPlayer(name)) return;
+        this.getPlayer(name).enabled = false;
+    }
+
+    enablePlayer(name){
+        if (!this.hasPlayer(name)) return;
+        this.getPlayer(name).enabled = true;
+    }
+
+    isEnabled(name){
+        if (!this.hasPlayer(name)) return;
+        return this.getPlayer(name).enabled;
+    }
+
     get players(){
         return [...this._players];
     }
@@ -475,8 +490,11 @@ class GameModel{
      */
     nextActivePlayer(){
         if (this._players.length === 0) return null;
-        let player = this._players.shift();
-        this._players.push(player);
+
+        do{
+            this._players.push(this._players.shift());
+        } while(this._players[0].enabled === false);
+
         return this._players[0];
     }
 }

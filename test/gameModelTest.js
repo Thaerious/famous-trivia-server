@@ -14,7 +14,7 @@ describe('GameModel', function () {
         });
     });
 
-    describe('players', function(){
+    describe('#players', function(){
         const gameModel = new GameModel(data);
         gameModel.addPlayer('a');
         gameModel.addPlayer('b');
@@ -24,7 +24,7 @@ describe('GameModel', function () {
             assert.equal(gameModel.players.length, 4);
         });
     });
-    describe('round', function () {
+    describe('#round', function () {
         const gameModel = new GameModel(data);
         it('starts on round -1 (no round)', function () {
             assert.equal(gameModel.round, -1);
@@ -42,7 +42,7 @@ describe('GameModel', function () {
             assert.equal(gameModel.round, 1);
         });
     });
-    describe('getRound', function () {
+    describe('#getRound', function () {
         const gameModel = new GameModel(data);
         it('get the current round', function () {
             gameModel.setRound(0);
@@ -55,7 +55,7 @@ describe('GameModel', function () {
             assert.equal(gameModel.setRound(1).constructor.name, "JeopardyModel");
         });
     });
-    describe('#nextRound()', function () {
+    describe('#nextRound', function () {
         const gameModel = new GameModel(data);
         it('first call gets first round', function () {
             assert.equal(gameModel.nextRound().constructor.name, "MultipleChoiceModel");
@@ -68,7 +68,7 @@ describe('GameModel', function () {
             assert.equal(gameModel.nextRound().constructor.name, "JeopardyModel");
         });
     });
-    describe('addPlayer', function () {
+    describe('#addPlayer', function () {
         const gameModel = new GameModel(data);
         let player1 = null;
         let player2 = null;
@@ -97,7 +97,7 @@ describe('GameModel', function () {
             assert.equal(player1.enabled, true);
         });
     });
-    describe('getPlayer', function () {
+    describe('#getPlayer', function () {
         const gameModel = new GameModel(data);
         let player1 = gameModel.addPlayer("a");
         let player2 = gameModel.addPlayer("b");
@@ -108,7 +108,7 @@ describe('GameModel', function () {
             assert.equal(gameModel.getPlayer("c"), null);
         });
     });
-    describe('hasPlayer', function () {
+    describe('#hasPlayer', function () {
         const gameModel = new GameModel(data);
         let player1 = gameModel.addPlayer("a");
         let player2 = gameModel.addPlayer("b");
@@ -119,7 +119,7 @@ describe('GameModel', function () {
             assert.equal(gameModel.hasPlayer("c"), false);
         });
     });
-    describe('setActivePlayer', function () {
+    describe('#setActivePlayer', function () {
         const gameModel = new GameModel(data);
         let player1 = gameModel.addPlayer("a");
         let player2 = gameModel.addPlayer("b");
@@ -142,7 +142,7 @@ describe('GameModel', function () {
             assert.equal(gameModel.activePlayer, player2);
         });
     });
-    describe('nextActivePlayer', function () {
+    describe('#nextActivePlayer', function () {
         const gameModel = new GameModel(data);
         let player1 = gameModel.addPlayer("a");
         let player2 = gameModel.addPlayer("b");
@@ -154,11 +154,22 @@ describe('GameModel', function () {
             assert.equal(gameModel.nextActivePlayer(), player2);
         });
         it('active player field changes', function () {
-            gameModel.nextActivePlayer()
+            gameModel.nextActivePlayer();
             assert.equal(gameModel.activePlayer, player3);
         });
+        it('disabled players do not become active', function () {
+            gameModel.disablePlayer(player1.name);
+            gameModel.nextActivePlayer();
+            assert.equal(gameModel.activePlayer, player2);
+        });
+        it('enabled players become active', function () {
+            gameModel.enablePlayer(player1.name);
+            gameModel.nextActivePlayer();
+            gameModel.nextActivePlayer();
+            assert.equal(gameModel.activePlayer, player1);
+        });
     });
-    describe('removePlayer', function () {
+    describe('#removePlayer', function () {
         const gameModel = new GameModel(data);
         let player1 = gameModel.addPlayer("a");
         let player2 = gameModel.addPlayer("b");
@@ -171,6 +182,23 @@ describe('GameModel', function () {
         });
         it('active player field changes', function () {
             assert.equal(gameModel.activePlayer, player2);
+        });
+    });
+    describe('#enablePlayer #disablePlayer #isEnabled', function () {
+        const gameModel = new GameModel(data);
+        let player1 = gameModel.addPlayer("a");
+        let player2 = gameModel.addPlayer("b");
+        let player3 = gameModel.addPlayer("c");
+        it('disabled => isEnabled : false', function () {
+            gameModel.disablePlayer(player3.name);
+            assert.equal(gameModel.isEnabled(player3.name), false);
+        });
+        it('enabled => isEnabled : true', function () {
+            gameModel.enablePlayer(player3.name);
+            assert.equal(gameModel.isEnabled(player3.name), true);
+        });
+        it('players are enabled by default', function () {
+            assert.equal(gameModel.isEnabled(player2.name), true);
         });
     });
 });

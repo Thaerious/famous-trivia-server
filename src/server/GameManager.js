@@ -30,12 +30,14 @@ CREATE TABLE hashes         \
 
 class GameManager {
     constructor() {
-        this.games = {};
-        this.users = {};
-        this.hostHashes = {};
-        this.contestantHashes = {};
+        this.liveGames= {};
     }
 
+    /**
+     * Open the db.
+     * @param path
+     * @returns {Promise<unknown>}
+     */
     async connect(path) {
         return new Promise((resolve, reject) => {
             if (!fs.existsSync(path)) {
@@ -57,6 +59,10 @@ class GameManager {
         });
     }
 
+    /**
+     * Close the db
+     * @returns {Promise<unknown>}
+     */
     async disconnect() {
         return new Promise((resolve, reject) => {
             this.db.close((err) => {
@@ -66,6 +72,10 @@ class GameManager {
         });
     }
 
+    /**
+     * Remove all entries from the db.
+     * @returns {Promise<unknown>}
+     */
     clearAll() {
         return new Promise((resolve, reject) => {
             this.db.run("DELETE FROM games", () => {
@@ -96,6 +106,10 @@ class GameManager {
         });
     }
 
+    /**
+     * List all the users with an game in the db.
+     * @returns {Promise<unknown>}
+     */
     listGames() {
         return new Promise((resolve, reject) => {
             this.db.all(`SELECT userId
@@ -110,6 +124,11 @@ class GameManager {
         });
     }
 
+    /**
+     * True if the game has been saved.
+     * @param user
+     * @returns {Promise<unknown>}
+     */
     hasGame(user) {
         return new Promise((resolve, reject) => {
             this.db.get(`SELECT userId FROM games where userId = '${user.userId}'`, (err, row) => {
@@ -119,24 +138,43 @@ class GameManager {
         });
     }
 
+    /**
+     * Retrieve the saved JSON of a game.
+     * @param user
+     * @returns {Promise<unknown>}
+     */
     getGame(user) {
         return new Promise((resolve, reject) => {
             this.db.get(`SELECT game FROM games where userId = '${user.userId}'`, (err, row) => {
                 if (err) reject(err);
-                else resolve(row.game);
+                else resolve(row ? row.game : undefined);
             });
         });
     }
 
+    /**
+     * Remove a game from the db.
+     * @param user
+     * @returns {Promise<unknown>}
+     */
     deleteGame(user) {
-        return new Promise((resolve, reject) => {
-            this.db.exec(`DELETE from games where userId = '${user.userId}';`, (err, row) => {
-                if (err) reject(err);
-                else resolve();
-            });
+        let cmd = [
+            `DELETE from games where userId = '${user.userId}'`,
+            `DELETE from hashes where userId = '${user.userId}'`
+        ]
+
+        return new Promise(async (resolve, reject) => {
+            this.db
+                .exec(cmd[0])
+                .exec(cmd[1], () => resolve(true));
         });
     }
 
+    /**
+     * Retrieve the hashes for a game.
+     * @param user
+     * @returns {Promise<unknown>}
+     */
     getHashes(user) {
         return new Promise((resolve, reject) => {
             this.db.get(`SELECT host, contestant  FROM hashes where userId = '${user.userId}'`, (err, row) => {
@@ -144,6 +182,39 @@ class GameManager {
                 else resolve(row);
             });
         });
+    }
+
+    /**
+     * Retrieve the user id for a given hash.
+     * Hash can be host or contestant.
+     * @param user
+     * @returns {Promise<unknown>}
+     */
+    getUser(hash) {
+        return new Promise((resolve, reject) => {
+            this.db.get(`SELECT userId  FROM hashes where host = '${hash}' OR contestant = '${hash}'`, (err, row) => {
+                if (err) reject(err);
+                else resolve(row ? row.userId : undefined);
+            });
+        });
+    }
+
+    /**
+     * Return the game object.
+     * This will retrieve it from the database if this is the first time getLive is called
+     * for the given game.  The has can be either the user or contestant hash.
+     * @param hash
+     */
+    async getLive(hash){
+        let userId = await this.getUser(hash);
+
+        if (!this.liveGames[userId]){
+            let json = await this.getGame({userId: userId});
+            if (!json) return undefined;
+            this.liveGames[userId] = Game.fromJSON(json);
+        }
+
+        return this.liveGames[userId];
     }
 }
 
