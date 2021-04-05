@@ -23,7 +23,7 @@ window.main = async function(){
 function onLoad(event) {
     console.log("Window onload");
     let id = event.detail.id;
-    window.location = `editor.html?action=load&fileId=${id}`;
+    window.location = `editor.ejs?action=load&fileId=${id}`;
 }
 
 async function checkForGame() {
@@ -109,7 +109,7 @@ function addMenuListeners() {
         let model = new Model().init("Game Name");
         let fp = await fileOps.create();
         await fileOps.setBody(fp, JSON.stringify(model.get(), null, 2));
-        location.href = location.origin + "/editor.html?action=load&fileId=" + fp;
+        location.href = location.origin + "/editor.ejs?action=load&fileId=" + fp;
     });
 
     document.querySelector("#load").addEventListener("click", async (e) => {

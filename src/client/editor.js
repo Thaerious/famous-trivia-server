@@ -21,10 +21,6 @@ window.onload = async () => {
 
 async function setup(){
     let start = new Date();
-    await Nidget.NidgetElement.loadTemplateSnippet("snippets/check-box.html", "check-box");
-    await Nidget.NidgetElement.loadTemplateSnippet("snippets/multiple-choice-pane.html", "multiple-choice-pane");
-    await Nidget.NidgetElement.loadTemplateSnippet("snippets/game-board.html", "game-board");
-    await Nidget.NidgetElement.loadTemplateSnippet("snippets/question-pane.html", "question-pane");
 
     parseURLParameters();
     new Menu().init("#menu");

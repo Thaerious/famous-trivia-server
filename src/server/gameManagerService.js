@@ -33,7 +33,7 @@ async function parseMessage(gameManager, message, res, user){
     switch(message.action){
         case "has-game":
         case "launch":
-            if (gameManager.hasGame(user)){
+            if (await gameManager.hasGame(user)){
                 let hashes = await gameManager.getHashes(user);
                 hashes['has-game'] = "true";
                 res.json(hashes);

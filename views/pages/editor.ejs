@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head'); %>
+    <%- include('../partials/google'); %>
+    <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+</head>
+<body>
+
+<%- include('../partials/question-pane'); %>
+<%- include('../partials/game-board'); %>
+<%- include('../partials/multiple-choice-pane'); %>
+
+<a id="download-anchor" download="download.json" type="text/json"></a>
+
+<div class="top-bar" id="top-bar">
+    <div class="game-name" id="game-name" contenteditable="true">Game Name</div>
+
+    <div class="menu" id="menu">
+        <img class="menu-icon" id="menu-icon" src="assets/images/menu.png"/>
+        <div class="menu-area hidden" id="outer">
+            <div class="sub-menu">
+                <div class="menu-label">Add Round</div>
+                <div class="menu-area hidden" id="inner">
+                    <nidget-element class="menu-item" data-autoclose="true" id="menu-add-category">Category
+                    </nidget-element>
+                    <nidget-element class="menu-item" data-autoclose="true" id="menu-add-multiple-choice">Multiple
+                        Choice
+                    </nidget-element>
+                </div>
+                <div class="sub-menu-indicator">&#5125;</div>
+            </div>
+            <nidget-element class="menu-item" id="menu-remove-round">Remove Round</nidget-element>
+            <nidget-element class="menu-item" id="menu-home-screen">Home Screen</nidget-element>
+            <nidget-element class="menu-item" id="menu-value-plus">Increase Value</nidget-element>
+            <nidget-element class="menu-item" id="menu-value-minus">Decrease Value</nidget-element>
+            <nidget-element class="menu-item" id="menu-download">Download</nidget-element>
+        </div>
+    </div>
+</div>
+
+<div class="round-number" id="round-number">
+    <img class="triangle-indicator" id="triangle-right" src="assets/images/right_triangle.png"/>
+    <nidget-text class="text">Round 1</nidget-text>
+    <img class="triangle-indicator" id="triangle-left" src="assets/images/left_triangle.png"/>
+</div>
+
+<question-pane id="question-pane" class="hidden" template-id="question-pane-template"></question-pane>
+<game-board id="game-board" class="hidden" template-id="game-board-template"></game-board>
+<multiple-choice-pane id="multiple-choice-pane" class="hidden" template-id="multiple-choice-pane-template"></multiple-choice-pane>
+
+</body>
+</html>
