@@ -29,8 +29,26 @@ CREATE TABLE hashes         \
 )';
 
 class GameManager {
-    constructor() {
+    constructor(path) {
+        this.path = path;
         this.liveGames= {};
+    }
+
+    async setup(){
+        return new Promise((resolve, reject) => {
+            if (!fs.existsSync(this.path)) {
+                this.db = new sqlite3.Database(this.path, async (err) => {
+                    if (err) reject(new Error(err));
+                    else {
+                        this.db.run(TABLE1);
+                        this.db.run(TABLE2);
+                        this.db.run(TABLE3);
+                        await this.disconnect();
+                        resolve();
+                    }
+                });
+            }
+        });
     }
 
     /**
@@ -39,22 +57,11 @@ class GameManager {
      * @returns {Promise<unknown>}
      */
     async connect(path) {
+        path = path ?? this.path;
         return new Promise((resolve, reject) => {
-            if (!fs.existsSync(path)) {
-                this.db = new sqlite3.Database(path, (err) => {
-                    if (err) reject(new Error(err));
-                    else {
-                        this.db.run(TABLE1);
-                        this.db.run(TABLE2);
-                        this.db.run(TABLE3);
-                        resolve();
-                    }
-                });
-            }
-
             this.db = new sqlite3.Database(path, (err) => {
                 if (err) reject(new Error(err));
-                else resolve();
+                else resolve(this);
             });
         });
     }
@@ -77,7 +84,7 @@ class GameManager {
      * @returns {Promise<unknown>}
      */
     clearAll() {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             this.db.run("DELETE FROM games", () => {
                 this.db.run("DELETE FROM hashes", () => resolve());
             });
@@ -112,8 +119,7 @@ class GameManager {
      */
     listGames() {
         return new Promise((resolve, reject) => {
-            this.db.all(`SELECT userId
-                         FROM games`, (err, row) => {
+            this.db.all(`SELECT userId FROM games`, (err, row) => {
                 if (err) reject(err);
                 else {
                     let result = [];
@@ -161,7 +167,7 @@ class GameManager {
         let cmd = [
             `DELETE from games where userId = '${user.userId}'`,
             `DELETE from hashes where userId = '${user.userId}'`
-        ]
+        ];
 
         return new Promise(async (resolve, reject) => {
             this.db

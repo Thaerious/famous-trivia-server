@@ -12,12 +12,14 @@ function onSuccess(googleUser) {
         googleUser.grant(options).then(
             function (success) {
                 enableButtons();
+                window.main();
             },
             function (fail) {
                 alert(JSON.stringify({message: "fail", value: fail}));
             });
     } else {
         enableButtons();
+        window.main();
     }
 }
 

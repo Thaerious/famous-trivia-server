@@ -1,0 +1,21 @@
+<!doctype html>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>GameModel</title>
+        <link rel="stylesheet" href="../styles/contestant_join.css">
+        <script type="module" src="../scripts/contestant_join.js"></script>
+    </head>
+
+    <body>
+        <form name="login-form" id="login-form" class="form" action="/login-action" method="post">
+            <div class="label">Enter Name</div>
+            <input id="name" class="name" name="name" type="text">
+            <input id="login-button" class="button"  type="submit">
+        </form>
+        <div id="message-box" class="form hidden">
+            <div id="message-text" class="label"></div>
+            <div id="close-button" class="button">Close</div>
+        </div>
+    </body>
+</html>

@@ -5,7 +5,6 @@ class CLI {
     constructor(game, gameManager) {
         this.game = game;
         this.gameManager = gameManager;
-        console.log(gameManager);
 
         let rl = readline.createInterface(process.stdin, process.stdout);
         rl.setPrompt('SERVER> ');

@@ -1,4 +1,4 @@
-function catchDesignPage(req, res, next) {
+function cors(req, res, next) {
     let csp = extractCSP(res);
     csp["default-src"] = "'self' *.google.com *.googleapis.com 'unsafe-inline'";
     csp["style-src"] = "'self' *.google.com 'unsafe-inline'";
@@ -40,4 +40,4 @@ function concatCSP(res, csp){
     return policyString;
 }
 
-export default catchDesignPage;
+export default cors;

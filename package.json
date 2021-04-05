@@ -8,6 +8,7 @@
     "host-watch-js": "watchify -t babelify src/client/host.js -o public/scripts/host.js -dv",
     "editor-build-js": "browserify -t babelify src/client/editor.js -o public/scripts/editor.js -d",
     "editor-watch-js": "watchify -t babelify src/client/editor.js -o public/scripts/editor.js -dv",
+    "launch-console-watch-js": "watchify -t babelify src/client/launch_console.js -o public/scripts/launch_console.js -dv",
     "build-js": "npm run host-build-js && npm run editor-build-js",
     "watch-js": "start npm run host-watch-js && start npm run editor-watch-js",
     "build-css": "sass src/styles:public/styles/generated/,",
@@ -29,12 +30,15 @@
     "@thaerious/nidget": "file:..\\..\\nidget",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
+    "ejs": "^3.1.6",
     "express": "^4.17.1",
     "express-useragent": "^1.0.15",
     "google-auth-library": "^7.0.3",
     "helmet": "^4.4.1",
     "http": "^0.0.1-security",
-    "sqlite3": "^5.0.2"
+    "path": "^0.12.7",
+    "sqlite3": "^5.0.2",
+    "ws": "^7.4.4"
   },
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.13.10",
