@@ -4,8 +4,18 @@ import fs from 'fs';
 
 const sessionCookieName = "trivia-session";
 const TABLE1 = 'CREATE TABLE sessions(session varchar(64) primary key, expires int)';
-const TABLE2 = 'CREATE TABLE parameters(session varchar(64) primary key, name varchar(64), value varchar(256))';
+const TABLE2 = 'CREATE TABLE parameters(session varchar(64), name varchar(64), value varchar(256))';
 
+/**
+ * The Session Manager will add a cookie to all pages that use it.
+ * This cookie will be recoded in the sessions db.
+ * A "SessionInstance" will be attached to the request on "req.session";
+ * this can be used to add and remove values from the session db associated with this
+ * session.
+ *
+ * Having a session variable does not automatically mean the user is verified.
+ * Other endpoints will take care of that.
+ */
 class SessionManager {
     constructor(path) {
         this.path = path;
@@ -47,6 +57,20 @@ class SessionManager {
         });
     }
 
+    async get(cmd){
+        return new Promise((resolve, reject) => {
+            this.db.exec(cmd, (err, row) => {
+                if (err) {
+                    console.log(cmd);
+                    reject(new Error(err));
+                }
+                else{
+                    resolve(row);
+                }
+            });
+        });
+    }
+
     /**
      * Adds session cookies to browsers that don't have one.
      * Attaches the SessionInstance to the request.
@@ -67,7 +91,7 @@ class SessionManager {
             }
 
             await this.saveHash(sessionCookieValue, expires);
-            if (!req.session) req.session = new SessionInstance(this.db, sessionCookieValue);
+            if (!req.session) req.session = new SessionInstance(this, sessionCookieValue);
 
             next();
         }
@@ -85,21 +109,29 @@ class SessionManager {
 
 class SessionInstance {
 
-    constructor(db, hash) {
-        this.db = db;
+    constructor(sessionManager, hash) {
+        this.sm = sessionManager;
         this._hash = hash;
     }
 
-    get(key) {
+    async get(key) {
+        const cmd = `SELECT value FROM parameters where session = '${this.hash}' AND name = '${key}'`;
 
+        await this.sm.connect();
+        let row = await this.sm.get(cmd);
+        await this.sm.disconnect();
+        return row.value;
+    }
+
+    async set(key, value) {
+        const cmd = `INSERT INTO parameters VALUES ('${this.hash}', '${key}', '${value}') `;
+        await this.sm.connect();
+        await this.sm.exec(cmd);
+        await this.sm.disconnect();
     }
 
     get hash() {
         return this._hash;
-    }
-
-    set(key, value) {
-
     }
 }
 

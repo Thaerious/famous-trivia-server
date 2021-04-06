@@ -5,6 +5,7 @@ import UserAgent from 'express-useragent';
 import cors from './cors.js';
 import BodyParser from 'body-parser';
 import launcher from './launcher.js';
+import connectHost from './connectHost.js';
 import gameManagerService from './gameManagerService.js';
 import GameManager from "./GameManager.js";
 import CLI from './CLI.js';
@@ -21,9 +22,10 @@ const sessionManager = new SessionManager("assets/sessions.db");
 
 new CLI(gameManager);
 app.use(helmet()); // automatic security settings
-app.use(UserAgent.express()); // use to determine what the connection is using (phone,browser etc)
+app.use(UserAgent.express()); // used to determine what the connection is using (phone,browser etc)
 
 app.use('/contestant_join.html', sessionManager.middleware);
+app.use('/host_portal.ejs', sessionManager.middleware);
 
 // app.post('/login-action', function (req, res) {
 //     let name = req.body["name"].trim();
@@ -51,6 +53,11 @@ app.use("/launch", launcher(gameManager));
 // called from host.js, launch_console.js
 app.use("/game-manager-service", BodyParser.json());
 app.use("/game-manager-service", gameManagerService(gameManager));
+
+// verifies the host and marks the cookie with {role : "host"}
+app.use('/connect-host', sessionManager.middleware);
+app.use("/connect-host", BodyParser.json());
+app.use("/connect-host", connectHost(gameManager));
 /** ------------------------- **/
 
 /** page rendering end-points **/

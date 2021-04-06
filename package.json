@@ -9,6 +9,7 @@
     "editor-build-js": "browserify -t babelify src/client/editor.js -o public/scripts/editor.js -d",
     "editor-watch-js": "watchify -t babelify src/client/editor.js -o public/scripts/editor.js -dv",
     "launch-console-watch-js": "watchify -t babelify src/client/launch_console.js -o public/scripts/launch_console.js -dv",
+    "host-portal-watch-js": "watchify -t babelify src/client/host_portal.js -o public/scripts/host_portal.js -dv",
     "build-js": "npm run host-build-js && npm run editor-build-js",
     "watch-js": "start npm run host-watch-js && start npm run editor-watch-js",
     "build-css": "sass src/styles:public/styles/generated/,",
