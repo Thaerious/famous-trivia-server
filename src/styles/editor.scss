@@ -2,7 +2,7 @@
 
 @import 'editor/layout';
 @import 'editor/buttons';
-@import 'shared/menu';
+@import 'components/menu';
 
 :root{
     --ui-border-color : #44d1dc;
@@ -13,7 +13,7 @@
 }
 
 body{
-    background-color: #dcf3fe;
+    background-color: #091158;
 }
 
 * {
@@ -28,4 +28,9 @@ body{
     url('../font/OPTIKorinna-Agency.ttf.eot?#iefix') format('embedded-opentype');
     font-weight: normal;
     font-style: normal;
+}
+
+.hidden-anchor{
+    position: relative;
+    left: -1000px;
 }

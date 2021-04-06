@@ -6,6 +6,9 @@ class MCAnswerCtrl {
         MCAnswerCtrl.model  = model;
         MCAnswerCtrl.saveCB = saveCB;
 
+        DOM.menuDecreaseValue.hide();
+        DOM.menuIncreaseValue.hide();
+
         DOM.multipleChoicePane.show();
 
         for (let i = 0; i < 6; i++) {
@@ -53,10 +56,14 @@ class MCQuestionCtrl {
         MCQuestionCtrl.model  = model;
         MCQuestionCtrl.saveCB = saveCB;
 
+        DOM.menuDecreaseValue.hide();
+        DOM.menuIncreaseValue.hide();
+
         DOM.questionPane.setText(model.question);
+        DOM.gameBoard.hide();
         DOM.questionPane.show();
         DOM.questionPane.boardButton = false;
-        DOM.questionPane.highlight('question')
+        DOM.questionPane.highlight('question');
 
         DOM.triangleRight.addEventListener("click", MCQuestionCtrl.cleanup);
         DOM.triangleLeft.addEventListener("click", MCQuestionCtrl.cleanup);
@@ -75,7 +82,6 @@ class MCQuestionCtrl {
     }
 
     static cleanup() {
-        DOM.questionPane.hide();
         DOM.questionPane.removeEventListener("text-update", MCQuestionCtrl.textList);
         DOM.questionPane.removeEventListener("button-answer", MCQuestionCtrl.answerList);
         DOM.triangleRight.removeEventListener("click", MCQuestionCtrl.cleanup);
@@ -94,6 +100,9 @@ class QuestionPaneCtrl {
         QuestionPaneCtrl.field   = field ?? QuestionPaneCtrl.field;
         QuestionPaneCtrl.saveCB  = saveCB ?? QuestionPaneCtrl.saveCB;
         QuestionPaneCtrl.closeCB = closeCB ?? QuestionPaneCtrl.closeCB;
+
+        DOM.menuDecreaseValue.show();
+        DOM.menuIncreaseValue.show();
 
         DOM.questionPane.setText(QuestionPaneCtrl.model[QuestionPaneCtrl.field.substr(0, 1)]);
         DOM.questionPane.boardButton = true;
@@ -136,8 +145,10 @@ class QuestionPaneCtrl {
 }
 
 class EditorPane {
-    constructor(model) {
+    constructor(model, fileOps, fileId) {
         this.model = model;
+        this.fileOps = fileOps;
+        this.fileId = fileId;
 
         DOM.multipleChoicePane = document.querySelector("#multiple-choice-pane");
         DOM.triangleRight = document.querySelector("#triangle-right");
@@ -159,6 +170,22 @@ class EditorPane {
             anchor.click();
         });
 
+        document.querySelector("#menu-move-right").addEventListener("click", ()=>{
+            if (this.model.currentRound >= this.model.roundCount - 1) return;
+            this.model.setRoundIndex(this.model.currentRound, this.model.currentRound + 1);
+            this.model.incrementRound();
+            this.updateView();
+            this.onSave();
+        });
+
+        document.querySelector("#menu-move-left").addEventListener("click", ()=>{
+            if (this.model.currentRound <= 0) return;
+            this.model.setRoundIndex(this.model.currentRound, this.model.currentRound - 1);
+            this.model.decrementRound();
+            this.updateView();
+            this.onSave();
+        });
+
         document.querySelector("#menu-remove-round").addEventListener("click", () => {
             this.model.removeRound();
             this.updateTriangleView();
@@ -167,7 +194,7 @@ class EditorPane {
         });
 
         document.querySelector("#menu-home-screen").addEventListener("click", () => {
-            location.href = "host.html";
+            location.href = "host.ejs";
         });
 
         DOM.menuIncreaseValue.addEventListener("click", () => {
@@ -192,12 +219,15 @@ class EditorPane {
             this.updateView();
         });
 
-        DOM.gameName.addEventListener("keydown", (event) => {
+        DOM.gameName.addEventListener("keypress", async (event) => {
             if (event.which === 13) {
-                this.updateName();
                 event.stopPropagation();
                 event.preventDefault();
-                document.querySelector("#game-board-container").focus();
+                document.body.focus();
+
+                this.model.name = DOM.gameName.innerText;
+                await this.fileOps.rename(this.fileId, this.model.name + ".json");
+                await this.onSave();
                 return false;
             }
         });
@@ -240,11 +270,7 @@ class EditorPane {
     }
 
     onSave() {
-        // override me
-    }
-
-    updateName() {
-        // override me
+        this.fileOps.setBody(this.fileId, this.model);
     }
 
     hideNavigation() {
@@ -273,13 +299,7 @@ class EditorPane {
     }
 
     multipleChoiceView(model) {
-        DOM.menuDecreaseValue.hide();
-        DOM.menuIncreaseValue.hide();
-
-        MCQuestionCtrl.run(
-            this.model.getRound(),
-            () => this.onSave()
-        );
+        MCQuestionCtrl.run(this.model.getRound(), () => this.onSave());
     }
 
     categoryView(model) {

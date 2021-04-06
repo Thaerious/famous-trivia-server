@@ -86,7 +86,11 @@ file-list{
     white-space: nowrap;
 }
 
-.select:hover, .delete:hover{
+.file-name:hover{
+    color: #9e0000;
+}
+
+.delete:hover{
     color: whitesmoke;
 }
 

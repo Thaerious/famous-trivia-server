@@ -193,6 +193,9 @@ check-box {
 
 body {
   background-color: #091158;
+  background-image: url("../../assets/images/background-1.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 * {
@@ -205,9 +208,5 @@ body {
   font-weight: normal;
   font-style: normal;
 }
-.hidden-anchor {
-  position: relative;
-  left: -1000px;
-}
 
-/*# sourceMappingURL=editor.css.map */
+/*# sourceMappingURL=host_portal.css.map */

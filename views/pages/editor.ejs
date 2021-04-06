@@ -11,7 +11,7 @@
 <%- include('../partials/game-board'); %>
 <%- include('../partials/multiple-choice-pane'); %>
 
-<a id="download-anchor" download="download.json" type="text/json"></a>
+<a id="download-anchor" class="hidden-anchor" download="download.json" type="text/json"></a>
 
 <div class="top-bar" id="top-bar">
     <div class="game-name" id="game-name" contenteditable="true">Game Name</div>
@@ -19,6 +19,8 @@
     <div class="menu" id="menu">
         <img class="menu-icon" id="menu-icon" src="assets/images/menu.png"/>
         <div class="menu-area hidden" id="outer">
+            <nidget-element class="menu-item" id="menu-home-screen">Home Screen</nidget-element>
+            <hr>
             <div class="sub-menu">
                 <div class="menu-label">Add Round</div>
                 <div class="menu-area hidden" id="inner">
@@ -31,10 +33,12 @@
                 <div class="sub-menu-indicator">&#5125;</div>
             </div>
             <nidget-element class="menu-item" id="menu-remove-round">Remove Round</nidget-element>
-            <nidget-element class="menu-item" id="menu-home-screen">Home Screen</nidget-element>
+            <nidget-element class="menu-item" id="menu-move-right">Move Round Right</nidget-element>
+            <nidget-element class="menu-item" id="menu-move-left">Move Round Left</nidget-element>
+            <hr>
+            <nidget-element class="menu-item" id="menu-download">Download</nidget-element>
             <nidget-element class="menu-item" id="menu-value-plus">Increase Value</nidget-element>
             <nidget-element class="menu-item" id="menu-value-minus">Decrease Value</nidget-element>
-            <nidget-element class="menu-item" id="menu-download">Download</nidget-element>
         </div>
     </div>
 </div>

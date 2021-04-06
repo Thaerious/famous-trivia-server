@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head'); %>
+</head>
+<body>
+
+<%- include('../partials/question-pane'); %>
+<%- include('../partials/game-board'); %>
+<%- include('../partials/multiple-choice-pane'); %>
+
+<a id="download-anchor" class="hidden-anchor" download="download.json" type="text/json"></a>
+
+<div class="top-bar" id="top-bar">
+    <div class="game-name" id="game-name" contenteditable="true">Game Name</div>
+
+    <div class="menu" id="menu">
+        <img class="menu-icon" id="menu-icon" src="assets/images/menu.png"/>
+        <div class="menu-area hidden" id="outer">
+            <nidget-element class="menu-item" id="menu-home-screen">Exit</nidget-element>
+        </div>
+    </div>
+</div>
+
+<div class="round-number" id="round-number">
+    <nidget-text class="text">Round 1</nidget-text>
+</div>
+
+<question-pane id="question-pane" class="hidden" template-id="question-pane-template"></question-pane>
+<game-board id="game-board" class="hidden" template-id="game-board-template"></game-board>
+<multiple-choice-pane id="multiple-choice-pane" class="hidden" template-id="multiple-choice-pane-template"></multiple-choice-pane>
+
+</body>
+</html>

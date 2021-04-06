@@ -38,6 +38,11 @@
   background-color: var(--ui-background);
   z-index: 0;
   cursor: text;
+  border: 3px solid black;
+  border-radius: 10px;
+  background-image: url("../../assets/images/jeopardy_cell_bg.png");
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 #outer .text-contents {
   position: absolute;

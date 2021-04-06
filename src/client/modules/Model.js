@@ -34,6 +34,13 @@ class Model {
         return this.gameModel.rounds[index];
     }
 
+    // TODO test
+    setRoundIndex(from, to){
+        let r = this.gameModel.rounds;
+        if (r.length <= 1) return;
+        [r[from], r[to]] = [r[to], r[from]];
+    }
+
     getColumn(index) {
         return this.getRound().column[index];
     }

@@ -3,7 +3,6 @@
     box-sizing: border-box;
 }
 
-
 :host(game-board.hidden){
     display: none;
 }
@@ -18,6 +17,8 @@
     font-size: 0;
     background-color: #1117d9;
     z-index: 0;
+    border: 3px solid black;
+    border-radius: 10px;
 
     .row {
         position: relative;
@@ -35,6 +36,12 @@
             border-color: black;
             border-style: solid;
             border-width: 1px 1px 1px 1px;
+
+            &[data-row]{
+                background-image: url("../../assets/images/jeopardy_cell_bg.png");
+                background-repeat: no-repeat;
+                background-size: cover;
+            }
 
             &[data-row="h"] nidget-text {
                 position: absolute;
@@ -67,7 +74,7 @@
                     transform: translateY(-50%);
                     text-align: center;
                     width: 100%;
-                    font-size: 4.5vh;
+                    font-size: 6.5vh;
                     color: #ffdc18;
 
                     &[data-complete='false']{

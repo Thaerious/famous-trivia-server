@@ -37,7 +37,7 @@ async function setup(){
     window.model = model;
 
     document.querySelector("#game-name").textContent = model.name;
-    editorPane = new EditorPane(model);
+    editorPane = new EditorPane(model, fileOps, window.parameters.fileId);
     editorPane.onSave = saveModel;
 
     let end = new Date();

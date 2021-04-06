@@ -25,7 +25,7 @@ check-box{
     position: absolute;
     top: 15vh;
     left: 50%;
-    width: calc(75 * 1.11vh);
+    width: calc(75 / 9 * 16vh);
     height: 75vh;
     transform: translateX(-50%);
     z-index: 5;
@@ -47,7 +47,7 @@ check-box{
         width: 80%;
         height: 5vh;
         transform: translateX(-50%);
-        background-color: #060ce9;
+        background-color: #282058;
         color: whitesmoke;
         font-family: Arial Black, serif;
         font-size: 4vh;
@@ -82,7 +82,7 @@ check-box{
         position: absolute;
         font-family: Arial Black, serif;
         font-size: 4vh;
-        color: black;
+        color: #e8e8e8;
         text-align: center;
         left: 50%;
         transform: translateX(-50%);

@@ -10,6 +10,11 @@ body{
     background-color: #a3f3ff;
 }
 
+.hidden-anchor{
+    position: relative;
+    left: -1000px;
+}
+
 .busy-box{
     position: absolute;
     left: -5%;

@@ -13,7 +13,7 @@ window.fileOps = fileOps;
 window.renderButton = renderButton;
 
 // main called from renderButton.js
-window.main = async function(){
+window.main = async function () {
     await checkForGame();
     await fileOps.load();
     addMenuListeners();
@@ -72,7 +72,7 @@ async function onLaunch(event) {
     xhttp.send(JSON.stringify({
         model: model,
         token: token,
-        action : "launch"
+        action: "launch"
     }));
 }
 
@@ -94,9 +94,13 @@ async function launchVerify() {
 function setupFileList() {
     let fileList = document.querySelector("file-list");
 
-    fileList.addEventListener("delete-file", async (id) => {
+    fileList.addEventListener("delete-file", async (event) => {
         fileList.busy = true;
-        await fileOps.delete(id);
+        try {
+            await fileOps.delete(event.detail.id);
+        } catch (err) {
+            console.log(err);
+        }
         populateFileList();
         fileList.busy = false;
     });
@@ -104,6 +108,7 @@ function setupFileList() {
 
 function addMenuListeners() {
     let busyBox = document.querySelector(".busy-box");
+
     document.querySelector("#create").addEventListener("click", async (e) => {
         busyBox.classList.remove("hidden");
         let model = new Model().init("Game Name");
@@ -111,6 +116,25 @@ function addMenuListeners() {
         await fileOps.setBody(fp, JSON.stringify(model.get(), null, 2));
         location.href = location.origin + "/editor.ejs?action=load&fileId=" + fp;
     });
+
+    document.querySelector("#upload").addEventListener("click", async (e) => {
+        let anchor = document.querySelector("#upload-anchor");
+        anchor.click();
+
+        anchor.addEventListener("change", event => {
+            const data = anchor.files[0];
+            const reader = new FileReader();
+
+            reader.onload = async e => {
+                let name = JSON.parse(e.target.result).name;
+                let fp = await fileOps.create(name + ".json");
+                await fileOps.setBody(fp, e.target.result);
+                location.href = location.origin + "/editor.ejs?action=load&fileId=" + fp;
+            }
+            reader.readAsText(data);
+        }, {once: true});
+    });
+
 
     document.querySelector("#load").addEventListener("click", async (e) => {
         populateFileList();

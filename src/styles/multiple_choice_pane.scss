@@ -23,6 +23,12 @@
     background-color: #1117d9;
     z-index: 0;
 
+    border: 3px solid black;
+    border-radius: 10px;
+    background-image: url("../../assets/images/jeopardy_cell_bg.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+
     check-box{
         position: absolute;
         width: 5%;

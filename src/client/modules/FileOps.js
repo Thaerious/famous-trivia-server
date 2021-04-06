@@ -20,10 +20,10 @@ class FileOps {
         });
     }
 
-    async create(){
+    async create(filename = "Game Name.json"){
         return new Promise((resolve, reject)=> {
             gapi.client.drive.files.create({
-                name : FileOps.filename,
+                name : filename,
                 parents: ['appDataFolder'],
                 fields: "id"
             }).then(res=>{
@@ -41,7 +41,7 @@ class FileOps {
             }).then(res=>{
                 resolve(res.result);
             }, function (error) {
-                reject(error.message);
+                reject(error);
             });
         });
     }
@@ -109,7 +109,5 @@ class FileOps {
         });
     }
 }
-
-FileOps.filename = "Game Name.json";
 
 export default FileOps;
