@@ -9,12 +9,14 @@ const data = JSON.parse(file);
 let gameModel = new GameModel(data);
 let game = new Game(gameModel);
 
-describe('class GameManager', function () {
-    let gameManager = new GameManager();
+describe('class GameManager', async function () {
+    let gameManager = new GameManager('./assets/test.db');
 
     describe('#connect()', function () {
         it('has database', async function () {
-            await gameManager.connect('./assets/trivia.db');
+            console.log("WTF WTF WTF WTF");
+            await gameManager.setup();
+            await gameManager.connect();
         });
         it('missing database, creates it', async function () {
             await gameManager.connect('./assets/test.db');
@@ -121,7 +123,7 @@ describe('class GameManager', function () {
     after(async function () {
         setTimeout(async () => {
             await gameManager.disconnect();
-            await fs.unlinkSync('./assets/test.db');
+            // await fs.unlinkSync('./assets/test.db');
         }, 250);
     });
 });

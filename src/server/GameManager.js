@@ -40,10 +40,13 @@ class GameManager {
                 this.db = new sqlite3.Database(this.path, async (err) => {
                     if (err) reject(new Error(err));
                     else {
-                        this.db.run(TABLE1);
-                        this.db.run(TABLE2);
-                        this.db.run(TABLE3);
-                        await this.disconnect();
+                        this.db.serialize(()=> {
+                            this.db.run(TABLE1);
+                            this.db.run(TABLE2);
+                            this.db.run(TABLE3);
+                        }, ()=>{
+                            this.db.close();
+                        });
                         resolve();
                     }
                 });
