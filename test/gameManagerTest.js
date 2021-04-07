@@ -14,7 +14,6 @@ describe('class GameManager', async function () {
 
     describe('#connect()', function () {
         it('has database', async function () {
-            console.log("WTF WTF WTF WTF");
             await gameManager.setup();
             await gameManager.connect();
         });
@@ -55,32 +54,28 @@ describe('class GameManager', async function () {
     });
 
     describe(`#getGame()`, function () {
-        it(`has game`, async function () {
-            let r = await gameManager.getGame({userId: "test-user"});
-            assert.equal(r, JSON.stringify(game));
+        it(`get game`, async function () {
+            let a = await gameManager.getGame({userId: "test-user"});
+            let e = JSON.stringify(game);
+            assert.equal(a, e);
         });
     });
 
-    describe(`#getHashes()`, function () {
-        it(`has values`, async function () {
-            let r = await gameManager.getHashes({userId: "test-user"});
+    describe(`#getHash()`, function () {
+        it(`has value`, async function () {
+            let r = await gameManager.getHash({userId: "test-user"});
             assert.notEqual(r, undefined);
         });
-        it(`does not have values`, async function () {
-            let r = await gameManager.getHashes({userId: "nota-user"});
+        it(`does not have value`, async function () {
+            let r = await gameManager.getHash({userId: "nota-user"});
             assert.equal(r, undefined);
         });
     });
 
     describe(`#getUser()`, function () {
-        it(`from host hash`, async function () {
-            let r = await gameManager.getHashes({userId: "test-user"});
-            let userId = await gameManager.getUser(r.host);
-            assert.equal(userId, "test-user");
-        });
-        it(`from contestant hash`, async function () {
-            let r = await gameManager.getHashes({userId: "test-user"});
-            let userId = await gameManager.getUser(r.contestant);
+        it(`has hash`, async function () {
+            let r = await gameManager.getHash({userId: "test-user"});
+            let userId = await gameManager.getUser(r);
             assert.equal(userId, "test-user");
         });
         it(`doesn't exist`, async function () {
@@ -90,20 +85,15 @@ describe('class GameManager', async function () {
     });
 
     describe(`#getLive()`, function () {
-        it(`from host hash`, async function () {
-            let r = await gameManager.getHashes({userId: "test-user"});
-            let game = await gameManager.getLive(r.host);
-            assert.equal(game.constructor.name, "Game");
-        });
-        it(`from contestant hash`, async function () {
-            let r = await gameManager.getHashes({userId: "test-user"});
-            let game = await gameManager.getLive(r.contestant);
+        it(`has hash`, async function () {
+            let r = await gameManager.getHash({userId: "test-user"});
+            let game = await gameManager.getLive(r);
             assert.equal(game.constructor.name, "Game");
         });
         it(`is the same object when called twice`, async function () {
-            let r = await gameManager.getHashes({userId: "test-user"});
-            let game1 = await gameManager.getLive(r.contestant);
-            let game2 = await gameManager.getLive(r.contestant);
+            let r = await gameManager.getHash({userId: "test-user"});
+            let game1 = await gameManager.getLive(r);
+            let game2 = await gameManager.getLive(r);
             assert.equal(game1, game2);
         });
     });
@@ -115,7 +105,7 @@ describe('class GameManager', async function () {
             assert.equal(r, false);
         });
         it(`hashes deleted`, async function () {
-            let r = await gameManager.getHashes({userId: "test-user"});
+            let r = await gameManager.getHash({userId: "test-user"});
             assert.equal(r, undefined);
         });
     });
