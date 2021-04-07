@@ -15,11 +15,28 @@ class ParseError extends Error{
 }
 
 class Connection{
-    constructor(ws, req, game){
-        this.game = game;
+    constructor(ws, req, gameManager){
+        this.req = req;
         this.ws = ws;
+        this.gm = gameManager;
+        this.checkRole();
+    }
 
-        ws.on('message', (message) => {
+    async addPlayer(){
+        let name = await this.req.session.get("name");
+        this.game.addPlayer(name);
+    }
+
+    async connect(){
+        let hash = await this.req.session.get("hash");
+        let user = this.gm.getUser(hash);
+        this.game = this.gm.getGame(user);
+
+        this.game.addListener(meg => {
+            this.ws.send(JSON.stringify(msg));
+        });
+
+        this.ws.on('message', (message) => {
             try {
                 this.parseMessage(message);
             } catch (err) {
@@ -32,24 +49,32 @@ class Connection{
             }
         });
 
-        ws.on('close', ()=>{
-            this.game.disablePlayer(this.index);
-        });
-
         setInterval(()=>this.ping(), 15000);
+    }
+
+    /**
+     * Check for host in session,
+     * If host, add listener.
+     * If not host,
+     * Check for name in session.
+     * If no name, reject connection.
+     * If name, add player and listener
+     */
+    async checkRole(){
+        if (await this.req.session.get("role") === "host"){
+            this.connect();
+        }
+        else if (await this.req.session.has("role") === "contestant"){
+            await this.connect();
+            await this.addPlayer();
+        }
+        else {
+            this.ws.close();
+        }
     }
 
     ping(){
         this.ws.send(`{"action":"ping"}`);
-    }
-
-    /**
-     * Notify the game of this connection.
-     * The game will assign a role and an index.
-     * @param name
-     */
-    join(name){
-        let r = this.game.addListener(name, (message) => this.ws.send(message));
     }
 
     parseMessage(json){

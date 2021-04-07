@@ -7,7 +7,7 @@ window.addEventListener("load", ()=>{
     document.querySelector("#contestant_link").innerText = `${window.location.host}/contestant_join.ejs?hash=${window.parameters.cont}`;
 
     document.querySelector("#host").addEventListener("click", ()=>{
-        window.open(`host_portal.ejs?hash=${window.parameters.host}`, '_blank').focus();
+        window.open(`host_portal.ejs`, '_blank').focus();
     });
 
     document.querySelector("#contestant").addEventListener("click", ()=>{

@@ -6,8 +6,6 @@ function connectHost(gameManager) {
     return async (req, res, next) => {
         let token = req.body.token;
 
-        console.log(req.body);
-
         if (!token){
             res.json({
                 result : "launcher error",
@@ -20,7 +18,8 @@ function connectHost(gameManager) {
         try {
             let user = await verify(token);
             let hash = gameManager.getHashes(user).contestant;
-            req.session.set("role", "host");
+            await req.session.set("role", "host");
+            await req.session.set("game", "hash");
 
             res.json({
                 result : "success"

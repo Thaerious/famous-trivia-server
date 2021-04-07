@@ -50,6 +50,11 @@ class CLI {
             case "list":
                 this.gameManager.list();
                 break;
+            case "ap":
+            case "addplayer":
+                game.gameModel.addPlayer(split[1]);
+                game.broadcast();
+                break;
             case "":
                 break;
             default:

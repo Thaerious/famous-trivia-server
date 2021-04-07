@@ -13,11 +13,12 @@ import WebSocket from 'ws';
 import SessionManager from "./SessionManager.js";
 import ejs from 'ejs';
 import path from 'path';
+import Connection from "./Connection.js";
 
 const port = 8000;
 const app = Express();
 const server = http.createServer(app);
-const gameManager = await new GameManager("assets/trivia.db").connect();;
+const gameManager = await new GameManager("assets/trivia.db").connect();
 const sessionManager = new SessionManager("assets/sessions.db");
 
 new CLI(gameManager);
@@ -73,75 +74,72 @@ app.set('view engine', 'ejs');
 
 app.get('*.ejs', (req, res) => {
     res.render(`pages/${req.path}`, {
-        filename : path.basename(req.path.slice(0, -4))
+        filename: path.basename(req.path.slice(0, -4))
     });
 });
 
-const wss = new WebSocket.Server({ server:server, path:"/game-service.ws"});
-wss.on('connection', (ws, req) =>{
-    let cookies = new Cookies(req.headers.cookie);
+const wss = new WebSocket.Server({server: server, path: "/game-service.ws"});
+wss.on('connection', async (ws, req) => {
+    await sessionManager.applyTo(req);
 
-    if (!cookies.has(sessionCookieName)){
-        ws.close();
-    } else {
-        let hash = cookies.get(sessionCookieName);
-        let name = sessionManager.getName(hash);
-
-        try {
-            new Connection(ws, req, game, sessionManager).join(name);
-        } catch (err) {
-            console.log("ERROR: " + err.message);
-            let msg = {
-                action : "error",
-                text   : err.message
-            }
-            ws.send(JSON.stringify(msg));
+    try {
+        new Connection(ws, req, gameManager);
+        console.log(await req.session.listKeys());
+    } catch (err) {
+        console.log(err);
+        console.log("ERROR: " + err.message);
+        let msg = {
+            action: "error",
+            text: err.message
         }
+        ws.send(JSON.stringify(msg));
     }
 });
 
 app.use(Express.static('public'));
 
-server.listen(port, () => {console.log(`HTTP listener started on port ${port}`)});
+server.listen(port, () => {
+    console.log(`HTTP listener started on port ${port}`)
+});
 
-class Cookies{
+class Cookies {
     constructor(string) {
         this.cookies = {};
         let rawCookies = string.split('; ');
-        rawCookies.forEach(raw=>{
+        rawCookies.forEach(raw => {
             let keyValue = raw.split("=");
             this.cookies[keyValue[0]] = keyValue[1];
         });
     }
 
-    get(key){
+    get(key) {
         return this.cookies[key];
     }
 
-    has(key){
+    has(key) {
         return this.cookies[key] !== undefined;
     }
 }
 
-function checkName(name){
-    let msg = {action : "error"}
+function checkName(name) {
+    let msg = {action: "error"}
 
-    if (!name || name.trim().length === 0){
+    if (!name || name.trim().length === 0) {
         msg.text = "Empty name not permitted";
         return JSON.stringify(msg);
     }
 
-    if (sessionManager.hasName(name)){
+    if (sessionManager.hasName(name)) {
         msg.text = "Name already in use";
         return JSON.stringify(msg);
     }
 
-    if (name.length > 16){
+    if (name.length > 16) {
         msg.text = "Name must be 16 character or less";
         return JSON.stringify(msg);
     }
 
-    if (name.length < 2){
+    if (name.length < 2) {
         msg.text = "Name must be 2 character or more";
         return JSON.stringify(msg);
     }

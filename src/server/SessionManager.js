@@ -71,6 +71,21 @@ class SessionManager {
         });
     }
 
+    async all(cmd){
+        return new Promise((resolve, reject) => {
+            this.db.all(cmd, (err, rows) => {
+                if (err) {
+                    console.log(cmd);
+                    reject(new Error(err));
+                }
+                else{
+                    console.log(rows);
+                    resolve(rows);
+                }
+            });
+        });
+    }
+
     /**
      * Adds session cookies to browsers that don't have one.
      * Attaches the SessionInstance to the request.
@@ -78,22 +93,28 @@ class SessionManager {
      */
     get middleware() {
         return async (req, res, next) => {
-            let cookies = new Cookies(req.headers.cookie);
-            let sessionCookieValue = "";
-
-            let expires = new Date().getTime() + 24 * 60 * 60 * 1000;
-
-            if (!cookies.has(sessionCookieName)) {
-                sessionCookieValue = crypto.randomBytes(64).toString('hex');
-                res.cookie(sessionCookieName, sessionCookieValue);
-            } else {
-                sessionCookieValue = cookies.get(sessionCookieName);
-            }
-
-            await this.saveHash(sessionCookieValue, expires);
-            if (!req.session) req.session = new SessionInstance(this, sessionCookieValue);
-
+            this.applyTo(req);
             next();
+        }
+    }
+
+    async applyTo(req){
+        let cookies = new Cookies(req.headers.cookie);
+
+        let sessionCookieValue = "";
+
+        let expires = new Date().getTime() + 24 * 60 * 60 * 1000;
+
+        if (!cookies.has(sessionCookieName)) {
+            sessionCookieValue = crypto.randomBytes(64).toString('hex');
+            res.cookie(sessionCookieName, sessionCookieValue);
+        } else {
+            sessionCookieValue = cookies.get(sessionCookieName);
+        }
+
+        await this.saveHash(sessionCookieValue, expires);
+        if (!req.session){
+            req.session = new SessionInstance(this, sessionCookieValue);
         }
     }
 
@@ -108,10 +129,27 @@ class SessionManager {
 }
 
 class SessionInstance {
-
     constructor(sessionManager, hash) {
         this.sm = sessionManager;
         this._hash = hash;
+    }
+
+    async listKeys(){
+        const cmd = `SELECT name FROM parameters where session = '${this.hash}'`;
+
+        await this.sm.connect();
+        let rows = await this.sm.all(cmd);
+        await this.sm.disconnect();
+
+        let r = [];
+        for (let row of rows){
+            r.push(row.name);
+        }
+        return row;
+    }
+
+    async has(key){
+        return await this.get(key) !== undefined;
     }
 
     async get(key) {
@@ -120,11 +158,12 @@ class SessionInstance {
         await this.sm.connect();
         let row = await this.sm.get(cmd);
         await this.sm.disconnect();
-        return row.value;
+        if (row) return row.value;
+        return undefined;
     }
 
     async set(key, value) {
-        const cmd = `INSERT INTO parameters VALUES ('${this.hash}', '${key}', '${value}') `;
+        const cmd = `REPLACE INTO parameters VALUES ('${this.hash}', '${key}', '${value}') `;
         await this.sm.connect();
         await this.sm.exec(cmd);
         await this.sm.disconnect();

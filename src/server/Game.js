@@ -93,7 +93,6 @@ class Game {
     onInput(input) {
         this[this.state](input);
         let update = this.getUpdate();
-        update.action = "update_model";
         update.input = input.action;
         this.broadcast(update);
     }
@@ -107,6 +106,8 @@ class Game {
     }
 
     broadcast(msg) {
+        msg = msg ?? this.getUpdate();
+
         for (let name in this.listeners){
             this.listeners[name](msg);
         }
