@@ -17,9 +17,9 @@ function connectHost(gameManager) {
 
         try {
             let user = await verify(token);
-            let hash = gameManager.getHashes(user).contestant;
+            let hash = await gameManager.getHash(user);
             await req.session.set("role", "host");
-            await req.session.set("game", "hash");
+            await req.session.set("game-hash", hash);
 
             res.json({
                 result : "success"

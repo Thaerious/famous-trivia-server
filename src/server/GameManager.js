@@ -7,13 +7,7 @@ import sqlite3 from 'sqlite3';
 import fs from 'fs';
 import awaitAsyncGenerator from "@babel/runtime/helpers/esm/awaitAsyncGenerator";
 
-const TABLE1 = '                        \
-CREATE TABLE games                      \
-(                                       \
-    userId     varchar(64) primary key, \
-    hash       varchar(32) unique,      \
-    game       text                     \
-)';
+const TABLE1 = 'CREATE TABLE games (userId varchar(64) primary key, hash varchar(32) unique, game text)';
 
 class GameManager {
     constructor(path) {
@@ -68,7 +62,7 @@ class GameManager {
         return new Promise(async (resolve, reject) => {
             await this.connect();
             this.db.exec(cmd, async err => {
-                if (err) reject(err);
+                if (err) reject(new Error(err));
                 else {
                     await this.disconnect();
                     resolve();
@@ -81,7 +75,7 @@ class GameManager {
         return new Promise(async (resolve, reject) => {
             await this.connect();
             this.db.all(cmd, async (err, rows) => {
-                if (err) reject(err);
+                if (err) reject(new Error(err));
                 else {
                     await this.disconnect();
                     resolve(rows);
@@ -94,7 +88,10 @@ class GameManager {
         return new Promise(async (resolve, reject) => {
             await this.connect();
             this.db.get(cmd, async (err, row) => {
-                if (err) reject(err);
+                if (err){
+                    console.log(cmd);
+                    reject(new Error(err));
+                }
                 else {
                     await this.disconnect();
                     resolve(row);
@@ -198,7 +195,6 @@ class GameManager {
         if (!this.liveGames[hash]){
             let cmd = `SELECT game FROM games where hash = '${hash}'`;
             let r = await this.get(cmd);
-            console.log(cmd);
             if (!r) return undefined;
             this.liveGames[hash] = Game.fromJSON(r.game);
         }

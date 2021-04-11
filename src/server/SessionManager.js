@@ -4,7 +4,7 @@ import fs from 'fs';
 
 const sessionCookieName = "trivia-session";
 const TABLE1 = 'CREATE TABLE sessions(session varchar(64) primary key, expires int)';
-const TABLE2 = 'CREATE TABLE parameters(session varchar(64), name varchar(64), value varchar(256))';
+const TABLE2 = 'CREATE TABLE parameters(session varchar(64), name varchar(64), value varchar(256), UNIQUE(session, name))';
 
 /**
  * The Session Manager will add a cookie to all pages that use it.
@@ -19,6 +19,18 @@ const TABLE2 = 'CREATE TABLE parameters(session varchar(64), name varchar(64), v
 class SessionManager {
     constructor(path) {
         this.path = path;
+        this.sessions = {};
+    }
+
+    async load(){
+        await this.connect();
+        this.sessions = {};
+
+        let sessionRows = await this.all("SELECT session FROM Sessions");
+        for (let sessionRow of sessionRows){
+            this.sessions[sessionRow.session] = new SessionInstance(this, sessionRow.session);
+            await this.sessions[sessionRow.session].load();
+        }
     }
 
     /**
@@ -79,7 +91,6 @@ class SessionManager {
                     reject(new Error(err));
                 }
                 else{
-                    console.log(rows);
                     resolve(rows);
                 }
             });
@@ -93,31 +104,48 @@ class SessionManager {
      */
     get middleware() {
         return async (req, res, next) => {
-            this.applyTo(req);
+            this.applyTo(req, res);
             next();
         }
     }
 
-    async applyTo(req){
+    async applyTo(req, res){
         let cookies = new Cookies(req.headers.cookie);
 
-        let sessionCookieValue = "";
+        let sessionHash = "";
 
         let expires = new Date().getTime() + 24 * 60 * 60 * 1000;
 
         if (!cookies.has(sessionCookieName)) {
-            sessionCookieValue = crypto.randomBytes(64).toString('hex');
-            res.cookie(sessionCookieName, sessionCookieValue);
+            sessionHash = crypto.randomBytes(64).toString('hex');
+            res.cookie(sessionCookieName, sessionHash);
         } else {
-            sessionCookieValue = cookies.get(sessionCookieName);
+            sessionHash = cookies.get(sessionCookieName);
         }
 
-        await this.saveHash(sessionCookieValue, expires);
+        if (!this.sessions[sessionHash]) {
+            await this.saveHash(sessionHash, expires);
+        }
+
         if (!req.session){
-            req.session = new SessionInstance(this, sessionCookieValue);
+            req.session = this.getSession(sessionHash);
         }
     }
 
+    getSession(sessionHash){
+        if (!this.sessions[sessionHash]) {
+            this.sessions[sessionHash] = new SessionInstance(this, sessionHash);
+        }
+
+        return this.sessions[sessionHash];
+    }
+
+    /**
+     * Store a session has in the database
+     * @param session
+     * @param expires
+     * @returns {Promise<void>}
+     */
     async saveHash(session, expires) {
         let hostHash = crypto.randomBytes(20).toString('hex');
         let contHash = crypto.randomBytes(20).toString('hex');
@@ -126,43 +154,44 @@ class SessionManager {
         await this.exec(`REPLACE INTO sessions VALUES ('${session}', '${expires}')`);
         await this.disconnect();
     }
+
+    listHashes(){
+        let r = [];
+        for (let key of Object.keys(this.sessions)){
+            r.push(key.substring(0, 6));
+        }
+        return r;
+    }
 }
 
 class SessionInstance {
     constructor(sessionManager, hash) {
         this.sm = sessionManager;
         this._hash = hash;
+        this.values = {};
     }
 
-    async listKeys(){
-        const cmd = `SELECT name FROM parameters where session = '${this.hash}'`;
-
-        await this.sm.connect();
-        let rows = await this.sm.all(cmd);
-        await this.sm.disconnect();
-
-        let r = [];
-        for (let row of rows){
-            r.push(row.name);
+    async load(){
+        let valueRows = await this.sm.all(`SELECT name, value FROM parameters WHERE session = '${this.hash}'`);
+        for (let valueRow of valueRows){
+            this.values[valueRow.name] = valueRow.value;
         }
-        return row;
     }
 
-    async has(key){
-        return await this.get(key) !== undefined;
+    listKeys(){
+        return Object.keys(this.values);
     }
 
-    async get(key) {
-        const cmd = `SELECT value FROM parameters where session = '${this.hash}' AND name = '${key}'`;
+    has(key){
+        return this.values[key] !== undefined;
+    }
 
-        await this.sm.connect();
-        let row = await this.sm.get(cmd);
-        await this.sm.disconnect();
-        if (row) return row.value;
-        return undefined;
+    get(key) {
+        return this.values[key];
     }
 
     async set(key, value) {
+        this.values[key] = value;
         const cmd = `REPLACE INTO parameters VALUES ('${this.hash}', '${key}', '${value}') `;
         await this.sm.connect();
         await this.sm.exec(cmd);

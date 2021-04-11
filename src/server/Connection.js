@@ -28,9 +28,8 @@ class Connection{
     }
 
     async connect(){
-        let hash = await this.req.session.get("hash");
-        let user = this.gm.getUser(hash);
-        this.game = this.gm.getGame(user);
+        let hash = await this.req.session.get("game-hash");
+        this.game = await this.gm.getLive(hash);
 
         this.game.addListener(meg => {
             this.ws.send(JSON.stringify(msg));

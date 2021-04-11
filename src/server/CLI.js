@@ -2,9 +2,9 @@ import readline from 'readline';
 import constants from "./constants.js";
 
 class CLI {
-    constructor(game, gameManager) {
-        this.game = game;
+    constructor(gameManager, sessionManager) {
         this.gameManager = gameManager;
+        this.sessionManager = sessionManager;
 
         let rl = readline.createInterface(process.stdin, process.stdout);
         rl.setPrompt('SERVER> ');
@@ -55,11 +55,27 @@ class CLI {
                 game.gameModel.addPlayer(split[1]);
                 game.broadcast();
                 break;
+            case "session":
+            case "s":
+                this.sessionCommand(split);
+                break
             case "":
                 break;
             default:
                 console.log("Unknown command");
                 break;
+        }
+    }
+
+    sessionCommand(split){
+        switch (split[1]) {
+            case "list":
+            case "l":
+                let r = this.sessionManager.listHashes();
+                console.log(r);
+                for (let s of r) console.log(s);
+                console.log("-----------------");
+                console.log("size " + r.length);
         }
     }
 }

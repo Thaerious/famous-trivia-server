@@ -28,10 +28,12 @@ function launcher(gameManager) {
         try {
             let user = await verify(token);
             let game = new Game(new GameModel(model));
-            gameManager.setGame(user, game)
-            let hashes = await gameManager.getHashes(user);
-            hashes.result = "success";
-            res.json(hashes);
+            await gameManager.setGame(user, game)
+            let hash = await gameManager.getHash(user);
+            res.json({
+                result : "success",
+                hash : hash
+            });
             res.end();
         } catch (err) {
             console.log(err);

@@ -63,7 +63,7 @@ function connectWebsocket(){
 
     return new Promise((resolve, reject)=>{
         let socket = new WebSocket(url);
-        this.socket.addEventListener('error', (event) => reject(event));
-        this.socket.addEventListener('open', (event) => resolve(event));
+        socket.addEventListener('error', (event) => reject(event));
+        socket.addEventListener('open', (event) => resolve(socket));
     });
 }

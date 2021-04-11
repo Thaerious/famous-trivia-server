@@ -29,14 +29,15 @@ function gameManagerService(gameManager) {
 }
 
 async function parseMessage(gameManager, message, res, user){
-    console.log(message);
     switch(message.action){
         case "has-game":
         case "launch":
             if (await gameManager.hasGame(user)){
-                let hashes = await gameManager.getHashes(user);
-                hashes['has-game'] = "true";
-                res.json(hashes);
+                let hash = await gameManager.getHash(user);
+                res.json({
+                    hash : hash,
+                    'has-game' : 'true'
+                });
             } else {
                 res.json({'has-game' : 'false'});
             }
