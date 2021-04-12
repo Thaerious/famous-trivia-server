@@ -31,11 +31,16 @@ class Connection{
         let hash = await this.req.session.get("game-hash");
         this.game = await this.gm.getLive(hash);
 
-        this.game.addListener(meg => {
+        this.game.addListener("@HOST", msg => {
             this.ws.send(JSON.stringify(msg));
         });
 
+        console.log("Client Connection Established");
+
         this.ws.on('message', (message) => {
+            console.log("Message from client:");
+            console.log(message);
+            console.log("-----------------------------------");
             try {
                 this.parseMessage(message);
             } catch (err) {
@@ -43,11 +48,12 @@ class Connection{
                     action : "error",
                     text   : err.msg
                 }
-                ws.send(JSON.stringify(msg));
+                this.ws.send(JSON.stringify(msg));
                 console.log(err);
             }
         });
 
+        this.send({action : "connection_established"});
         setInterval(()=>this.ping(), 15000);
     }
 
@@ -76,33 +82,20 @@ class Connection{
         this.ws.send(`{"action":"ping"}`);
     }
 
+    send(msg){
+        this.ws.send(JSON.stringify(msg));
+    }
+
     parseMessage(json){
         let msg = JSON.parse(json);
         msg.playerIndex = this.index;
 
         switch (msg.action){
             case "request_model":
-                let update = this.getUpdate();
-                update.action = "update_model";
-                update.input = input.action;
-                this.ws.send(update);
+                this.send(this.game.getUpdate());
             break;
-            case "buzz":
+            default:
                 this.game.onInput(msg);
-            break;
-            case "logout":
-                if (this.index >= 0) this.game.disablePlayer(this.index);
-                this.ws.close();
-            break;
-            case "load_questions":
-                if (this.role !== "host") throw new ParseError("Non-Host attempting host op");
-                this.game.onCommand(msg);
-            break;
-            case "select":
-            case "accept":
-            case "reject":
-            case "continue":
-                this.game.onAction(msg);
             break;
          }
     }

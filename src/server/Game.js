@@ -15,7 +15,10 @@ class Timer {
 
         this.currentTime = startTime;
         this.timeout = setTimeout(() => this.update(), 1000);
-        this.game.broadcast({action: "start_timer", value: startTime});
+        this.game.broadcast({
+            action: "start_timer",
+            data: {time: startTime}
+        });
     }
 
     stop() {
@@ -36,7 +39,10 @@ class Timer {
     }
 
     onUpdate() {
-        this.game.broadcast({action: "update_timer", value: this.currentTime});
+        this.game.broadcast({
+            action: "update_timer",
+            data: {time: this.currentTime}
+        });
     }
 
     onExpire() {
@@ -51,9 +57,9 @@ class Timer {
 }
 
 Timer.TIMES = {
-    ANSWER : 30,
-    BUZZ : 10,
-    MULTIPLE_CHOICE : 60
+    ANSWER: 30,
+    BUZZ: 10,
+    MULTIPLE_CHOICE: 60
 }
 
 class Game {
@@ -68,14 +74,14 @@ class Game {
      * Create JSON representation for saving.
      * Use fromJSON to restore the objects state.
      */
-    toJSON(){
+    toJSON() {
         let sanitized = Object.assign({}, this);
         delete sanitized.timer;
         delete sanitized.listeners;
         return sanitized;
     }
 
-    static fromJSON(json){
+    static fromJSON(json) {
         if (typeof json === "string") {
             json = JSON.parse(json);
         }
@@ -93,22 +99,22 @@ class Game {
     onInput(input) {
         this[this.state](input);
         let update = this.getUpdate();
-        update.input = input.action;
+        update.data.input = input.action;
         this.broadcast(update);
     }
 
-    addListener(name, cb){
+    addListener(name, cb) {
         this.listeners[name] = cb;
     }
 
-    removeListener(name){
+    removeListener(name) {
         delete this.listeners[name];
     }
 
     broadcast(msg) {
         msg = msg ?? this.getUpdate();
 
-        for (let name in this.listeners){
+        for (let name in this.listeners) {
             this.listeners[name](msg);
         }
     }
@@ -119,7 +125,7 @@ class Game {
 
     createPlayerData() {
         let data = {};
-            for (let player of this.model.players) {
+        for (let player of this.model.players) {
             data[player.name] = new Array(this.model.getRound().getAnswers().length);
             data[player.name].fill(0);
         }
@@ -148,11 +154,11 @@ class Game {
         }
     }
 
-    updateMCScores(){
+    updateMCScores() {
         let values = this.model.getRound().getValues();
-        for (let name in this.playersData){
-            for (let index = 0; index < this.playersData[name].length; index++){
-                if (values[index]){
+        for (let name in this.playersData) {
+            for (let index = 0; index < this.playersData[name].length; index++) {
+                if (values[index]) {
                     this.model.getPlayer(name).score += this.playersData[name][index];
                 } else {
                     this.model.getPlayer(name).score -= this.playersData[name][index];
@@ -165,7 +171,7 @@ class Game {
      * Return the sum of all multiple choice bets for the given name.
      * @param name
      */
-    sumMCBet(name){
+    sumMCBet(name) {
         let r = 0;
         for (let index = 0; index < this.playersData[name].length; index++) {
             r = r + this.playersData[name][index];
@@ -173,11 +179,14 @@ class Game {
         return r;
     }
 
-    getUpdate(){
-        let update = this.model.getUpdate();
-        update.state = this.state;
-        update.action = "update_model";
-        return update;
+    getUpdate() {
+        return {
+            action: "update_model",
+            data: {
+                model: this.model.getUpdate(),
+                state: this.state
+            }
+        }
     }
 
     [0](input) {
@@ -186,6 +195,7 @@ class Game {
                 this.model.addPlayer(input.data.name);
                 break;
             case "start":
+                this.broadcast({action : "start_game"});
                 this.startRound();
                 break;
         }
@@ -274,7 +284,7 @@ class Game {
             case "expire":
                 break;
             case "accept":
-                this.model.getPlayer(this.model.getRound().getCurrent()).score  += this.model.getRound().getValue();
+                this.model.getPlayer(this.model.getRound().getCurrent()).score += this.model.getRound().getValue();
                 this.model.getRound().setRevealState();
                 this.state = 9;
                 break;
@@ -327,7 +337,7 @@ class Game {
                 this.model.addPlayer(input.data.name);
                 break;
             case "continue":
-                if (this.model.getRound().hasUnspent()){
+                if (this.model.getRound().hasUnspent()) {
                     this.model.nextActivePlayer();
                     this.model.getRound().setBoardState();
                     this.model.getRound().resetCurrentPlayers(this.model.players);
@@ -341,5 +351,8 @@ class Game {
 }
 
 
-
-export {Game, Timer};
+export {
+    Game
+    ,
+    Timer
+};

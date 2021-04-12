@@ -17,10 +17,25 @@ class JeopardyModel{
         }
 
         this.stateData = {
-            style    : GameModel.STYLE.JEOPARDY,
-            state    : GameModel.STATES.BOARD,
-            spent    : this.spent
+            style      : GameModel.STYLE.JEOPARDY,
+            state      : GameModel.STATES.BOARD,
+            spent      : this.spent
         };
+
+        this.categories = [];
+        this.values = [];
+
+        for (let column of this.model.column){
+            this.categories.push({
+                "text" : column.category,
+                "font-size" : column.fontSize
+            });
+            let valueCol = [];
+            this.values.push(valueCol);
+            for (let cell of column.cell){
+                valueCol.push(cell.value);
+            }
+        }
     }
 
     resetCurrentPlayers(players){
@@ -214,6 +229,8 @@ class JeopardyModel{
             r.players.unshift(p);
         }
         r.current_player = this.currentPlayer;
+        r.categories = this.categories;
+        r.values = this.values;
         return r;
     }
 }

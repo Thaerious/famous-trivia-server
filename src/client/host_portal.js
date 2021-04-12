@@ -4,7 +4,8 @@ import Menu from "./modules/Menu.js";
 import QuestionPane from "./modules/QuestionPane.js";
 import EditorPane from "./modules/EditorPane.js";
 import Model from "./modules/Model";
-const Nidget = require("@thaerious/nidget")
+import AbstractView from "./AbstractView.js";
+const Nidget = require("@thaerious/nidget");
 
 import "./modules/GameBoard.js";
 import "./modules/MultipleChoicePane.js";
@@ -18,6 +19,8 @@ let editorPane = null;
 
 window.onload = async () => {
     let start = new Date();
+
+    window.hostView = new AbstractView();
 
     // new Menu().init("#menu");
 

@@ -573,7 +573,32 @@ describe('JeopardyModel', function () {
             assert.equal(update.players[0], 'b');
             assert.equal(update.players[1], 'c');
         });
+
+        it("has category data", function () {
+            console.log(update);
+            assert.notEqual(update.categories, undefined);
+        });
+
+        it("has specific category data", function () {
+            assert.equal(update.categories[0].text, "CATEGORY\n1");
+        });
+
+        it("has category text size data", function () {
+            assert.equal(update.categories[0]['font-size'], "16px");
+        });
+
+        it("has value data", function () {
+            assert.notEqual(update.values, undefined);
+        });
+
+        it("check value data", function () {
+            assert.equal(update.values[0][0], 100);
+            assert.equal(update.values[3][0], 100);
+            assert.equal(update.values[3][2], 300);
+        });
     });
+
+
 });
 
 
