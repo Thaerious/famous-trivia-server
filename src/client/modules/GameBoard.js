@@ -10,7 +10,7 @@
 
 const NidgetElement = require("@Thaerious/nidget").NidgetElement;
 
-class CellSelectEvent extends  CustomEvent{
+class CellSelectEvent extends CustomEvent{
     constructor(row, col) {
         super('cell-select',
               {detail : {row : row, col : col }}
@@ -37,7 +37,7 @@ class GameBoard extends NidgetElement {
             this.getHeader(col).addEventListener("input", (event)=>event.target.fitText.notify(1, 1));
 
             this.getHeader(col).addEventListener("blur", (event)=>{
-                let fontSize = window.getComputedStyle(event.target)["font-size"];
+                let fontSize = event.target.style["font-size"];
                 this.dispatchEvent(new HeaderUpdateEvent(col, event.target.text, fontSize));
             });
 
@@ -55,10 +55,14 @@ class GameBoard extends NidgetElement {
      * @param value
      * @param value
      */
-    setHeader(index, value, fontSize){
+    setHeader(index, value, fontSize, lock = false){
         let element = this.getHeader(index);
         element.text = value;
+        console.log(fontSize);
         if (fontSize) element.style["font-size"] = fontSize;
+        if (lock){
+            element.setAttribute("contentEditable", "false");
+        }
     }
 
     /**

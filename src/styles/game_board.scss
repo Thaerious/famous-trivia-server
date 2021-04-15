@@ -65,6 +65,10 @@
             &:not([data-row="h"]){
                 cursor: pointer;
 
+                &:hover {
+                    opacity: 70%;
+                }
+
                 nidget-text {
                     position: absolute;
                     left: 0;

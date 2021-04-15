@@ -136,8 +136,6 @@ class JeopardyModel{
      * @returns question text
      */
     setQuestionState(col, row){
-        this.setSpent(col, row);
-
         this.stateData = {
             style    : GameModel.STYLE.JEOPARDY,
             state    : GameModel.STATES.QUESTION,

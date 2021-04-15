@@ -1,8 +1,10 @@
 
 class HostController{
 
-    constructor(ws) {
+    constructor(ws, view) {
         this.ws = ws;
+        this.view = view;
+
         this.ws.addEventListener('message', (event) => this.process(JSON.parse(event.data)));
         this.ws.addEventListener('close', (event) => this.onClose(event));
 
@@ -22,7 +24,7 @@ class HostController{
                 this.send({action : "request_model"});
                 break;
             case "update_model":
-                this.onUpdate(message);
+                this.view.updateModel(message.data);
                 break;
         }
     }

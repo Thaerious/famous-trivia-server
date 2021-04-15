@@ -266,8 +266,13 @@ class Game {
     [5](input) { // waiting for host to read question and click continue
         switch (input.action) {
             case "continue":
+                this.model.getRound().setSpent();
                 this.timer.start(Timer.TIMES.ANSWER);
                 this.state = 6;
+                break;
+            case "back":
+                this.timer.start(Timer.TIMES.ANSWER);
+                this.state = 4;
                 break;
         }
     }

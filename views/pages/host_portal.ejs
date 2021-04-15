@@ -10,11 +10,7 @@
 <%- include('../partials/game-board'); %>
 <%- include('../partials/multiple-choice-pane'); %>
 
-<a id="download-anchor" class="hidden-anchor" download="download.json" type="text/json"></a>
-
 <div class="top-bar" id="top-bar">
-    <div class="game-name" id="game-name" contenteditable="true">Game Name</div>
-
     <div class="menu" id="menu">
         <img class="menu-icon" id="menu-icon" src="assets/images/menu.png"/>
         <div class="menu-area hidden" id="outer">
@@ -30,6 +26,12 @@
 <question-pane id="question-pane" class="hidden" template-id="question-pane-template"></question-pane>
 <game-board id="game-board" class="hidden" template-id="game-board-template"></game-board>
 <multiple-choice-pane id="multiple-choice-pane" class="hidden" template-id="multiple-choice-pane-template"></multiple-choice-pane>
+
+<div class="nav-button hidden" id="accept">ACCEPT</div>
+<div class="nav-button hidden" id="reject">REJECT</div>
+<div class="nav-button hidden" id="continue">BACK</div>
+<div class="nav-button hidden" id="continue">CONTINUE</div>
+<div class="nav-button hidden" id="next">NEXT ROUND</div>
 
 </body>
 </html>

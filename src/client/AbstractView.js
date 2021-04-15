@@ -1,7 +1,5 @@
 "use strict"
 
-
-
 class AbstractView{
     constructor(){
         this.DOM = {};
@@ -36,86 +34,68 @@ class AbstractView{
         }
     }
 
-    setupMenu(){
-        this.menuIndicator.addEventListener("click", (event)=>{
-            this.menuArea.hidden = !this.menuArea.hidden;
-        });
-        this.menuLogout.addEventListener("click", (event)=>{
-            this.logout();
-        });
+    updateModel(update){
+        switch (update.state){
+            case 0:
+                break;
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                this.DOM.gameBoard.show();
+                this.fillJeopardyCategories(update);
+                this.fillJeopardyCells(update);
+                break;
+            case 5:
+                this.DOM.gameBoard.show();
+                this.fillJeopardyCategories(update);
+                this.fillJeopardyCells(update);
+                break;
+            case 6:
+                this.DOM.gameBoard.show();
+                this.fillJeopardyCategories(update);
+                this.fillJeopardyCells(update);
+                break;
+            case 7:
+                this.DOM.gameBoard.show();
+                this.fillJeopardyCategories(update);
+                this.fillJeopardyCells(update);
+                break;
+            case 8:
+                this.DOM.gameBoard.show();
+                this.fillJeopardyCategories(update);
+                this.fillJeopardyCells(update);
+                break;
+            case 9:
+                this.DOM.gameBoard.show();
+                this.fillJeopardyCategories(update);
+                this.fillJeopardyCells(update);
+                break;
+            default:
+                break;
+        }
     }
 
-    updatePlayers(update){
-        if (!update.players) return;
-        for (let i = 0; i < 10; i++) {
-            this.getContestant(i).lit = "";
-            if (update.players[i]){
-                let player = update.players[i];
-                this.getContestant(i).show();
-                if (player.name) this.getContestant(i).name = player.name;
-                if (player.score) this.getContestant(i).score = player.score;
-                if (player.buzzer === "disabled") this.getContestant(i).lit = "red";
-                this.getContestant(i).disabled = !player.enabled;
-            } else {
-                this.getContestant(i).hide();
+    fillJeopardyCategories(update){
+        for (let i = 0; i < 6; i++){
+            let category = update.model.round.categories[i];
+            this.DOM.gameBoard.setHeader(i, category["text"], category["font-size"], true)
+        }
+    }
+
+    fillJeopardyCells(update){
+        let round = update.model.round;
+        for (let c = 0; c < 6; c++){
+            for (let r = 0; r < 5; r++){
+                if (round.spent[c][r]) continue;
+                this.DOM.gameBoard.setCell(r, c, round.values[c][r]);
             }
         }
-
-        if (update.current_player >= 0) this.getContestant(update.current_player).lit = "yellow";
     }
 
-    updateQuestions(update){
-        if (!update.questionSet) return;
-        for(let i in update.questionSet){
-            this.gameBoard.setHeader(i, update.questionSet[i].category);
-            for(let j in update.questionSet[i].questions){
-                this.gameBoard.setCell(j, i, update.questionSet[i].questions[j].value);
-            }
-        }
-    }
-
-    highlightContestant(index = -1){
-        for (let element of document.querySelectorAll(`[data-highlight="true"]`)){
-            element.highlight = false;
-        }
-
-        if (index < 0 || index > 9) return;
-        document.querySelector(`#contestant-${index}`).highlight = true;
-    }
-
-    /**
-     * look for non-model updates, such as showing a question or answer
-     **/
-    showQuestion(update){
-        if (update.state_data.type === "text"){
-            this.questionText.innerHTML = update.state_data.text;
-            this.questionPage.show();
-            this.buttons.show();
-            this.gameBoard.hide();
-        }
-    }
-
-    /**
-     * look for non-model updates, such as showing a question or answer
-     **/
-    showAnswer(update){
-        this.questionText.innerHTML = update.state_data.text;
-        this.questionPage.show();
-        this.gameBoard.hide();
-    }
-
-    getContestant(index){
-        if (index < 0 || index > 11) return;
-        return document.querySelector(`#contestant-${index}`);
-    }
-
-    logout(){
-        let msg = {
-            action : "logout"
-        };
-        this.socket.send(JSON.stringify(msg));
-        document.location = "pages/join.html";
-    }
 }
 
 module.exports = AbstractView;

@@ -4,7 +4,7 @@ import Menu from "./modules/Menu.js";
 import QuestionPane from "./modules/QuestionPane.js";
 import EditorPane from "./modules/EditorPane.js";
 import Model from "./modules/Model";
-import AbstractView from "./AbstractView.js";
+import HostView from "./HostView.js";
 const Nidget = require("@thaerious/nidget");
 
 import "./modules/GameBoard.js";
@@ -20,7 +20,7 @@ let editorPane = null;
 window.onload = async () => {
     let start = new Date();
 
-    window.hostView = new AbstractView();
+    window.hostView = new HostView();
 
     // new Menu().init("#menu");
 
@@ -29,7 +29,7 @@ window.onload = async () => {
         await fileOps.loadClient();
         await sendTokenToServer();
         let ws = await connectWebsocket();
-        new HostController(ws);
+        new HostController(ws, window.hostView);
     } catch (err) {
         console.log(err);
     }

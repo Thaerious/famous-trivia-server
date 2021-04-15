@@ -7,17 +7,16 @@
     "editor-js": "browserify -t babelify src/client/editor.js -o public/scripts/editor.js -d",
     "host-js": "browserify -t babelify src/client/host_portal.js -o public/scripts/host_portal.js -d",
     "launch-js": "browserify -t babelify src/client/launch_console.js -o public/scripts/launch_console.js -d",
-    "build-js" : "npm run editor-js && npm run host-js && npm run launch-js",
+    "build-js": "npm run editor-js && npm run host-js && npm run launch-js",
 
     "editor-watch-js": "watchify -t babelify src/client/editor.js -o public/scripts/editor.js -dv",
-    "launch-console-watch-js": "watchify -t babelify src/client/launch_console.js -o public/scripts/launch_console.js -dv",
-    "host-portal-watch-js": "watchify -t babelify src/client/host_portal.js -o public/scripts/host_portal.js -dv",
+    "launch-watch-js": "watchify -t babelify src/client/launch_console.js -o public/scripts/launch_console.js -dv",
+    "host-watch-js": "watchify -t babelify src/client/host_portal.js -o public/scripts/host_portal.js -dv",
 
     "watch-js": "start npm run host-watch-js && start npm run editor-watch-js",
     "build-css": "sass src/styles:public/styles/generated/",
     "watch-css": "sass --watch src/styles:public/styles/generated/",
-
-    "build" : "npm run build-js && npm run build-css"
+    "build": "npm run build-js && npm run build-css"
   },
   "repository": {
     "type": "git",

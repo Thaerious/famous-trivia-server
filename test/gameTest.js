@@ -185,6 +185,60 @@ describe('Game', function () {
         });
     });
 
+    describe('host presses back', function(){
+        it('state changes', function(){
+            game.onInput({action : "back"});
+            let update = game.getUpdate().data;
+            assert.equal(update.state, 4);
+        });
+        it('current player is \'active player\'', function(){
+            let update = game.getUpdate().data;
+            assert.equal(update.model.round.current_player, "robin");
+        });
+        it('player list doesn\'t contain current player', function(){
+            let update = game.getUpdate().data;
+            assert.equal(update.model.round.players.indexOf("robin"), -1);
+            console.log(JSON.stringify(update, null, 2));
+        });
+    });
+
+    describe('select question (first cat, $200)', function(){
+        it('state changes', function(){
+            game.onInput({action : "select", data : {col : 0, row : 1}});
+            let update = game.getUpdate().data;
+            assert.equal(update.state, 5);
+        });
+        it('loads correct (jeop) round', function(){
+            let update = game.getUpdate().data;
+            assert.equal(update.model.round.style, GameModel.STYLE.JEOPARDY);
+        });
+        it('jeopardy starts in question state', function(){
+            let update = game.getUpdate().data;
+            assert.equal(update.model.round.state, GameModel.STATES.QUESTION);
+        });
+        it('column set to 0', function(){
+            let update = game.getUpdate().data;
+            assert.equal(update.model.round.col, 0);
+        });
+        it('row set to 1', function(){
+            let update = game.getUpdate().data;
+            assert.equal(update.model.round.row, 1);
+        });
+        it('type is text', function(){
+            let update = game.getUpdate().data;
+            assert.equal(update.model.round.type, "text");
+        });
+        it('question is Q 1.2', function(){
+            let update = game.getUpdate().data;
+            assert.equal(update.model.round.question, "Q 1.2");
+        });
+        it('answer text not provided', function(){
+            game.onInput({action : "accept"});
+            let update = game.getUpdate().data;
+            assert.equal(update.model.round.answer, undefined);
+        });
+    });
+
     describe('host presses continue', function(){
         it('state changes', function(){
             game.onInput({action : "continue"});

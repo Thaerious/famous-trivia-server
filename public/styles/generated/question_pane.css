@@ -1,7 +1,6 @@
 .nav-button {
-  position: relative;
   display: inline-block;
-  width: 20vh;
+  width: 22vh;
   height: 5vh;
   border: 0.33vh solid black;
   background-color: white;
@@ -12,15 +11,6 @@
   line-height: 4vh;
   font-size: 3vh;
   cursor: pointer;
-}
-.nav-button.hidden {
-  display: none;
-}
-.nav-button:hover {
-  background-color: #ffffc8;
-}
-.nav-button.selected {
-  background-color: yellow;
 }
 
 * {

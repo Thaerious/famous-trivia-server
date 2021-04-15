@@ -1,0 +1,106 @@
+check-box{
+    position: absolute;
+    width: 5%;
+    height: 5%;
+    left: 2%;
+}
+
+#game-board, #multiple-choice-pane, #question-pane {
+    position: absolute;
+    top: 8vh;
+    left: 50%;
+    width: calc(75 / 9 * 16vh);
+    height: 75vh;
+    transform: translateX(-50%);
+    z-index: 5;
+}
+
+#top-bar {
+    position: absolute;
+    top: 1vh;
+    left: 50%;
+    width: calc(75 * 1.11vh);
+    height: 5vh;
+    transform: translateX(-50%);
+    z-index: 100;
+
+    #menu-icon {
+        position: absolute;
+        right: 0px;
+        width: 5vh;
+    }
+}
+
+#round-number{
+    position: absolute;
+    top: 1vh;
+    left: 50%;
+    width: calc(75 * 1.11vh);
+    height: 5vh;
+    transform: translateX(-50%);
+
+    .text{
+        position: absolute;
+        font-family: Arial Black, serif;
+        font-size: 4vh;
+        color: #e8e8e8;
+        text-align: center;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}
+
+.menu-area{
+    width: 200px;
+}
+
+.nav-button{
+    position: absolute;
+    bottom: 6vh;
+
+    &.hidden{
+        display: none;
+    }
+
+    &#accept{
+        left: 50%;
+        transform: translateX(-110%);
+        background-color: #8cffa0;
+
+        &:hover{
+            background-color: #c8fbd1;
+        }
+    }
+
+    &#reject{
+        left: 50%;
+        transform: translateX(10%);
+        background-color: #e24ab4;
+
+        &:hover{
+            background-color: #df7bc2;
+        }
+    }
+
+    &#continue{
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #ebff43;
+
+        &:hover{
+            background-color: #ecff8c;
+        }
+    }
+
+    &#next{
+        left: 50%;
+        width: 40vh;
+        transform: translateX(-50%);
+        background-color: #ebff43;
+
+        &:hover{
+            background-color: #ecff8c;
+        }
+    }
+}
+
