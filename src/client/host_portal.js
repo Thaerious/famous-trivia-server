@@ -5,12 +5,12 @@ import QuestionPane from "./modules/QuestionPane.js";
 import EditorPane from "./modules/EditorPane.js";
 import Model from "./modules/Model";
 import HostView from "./HostView.js";
-const Nidget = require("@thaerious/nidget");
+import HostController from "./HostController";
 
 import "./modules/GameBoard.js";
+import "./modules/PlayerContainer.js";
 import "./modules/MultipleChoicePane.js";
 import "./modules/CheckBox.js";
-import HostController from "./HostController";
 
 let fileOps = new FileOps();
 let model = null;

@@ -9,6 +9,8 @@
 <%- include('../partials/question-pane'); %>
 <%- include('../partials/game-board'); %>
 <%- include('../partials/multiple-choice-pane'); %>
+<%- include('../partials/player-container'); %>
+<%- include('../partials/player-panel'); %>
 
 <div class="top-bar" id="top-bar">
     <div class="menu" id="menu">
@@ -23,9 +25,12 @@
     <nidget-text class="text">Round 1</nidget-text>
 </div>
 
-<question-pane id="question-pane" class="hidden" template-id="question-pane-template"></question-pane>
-<game-board id="game-board" class="hidden" template-id="game-board-template"></game-board>
-<multiple-choice-pane id="multiple-choice-pane" class="hidden" template-id="multiple-choice-pane-template"></multiple-choice-pane>
+<div id="main-container">
+    <player-container id="player-container-left" template-id="player-container-template"></player-container>
+    <question-pane id="question-pane" class="hidden" template-id="question-pane-template"></question-pane>
+    <game-board id="game-board" class="hidden" template-id="game-board-template"></game-board>
+    <multiple-choice-pane id="multiple-choice-pane" class="hidden" template-id="multiple-choice-pane-template"></multiple-choice-pane>
+</div>
 
 <div class="nav-button hidden" id="accept">ACCEPT</div>
 <div class="nav-button hidden" id="reject">REJECT</div>

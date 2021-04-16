@@ -5,13 +5,28 @@ check-box {
   left: 2%;
 }
 
-#game-board, #multiple-choice-pane, #question-pane {
+#main-container {
   position: absolute;
-  top: 8vh;
   left: 50%;
+  top: 8vh;
+  height: 75vh;
+  width: calc(27vh + (75 / 9 * 16vh));
+  transform: translateX(-50%);
+}
+#main-container #player-container-left {
+  position: absolute;
+  width: 25vh;
+  height: 75vh;
+  top: 0;
+  left: 0;
+  z-index: 2000;
+}
+#main-container #game-board, #main-container #multiple-choice-pane, #main-container #question-pane {
+  position: absolute;
+  top: 0;
+  right: 0;
   width: calc(75 / 9 * 16vh);
   height: 75vh;
-  transform: translateX(-50%);
   z-index: 5;
 }
 
