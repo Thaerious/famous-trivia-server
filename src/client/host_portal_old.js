@@ -1,13 +1,16 @@
 import FileOps from "./modules/FileOps.js";
 import Authenticate from "./modules/Authenticate.js";
+import Menu from "./modules/Menu.js";
+import QuestionPane from "./modules/QuestionPane.js";
+import EditorPane from "./modules/EditorPane.js";
+import Model from "./modules/Model";
 import HostView from "./HostView.js";
-import HostController from "./HostController";
+const Nidget = require("@thaerious/nidget");
 
 import "./modules/GameBoard.js";
 import "./modules/MultipleChoicePane.js";
 import "./modules/CheckBox.js";
-import "./modules/PlayerContainer.js";
-import "./modules/PlayerPanel.js";
+import HostController from "./HostController";
 
 let fileOps = new FileOps();
 let model = null;

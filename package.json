@@ -4,9 +4,9 @@
   "description": "Creator and Luancher for Online Trivia",
   "main": "src/server/server.js",
   "scripts": {
-    "editor-js": "browserify -t babelify src/client/editor.js -o public/scripts/editor.js -d",
-    "host-js": "browserify -t babelify src/client/host_portal.js -o public/scripts/host_portal.js -d",
-    "launch-js": "browserify -t babelify src/client/launch_console.js -o public/scripts/launch_console.js -d",
+    "editor-js": "browserify -t babelify src/client/editor.js -o public/scripts/generated/editor.js -d",
+    "host-js": "browserify -t babelify src/client/host_portal.js -o public/scripts/generated/host_portal.js -d",
+    "launch-js": "browserify -t babelify src/client/launch_console.js -o public/scripts/generated/launch_console.js -d",
     "build-js": "npm run editor-js && npm run host-js && npm run launch-js",
 
     "editor-watch-js": "watchify -t babelify src/client/editor.js -o public/scripts/editor.js -dv",
