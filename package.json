@@ -5,16 +5,14 @@
   "main": "src/server/server.js",
   "scripts": {
     "editor-js": "browserify -t babelify src/client/editor.js -o public/scripts/generated/editor.js -d",
-    "host": "browserify -t babelify src/client/host.js -o public/scripts/generated/host.js -d",
+    "host-js": "browserify -t babelify src/client/host.js -o public/scripts/generated/host.js -d",
     "host-portal-js": "browserify -t babelify src/client/host_portal.js -o public/scripts/generated/host_portal.js -d",
     "launch-js": "browserify -t babelify src/client/launch_console.js -o public/scripts/generated/launch_console.js -d",
     "build-js": "npm run editor-js && npm run host-js && npm run launch-js",
-
     "watch-editor-js": "watchify -t babelify src/client/editor.js -o public/scripts/editor.js -dv",
     "watch-launch-js": "watchify -t babelify src/client/launch_console.js -o public/scripts/launch_console.js -dv",
     "watch-host-js": "watchify -t babelify src/client/host.js -o public/scripts/host.js -dv",
     "watch-host-portal-js": "watchify -t babelify src/client/host_portal.js -o public/scripts/host_portal.js -dv",
-
     "watch-js": "start npm run host-watch-js && start npm run editor-watch-js",
     "build-css": "sass src/styles:public/styles/generated/",
     "watch-css": "sass --watch src/styles:public/styles/generated/",
