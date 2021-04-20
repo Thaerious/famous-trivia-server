@@ -27,7 +27,6 @@ class AnswerClick extends  CustomEvent{
 }
 
 class QuestionPane extends NidgetElement{
-
     async ready(){
         await super.ready();
 

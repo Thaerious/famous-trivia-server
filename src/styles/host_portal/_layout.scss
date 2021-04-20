@@ -81,9 +81,22 @@ check-box {
     display: none;
   }
 
-  &#accept {
+  &.left{
     left: 50%;
     transform: translateX(-110%);
+  }
+
+  &.right{
+    left: 50%;
+    transform: translateX(10%);
+  }
+
+  &.center{
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  &#accept {
     background-color: #8cffa0;
 
     &:hover {
@@ -92,8 +105,6 @@ check-box {
   }
 
   &#reject {
-    left: 50%;
-    transform: translateX(10%);
     background-color: #e24ab4;
 
     &:hover {
@@ -102,8 +113,6 @@ check-box {
   }
 
   &#continue {
-    left: 50%;
-    transform: translateX(-50%);
     background-color: #ebff43;
 
     &:hover {
@@ -112,9 +121,7 @@ check-box {
   }
 
   &#next {
-    left: 50%;
     width: 40vh;
-    transform: translateX(-50%);
     background-color: #ebff43;
 
     &:hover {

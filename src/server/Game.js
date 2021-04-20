@@ -8,6 +8,8 @@ class Timer {
 
     start(startTime = 10) {
         if (startTime === 0) return;
+        this.startTime = startTime;
+
         if (this.timeout) {
             clearTimeout(this.timeout);
             delete this.timeout;
@@ -41,7 +43,11 @@ class Timer {
     onUpdate() {
         this.game.broadcast({
             action: "update_timer",
-            data: {time: this.currentTime}
+            data: {
+                'start-time' : this.startTime,
+                time: this.currentTime,
+                progress : Math.trunc(this.currentTime / this.startTime * 100)
+            }
         });
     }
 

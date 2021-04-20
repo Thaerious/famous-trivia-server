@@ -59,5 +59,8 @@
   transform: translate(-50%, -110%);
   top: 100%;
 }
+#outer #buttons .hidden {
+  display: none;
+}
 
 /*# sourceMappingURL=question_pane.css.map */

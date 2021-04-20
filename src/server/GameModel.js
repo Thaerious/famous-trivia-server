@@ -142,7 +142,8 @@ class JeopardyModel{
             col      : col,
             row      : row,
             type     : this.getType(col, row),
-            question : this.getQuestion(col, row)
+            question : this.getQuestion(col, row),
+            spent    : this.spent
         };
 
         return this.stateData;

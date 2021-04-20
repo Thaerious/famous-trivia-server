@@ -1,5 +1,5 @@
 
-class HostController{
+class HostPortalController {
 
     constructor(ws, view) {
         this.ws = ws;
@@ -7,6 +7,9 @@ class HostController{
 
         this.ws.addEventListener('message', (event) => this.process(JSON.parse(event.data)));
         this.ws.addEventListener('close', (event) => this.onClose(event));
+
+        this.view.addEventListener('click', (event)=>this.send(event.detail));
+        this.view.addEventListener('cell-select', (event)=>this.send(event.detail));
 
         window.start = function(){
             this.send({action : "start"});
@@ -17,6 +20,10 @@ class HostController{
 
     }
 
+    /**
+     * Incoming messages get processed here.
+     * @param message
+     */
     process(message){
         if (message.action !== "ping") console.log(message);
         switch (message.action) {
@@ -25,6 +32,15 @@ class HostController{
                 break;
             case "update_model":
                 this.view.updateModel(message.data);
+                break;
+            case "start_timer":
+                this.view.startTimer(message.data);
+                break;
+            case "update_timer":
+                this.view.updateTimer(message.data);
+                break;
+            case "stop_timer":
+                this.view.stopTimer(message.data);
                 break;
         }
     }
@@ -39,4 +55,4 @@ class HostController{
     }
 }
 
-export default HostController;
+export default HostPortalController;

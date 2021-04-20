@@ -74,34 +74,38 @@ check-box {
 .nav-button.hidden {
   display: none;
 }
-.nav-button#accept {
+.nav-button.left {
   left: 50%;
   transform: translateX(-110%);
+}
+.nav-button.right {
+  left: 50%;
+  transform: translateX(10%);
+}
+.nav-button.center {
+  left: 50%;
+  transform: translateX(-50%);
+}
+.nav-button#accept {
   background-color: #8cffa0;
 }
 .nav-button#accept:hover {
   background-color: #c8fbd1;
 }
 .nav-button#reject {
-  left: 50%;
-  transform: translateX(10%);
   background-color: #e24ab4;
 }
 .nav-button#reject:hover {
   background-color: #df7bc2;
 }
 .nav-button#continue {
-  left: 50%;
-  transform: translateX(-50%);
   background-color: #ebff43;
 }
 .nav-button#continue:hover {
   background-color: #ecff8c;
 }
 .nav-button#next {
-  left: 50%;
   width: 40vh;
-  transform: translateX(-50%);
   background-color: #ebff43;
 }
 .nav-button#next:hover {

@@ -1,21 +1,13 @@
 "use strict"
 
-class AbstractView{
+class AbstractView extends EventTarget{
     constructor(){
+        super();
         this.DOM = {};
 
         this.DOM.gameBoard = document.querySelector("game-board");
-        this.DOM.questionPage = document.querySelector("#text-question");
-        this.DOM.questionText = document.querySelector("#text-contents");
-        this.DOM.buttons = document.querySelector("#buttons");
-
-        this.DOM.buzzer_button = document.querySelector("#buzz");
-        this.DOM.accept_button = document.querySelector("#accept_answer");
-        this.DOM.reject_button = document.querySelector("#reject_answer");
-        this.DOM.start_timer_button = document.querySelector("#start_timer");
-        this.DOM.time_out_button = document.querySelector("#time_out");
-        this.DOM.continue_button = document.querySelector("#continue");
-        this.DOM.back_button = document.querySelector("#back");
+        this.DOM.questionPane = document.querySelector("#question-pane");
+        // this.DOM.questionText = document.querySelector("#text-contents");
 
         this.DOM.playing_indicator = document.querySelector("#playing");
         this.DOM.clock = document.querySelector("#clock");
@@ -23,6 +15,8 @@ class AbstractView{
         this.DOM.menuIndicator = document.querySelector("#menu-indicator");
         this.DOM.menuArea = document.querySelector("#menu-area");
         this.DOM.menuLogout = document.querySelector("#menu-logout");
+
+        this.DOM.playerContainer = document.querySelector("#player-container-left");
 
         this.assertDOM();
         // this.setupMenu();
@@ -34,7 +28,25 @@ class AbstractView{
         }
     }
 
+    startTimer(update){
+
+    }
+
+    updateTimer(update){
+        if (this.lastUpdate.model.players.length <= 0) return;
+        let currentName = this.lastUpdate.model.players[0].name;
+        let currentPanel = this.DOM.playerContainer.getPlayer(currentName);
+        currentPanel.setTimer(update.progress);
+    }
+
+    stopTimer(update){
+
+    }
+
     updateModel(update){
+        this.fillPlayers(update);
+        this.lastUpdate = update;
+
         switch (update.state){
             case 0:
                 break;
@@ -50,14 +62,14 @@ class AbstractView{
                 this.fillJeopardyCells(update);
                 break;
             case 5:
-                this.DOM.gameBoard.show();
-                this.fillJeopardyCategories(update);
-                this.fillJeopardyCells(update);
+                this.DOM.gameBoard.hide();
+                this.DOM.questionPane.show();
+                this.DOM.questionPane.setText(update.model.round.question);
                 break;
             case 6:
-                this.DOM.gameBoard.show();
-                this.fillJeopardyCategories(update);
-                this.fillJeopardyCells(update);
+                this.DOM.gameBoard.hide();
+                this.DOM.questionPane.show();
+                this.DOM.questionPane.setText(update.model.round.question);
                 break;
             case 7:
                 this.DOM.gameBoard.show();
@@ -70,13 +82,25 @@ class AbstractView{
                 this.fillJeopardyCells(update);
                 break;
             case 9:
-                this.DOM.gameBoard.show();
-                this.fillJeopardyCategories(update);
-                this.fillJeopardyCells(update);
+                this.DOM.gameBoard.hide();
+                this.DOM.questionPane.show();
+                this.DOM.questionPane.setText(update.model.round.answer);
                 break;
             default:
                 break;
         }
+    }
+
+    fillPlayers(update){
+        this.DOM.playerContainer.clear();
+        if (update.model.players.length <= 0) return;
+
+        for (let player of update.model.players){
+            this.DOM.playerContainer.addPlayer(player.name, player.score);
+        }
+
+        this.DOM.playerContainer.getPlayer(update.model.players[0].name).highlight = true;
+        this.DOM.playerContainer.getPlayer(update.model.players[0].name).active = true;
     }
 
     fillJeopardyCategories(update){
@@ -95,7 +119,6 @@ class AbstractView{
             }
         }
     }
-
 }
 
 module.exports = AbstractView;

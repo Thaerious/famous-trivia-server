@@ -14,6 +14,9 @@ import SessionManager from "./SessionManager.js";
 import ejs from 'ejs';
 import path from 'path';
 import Connection from "./Connection.js";
+import NidgetPreprocessor from "./NidgetPreprocessor.js";
+import fs from "fs";
+import awaitAsyncGenerator from "@babel/runtime/helpers/esm/awaitAsyncGenerator";
 
 const port = 8000;
 const app = Express();
@@ -22,6 +25,14 @@ const gameManager = await new GameManager("assets/trivia.db");
 gameManager.connect();
 const sessionManager = new SessionManager("assets/trivia.db");
 await sessionManager.load();
+
+const nidgetPreprocessor = new NidgetPreprocessor("views/nidgets");
+await nidgetPreprocessor.setup();
+
+let myFileLoader = function (filePath) {
+    return nidgetPreprocessor.process(filePath);
+};
+ejs.fileLoader = myFileLoader;
 
 new CLI(gameManager, sessionManager);
 app.use(helmet()); // automatic security settings

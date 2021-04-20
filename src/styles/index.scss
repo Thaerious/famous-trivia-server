@@ -1,9 +1,5 @@
 // host_portal.scss
 
-@import 'host_portal/layout';
-@import 'editor/buttons';
-//@import 'components/menu';
-
 :root {
   --ui-border-color: #44d1dc;
   --ui-background-hover: #3f43d8;
@@ -17,7 +13,7 @@ body {
   background-color: #091158;
   background-image: url("../../assets/images/background-2.jpg");
   background-repeat: no-repeat;
-  background-size: cover;
+  //background-size: cover;
   background-size: 100% 100%;
   height: 100vh;
   width: 100vh;
@@ -35,4 +31,17 @@ body {
   url('../font/OPTIKorinna-Agency.ttf.eot?#iefix') format('embedded-opentype');
   font-weight: normal;
   font-style: normal;
+}
+
+#timer{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+
+  font-family: "Arial Black", serif;
+  font-size: 2em;
+  line-height: 65px;
 }

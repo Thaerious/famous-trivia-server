@@ -4,8 +4,8 @@ const NidgetElement = require("@Thaerious/nidget").NidgetElement;
 import "./PlayerPanel.js";
 
 class PlayerPanel extends NidgetElement {
-    constructor() {
-        super();
+    constructor(templateId = "player-panel-template") {
+        super(templateId);
     }
 
     async ready(){
@@ -28,10 +28,18 @@ class PlayerPanel extends NidgetElement {
         return this.querySelector("#score").text;
     }
 
+    set highlight(value){
+        if (value) this.querySelector(".outer").classList.add("highlight");
+        else this.querySelector(".outer").classList.remove("highlight");
+    }
+
+    set active(value){
+        if (value) this.querySelector("#buzz-light").classList.add("active");
+        else this.querySelector("#buzz-light").classList.remove("active");
+    }
+
     buzz(){
         this.querySelector("#buzz-light").classList.add("sweep-right");
-        this.querySelector("#name").classList.add("active");
-        this.querySelector("#score").classList.add("active");
     }
 
     clear(){

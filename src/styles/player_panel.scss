@@ -10,9 +10,16 @@
 .outer {
   position: relative;
   width: 100%;
-  background-color: rgba(20, 43, 203, 0.5);
+  background-color: rgba(20, 43, 203, 0.85);
   border: 3px solid black;
   border-radius: 3px;
+  height: 100%;
+
+  &.highlight {
+    #name, #score {
+      color: yellow;
+    }
+  }
 
   #name, #score {
     position: relative;
@@ -25,33 +32,39 @@
     text-align: center;
     text-shadow: 4px 4px #000;
 
-    &.active{
+    &.active {
       color: #f5f500;
     }
   }
 
   @keyframes buzz-sweep-right {
-    0% {width: 0%;}
-    75% {width: 100%; background-color: greenyellow;}
-    99% {background-color: #ffff00
+    0% {
+      width: 0%;
     }
-    100% {background-color: greenyellow}
+    100% {
+      width: 100%;
+      background-color: greenyellow;
+    }
   }
 
-  #clock{
+  #clock {
     position: relative;
     width: 100%;
     height: 2vh;
     background-color: grey;
     margin-top: 5px;
 
-    #buzz-light{
+    #buzz-light {
       position: absolute;
       height: 2vh;
       background-color: greenyellow;
       margin-top: 5px;
       bottom: 0;
       width: 0;
+
+      &.active{
+        width: 100%;
+      }
 
       &.sweep-right {
         animation-name: buzz-sweep-right;
@@ -68,23 +81,23 @@
     height: 100%;
     border: 1px solid black;
 
-    &.spent{
+    &.spent {
       background-color: red;
     }
 
-    &[data-index='1']{
+    &[data-index='1'] {
       left: 20%;
     }
 
-    &[data-index='2']{
+    &[data-index='2'] {
       left: 40%;
     }
 
-    &[data-index='3']{
+    &[data-index='3'] {
       left: 60%;
     }
 
-    &[data-index='4']{
+    &[data-index='4'] {
       left: 80%;
     }
   }

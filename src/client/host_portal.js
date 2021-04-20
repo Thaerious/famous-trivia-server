@@ -1,13 +1,14 @@
 import FileOps from "./modules/FileOps.js";
 import Authenticate from "./modules/Authenticate.js";
-import HostView from "./HostView.js";
-import HostController from "./HostController";
+import HostPortalView from "./HostPortalView.js";
+import HostPortalController from "./HostPortalController";
 
 import "./modules/GameBoard.js";
 import "./modules/MultipleChoicePane.js";
 import "./modules/CheckBox.js";
 import "./modules/PlayerContainer.js";
 import "./modules/PlayerPanel.js";
+import "./modules/QuestionPane.js";
 
 let fileOps = new FileOps();
 let model = null;
@@ -17,16 +18,28 @@ let editorPane = null;
 window.onload = async () => {
     let start = new Date();
 
-    window.hostView = new HostView();
+    window.hostView = new HostPortalView();
 
-    // new Menu().init("#menu");
+    // new Menu().init("#menu")host_portal.js;
 
     try {
         await new Authenticate().loadClient();
         await fileOps.loadClient();
         await sendTokenToServer();
         let ws = await connectWebsocket();
-        new HostController(ws, window.hostView);
+        new HostPortalController(ws, window.hostView);
+
+        window.addPlayers = function(){
+            ws.send(JSON.stringify({action : "join", data : {name : "Adam"}}));
+            ws.send(JSON.stringify({action : "join", data : {name : "Bert"}}));
+            ws.send(JSON.stringify({action : "join", data : {name : "Carol"}}));
+            ws.send(JSON.stringify({action : "join", data : {name : "Dave"}}));
+            ws.send(JSON.stringify({action : "join", data : {name : "Edith"}}));
+            ws.send(JSON.stringify({action : "join", data : {name : "Fran"}}));
+            ws.send(JSON.stringify({action : "join", data : {name : "Garth"}}));
+            ws.send(JSON.stringify({action : "join", data : {name : "Herbert"}}));
+        }
+
     } catch (err) {
         console.log(err);
     }
