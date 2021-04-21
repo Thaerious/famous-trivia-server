@@ -2,3 +2,4 @@
 node_modules/
 public/styles/generated/*
 public/scripts/generated/*
+logs/
