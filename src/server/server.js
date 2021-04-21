@@ -3,7 +3,7 @@
 import Express from 'express';
 import http from 'http';
 import helmet from 'helmet';
-import UserAgent from 'express-useragent';
+import UserAgent from 'express-useragent';                    // Request source machine details
 import cors from './cors.js';
 import BodyParser from 'body-parser';
 import launcher from './launcher.js';
@@ -35,43 +35,47 @@ app.use(UserAgent.express()); // used to determine what the connection is using 
 app.use('/host_portal.ejs', sessionManager.middleware);
 
 /** non-rendering end-points **/
-// launch a new game, called from host.js
-app.use("/launch", BodyParser.json());
-app.use("/launch", launcher(gameManager));
+    // launch a new game, called from host.js
+    app.use("/launch", BodyParser.json());
+    app.use("/launch", launcher(gameManager));
 
-// called from host.js, launch_console.js
-app.use("/game-manager-service", BodyParser.json());
-app.use("/game-manager-service", gameManagerService(gameManager));
+    // called from host.js, launch_console.js
+    app.use("/game-manager-service", BodyParser.json());
+    app.use("/game-manager-service", gameManagerService(gameManager));
 
-// verifies the host and marks the cookie with {role : "host"}
-app.use('/connect-host', sessionManager.middleware);
-app.use("/connect-host", BodyParser.json());
-app.use("/connect-host", connectHost(gameManager));
+    // verifies the host and marks the cookie with {role : "host"}
+    app.use('/connect-host', sessionManager.middleware);
+    app.use("/connect-host", BodyParser.json());
+    app.use("/connect-host", connectHost(gameManager));
 /** ------------------------- **/
 
 /** page rendering end-points **/
-app.use("/*.ejs", cors);
-app.get("/*.html", cors);
+    app.use("/*.ejs", cors);
+    app.get("/*.html", cors);
 /** ------------------------- **/
 
-/* template engine setup */
-/* http://expressjs.com/en/guide/using-template-engines.html */
-/* https://ejs.co/ */
-/* https://github.com/mde/ejs/wiki/Using-EJS-with-Express */
+/** template engine setup
+ * http://expressjs.com/en/guide/using-template-engines.html
+ * https://ejs.co/
+ * https://github.com/mde/ejs/wiki/Using-EJS-with-Express
+*/
+    app.set('view engine', 'ejs');
 
-app.set('view engine', 'ejs');
+    app.get('*.ejs', (req, res) => {
+        let nidgetDependencies = nidgetPreprocessor.getDependencies("./views/pages/" + req.path);
 
-app.get('*.ejs', (req, res) => {
-    let nidgetDependencies = nidgetPreprocessor.getDependencies("./views/pages/" + req.path);
-
-    res.render(`pages/${req.path}`, {
-        filename: Path.basename(req.path.slice(0, -4)),
-        nidgets : nidgetDependencies
+        res.render(`pages/${req.path}`, {
+            filename: Path.basename(req.path.slice(0, -4)),
+            nidgets : nidgetDependencies
+        });
     });
-});
+/** ------------------------- **/
 
+/** Browserify Just-In-Time Transpiler **/
 app.get('/jit/*.js', new JITBrowserify(nidgetPreprocessor).middleware);
+/** ------------------------- **/
 
+/** Game Web Socket **/
 const wss = new WebSocket.Server({server: server, path: "/game-service.ws"});
 wss.on('connection', async (ws, req) => {
     await sessionManager.applyTo(req);
@@ -88,6 +92,7 @@ wss.on('connection', async (ws, req) => {
         ws.send(JSON.stringify(msg));
     }
 });
+/** ------------------------- **/
 
 app.use(Express.static('public'));
 
