@@ -1,3 +1,5 @@
-<% for (let nidget of nidgets){
-    include('../nidgets/' + nidget);
-} %>
+<% for (let nidget of nidgets){%>
+    <% let path = '../nidgets/' + nidget %>
+    <!-- <%= path %> -->
+    <%- include(path); %>
+<% } %>

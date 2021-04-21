@@ -23,7 +23,6 @@ class JITBrowserify {
         let dependencies = this.nidgetPreprocessor.getDependencies("./views/pages/"+ name + ".ejs");
 
         for (let dep of dependencies) {
-            console.log(dep);
             let path = getScriptPath("./src/client/modules/", dep);
             b.add(path);
         }
