@@ -1,4 +1,5 @@
 function cors(req, res, next) {
+    console.log(req.baseURL);
     let csp = extractCSP(res);
     csp["default-src"] = "'self' *.google.com *.googleapis.com 'unsafe-inline'";
     csp["style-src"] = "'self' *.google.com 'unsafe-inline'";

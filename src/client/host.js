@@ -9,7 +9,6 @@ import renderButton from "./host/renderButton";
 let folderId = null;
 let fileOps = new FileOps();
 window.fileOps = fileOps;
-
 window.renderButton = renderButton;
 
 // main called from renderButton.js
@@ -28,8 +27,7 @@ function onLoad(event) {
 
 async function checkForGame() {
     let token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
-
-    var xhttp = new XMLHttpRequest();
+    let xhttp = new XMLHttpRequest();
 
     xhttp.addEventListener("load", (event) => {
         let response = JSON.parse(xhttp.responseText);
@@ -54,7 +52,7 @@ async function onLaunch(event) {
     let model = JSON.parse(file.body);
     let token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
 
-    var xhttp = new XMLHttpRequest();
+    let xhttp = new XMLHttpRequest();
     xhttp.addEventListener("load", (event) => {
         let response = JSON.parse(xhttp.responseText);
         console.log(response);
@@ -79,7 +77,7 @@ async function onLaunch(event) {
 async function launchVerify() {
     let token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
 
-    var xhttp = new XMLHttpRequest();
+    let xhttp = new XMLHttpRequest();
     xhttp.open('POST', 'verify');
     xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.onload = function () {

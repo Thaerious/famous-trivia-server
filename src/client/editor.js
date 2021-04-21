@@ -6,10 +6,6 @@ import EditorPane from "./modules/EditorPane.js";
 import Model from "./modules/Model";
 const Nidget = require("@thaerious/nidget")
 
-import "./modules/GameBoard.js";
-import "./modules/MultipleChoicePane.js";
-import "./modules/CheckBox.js";
-
 let fileOps = new FileOps();
 let model = null;
 let questionPane = null;

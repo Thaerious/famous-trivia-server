@@ -21,13 +21,7 @@ class NidgetPreprocessor {
         for (let nidget in this.knownNidgets){
             this.knownNidgets[nidget].dependencies.add(nidget);
             let filePath = this.modulePath + "/" + nidget + ".ejs";
-            console.log(filePath);
             this.seekDependencies(filePath, this.knownNidgets[nidget].dependencies);
-        }
-
-        for (let nidget in this.knownNidgets){
-            console.log(nidget);
-            console.log(this.knownNidgets[nidget].dependencies);
         }
 
         return this;
@@ -67,27 +61,6 @@ class NidgetPreprocessor {
                 this.seekDependencies(childFilePath, set);
             }
         }
-    }
-
-    process(filePath) {
-        let includes = this.getDependencies(filePath)
-
-        const fileString = fs.readFileSync(filePath);
-        const htmlString = `<html><body>${fileString}</body></html>`;
-        const dom = new JSDOM(htmlString);
-
-        for (let include of includes){
-            dom.window.document.head.innerHTML =
-                dom.window.document.head.innerHTML +
-                `\n<%- include('../nidgets/${include}.ejs'); %>\n`
-        }
-
-        let returnValue = dom.window.document.documentElement.outerHTML;
-        returnValue = returnValue.replaceAll("&lt;%=", "<%=");
-        returnValue = returnValue.replaceAll("&lt;%-", "<%-");
-        returnValue = returnValue.replaceAll("%&gt;", "%>");
-
-        return returnValue;
     }
 }
 

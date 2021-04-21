@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <%- include('../partials/head'); %>
-    <%- include('../partials/google'); %>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="styles/generated/host.css"/>
+    <script type="text/javascript" src="jit/host.js" defer></script>
+    <meta name="google-signin-client_id" content="158823134681-98bgkangoltk636ukf8pofeis7pa7jbk.apps.googleusercontent.com">
+    <script type="text/javascript" src="https://apis.google.com/js/api.js"></script>
     <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
 </head>
 <body class="container">
-<%- include('../partials/nidget-templates'); %>
+
 
 <input id="upload-anchor" onblur="console.log('booya')" class="hidden-anchor" type="file"/>
 

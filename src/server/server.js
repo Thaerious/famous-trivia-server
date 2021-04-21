@@ -1,3 +1,5 @@
+// noinspection JSCheckFunctionSignatures
+
 import Express from 'express';
 import http from 'http';
 import helmet from 'helmet';
@@ -12,12 +14,10 @@ import CLI from './CLI.js';
 import WebSocket from 'ws';
 import SessionManager from "./SessionManager.js";
 import ejs from 'ejs';
-import path from 'path';
+import Path from 'path';
 import Connection from "./Connection.js";
 import NidgetPreprocessor from "./NidgetPreprocessor.js";
 import JITBrowserify from "./JITBrowserify.js";
-import fs from "fs";
-import awaitAsyncGenerator from "@babel/runtime/helpers/esm/awaitAsyncGenerator";
 
 const port = 8000;
 const app = Express();
@@ -26,36 +26,13 @@ const gameManager = await new GameManager("assets/trivia.db");
 gameManager.connect();
 const sessionManager = new SessionManager("assets/trivia.db");
 await sessionManager.load();
-
 const nidgetPreprocessor = new NidgetPreprocessor("views/nidgets").setup();
-ejs.fileLoader = (filePath) => {
-    return nidgetPreprocessor.process(filePath);
-};
 
 new CLI(gameManager, sessionManager);
 app.use(helmet()); // automatic security settings
 app.use(UserAgent.express()); // used to determine what the connection is using (phone,browser etc)
 
-app.use('/contestant_join.html', sessionManager.middleware);
 app.use('/host_portal.ejs', sessionManager.middleware);
-
-// app.post('/login-action', function (req, res) {
-//     let name = req.body["name"].trim();
-//     let msg = checkName(name);
-//
-//     if (!msg) {
-//         let hash = sessionManager.addSession(name);
-//         res.setHeader('Content-Type', 'application/json');
-//         res.cookie(sessionCookieName, hash);
-//         res.json(`{"action":"success"}`);
-//         res.end();
-//     }else{
-//         res.status(401);
-//         res.setHeader('Content-Type', 'application/json');
-//         res.json(msg);
-//         res.end();
-//     }
-// });
 
 /** non-rendering end-points **/
 // launch a new game, called from host.js
@@ -74,6 +51,7 @@ app.use("/connect-host", connectHost(gameManager));
 
 /** page rendering end-points **/
 app.use("/*.ejs", cors);
+app.get("/*.html", cors);
 /** ------------------------- **/
 
 /* template engine setup */
@@ -84,8 +62,11 @@ app.use("/*.ejs", cors);
 app.set('view engine', 'ejs');
 
 app.get('*.ejs', (req, res) => {
+    let nidgetDependencies = nidgetPreprocessor.getDependencies("./views/pages/" + req.path);
+
     res.render(`pages/${req.path}`, {
-        filename: path.basename(req.path.slice(0, -4))
+        filename: Path.basename(req.path.slice(0, -4)),
+        nidgets : nidgetDependencies
     });
 });
 
@@ -113,48 +94,3 @@ app.use(Express.static('public'));
 server.listen(port, () => {
     console.log(`HTTP listener started on port ${port}`)
 });
-
-class Cookies {
-    constructor(string) {
-        this.cookies = {};
-        let rawCookies = string.split('; ');
-        rawCookies.forEach(raw => {
-            let keyValue = raw.split("=");
-            this.cookies[keyValue[0]] = keyValue[1];
-        });
-    }
-
-    get(key) {
-        return this.cookies[key];
-    }
-
-    has(key) {
-        return this.cookies[key] !== undefined;
-    }
-}
-
-function checkName(name) {
-    let msg = {action: "error"}
-
-    if (!name || name.trim().length === 0) {
-        msg.text = "Empty name not permitted";
-        return JSON.stringify(msg);
-    }
-
-    if (sessionManager.hasName(name)) {
-        msg.text = "Name already in use";
-        return JSON.stringify(msg);
-    }
-
-    if (name.length > 16) {
-        msg.text = "Name must be 16 character or less";
-        return JSON.stringify(msg);
-    }
-
-    if (name.length < 2) {
-        msg.text = "Name must be 2 character or more";
-        return JSON.stringify(msg);
-    }
-
-    return undefined;
-}
