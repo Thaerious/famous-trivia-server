@@ -4,7 +4,7 @@
 }
 
 :host(player-container.hidden) {
-  display: none;
+  visibility: hidden;
 }
 
 @keyframes expand-show {
@@ -62,7 +62,9 @@
   }
 
   &.hide-extra .inner.extra{
-    visibility: hidden;
+    //visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
   }
 
   .inner {

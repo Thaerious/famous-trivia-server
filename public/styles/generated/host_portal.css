@@ -67,49 +67,69 @@ check-box {
   width: 200px;
 }
 
-.nav-button {
+.button-dock {
   position: absolute;
-  bottom: 6vh;
+  width: calc(75 / 9 * 16vh);
+  right: 0;
+  bottom: -5vh;
+  height: 5vh;
 }
-.nav-button.hidden {
+.button-dock .nav-button {
+  position: absolute;
+  bottom: -1vh;
+}
+.button-dock .nav-button.hidden {
   display: none;
 }
-.nav-button.left {
+.button-dock .nav-button.left {
   left: 50%;
-  transform: translateX(-110%);
+  transform: translateX(-140%);
 }
-.nav-button.right {
+.button-dock .nav-button.right {
   left: 50%;
-  transform: translateX(10%);
+  transform: translateX(40%);
 }
-.nav-button.center {
+.button-dock .nav-button.center {
   left: 50%;
   transform: translateX(-50%);
 }
-.nav-button#accept {
+.button-dock .nav-button#accept {
   background-color: #8cffa0;
 }
-.nav-button#accept:hover {
+.button-dock .nav-button#accept:hover {
   background-color: #c8fbd1;
 }
-.nav-button#reject {
+.button-dock .nav-button#reject {
   background-color: #e24ab4;
 }
-.nav-button#reject:hover {
+.button-dock .nav-button#reject:hover {
   background-color: #df7bc2;
 }
-.nav-button#continue {
+.button-dock .nav-button#continue {
   background-color: #ebff43;
 }
-.nav-button#continue:hover {
+.button-dock .nav-button#continue:hover {
   background-color: #ecff8c;
 }
-.nav-button#next {
+.button-dock .nav-button#next {
   width: 40vh;
   background-color: #ebff43;
 }
-.nav-button#next:hover {
+.button-dock .nav-button#next:hover {
   background-color: #ecff8c;
+}
+
+trivia-timer {
+  position: absolute;
+  right: calc(75 / 9 * 8vh);
+  top: 75vh;
+  transform: translate(50%, -50%);
+  width: 14vh;
+  height: 14vh;
+  z-index: 10;
+  font-family: "Arial Black", serif;
+  font-size: 2em;
+  line-height: 65px;
 }
 
 .nav-button {

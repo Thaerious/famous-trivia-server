@@ -107,7 +107,7 @@ class JeopardyModel{
         return true;
     }
 
-    clearCurrent(remove = true){
+    clearCurrent(){
         if (this.currentPlayer === '') return false;
         this.currentPlayer = '';
         return true;

@@ -28,6 +28,11 @@ class PlayerPanel extends NidgetElement {
         return this.querySelector("#score").text;
     }
 
+    set dim(value){
+        if (value) this.querySelector(".outer").classList.add("dim");
+        else this.querySelector(".outer").classList.remove("dim");
+    }
+
     set highlight(value){
         if (value) this.querySelector(".outer").classList.add("highlight");
         else this.querySelector(".outer").classList.remove("highlight");

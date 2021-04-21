@@ -10,7 +10,7 @@ class AbstractView extends EventTarget{
         // this.DOM.questionText = document.querySelector("#text-contents");
 
         this.DOM.playing_indicator = document.querySelector("#playing");
-        this.DOM.clock = document.querySelector("#clock");
+        this.DOM.timer = document.querySelector("trivia-timer");
 
         this.DOM.menuIndicator = document.querySelector("#menu-indicator");
         this.DOM.menuArea = document.querySelector("#menu-area");
@@ -29,14 +29,18 @@ class AbstractView extends EventTarget{
     }
 
     startTimer(update){
-
+        this.DOM.timer.show(update.time);
     }
 
     updateTimer(update){
         if (this.lastUpdate.model.players.length <= 0) return;
-        let currentName = this.lastUpdate.model.players[0].name;
-        let currentPanel = this.DOM.playerContainer.getPlayer(currentName);
-        currentPanel.setTimer(update.progress);
+        this.DOM.timer.set(update.time);
+
+        if (this.lastUpdate.state === 6 || this.lastUpdate.state === 8) {
+            let currentName = this.lastUpdate.model.players[0].name;
+            let currentPanel = this.DOM.playerContainer.topPlayer();
+            currentPanel.setTimer(update.progress);
+        }
     }
 
     stopTimer(update){
@@ -60,31 +64,39 @@ class AbstractView extends EventTarget{
                 this.DOM.gameBoard.show();
                 this.fillJeopardyCategories(update);
                 this.fillJeopardyCells(update);
+                this.DOM.timer.hide();
                 break;
             case 5:
                 this.DOM.gameBoard.hide();
                 this.DOM.questionPane.show();
                 this.DOM.questionPane.setText(update.model.round.question);
+                this.DOM.timer.hide();
                 break;
             case 6:
                 this.DOM.gameBoard.hide();
                 this.DOM.questionPane.show();
                 this.DOM.questionPane.setText(update.model.round.question);
+                this.DOM.timer.show();
                 break;
             case 7:
-                this.DOM.gameBoard.show();
-                this.fillJeopardyCategories(update);
-                this.fillJeopardyCells(update);
+                this.DOM.gameBoard.hide();
+                this.DOM.questionPane.show();
+                this.DOM.questionPane.setText(update.model.round.question);
+                this.updateBuzzPlayers(update);
                 break;
             case 8:
-                this.DOM.gameBoard.show();
-                this.fillJeopardyCategories(update);
-                this.fillJeopardyCells(update);
+                this.DOM.gameBoard.hide();
+                this.DOM.questionPane.show();
+                this.DOM.questionPane.setText(update.model.round.question);
+                this.DOM.timer.show();
+                this.updateBuzzPlayers(update);
                 break;
             case 9:
                 this.DOM.gameBoard.hide();
                 this.DOM.questionPane.show();
                 this.DOM.questionPane.setText(update.model.round.answer);
+                this.DOM.timer.hide();
+                this.updateBuzzPlayers(update);
                 break;
             default:
                 break;
@@ -103,6 +115,34 @@ class AbstractView extends EventTarget{
         this.DOM.playerContainer.getPlayer(update.model.players[0].name).active = true;
     }
 
+    /**
+     * Update the player display for the jeopardy buzz availability.
+     * @param update
+     */
+    updateBuzzPlayers(update){
+        if (update.model.players.length <= 0) return;
+
+        if (update.model.round.current_player) {
+            this.DOM.playerContainer.moveToTop(update.model.round.current_player);
+        }
+
+        for (let player of update.model.players){
+            if (update.model.round.current_player === player.name) {
+                this.DOM.playerContainer.getPlayer(update.model.round.current_player).dim = false;
+                this.DOM.playerContainer.getPlayer(update.model.round.current_player).highlight = true;
+                this.DOM.playerContainer.getPlayer(update.model.round.current_player).active = true;
+            }
+            else {
+                this.DOM.playerContainer.getPlayer(player.name).highlight = false;
+                this.DOM.playerContainer.getPlayer(player.name).active = false;
+
+                if (update.model.round.players.indexOf(player.name) === -1) {
+                    this.DOM.playerContainer.getPlayer(player.name).dim = true;
+                }
+            }
+        }
+    }
+
     fillJeopardyCategories(update){
         for (let i = 0; i < 6; i++){
             let category = update.model.round.categories[i];
@@ -114,8 +154,11 @@ class AbstractView extends EventTarget{
         let round = update.model.round;
         for (let c = 0; c < 6; c++){
             for (let r = 0; r < 5; r++){
-                if (round.spent[c][r]) continue;
-                this.DOM.gameBoard.setCell(r, c, round.values[c][r]);
+                if (round.spent[c][r]){
+                    this.DOM.gameBoard.setCell(r, c, "");
+                } else {
+                    this.DOM.gameBoard.setCell(r, c, round.values[c][r]);
+                }
             }
         }
     }

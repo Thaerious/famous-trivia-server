@@ -1,6 +1,4 @@
 import verify from './verify.js';
-import {Game} from './Game.js';
-import GameModel from './GameModel.js';
 
 function connectHost(gameManager) {
     return async (req, res, next) => {

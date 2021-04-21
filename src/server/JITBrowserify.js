@@ -18,7 +18,7 @@ class JITBrowserify {
 
         res.setHeader('Content-Type', 'text/javascript');
         let filepath = './src/client/'+ path;
-        let b = browserify(filepath);
+        let b = browserify(filepath, {debug : true});
 
         let dependencies = this.nidgetPreprocessor.getDependencies("./views/pages/"+ name + ".ejs");
 
@@ -30,21 +30,6 @@ class JITBrowserify {
         b.transform("babelify");
         b.bundle().pipe(res);
     }
-}
-
-async function getScript(filepath){
-    let b = browserify(filepath);
-    b.transform("babelify");
-    return await streamToString(b.bundle());
-}
-
-function streamToString (stream) {
-    const chunks = [];
-    return new Promise((resolve, reject) => {
-        stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
-        stream.on('error', (err) => reject(err));
-        stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
-    });
 }
 
 /**

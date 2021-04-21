@@ -1,5 +1,5 @@
 import GameModel from "./GameModel.js";
-import fs from 'fs';
+import constants from "./constants.js";
 
 class Timer {
     constructor(game) {
@@ -32,7 +32,7 @@ class Timer {
 
     update() {
         this.currentTime = this.currentTime - 1;
-        if (this.currentTime > 0) {
+        if (this.currentTime >= 0) {
             this.timeout = setTimeout(() => this.update(), 1000);
             this.onUpdate(this.currentTime);
         } else {
@@ -54,18 +54,12 @@ class Timer {
     onExpire() {
         delete this.timeout;
         this.game.onInput({action: "expire"});
-        this.game.broadcast({action: "stop_timer"});
+        // this.game.broadcast({action: "stop_timer"});
     }
 
     clear() {
         if (this.timeout) clearTimeout(this.timeout);
     }
-}
-
-Timer.TIMES = {
-    ANSWER: 30,
-    BUZZ: 10,
-    MULTIPLE_CHOICE: 60
 }
 
 class Game {
@@ -104,8 +98,11 @@ class Game {
      */
     onInput(input) {
         this[this.state](input);
+    }
+
+    updateState(state){
+        this.state = state;
         let update = this.getUpdate();
-        update.data.input = input.action;
         this.broadcast(update);
     }
 
@@ -143,21 +140,15 @@ class Game {
         if (this.model.getRound().stateData.style === GameModel.STYLE.MULTIPLE_CHOICE) {
             this.model.getRound().setQuestionState();
             this.playersData = this.createPlayerData();
-            this.state = 1;
+            this.updateState(1);
         } else if (this.model.getRound().stateData.style === GameModel.STYLE.JEOPARDY) {
             this.model.getRound().setBoardState();
-            this.state = 4;
+            this.updateState(4);
         }
     }
 
     isQuestionDone() {
-        if (this.model.getRound().hasUnspent()) {
-            this.timer.start(Timer.TIMES.BUZZ);
-            this.state = 7;
-        } else {
-            this.model.getRound().setRevealState();
-            this.state = 9;
-        }
+        return this.model.getRound().hasUnspent();
     }
 
     updateMCScores() {
@@ -199,6 +190,7 @@ class Game {
         switch (input.action) {
             case "join":
                 this.model.addPlayer(input.data.name);
+                this.broadcast();
                 break;
             case "start":
                 this.broadcast({action : "start_game"});
@@ -211,11 +203,12 @@ class Game {
         switch (input.action) {
             case "join":
                 this.model.addPlayer(input.data.name);
+                this.broadcast();
                 break;
             case "continue":
-                this.state = 2;
+                this.updateState(2);
                 this.model.getRound().setAnswerState();
-                this.timer.start(Timer.TIMES.MULTIPLE_CHOICE);
+                this.timer.start(constants.TIMES.MULTIPLE_CHOICE);
                 this.roundData = {};
                 break;
         }
@@ -225,9 +218,10 @@ class Game {
         switch (input.action) {
             case "join":
                 this.model.addPlayer(input.data.name);
+                this.broadcast();
                 break;
             case "expire":
-                this.state = 3;
+                this.updateState(3);
                 this.model.getRound().setRevealState();
                 this.updateMCScores();
                 break;
@@ -248,6 +242,7 @@ class Game {
         switch (input.action) {
             case "join":
                 this.model.addPlayer(input.data.name);
+                this.broadcast();
                 break;
             case "continue":
                 this.startRound();
@@ -259,11 +254,12 @@ class Game {
         switch (input.action) {
             case "join":
                 this.model.addPlayer(input.data.name);
+                this.broadcast();
                 break;
             case "select":
                 if (!this.model.getRound().isSpent(input.data.col, input.data.row)) {
                     this.model.getRound().setQuestionState(input.data.col, input.data.row);
-                    this.state = 5;
+                    this.updateState(5);
                 }
                 break;
         }
@@ -271,14 +267,17 @@ class Game {
 
     [5](input) { // waiting for host to read question and click continue
         switch (input.action) {
+            case "join":
+                this.model.addPlayer(input.data.name);
+                this.broadcast();
+                break;
             case "continue":
                 this.model.getRound().setSpent();
-                this.timer.start(Timer.TIMES.ANSWER);
-                this.state = 6;
+                this.updateState(6);
+                this.timer.start(constants.TIMES.ANSWER);
                 break;
             case "back":
-                this.timer.start(Timer.TIMES.ANSWER);
-                this.state = 4;
+                this.updateState(4);
                 break;
         }
     }
@@ -287,19 +286,29 @@ class Game {
         switch (input.action) {
             case "join":
                 this.model.addPlayer(input.data.name);
+                this.broadcast();
                 break;
             case "reject":
                 this.model.getRound().clearCurrent();
-                this.isQuestionDone();
+                this.timer.stop();
+                this.model.getRound().clearCurrent();
+
+                if (this.isQuestionDone()){
+                    this.timer.start(constants.TIMES.BUZZ);
+                    this.updateState(7);
+                } else {
+                    this.model.getRound().setRevealState();
+                    this.updateState(9);
+                }
                 break;
             case "expire":
                 break;
             case "accept":
                 this.model.getPlayer(this.model.getRound().getCurrent()).score += this.model.getRound().getValue();
                 this.model.getRound().setRevealState();
-                this.state = 9;
+                this.timer.stop();
+                this.updateState(9);
                 break;
-
         }
     }
 
@@ -307,17 +316,21 @@ class Game {
         switch (input.action) {
             case "join":
                 this.model.addPlayer(input.data.name);
+                this.broadcast();
                 break;
             case "buzz":
+                console.log("BUZZ: " + input.data.name);
+                console.log(this.model.getRound().hasPlayer(input.data.name));
                 if (this.model.getRound().hasPlayer(input.data.name)) {
                     this.model.getRound().setCurrent(input.data.name);
-                    this.timer.start(Timer.TIMES.ANSWER);
-                    this.state = 8;
+                    this.timer.start(constants.TIMES.ANSWER);
+                    this.updateState(8);
                 }
                 break;
             case "expire":
+                this.broadcast({action: "stop_timer"});
                 this.model.getRound().setRevealState();
-                this.state = 9;
+                this.updateState(9);
                 break;
         }
     }
@@ -326,18 +339,29 @@ class Game {
         switch (input.action) {
             case "join":
                 this.model.addPlayer(input.data.name);
+                this.broadcast();
                 break;
             case "reject":
                 let player = this.model.getPlayer(this.model.getRound().getCurrent());
                 player.score -= (this.model.getRound().getValue() / 2);
-                this.isQuestionDone();
+                this.timer.stop();
+                this.model.getRound().clearCurrent();
+
+                if (this.isQuestionDone()){
+                    this.timer.start(constants.TIMES.BUZZ);
+                    this.updateState(7);
+                } else {
+                    this.model.getRound().setRevealState();
+                    this.updateState(9);
+                }
                 break;
             case "expire":
                 break;
             case "accept":
-                this.model.getRound().getCurrent().score += this.model.getRound().getValue();
+                this.model.getPlayer(this.model.getRound().getCurrent()).score += this.model.getRound().getValue();
                 this.model.getRound().setRevealState();
-                this.state = 9;
+                this.timer.stop();
+                this.updateState(9);
                 break;
         }
     }
@@ -346,13 +370,14 @@ class Game {
         switch (input.action) {
             case "join":
                 this.model.addPlayer(input.data.name);
+                this.broadcast();
                 break;
             case "continue":
                 if (this.model.getRound().hasUnspent()) {
                     this.model.nextActivePlayer();
                     this.model.getRound().setBoardState();
                     this.model.getRound().resetCurrentPlayers(this.model.players);
-                    this.state = 4;
+                    this.updateState(4);
                 } else {
                     this.startRound();
                 }
@@ -363,7 +388,5 @@ class Game {
 
 
 export {
-    Game
-    ,
-    Timer
+    Game, Timer
 };

@@ -1,6 +1,5 @@
 
 class HostPortalController {
-
     constructor(ws, view) {
         this.ws = ws;
         this.view = view;
@@ -11,8 +10,8 @@ class HostPortalController {
         this.view.addEventListener('click', (event)=>this.send(event.detail));
         this.view.addEventListener('cell-select', (event)=>this.send(event.detail));
 
-        window.start = function(){
-            this.send({action : "start"});
+        window.buzz = function(name){
+            this.send({action : "buzz", data : {name : name}});
         }.bind(this);
     }
 
@@ -25,7 +24,7 @@ class HostPortalController {
      * @param message
      */
     process(message){
-        if (message.action !== "ping") console.log(message);
+        if (message.action !== "ping" && message.action !== "update_timer") console.log(message);
         switch (message.action) {
             case "connection_established":
                 this.send({action : "request_model"});

@@ -27,11 +27,11 @@ class Connection{
         this.game.addPlayer(name);
     }
 
-    async connect(){
+    async connect(name){
         let hash = await this.req.session.get("game-hash");
         this.game = await this.gm.getLive(hash);
 
-        this.game.addListener("@HOST", msg => {
+        this.game.addListener(name, msg => {
             this.ws.send(JSON.stringify(msg));
         });
 
@@ -67,7 +67,7 @@ class Connection{
      */
     async checkRole(){
         if (await this.req.session.get("role") === "host"){
-            this.connect();
+            this.connect("@HOST");
         }
         else if (await this.req.session.has("role") === "contestant"){
             await this.connect();

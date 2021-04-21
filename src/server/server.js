@@ -66,9 +66,6 @@ app.use('/host_portal.ejs', sessionManager.middleware);
 
     app.get('*.ejs', (req, res) => {
         let nidgetDependencies = nidgetPreprocessor.getDependencies("./views/pages/" + req.path);
-        console.log("EJS> " + req.path);
-        console.log(nidgetDependencies);
-
         res.render(`pages/${req.path}`, {
             filename: Path.basename(req.path.slice(0, -4)),
             nidgets : nidgetDependencies

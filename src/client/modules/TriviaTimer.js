@@ -20,6 +20,14 @@ class TriviaTimer extends NidgetElement{
         }
     }
 
+    show(value){
+        if (value) {
+            this.querySelector("#current-tick").innerHTML = value;
+            this.querySelector("#prev-tick").innerHTML = value - 1;
+        }
+        super.show();
+    }
+
     step(){
         if (this.value > 0 && this.running) {
             this.tick();

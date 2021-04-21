@@ -44,6 +44,8 @@ class NidgetPreprocessor {
 
     /**
      * Get all dependencies from a nidget ejs file.
+     * Adds any dependencies in the data-include attribute of the template (comma or space delimited).
+     * Then searches for any tag-names that match any .ejs files in views/nidgets.
      * @param filename
      */
     seekDependencies(filePath, set){
@@ -55,6 +57,11 @@ class NidgetPreprocessor {
             if (set.has(nidget)) continue;
 
             const template = dom.window.document.querySelector(`template`);
+
+            let includes = template.getAttribute("data-include") ?? "";
+            let split = includes.split(/[ ,]+/g);
+            for (let s of split) if (s.trim() != "") set.add(s.trim());
+
             if (template.content.querySelector(nidget)){
                 set.add(nidget);
                 let childFilePath = this.modulePath + "/" + nidget + ".ejs";
