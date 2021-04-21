@@ -28,7 +28,7 @@ class HeaderUpdateEvent extends  CustomEvent{
 
 class GameBoard extends NidgetElement {
     constructor() {
-        super();
+        super("game-board-template");
     }
 
     async ready(){

@@ -15,6 +15,7 @@ import ejs from 'ejs';
 import path from 'path';
 import Connection from "./Connection.js";
 import NidgetPreprocessor from "./NidgetPreprocessor.js";
+import JITBrowserify from "./JITBrowserify.js";
 import fs from "fs";
 import awaitAsyncGenerator from "@babel/runtime/helpers/esm/awaitAsyncGenerator";
 
@@ -26,13 +27,10 @@ gameManager.connect();
 const sessionManager = new SessionManager("assets/trivia.db");
 await sessionManager.load();
 
-const nidgetPreprocessor = new NidgetPreprocessor("views/nidgets");
-await nidgetPreprocessor.setup();
-
-let myFileLoader = function (filePath) {
+const nidgetPreprocessor = new NidgetPreprocessor("views/nidgets").setup();
+ejs.fileLoader = (filePath) => {
     return nidgetPreprocessor.process(filePath);
 };
-ejs.fileLoader = myFileLoader;
 
 new CLI(gameManager, sessionManager);
 app.use(helmet()); // automatic security settings
@@ -90,6 +88,8 @@ app.get('*.ejs', (req, res) => {
         filename: path.basename(req.path.slice(0, -4))
     });
 });
+
+app.get('/jit/*.js', new JITBrowserify(nidgetPreprocessor).middleware);
 
 const wss = new WebSocket.Server({server: server, path: "/game-service.ws"});
 wss.on('connection', async (ws, req) => {

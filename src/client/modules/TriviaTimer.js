@@ -4,6 +4,7 @@ class TriviaTimer extends NidgetElement{
 
     constructor() {
         super("trivia-timer-template");
+        console.log("Trivia Timer");
     }
 
     start(value){

@@ -3,13 +3,6 @@ import Authenticate from "./modules/Authenticate.js";
 import HostPortalView from "./HostPortalView.js";
 import HostPortalController from "./HostPortalController";
 
-import "./modules/GameBoard.js";
-import "./modules/MultipleChoicePane.js";
-import "./modules/CheckBox.js";
-import "./modules/PlayerContainer.js";
-import "./modules/PlayerPanel.js";
-import "./modules/QuestionPane.js";
-
 let fileOps = new FileOps();
 let model = null;
 let questionPane = null;

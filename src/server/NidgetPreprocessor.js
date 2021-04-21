@@ -3,40 +3,59 @@ import {JSDOM} from 'jsdom';
 import browserify from 'browserify';
 
 class NidgetPreprocessor {
-    constructor(filepath) {
-        this.sourcePath = filepath;
+    constructor(modulePath) {
+        this.modulePath = modulePath;
         this.knownNidgets = {};
     }
 
-    async setup(){
-        let files = fs.readdirSync(this.sourcePath);
+    setup(){
+        let files = fs.readdirSync(this.modulePath);
 
         for (let file of files){
             const nidgetName = file.substr(0, file.length - 4);
             this.knownNidgets[nidgetName] = {
-                dependencies: new Set(),
-                script: await this.getScript(getScriptName(nidgetName))
+                dependencies: new Set()
             }
         }
 
         for (let nidget in this.knownNidgets){
-            this.seekDependencies(nidget, this.knownNidgets[nidget].dependencies);
+            this.knownNidgets[nidget].dependencies.add(nidget);
+            let filePath = this.modulePath + "/" + nidget + ".ejs";
+            console.log(filePath);
+            this.seekDependencies(filePath, this.knownNidgets[nidget].dependencies);
         }
 
-        // console.log(this.knownNidgets);
+        for (let nidget in this.knownNidgets){
+            console.log(nidget);
+            console.log(this.knownNidgets[nidget].dependencies);
+        }
+
+        return this;
+    }
+
+    getDependencies(filePath){
+        const fileString = fs.readFileSync(filePath);
+        const dom = new JSDOM(fileString);
+
+        let includes = new Set();
+        for (let nidget in this.knownNidgets){
+            if (dom.window.document.querySelector(nidget)){
+                for(const dependent of this.knownNidgets[nidget].dependencies) {
+                    includes.add(dependent);
+                }
+            }
+        }
+        return includes;
     }
 
     /**
      * Get all dependencies from a nidget ejs file.
      * @param filename
      */
-    seekDependencies(parent, set){
-        const filePath = this.sourcePath + "/" + parent + ".ejs";
+    seekDependencies(filePath, set){
         const fileString = fs.readFileSync(filePath);
         const htmlString = `<html><body>${fileString}</body></html>`;
         const dom = new JSDOM(htmlString);
-
-        set.add(parent);
 
         for (let nidget in this.knownNidgets){
             if (set.has(nidget)) continue;
@@ -44,31 +63,23 @@ class NidgetPreprocessor {
             const template = dom.window.document.querySelector(`template`);
             if (template.content.querySelector(nidget)){
                 set.add(nidget);
-                this.seekDependencies(nidget, set);
+                let childFilePath = this.modulePath + "/" + nidget + ".ejs";
+                this.seekDependencies(childFilePath, set);
             }
         }
     }
 
     process(filePath) {
-        const fileString = fs.readFileSync(filePath);
-        const dom = new JSDOM(fileString);
+        let includes = this.getDependencies(filePath)
 
-        let includes = [];
-        for (let nidget in this.knownNidgets){
-            if (dom.window.document.querySelector(nidget)){
-                includes.push(nidget);
-            }
-        }
+        const fileString = fs.readFileSync(filePath);
+        const htmlString = `<html><body>${fileString}</body></html>`;
+        const dom = new JSDOM(htmlString);
 
         for (let include of includes){
             dom.window.document.head.innerHTML =
                 dom.window.document.head.innerHTML +
                 `\n<%- include('../nidgets/${include}.ejs'); %>\n`
-
-
-            dom.window.document.body.innerHTML =
-                dom.window.document.body.innerHTML +
-                `<script>${this.knownNidgets[include].script}</script>`;
         }
 
         let returnValue = dom.window.document.documentElement.outerHTML;
@@ -78,21 +89,6 @@ class NidgetPreprocessor {
 
         return returnValue;
     }
-
-    async getScript(filepath){
-        let b = browserify(filepath);
-        b.transform("babelify");
-        return await streamToString(b.bundle());
-    }
-}
-
-function streamToString (stream) {
-    const chunks = [];
-    return new Promise((resolve, reject) => {
-        stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
-        stream.on('error', (err) => reject(err));
-        stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
-    });
 }
 
 function getScriptName(nidget){

@@ -1,3 +1,3 @@
 window.onload = async () => {
-    console.log("Start Index");
+    console.log("Start Index Dot JS");
 }

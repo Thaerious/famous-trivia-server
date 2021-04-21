@@ -6,12 +6,6 @@
 </head>
 <body>
 
-<%- include('../nidgets/question-pane'); %>
-<%- include('../nidgets/game-board'); %>
-<%- include('../nidgets/multiple-choice-pane'); %>
-<%- include('../nidgets/player-container'); %>
-<%- include('../nidgets/player-panel'); %>
-
 <div class="top-bar" id="top-bar">
     <div class="menu" id="menu">
         <img class="menu-icon" id="menu-icon" src="assets/images/menu.png"/>
@@ -28,7 +22,7 @@
 <div id="main-container">
     <player-container id="player-container-left"></player-container>
     <question-pane id="question-pane" class="hidden" template-id="question-pane-template"></question-pane>
-    <game-board id="game-board" class="hidden" template-id="game-board-template"></game-board>
+    <game-board id="game-board" class="hidden"></game-board>
     <multiple-choice-pane id="multiple-choice-pane" class="hidden" template-id="multiple-choice-pane-template"></multiple-choice-pane>
     <div id="clock">
         <div id="prev_tick"></div>
