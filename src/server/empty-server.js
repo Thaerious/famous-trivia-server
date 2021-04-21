@@ -72,7 +72,7 @@ app.get('*.ejs', (req, res) => {
 /** ------------------------- **/
 
 /** Browserify Just-In-Time Transpiler **/
-app.get('/jit/*.js', new JITBrowserify(nidgetPreprocessor).middleware);
+    app.get('/jit/*.js', new JITBrowserify(nidgetPreprocessor).middleware);
 /** ------------------------- **/
 
 server.listen(port, () => {
