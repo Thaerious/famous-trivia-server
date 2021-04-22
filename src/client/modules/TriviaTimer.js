@@ -4,7 +4,6 @@ class TriviaTimer extends NidgetElement{
 
     constructor() {
         super("trivia-timer-template");
-        console.log("Trivia Timer");
     }
 
     start(value){
@@ -21,11 +20,24 @@ class TriviaTimer extends NidgetElement{
     }
 
     show(value){
+        this.querySelector(".outer").classList.remove("cycle");
         if (value) {
             this.querySelector("#current-tick").innerHTML = value;
-            this.querySelector("#prev-tick").innerHTML = value - 1;
         }
         super.show();
+    }
+
+    spin(){
+        this.querySelector(".outer").classList.remove("cycle");
+        setTimeout(
+            ()=>this.querySelector(".outer").classList.add("cycle"),
+            10
+        );
+
+        setTimeout(
+            ()=>this.querySelector("#current-tick").innerHTML = this.querySelector("#prev-tick").innerHTML,
+            500
+        );
     }
 
     step(){
@@ -36,19 +48,8 @@ class TriviaTimer extends NidgetElement{
     }
 
     set(value){
-        this.value = value;
         this.querySelector("#prev-tick").innerHTML = value;
-        this.querySelector(".outer").classList.remove("cycle");
-
-        setTimeout(
-            ()=>this.querySelector(".outer").classList.add("cycle"),
-            10
-        );
-
-        setTimeout(
-            ()=>this.querySelector("#current-tick").innerHTML = value,
-            500
-        );
+        this.spin();
     }
 
     tick(nextValue){

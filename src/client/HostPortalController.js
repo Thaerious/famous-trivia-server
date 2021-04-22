@@ -24,7 +24,7 @@ class HostPortalController {
      * @param message
      */
     process(message){
-        if (message.action !== "ping" && message.action !== "update_timer") console.log(message);
+        if (message.action !== "ping") console.log(message);
         switch (message.action) {
             case "connection_established":
                 this.send({action : "request_model"});

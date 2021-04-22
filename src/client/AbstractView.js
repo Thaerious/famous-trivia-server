@@ -76,7 +76,6 @@ class AbstractView extends EventTarget{
                 this.DOM.gameBoard.hide();
                 this.DOM.questionPane.show();
                 this.DOM.questionPane.setText(update.model.round.question);
-                this.DOM.timer.show();
                 break;
             case 7:
                 this.DOM.gameBoard.hide();
@@ -88,7 +87,6 @@ class AbstractView extends EventTarget{
                 this.DOM.gameBoard.hide();
                 this.DOM.questionPane.show();
                 this.DOM.questionPane.setText(update.model.round.question);
-                this.DOM.timer.show();
                 this.updateBuzzPlayers(update);
                 break;
             case 9:

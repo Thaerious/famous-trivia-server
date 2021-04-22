@@ -148,7 +148,7 @@ class Game {
     }
 
     isQuestionDone() {
-        return this.model.getRound().hasUnspent();
+        return this.model.getRound().countPlayers !== 0;
     }
 
     updateMCScores() {
