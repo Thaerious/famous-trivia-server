@@ -86,20 +86,17 @@ class AbstractView extends EventTarget{
                 this.DOM.gameBoard.hide();
                 this.DOM.questionPane.show();
                 this.DOM.questionPane.setText(update.model.round.question);
-                this.updateBuzzPlayers(update);
                 break;
             case 8:
                 this.DOM.gameBoard.hide();
                 this.DOM.questionPane.show();
                 this.DOM.questionPane.setText(update.model.round.question);
-                this.updateBuzzPlayers(update);
                 break;
             case 9:
                 this.DOM.gameBoard.hide();
                 this.DOM.questionPane.show();
                 this.DOM.questionPane.setText(update.model.round.answer);
                 this.DOM.timer.hide();
-                this.updateBuzzPlayers(update);
                 break;
             case 10:
                 this.DOM.gameBoard.hide();
@@ -118,34 +115,12 @@ class AbstractView extends EventTarget{
 
         for (let player of update.model.players){
             this.DOM.playerContainer.addPlayer(player.name, player.score);
-        }
 
-        this.DOM.playerContainer.getPlayer(update.model.players[0].name).highlight = true;
-        this.DOM.playerContainer.getPlayer(update.model.players[0].name).active = true;
-    }
-
-    /**
-     * Update the player display for the jeopardy buzz availability.
-     * @param update
-     */
-    updateBuzzPlayers(update){
-        if (update.model.players.length <= 0) return;
-
-        if (update.model.round.current_player) {
-            this.DOM.playerContainer.moveToTop(update.model.round.current_player);
-        }
-
-        for (let player of update.model.players){
-            if (update.model.round.current_player === player.name) {
-                this.DOM.playerContainer.getPlayer(update.model.round.current_player).dim = false;
-                this.DOM.playerContainer.getPlayer(update.model.round.current_player).highlight = true;
-                this.DOM.playerContainer.getPlayer(update.model.round.current_player).active = true;
-            }
-            else {
-                this.DOM.playerContainer.getPlayer(player.name).highlight = false;
-                this.DOM.playerContainer.getPlayer(player.name).active = false;
-
-                if (update.model.round.players.indexOf(player.name) === -1) {
+            if (update.model.round && update.model.round.style === 'j') { // TODO remove magic string
+                if (update.model.round.current_player === player.name) {
+                    this.DOM.playerContainer.getPlayer(player.name).highlight = true;
+                    this.DOM.playerContainer.getPlayer(player.name).active = true;
+                } else if (update.model.round.spentPlayers.indexOf(player.name) !== -1) {
                     this.DOM.playerContainer.getPlayer(player.name).dim = true;
                 }
             }

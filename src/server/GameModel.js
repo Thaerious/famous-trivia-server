@@ -3,15 +3,19 @@ import getPrototypeOf from "@babel/runtime/helpers/esm/getPrototypeOf";
 
 class EndOfGame{
 
-    constructor() {
+    constructor(parent) {
+        this.parent = parent;
+
         this.stateData = {
-            style : GameModel.STYLE.END_OF_GAME
+            style : GameModel.STYLE.END_OF_GAME,
+            players : parent.players
         }
     }
 
     getUpdate() {
         return {
-            style : GameModel.STYLE.END_OF_GAME
+            style : GameModel.STYLE.END_OF_GAME,
+            players : this.parent.players
         }
     }
 }
