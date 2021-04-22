@@ -30,7 +30,7 @@ class MultipleChoicePane extends NidgetElement {
     }
 
     async ready(){
-        await super.connectedCallback();
+        await super.ready();
         for (let element of this.querySelectorAll(".answer > nidget-text")){
             element.fitText.lock = "vh";
             element.addEventListener("keypress", (event)=>this.txtListener(event));

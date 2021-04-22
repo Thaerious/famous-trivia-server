@@ -26,7 +26,7 @@ const gameManager = await new GameManager("assets/trivia.db");
 gameManager.connect();
 const sessionManager = new SessionManager("assets/trivia.db");
 await sessionManager.load();
-const nidgetPreprocessor = new NidgetPreprocessor("views/nidgets").setup();
+const nidgetPreprocessor = new NidgetPreprocessor("views/nidgets", true).setup();
 
 new CLI(gameManager, sessionManager);
 app.use(helmet());            // automatic security settings (outgoing response headers)

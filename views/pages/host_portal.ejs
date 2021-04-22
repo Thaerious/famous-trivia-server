@@ -8,12 +8,12 @@
 <%- include('../partials/nidget-templates'); %>
 
 <div class="top-bar" id="top-bar">
-    <div class="menu" id="menu">
-        <img class="menu-icon" id="menu-icon" src="assets/images/menu.png"/>
-        <div class="menu-area hidden" id="outer">
-            <nidget-element class="menu-item" id="menu-home-screen">Exit</nidget-element>
-        </div>
-    </div>
+    <menu-container src="assets/images/menu.png">
+        <menu-item event-name="terminate">Terminate Hosting</menu-item>
+        <menu-item event-name="next">Next Round</menu-item>
+        <menu-item event-name="prev">Previous Round</menu-item>
+        <menu-item event-name="add-players">Add Players</menu-item>
+    </menu-container>
 </div>
 
 <div class="round-number" id="round-number">
@@ -24,7 +24,7 @@
     <player-container id="player-container-left"></player-container>
     <question-pane id="question-pane" class="hidden" template-id="question-pane-template"></question-pane>
     <game-board id="game-board" class="hidden"></game-board>
-    <multiple-choice-pane id="multiple-choice-pane" class="hidden" template-id="multiple-choice-pane-template"></multiple-choice-pane>
+    <multiple-choice-present id="multiple-choice-present" class="hidden"></multiple-choice-present>
     <trivia-timer class="hidden"></trivia-timer>
 
     <div class="button-dock">

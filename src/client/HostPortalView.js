@@ -50,10 +50,12 @@ class HostPortalView extends AbstractView{
                 this.DOM.startButton.show();
                 break;
             case 1:
+                this.DOM.continueButton.show();
                 break;
             case 2:
                 break;
             case 3:
+                this.DOM.continueButton.show();
                 break;
             case 4:
                 break;

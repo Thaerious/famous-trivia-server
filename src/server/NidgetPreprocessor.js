@@ -3,9 +3,10 @@ import {JSDOM} from 'jsdom';
 import browserify from 'browserify';
 
 class NidgetPreprocessor {
-    constructor(modulePath) {
+    constructor(modulePath, debug = false) {
         this.modulePath = modulePath;
         this.knownNidgets = {};
+        this.debug = debug;
     }
 
     setup(){
@@ -22,6 +23,13 @@ class NidgetPreprocessor {
             this.knownNidgets[nidget].dependencies.add(nidget);
             let filePath = this.modulePath + "/" + nidget + ".ejs";
             this.seekDependencies(filePath, this.knownNidgets[nidget].dependencies);
+        }
+
+        if (this.debug){
+            console.log("Known Nidgets:");
+            for (let nidget in this.knownNidgets){
+                console.log(" -- " + nidget);
+            }
         }
 
         return this;

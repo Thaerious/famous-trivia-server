@@ -10,10 +10,10 @@ check-box {
 #main-container {
   position: absolute;
   left: 50%;
+  transform: translateX(-50%);
   top: 8vh;
   height: 75vh;
   width: calc(27vh + (75 / 9 * 16vh));
-  transform: translateX(-50%);
 
   #player-container-left {
     position: absolute;
@@ -24,7 +24,7 @@ check-box {
     z-index: 2000;
   }
 
-  #game-board, #multiple-choice-pane, #question-pane {
+  #game-board, #multiple-choice-present, #question-pane {
     position: absolute;
     top: 0;
     right: 0;
@@ -38,15 +38,16 @@ check-box {
   position: absolute;
   top: 1vh;
   left: 50%;
-  width: calc(75 * 1.11vh);
-  height: 5vh;
   transform: translateX(-50%);
+  width: calc(27vh + (75 / 9 * 16vh));
+  height: 5vh;
   z-index: 100;
 
-  #menu-icon {
+  menu-container {
     position: absolute;
     right: 0px;
     width: 5vh;
+    height: 5vh;
   }
 }
 
@@ -79,7 +80,6 @@ check-box {
   right: 0;
   bottom: -5vh;
   height: 5vh;
-  //background-color: pink;
 
   .nav-button {
     position: absolute;

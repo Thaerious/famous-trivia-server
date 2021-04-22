@@ -22,6 +22,20 @@ window.onload = async () => {
         let ws = await connectWebsocket();
         new HostPortalController(ws, window.hostView);
 
+        document.querySelector("menu-container").addEventListener("add-players", ()=>{
+            ws.send(JSON.stringify({action : "join", data : {name : "Adam"}}));
+            ws.send(JSON.stringify({action : "join", data : {name : "Bert"}}));
+            ws.send(JSON.stringify({action : "join", data : {name : "Carol"}}));
+        });
+
+        document.querySelector("menu-container").addEventListener("next", ()=>{
+            ws.send(JSON.stringify({action : "next_round"}));
+        });
+
+        document.querySelector("menu-container").addEventListener("prev", ()=>{
+            ws.send(JSON.stringify({action : "prev_round"}));
+        });
+
         window.addPlayers = function(){
             ws.send(JSON.stringify({action : "join", data : {name : "Adam"}}));
             ws.send(JSON.stringify({action : "join", data : {name : "Bert"}}));

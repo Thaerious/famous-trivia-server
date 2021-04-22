@@ -3,6 +3,6 @@ export default {
     TIMES : {
         ANSWER: 10,
         BUZZ: 10,
-        MULTIPLE_CHOICE: 60
+        MULTIPLE_CHOICE: 5
     }
 };

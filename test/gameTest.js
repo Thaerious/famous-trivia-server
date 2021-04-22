@@ -93,15 +93,19 @@ describe('Game', function () {
         });
     });
 
-    describe('timer expires', function(){
+    describe('timer expires after bets submitted', function(){
+
         it('state changes', function(done){
+            this.timeout(5000);
             game.addListener("test", msg =>{
-                let update = game.getUpdate().data;
-                assert.equal(update.state, 3);
-                game.removeListener("test");
-                done();
+                if (msg.action === 'update_model') {
+                    assert.equal(msg.data.state, 3);
+                    game.removeListener("test");
+                    done();
+                }
             });
         });
+
         it('player #1 gains some loses some', function(){
             let update = game.getUpdate().data;
             assert.equal(update.model.players[0].score, 600);
@@ -142,9 +146,9 @@ describe('Game', function () {
             let update = game.getUpdate().data;
             assert.equal(update.model.round.current_player, "robin");
         });
-        it('player list doesn\'t contain current player', function(){
+        it(`spent list contains current player`, function(){
             let update = game.getUpdate().data;
-            assert.equal(update.model.round.players.indexOf("robin"), -1);
+            assert.notStrictEqual(update.model.round.spentPlayers.indexOf("robin"), -1);
         });
     });
 
@@ -195,10 +199,9 @@ describe('Game', function () {
             let update = game.getUpdate().data;
             assert.equal(update.model.round.current_player, "robin");
         });
-        it('player list doesn\'t contain current player', function(){
+        it('spent player list contains current player', function(){
             let update = game.getUpdate().data;
-            assert.equal(update.model.round.players.indexOf("robin"), -1);
-            console.log(JSON.stringify(update, null, 2));
+            assert.notStrictEqual(update.model.round.spentPlayers.indexOf("robin"), -1);
         });
     });
 
@@ -302,9 +305,9 @@ describe('Game', function () {
             let update = game.getUpdate().data;
             assert.equal(update.model.round.current_player, "alex");
         });
-        it('player list doesn\'t contain current player', function(){
+        it('spent list contains current player', function(){
             let update = game.getUpdate().data;
-            assert.equal(update.model.round.players.indexOf("alex"), -1);
+            assert.notStrictEqual(update.model.round.spentPlayers.indexOf("alex"), -1);
         });
     });
 
@@ -357,10 +360,11 @@ describe('Game', function () {
         });
     });
 
-    describe('timer expires', function(){
+    describe('timer expires after question selected', function(){
         it('state does not change', function(done){
+            this.timeout(5000);
             game.addListener("test", msg =>{
-                if (msg.data.input === 'expire') {
+                if (msg.action === 'update_model') {
                     assert.equal(msg.data.state, 6);
                     game.removeListener("test");
                     done();
@@ -403,9 +407,9 @@ describe('Game', function () {
                 let update = game.getUpdate().data;
                 assert.equal(update.model.round.current_player, "pat");
             });
-            it('player is not longer in unanswered list', function(){
+            it('player is in spent list', function(){
                 let update = game.getUpdate().data;
-                assert.equal(update.model.round.players.indexOf("pat"), -1);
+                assert.strictEqual(update.model.round.spentPlayers.indexOf("pat"), -1);
             });
         });
     });
@@ -423,8 +427,9 @@ describe('Game', function () {
     });
     describe('timer expires no buzz in', function(){
         it('state changes', function(done){
+            this.timeout(5000);
             game.addListener("test", msg =>{
-                if (msg.data.input === 'expire') {
+                if (msg.action === 'update_model') {
                     assert.equal(msg.data.state, 9);
                     game.removeListener("test");
                     done();

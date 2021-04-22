@@ -1,10 +1,34 @@
 import fs from 'fs';
 import getPrototypeOf from "@babel/runtime/helpers/esm/getPrototypeOf";
 
+class EndOfGame{
+
+    constructor() {
+        this.stateData = {
+            style : GameModel.STYLE.END_OF_GAME
+        }
+    }
+
+    getUpdate() {
+        return {
+            style : GameModel.STYLE.END_OF_GAME
+        }
+    }
+}
+
 class JeopardyModel{
-    constructor(players, model){
+    /**
+     * @param parent the GameModel object that constructed this
+     * @param model the JSON model of questions
+     */
+    constructor(parent, model){
+        this.parent = parent;
         this.model = model;
-        this.resetCurrentPlayers(players);
+
+        if (this.parent.players.length > 0) {
+            this.spentPlayers = [this.parent.players[0].name];
+            this.currentPlayer = this.parent.players[0].name;
+        }
 
         /** matrix of which questions have already been answered **/
         this.spent = [];
@@ -38,10 +62,57 @@ class JeopardyModel{
         }
     }
 
-    resetCurrentPlayers(players){
-        this._players = [];
-        for (let p of players) this._players.push(p.name);
-        this.setCurrent(this._players[0]);
+    isPlayerSpent(name){
+        return this.spentPlayers.indexOf(name) !== -1;
+    }
+
+    setPlayerSpent(name){
+        if (!this.parent.hasPlayer(name)) return false;
+        if (this.isPlayerSpent(name)) return false;
+        this.spentPlayers.push(name);
+        return true;
+    }
+
+    setCurrentPlayer(name){
+        if (!this.parent.hasPlayer(name)) return false;
+        if (this.currentPlayer === name) return false;
+        this.currentPlayer = name;
+        return true;
+    }
+
+    clearCurrentPlayer(){
+        if (this.currentPlayer === '') return false;
+        this.currentPlayer = '';
+        return true;
+    }
+
+    resetSpentAndCurrentPlayers(){
+        if (this.parent.players.length >= 0) {
+            this.spentPlayers = [this.parent.players[0].name];
+            this.currentPlayer = this.parent.players[0].name;
+        }
+    }
+
+    /** return true if name is unspent and is a name*/
+    hasPlayer(name){
+        if (!this.parent.hasPlayer(name)) return false;
+        return this.isPlayerSpent(name) === false;
+    }
+
+    hasCurrentPlayer(){
+        return this.currentPlayer !== '';
+    }
+
+    getCurrentPlayer(){
+        return this.currentPlayer;
+    }
+
+    /**
+     * return the number of unspent players.
+     * @returns {*}
+     */
+    countUnspentPlayers(){
+        return this.parent.players.length - this.spentPlayers.length;
     }
 
     get state (){
@@ -67,50 +138,6 @@ class JeopardyModel{
         col = col ?? this.stateData.col;
         row = row ?? this.stateData.row;
         this.spent[col][row] = true;
-    }
-
-    get countPlayers(){
-        return this._players.length;
-    }
-
-    hasPlayer(name){
-        return this._players.indexOf(name) != -1;
-    }
-
-    removePlayer(name){
-        let i = this._players.indexOf(name);
-        if (i === -1) return false;
-        this._players.splice(i, 1);
-        return true;
-    }
-
-    hasCurrent(){
-        return this.currentPlayer !== '';
-    }
-
-    getCurrent(){
-        return this.currentPlayer;
-    }
-
-    /**
-     * @param name if name exists, make name current, else do nothing.
-     * @param remove Remove the current player from the list
-     */
-    setCurrent(name, remove = true){
-        if (!this.hasPlayer(name)) return false;
-
-        if (remove){
-            this.removePlayer(name);
-        }
-
-        this.currentPlayer = name;
-        return true;
-    }
-
-    clearCurrent(){
-        if (this.currentPlayer === '') return false;
-        this.currentPlayer = '';
-        return true;
     }
 
     /**
@@ -223,9 +250,9 @@ class JeopardyModel{
 
     getUpdate(){
         let r = Object.assign({}, this.stateData);
-        r.players = [];
-        for (let p of this._players){
-            r.players.unshift(p);
+        r.spentPlayers = [];
+        for (let p of this.spentPlayers){
+            r.spentPlayers.unshift(p);
         }
         r.current_player = this.currentPlayer;
         r.categories = this.categories;
@@ -317,7 +344,7 @@ class MultipleChoiceModel{
 class GameModel{
     constructor(model) {
         this.model = model;
-        this._roundIndex = -1;
+        this.roundIndex = -1;
         this._players = []; // name, score, enabled
         this._currentRound = null;
     }
@@ -365,14 +392,10 @@ class GameModel{
         }
     }
 
-    get round(){
-        return this._roundIndex;
-    }
-
     set round(value){
         if (value < 0) value = 0;
         if (value >= this.model.rounds.length) value = this.model.rounds.length - 1;
-        this._roundIndex = value;
+        this.roundIndex = value;
     }
 
     /**
@@ -387,22 +410,30 @@ class GameModel{
     }
 
     setRound(index){
-        this.round = index;
+        if (index < 0 || index > this.model.rounds.length) return this._currentRound;
 
+        this.roundIndex = index;
+        if (index === this.model.rounds.length){
+            this._currentRound = new EndOfGame();
+            return this._currentRound;
+        }
         const roundModel = this.model.rounds[index];
+
         if (roundModel.type === "multiple_choice"){
             this._currentRound = new MultipleChoiceModel(roundModel);
         }
         else if (roundModel.type ==="choice"){
-            this._currentRound = new JeopardyModel(this.players, roundModel);
+            this._currentRound = new JeopardyModel(this, roundModel);
         }
-
         return this._currentRound;
     }
 
     nextRound(){
-        this.round = this.round + 1;
-        return this.setRound(this.round);
+        return this.setRound(this.roundIndex + 1);
+    }
+
+    prevRound(){
+        return this.setRound(this.roundIndex - 1);
     }
 
     /**
@@ -525,7 +556,8 @@ GameModel.STATES = {
 
 GameModel.STYLE = {
     MULTIPLE_CHOICE : "mc",
-    JEOPARDY : "j"
+    JEOPARDY : "j",
+    END_OF_GAME : "end"
 }
 
 export default GameModel;

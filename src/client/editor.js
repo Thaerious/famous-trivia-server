@@ -1,6 +1,6 @@
 import FileOps from "./modules/FileOps.js";
 import Authenticate from "./modules/Authenticate.js";
-import Menu from "./modules/Menu.js";
+import Menu from "./modules/MenuContainer.js";
 import QuestionPane from "./modules/QuestionPane.js";
 import EditorPane from "./modules/EditorPane.js";
 import Model from "./modules/Model";

@@ -413,7 +413,7 @@ describe('Game', function () {
         it('state does not change', function (done) {
             let game = Game.fromJSON(json);
             game.addListener("test", msg => {
-                if (msg.data.input === 'expire') {
+                if (msg.action === 'update_model') {
                     assert.equal(msg.data.state, 6);
                     game.removeListener("test");
                     done();
@@ -495,7 +495,7 @@ describe('Game', function () {
         it('state changes', function (done) {
             let game = Game.fromJSON(json);
             game.addListener("test", msg => {
-                if (msg.data.input === 'expire') {
+                if (msg.action === 'update_model') {
                     assert.equal(msg.data.state, 9);
                     game.removeListener("test");
                     done();

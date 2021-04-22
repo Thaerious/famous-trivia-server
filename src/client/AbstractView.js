@@ -7,7 +7,7 @@ class AbstractView extends EventTarget{
 
         this.DOM.gameBoard = document.querySelector("game-board");
         this.DOM.questionPane = document.querySelector("#question-pane");
-        // this.DOM.questionText = document.querySelector("#text-contents");
+        this.DOM.multipleChoice = document.querySelector("#multiple-choice-present");
 
         this.DOM.playing_indicator = document.querySelector("#playing");
         this.DOM.timer = document.querySelector("trivia-timer");
@@ -34,6 +34,7 @@ class AbstractView extends EventTarget{
 
     updateTimer(update){
         if (this.lastUpdate.model.players.length <= 0) return;
+        this.DOM.timer.show();
         this.DOM.timer.set(update.time);
 
         if (this.lastUpdate.state === 6 || this.lastUpdate.state === 8) {
@@ -55,6 +56,10 @@ class AbstractView extends EventTarget{
             case 0:
                 break;
             case 1:
+                this.DOM.multipleChoice.hide();
+                this.DOM.gameBoard.hide();
+                this.DOM.questionPane.show();
+                this.DOM.questionPane.setText(update.model.round.question);
                 break;
             case 2:
                 break;
@@ -95,6 +100,12 @@ class AbstractView extends EventTarget{
                 this.DOM.questionPane.setText(update.model.round.answer);
                 this.DOM.timer.hide();
                 this.updateBuzzPlayers(update);
+                break;
+            case 10:
+                this.DOM.gameBoard.hide();
+                this.DOM.questionPane.show();
+                this.DOM.questionPane.setText("GAME OVER");
+                this.DOM.timer.hide();
                 break;
             default:
                 break;
