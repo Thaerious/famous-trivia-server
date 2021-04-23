@@ -24,11 +24,11 @@ function onSuccess(googleUser) {
 }
 
 function enableButtons(){
-    document.querySelectorAll(".home-option").forEach(e=>e.classList.remove("disabled"));
+    document.querySelectorAll(".button").forEach(e=>e.classList.remove("disabled"));
 }
 
 function disableButtons(){
-    document.querySelectorAll(".home-option").forEach(e=>e.classList.add("disabled"));
+    document.querySelectorAll(".button").forEach(e=>e.classList.add("disabled"));
 }
 
 function onFailure(error) {

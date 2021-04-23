@@ -1,5 +1,6 @@
 @import 'components/check_box';
 @import 'components/file_list';
+@import 'components/button';
 
 *{
     box-sizing: border-box;
@@ -58,34 +59,4 @@ body{
     position: relative;
     left: 50%;
     transform: translateX(-50%);
-}
-
-.home-option{
-    position: relative;
-    border: 3px solid;
-    border-color: #4bf;
-    border-radius: 50px;
-    height: 50px;
-    width: 300px;
-    margin: 10px;
-    text-align: center;
-    font-size: 20px;
-    font-family: "Arial Black";
-    line-height: 47px;
-    cursor: pointer;
-    background-color: rgba(0, 192, 0, 0.3);
-}
-
-.home-option.disabled{
-    position: relative;
-    border-color: #6e6e6e;
-    color: #6e6e6e;
-    background-color: rgba(138, 138, 138, 0.6);
-    pointer-events: none;
-}
-
-.home-option:hover{
-    position: relative;
-    border-color: #4ff;
-    background-color: rgba(64, 255, 64, 0.6);
 }

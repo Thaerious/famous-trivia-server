@@ -4,7 +4,7 @@ window.addEventListener("load", ()=>{
     parseURLParameters();
     new Authenticate().loadClient();
 
-    document.querySelector("#contestant_link").innerText = `${window.location.host}/contestant_join.ejs?hash=${window.parameters.cont}`;
+    document.querySelector("#contestant_link").innerText = `${window.location.host}/contestant_join.ejs?hash=${window.parameters.hash}`;
 
     document.querySelector("#host").addEventListener("click", ()=>{
         window.open(`host_portal.ejs`, '_blank').focus();

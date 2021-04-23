@@ -4,12 +4,10 @@ import Model from "./modules/Model.js";
 import FileOps from "./modules/FileOps.js";
 import Parameters from "./modules/Parameters.js";
 import FileList from "./modules/FileList.js";
-import renderButton from "./host/renderButton";
 
 let folderId = null;
 let fileOps = new FileOps();
 window.fileOps = fileOps;
-window.renderButton = renderButton;
 
 // main called from renderButton.js
 window.main = async function () {
@@ -20,7 +18,6 @@ window.main = async function () {
 };
 
 function onLoad(event) {
-    console.log("Window onload");
     let id = event.detail.id;
     window.location = `editor.ejs?action=load&fileId=${id}`;
 }
