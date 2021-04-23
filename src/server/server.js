@@ -34,6 +34,7 @@ app.use(UserAgent.express()); // used to determine what the connection is using 
 
 /** Apply session manager **/
 app.use('/host_portal.ejs', sessionManager.middleware);
+app.use('/contestant_portal.ejs', sessionManager.middleware);
 /** -------------------------------------------------- **/
 
 /** non-rendering end-points **/

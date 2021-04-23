@@ -21,7 +21,7 @@ function gameManagerService(gameManager) {
         } catch (err) {
             console.log(err);
             res.json({
-                result : "game manager service error",
+                result : "error",
                 text : err.toString()
             });
         }
@@ -35,11 +35,15 @@ async function parseMessage(gameManager, message, res, user){
             if (await gameManager.hasGame(user)){
                 let hash = await gameManager.getHash(user);
                 res.json({
+                    result : 'success',
                     hash : hash,
                     'has-game' : 'true'
                 });
             } else {
-                res.json({'has-game' : 'false'});
+                res.json({
+                    result : 'success',
+                    'has-game' : 'false'
+                });
             }
         break;
         case "terminate":

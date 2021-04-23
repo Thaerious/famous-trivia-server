@@ -64,6 +64,15 @@ class AbstractView extends EventTarget{
             case 2:
                 break;
             case 3:
+                this.DOM.questionPane.hide();
+                this.DOM.multipleChoice.show();
+                this.DOM.multipleChoice.setMode("show");
+
+                for (let i = 0; i < 6; i++) {
+                    this.DOM.multipleChoice.setAnswerText(i, update.model.round.answers[i]);
+                    this.DOM.multipleChoice.setChecked(i, update.model.round.values[i]);
+                }
+
                 break;
             case 4:
                 this.DOM.gameBoard.show();

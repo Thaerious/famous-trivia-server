@@ -1,15 +1,15 @@
 const NidgetElement = require("@Thaerious/nidget").NidgetElement;
 require("./CheckBox.js");
 
-class ValueUpdate extends  CustomEvent{
+class ValueUpdate extends CustomEvent {
     constructor(index, value) {
         super('value-update',
-            {detail : {index : index, value : value}}
+            {detail: {index: index, value: value}}
         );
     }
 }
 
-class QuestionClick extends  CustomEvent{
+class QuestionClick extends CustomEvent {
     constructor() {
         super('button-question');
     }
@@ -20,7 +20,7 @@ class MultipleChoicePresent extends NidgetElement {
         super("multiple-choice-present-template");
     }
 
-    async ready(){
+    async ready() {
         await super.ready();
         // for (let element of this.querySelectorAll(".answer > nidget-text")){
         //     element.fitText.lock = "vh";
@@ -45,14 +45,25 @@ class MultipleChoicePresent extends NidgetElement {
         // });
     }
 
+    setMode(mode) {
+        switch (mode) {
+            case "show":
+                this.classList.add("show-mode");
+                break;
+            default:
+                this.classList.remove("show-mode");
+                break;
+        }
+    }
+
     txtListener(event) {
-        if (event.which === 13){
+        if (event.which === 13) {
             event.stopPropagation();
             event.preventDefault();
 
             let index = window.getComputedStyle(event.target).getPropertyValue("--index");
             index = parseInt(index);
-            if (index >= 5){
+            if (index >= 5) {
                 event.target.blur();
             } else {
                 let selector = `nidget-text[data-index="${index + 1}"]`;
@@ -65,20 +76,12 @@ class MultipleChoicePresent extends NidgetElement {
         return true;
     }
 
-    /**
-     * @param button {'question', 'answer'}
-     */
-    highlight(button){
-        for (let ele of this.querySelectorAll(`.selected`)) ele.classList.remove("selected");
-        this.querySelector(`#show-${button}`).classList.add("selected");
+    setAnswerText(index, text) {
+        this.querySelector(`.inner[data-index="${index}"] .answer`).text = text;
     }
 
-    setOptionText(index, text){
-        this.querySelector(`.option[data-index="${index}"] nidget-text`).text = text;
-    }
-
-    setChecked(index, value){
-        this.querySelector(`check-box[data-index="${index}"]`).checked = value;
+    setChecked(index, value) {
+        this.querySelector(`.inner[data-index="${index}"] check-box`).checked = value;
     }
 }
 

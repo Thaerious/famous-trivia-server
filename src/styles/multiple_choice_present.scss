@@ -9,6 +9,16 @@
     display: none;
 }
 
+:host(multiple-choice-present.show-mode){
+    .outer {
+        .inner{
+            .wager{
+                display: none;
+            }
+        }
+    }
+}
+
 .outer {
     position: absolute;
     box-sizing: border-box;
@@ -47,6 +57,7 @@
             width: 12%;
             height: 100%;
             top: 0;
+            text-align: right;
 
             &:focus {
                 outline: none;
@@ -60,6 +71,7 @@
             left: 19%;
             width: 81%;
             height: 100%;
+            text-align: left;
         }
 
         .wager, .answer {
@@ -70,7 +82,6 @@
             line-height: 7vh;
             font-family: OPTIKorinna-Agency, serif;
             text-transform: uppercase;
-            text-align: right;
             white-space: pre-line;
         }
     }

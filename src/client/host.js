@@ -33,7 +33,7 @@ async function checkForGame() {
         let response = JSON.parse(xhttp.responseText);
 
         if (response['has-game'] === "true") {
-            window.location = `launch_console.ejs?host=${response.host}&cont=${response.contestant}`;
+            window.location = `launch_console.ejs?hash=${response['hash']}`;
         }
     });
 
