@@ -23,7 +23,6 @@ const port = 8000;
 const app = Express();
 const server = http.createServer(app);
 const gameManager = await new GameManager("assets/trivia.db");
-gameManager.connect();
 const sessionManager = new SessionManager("assets/trivia.db");
 await sessionManager.load();
 const nidgetPreprocessor = new NidgetPreprocessor("views/nidgets", true).setup();

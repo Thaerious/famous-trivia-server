@@ -8,6 +8,7 @@ class GameManagerService {
             let xhttp = new XMLHttpRequest();
 
             xhttp.addEventListener("load", (event) => {
+                console.log(xhttp.responseText);
                 let response = JSON.parse(xhttp.responseText);
                 if (response.error) reject(response);
                 else resolve(response);
@@ -37,14 +38,11 @@ class GameManagerService {
     async setName(hash, name) {
         return await this.send({
             'game-hash': hash,
-            name : name,
+            name: name,
             action: "set-name"
         });
     }
-
 }
 
-GameManagerService
-    .URL = "game-manager-service";
-module
-    .exports = new GameManagerService();
+GameManagerService.URL = "game-manager-service";
+module.exports = new GameManagerService();

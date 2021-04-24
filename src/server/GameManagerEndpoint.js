@@ -61,12 +61,34 @@ class GameManagerEndpoint {
             res.json({
                 result: 'request_name'
             });
+        } else {
+            res.json({
+                result: 'success',
+                name : req.session.get("name")
+            });
         }
     }
 
     async ['set-name'] (req, res) {
-        // this.gameManager.hasContestant(req.body['name'], req.body['game-hash']);
-        await this.gameManager.addContestant(req.body['name'], req.body['game-hash']);
+        let name = this.validateName(req.body['name']);
+
+        if (await this.gameManager.hasContestant(name, req.body['game-hash'])){
+            res.json({
+                result: 'rejected',
+                reason : 'name is already in use'
+            });
+        } else {
+            await this.gameManager.addContestant(name, req.body['game-hash']);
+            req.session.set("name", name);
+            res.json({
+                result: 'success',
+                name : req.session.get("name")
+            });
+        }
+    }
+
+    validateName(source){
+        return source.toUpperCase();
     }
 }
 
