@@ -51,6 +51,9 @@ modal-alert{
   width: 300px;
   left: 50%;
   transform: translateX(-50%);
+  --ui-fg : 64, 255, 64;
+  --ui-border-color: 60, 120, 55;
+  --ui-border-color-hover: 39, 213, 23;
 }
 
 #name{

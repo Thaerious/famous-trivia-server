@@ -1,8 +1,8 @@
 .button {
-  border: 3px solid #3d7837;
+  border: 3px solid rgb(var(--ui-border-color));
   border-radius: 15px;
   cursor: pointer;
-  background-color: rgba(64, 255, 64, 0.6);
+  background-color: rgba(var(--ui-fg), 0.6);
 }
 .button .text {
   position: relative;
@@ -14,8 +14,8 @@
 }
 .button:hover {
   position: relative;
-  border-color: #38d91f;
-  background-color: rgba(64, 255, 64, 0.9);
+  border-color: rgb(var(--ui-border-color-hover));
+  background-color: rgba(var(--ui-fg), 0.9);
 }
 .button.disabled {
   border-color: #6e6e6e;

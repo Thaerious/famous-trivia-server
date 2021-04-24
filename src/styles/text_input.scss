@@ -2,16 +2,21 @@
   display: none;
 }
 
+* {
+  box-sizing: border-box;
+  user-select: none;
+}
+
 .text-input {
   position: absolute;
-  border: 3px solid #3d7837;
+  border: 3px solid rgb(var(--ui-border-color));
   border-radius: 15px;
   height: 100%;
   width: 100%;
   left: 0;
   top: 0;
   cursor: text;
-  background-color: rgba(64, 255, 64, 0.6);
+  background-color: rgba(var(--ui-fg), 0.6);
 
   .hint-text{
     color: rgba(128, 128, 128, 1.0);
@@ -43,8 +48,8 @@
 
   &:hover {
     position: relative;
-    border-color: #38d91f;
-    background-color: rgba(64, 255, 64, 0.9);
+    border-color: rgb(var(--ui-border-color-hover));
+    background-color: rgba(var(--ui-fg), 0.9);
 
     .text{
       background-color: whitesmoke;
