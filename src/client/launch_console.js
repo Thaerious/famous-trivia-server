@@ -1,4 +1,5 @@
 import Authenticate from './modules/Authenticate.js';
+import parseURLParameters from './parseURLParameters.js';
 
 window.addEventListener("load", ()=>{
     parseURLParameters();
@@ -17,7 +18,7 @@ window.addEventListener("load", ()=>{
     document.querySelector("#terminate").addEventListener("click", ()=>{
             let token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
 
-            var xhttp = new XMLHttpRequest();
+            let xhttp = new XMLHttpRequest();
 
             xhttp.addEventListener("load", (event) => {
                 window.location = `host.ejs`;
@@ -31,18 +32,6 @@ window.addEventListener("load", ()=>{
             }));
     });
 });
-
-/**
- * Extract value from the URL string, store in 'window.parameters'.
- */
-function parseURLParameters() {
-    window.parameters = {};
-    const parameters = window.location.search.substr(1).split("&");
-    for (const parameter of parameters) {
-        const split = parameter.split(/=/);
-        window.parameters[split[0]] = split[1] ?? "";
-    }
-}
 
 function copyLink() {
     let range = document.createRange();

@@ -14,12 +14,8 @@ describe('class GameManager', async function () {
 
     describe('#connect()', function () {
         it('has database', async function () {
-            await gameManager.setup();
             await gameManager.connect();
-        });
-        it('missing database, creates it', async function () {
-            await gameManager.connect('./assets/test.db');
-            assert.equal(await fs.existsSync('./assets/test.db'), true);
+            await gameManager.disconnect();
         });
     });
 
@@ -95,6 +91,30 @@ describe('class GameManager', async function () {
             let game1 = await gameManager.getLive(r);
             let game2 = await gameManager.getLive(r);
             assert.equal(game1, game2);
+        });
+    });
+
+    describe(`#addContestant()`, function () {
+        it(`doesn't error`, async function () {
+            let gameHash = await gameManager.getHash({userId: "test-user"});
+            await gameManager.addContestant("ima-name", gameHash);
+        });
+
+        it(`add => has`, async function () {
+            let gameHash = await gameManager.getHash({userId: "test-user"});
+            await gameManager.hasContestant("ima-name", gameHash);
+        });
+    });
+
+    describe(`#removeContestant()`, function () {
+        it(`doesn't error`, async function () {
+            let gameHash = await gameManager.getHash({userId: "test-user"});
+            await gameManager.removeContestant("ima-name", gameHash);
+        });
+
+        it(`add => !has`, async function () {
+            let gameHash = await gameManager.getHash({userId: "test-user"});
+            await gameManager.hasContestant("ima-name", gameHash);
         });
     });
 

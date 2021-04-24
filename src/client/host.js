@@ -4,6 +4,7 @@ import Model from "./modules/Model.js";
 import FileOps from "./modules/FileOps.js";
 import Parameters from "./modules/Parameters.js";
 import FileList from "./modules/FileList.js";
+import GameManagerService from "./services/GameManagerService.js";
 
 let folderId = null;
 let fileOps = new FileOps();
@@ -24,22 +25,10 @@ function onLoad(event) {
 
 async function checkForGame() {
     let token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
-    let xhttp = new XMLHttpRequest();
-
-    xhttp.addEventListener("load", (event) => {
-        let response = JSON.parse(xhttp.responseText);
-
-        if (response['has-game'] === "true") {
-            window.location = `launch_console.ejs?hash=${response['hash']}`;
-        }
-    });
-
-    xhttp.open("POST", "game-manager-service");
-    xhttp.setRequestHeader("Content-type", "application/json");
-    xhttp.send(JSON.stringify({
-        token: token,
-        action: "has-game"
-    }));
+    let response = await GameManagerService.checkForGame(token);
+    if (response.result === "success") {
+        window.location = `launch_console.ejs?hash=${response['hash']}`;
+    }
 }
 
 async function onLaunch(event) {

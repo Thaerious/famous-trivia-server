@@ -104,12 +104,14 @@ class SessionManager {
      */
     get middleware() {
         return async (req, res, next) => {
-            this.applyTo(req, res);
+            await this.applyTo(req, res);
             next();
         }
     }
 
     async applyTo(req, res){
+        console.log("SESSION MANAGER> " + req.baseUrl);
+
         let cookies = new Cookies(req.headers.cookie);
 
         let sessionHash = "";

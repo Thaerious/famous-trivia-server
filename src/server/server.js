@@ -8,7 +8,7 @@ import cors from './cors.js';
 import BodyParser from 'body-parser';                     // Extract JSON from non-rendering endpoints
 import launcher from './launcher.js';
 import connectHost from './connectHost.js';
-import gameManagerService from './gameManagerService.js';
+import GameManagerEndpoint from './GameManagerEndpoint.js';
 import GameManager from "./GameManager.js";
 import CLI from './CLI.js';
 import WebSocket from 'ws';
@@ -35,6 +35,7 @@ app.use(UserAgent.express()); // used to determine what the connection is using 
 /** Apply session manager **/
 app.use('/host_portal.ejs', sessionManager.middleware);
 app.use('/contestant_portal.ejs', sessionManager.middleware);
+app.use('/game-manager-service', sessionManager.middleware);
 /** -------------------------------------------------- **/
 
 /** non-rendering end-points **/
@@ -44,7 +45,7 @@ app.use('/contestant_portal.ejs', sessionManager.middleware);
 
     // called from host.js, launch_console.js
     app.use("/game-manager-service", BodyParser.json());
-    app.use("/game-manager-service", gameManagerService(gameManager));
+    app.use("/game-manager-service", new GameManagerEndpoint(gameManager).middleware);
 
     // verifies the host and marks the cookie with {role : "host"}
     app.use('/connect-host', sessionManager.middleware);
