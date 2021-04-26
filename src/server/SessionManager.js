@@ -1,10 +1,6 @@
 import crypto from "crypto";
 import sqlite3 from "sqlite3";
-import fs from 'fs';
-
-const sessionCookieName = "trivia-session";
-const TABLE1 = 'CREATE TABLE sessions(session varchar(64) primary key, expires int)';
-const TABLE2 = 'CREATE TABLE parameters(session varchar(64), name varchar(64), value varchar(256), UNIQUE(session, name))';
+import constants from "./constants.js";
 
 /**
  * The Session Manager will add a cookie to all pages that use it.
@@ -22,6 +18,10 @@ class SessionManager {
         this.sessions = {};
     }
 
+    /**
+     * Read session information from the DB to the live server.
+     * @returns {Promise<void>}
+     */
     async load(){
         await this.connect();
         this.sessions = {};
@@ -110,19 +110,15 @@ class SessionManager {
     }
 
     async applyTo(req, res){
-        console.log("SESSION MANAGER> " + req.baseUrl);
-
         let cookies = new Cookies(req.headers.cookie);
-
         let sessionHash = "";
+        let expires = new Date().getTime() + constants.SESSION_EXPIRE_HOURS * 60 * 60 * 1000;
 
-        let expires = new Date().getTime() + 24 * 60 * 60 * 1000;
-
-        if (!cookies.has(sessionCookieName)) {
+        if (!cookies.has(constants.SESSION_COOKIE_NAME)) {
             sessionHash = crypto.randomBytes(64).toString('hex');
-            res.cookie(sessionCookieName, sessionHash);
+            res.cookie(constants.SESSION_COOKIE_NAME, sessionHash, {maxAge : constants.SESSION_EXPIRE_HOURS * 60 * 60 * 1000});
         } else {
-            sessionHash = cookies.get(sessionCookieName);
+            sessionHash = cookies.get(constants.SESSION_COOKIE_NAME);
         }
 
         if (!this.sessions[sessionHash]) {
@@ -173,6 +169,10 @@ class SessionInstance {
         this.values = {};
     }
 
+    /**
+     * Read saved parameters from the DB to the live server for this session.
+     * @returns {Promise<void>}
+     */
     async load(){
         let valueRows = await this.sm.all(`SELECT name, value FROM parameters WHERE session = '${this.hash}'`);
         for (let valueRow of valueRows){
