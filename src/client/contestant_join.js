@@ -29,4 +29,7 @@ async function submit(){
     if (response.result === "rejected"){
         document.querySelector("#alert").show(response.reason);
     }
+    else if (response.result === "success"){
+        window.location = `contestant_portal.ejs`;
+    }
 }

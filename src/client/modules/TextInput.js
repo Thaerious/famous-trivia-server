@@ -54,9 +54,9 @@ class TextInput extends NidgetElement {
     }
 
     onInput(event){
-        console.log(this.filter);
         if (this.filter === "") return;
-        const check = this.content;
+        const check = this.content.trim();
+        let r = check.match("^" + this.filter + "$");
         if (!check.match("^" + this.filter + "$")){
             this.content = this.prevContent;
             this.setCaret(this.prevCaret);
