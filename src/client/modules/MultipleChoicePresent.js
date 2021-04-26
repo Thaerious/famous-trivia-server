@@ -50,6 +50,7 @@ class MultipleChoicePresent extends NidgetElement {
             case "show":
                 this.classList.add("show-mode");
                 break;
+            case "data-enter":
             default:
                 this.classList.remove("show-mode");
                 break;

@@ -95,7 +95,7 @@ class GameManagerEndpoint {
     }
 
     validateName(source){
-        if (!name.match(/^[ a-zA-Z_-]{0,15}$/)) return null;
+        if (!source.match(/^[ a-zA-Z_-]{0,15}$/)) return null;
         return source.toUpperCase();
     }
 }

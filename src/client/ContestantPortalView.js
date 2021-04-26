@@ -21,7 +21,7 @@ class ContestantPortalView extends AbstractView {
     updateModel(update) {
         super.updateModel(update);
         // this.DOM.buzzButton.hide();
-        this.DOM.timer.show();
+        // this.DOM.timer.show();
 
         for (let player of update.model.players) {
             if (player.name === this.name) {
@@ -31,6 +31,15 @@ class ContestantPortalView extends AbstractView {
         }
 
         switch (update.state) {
+            case 2:
+                this.DOM.multipleChoice.setMode("data-enter");
+                for (let i = 0; i < 6; i++) {
+                    this.DOM.multipleChoice.setAnswerText(i, update.model.round.answers[i]);
+                }
+                break;
+            case 3:
+                this.DOM.multipleChoice.setMode("data-enter");
+                break;
             case 7:
                 let check = update.model.round.spentPlayers.indexOf(this.name);
                 console.log(this.name);

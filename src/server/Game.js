@@ -226,8 +226,8 @@ class Game {
                 this.broadcast();
                 break;
             case "continue":
-                this.timer.start(Timer.TIMES.MULTIPLE_CHOICE);
                 this.updateState(2);
+                // this.timer.start(Timer.TIMES.MULTIPLE_CHOICE);
                 this.model.getRound().setAnswerState();
                 break;
         }
@@ -239,6 +239,7 @@ class Game {
                 this.model.addPlayer(input.data.name);
                 this.broadcast();
                 break;
+            case "continue":
             case "expire":
                 this.updateState(3);
                 this.model.getRound().setRevealState();

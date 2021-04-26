@@ -7,6 +7,27 @@
   user-select: none;
 }
 
+//:host(.ti-style-fill){
+//  .text-input {
+//    .text, .hint-text{
+//      position: absolute;
+//      text-align: center;
+//      font-size: 20px;
+//      font-family: "Arial Black", serif;
+//      line-height: 30px;
+//      top: 50%;
+//      width: 90%;
+//      left: 5%;
+//      transform: translateY(-50%);
+//      font-variant: small-caps;
+//      border-radius: 3px;
+//
+//    .text{
+//      background-color: pink;
+//    }
+//  }
+//}
+
 .text-input {
   position: absolute;
   border: 3px solid rgb(var(--ui-border-color));
@@ -47,7 +68,6 @@
   }
 
   &:hover {
-    position: relative;
     border-color: rgb(var(--ui-border-color-hover));
     background-color: rgba(var(--ui-fg), 0.9);
 

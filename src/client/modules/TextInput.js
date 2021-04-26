@@ -5,14 +5,19 @@ class TextInput extends NidgetElement {
         super("text-input-template");
     }
 
+    async connectedCallback() {
+        this.sourceInnerHTML = this.innerHTML;
+        await super.connectedCallback();
+    }
+
     async ready() {
         await super.ready();
 
-        this.filter = this.getAttribute(TextInput.FILTER) ?? /./;
+        this.filter = this.getAttribute(TextInput.FILTER) ?? ".";
         const hint = this.getAttribute(TextInput.HINT_ATTRIBUTE);
         this.DOM['hint'].innerHTML = hint;
 
-        this.content = "";
+        this.content = this.sourceInnerHTML;
 
         this.DOM['content'].addEventListener("click", ()=>{
             this.DOM['hint'].innerHTML = "";
@@ -49,6 +54,8 @@ class TextInput extends NidgetElement {
     }
 
     onInput(event){
+        console.log(this.filter);
+        if (this.filter === "") return;
         const check = this.content;
         if (!check.match("^" + this.filter + "$")){
             this.content = this.prevContent;
