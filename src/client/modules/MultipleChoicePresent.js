@@ -22,6 +22,30 @@ class MultipleChoicePresent extends NidgetElement {
 
     async ready() {
         await super.ready();
+
+        for (let element of this.querySelectorAll(".wager")){
+            element.addEventListener("click", event=>element.content = "");
+        }
+
+        for (let element of this.querySelectorAll(".wager")){
+            element.addEventListener("blur", event =>{
+                if(element.content === ""){
+                    element.content = '0';
+                    element.parentElement.querySelector("check-box").checked = false;
+                }  else {
+                    element.parentElement.querySelector("check-box").checked = true;
+                }
+            });
+        }
+
+        for (let element of this.querySelectorAll("check-box")){
+            element.addEventListener("value-update", event =>{
+                if(event.detail.value === "false"){
+                    element.parentElement.querySelector(".wager").content = 0;
+                }
+            });
+        }
+
         // for (let element of this.querySelectorAll(".answer > nidget-text")){
         //     element.fitText.lock = "vh";
         //     element.addEventListener("keypress", (event)=>this.txtListener(event));

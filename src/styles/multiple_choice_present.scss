@@ -3,6 +3,7 @@
 * {
     box-sizing: border-box;
     display: block;
+    user-select: none;
 }
 
 :host(multiple-choice-present.hidden){
@@ -51,8 +52,6 @@
 
         .wager {
             position: absolute;
-            border: 2px dotted;
-            border-color: var(--ui-border-color);
             left: 6%;
             width: 12%;
             height: 100%;
@@ -66,17 +65,16 @@
         }
 
         .answer {
-            background-color: rgba(0, 0, 255, 0.5);
+            //background-color: rgba(0, 0, 255, 0.5);
             position: absolute;
-            left: 19%;
+            left: 21%;
             width: 81%;
             height: 100%;
-            text-align: left;
+            text-align: center;
+            border-bottom: 1px dotted #878787;
         }
 
         .wager, .answer {
-            white-space: nowrap;
-            white-space: pre;
             color: #eee;
             font-size: 5vh;
             line-height: 7vh;

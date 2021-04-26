@@ -45,13 +45,21 @@ modal-alert{
   transform: translate(-50%, -50%);
 }
 
+text-input{
+  text-align: center;
+  font-size: 20px;
+  font-family: "Arial Black", serif;
+  line-height: 30px;
+  font-variant: small-caps;
+}
+
 #name, #join{
   position: absolute;
   height: 50px;
   width: 300px;
   left: 50%;
   transform: translateX(-50%);
-  --ui-fg : 64, 255, 64;
+  --ui-bg : 64, 255, 64;
   --ui-border-color: 60, 120, 55;
   --ui-border-color-hover: 39, 213, 23;
 }

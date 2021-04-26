@@ -13,7 +13,7 @@ class TextInput extends NidgetElement {
     async ready() {
         await super.ready();
 
-        this.filter = this.getAttribute(TextInput.FILTER) ?? ".";
+        this.filter = this.getAttribute(TextInput.FILTER) ?? ".*";
         const hint = this.getAttribute(TextInput.HINT_ATTRIBUTE);
         this.DOM['hint'].innerHTML = hint;
 
