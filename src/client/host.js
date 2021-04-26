@@ -44,7 +44,7 @@ async function onLaunch(event) {
         console.log(response);
 
         if (response.result === "success") {
-            window.location = `launch_console.ejs?host=${response.host}&cont=${response.contestant}`;
+            window.location = `launch_console.ejs`;
         } else {
             window.alert("Error launching game");
             console.log(response);

@@ -9,19 +9,24 @@
     line-height: 48px;
 }
 
-body{
+body, html {
+    height: 100%;
+    overflow: hidden;
     background-color: #a3f3ff;
 }
 
-.button-container{
+.bg {
     position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    border: 3px solid #44b3ff;
-    padding: 10px;
-    border-radius: 20px;
-    background-color: rgba(255, 255, 255, 0.3);
+    width: 100%;
+    height: 100%;
+    background-color: #a3f3ff;
+    background-image: url("../../assets/images/BG03.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    top: 0;
+    left: 0;
+    overflow: hidden;
 }
 
 #message{
@@ -48,4 +53,40 @@ body{
     position: relative;;
     user-select: all;
     transform: translateX(-100%);
+}
+
+.button-container{
+    position: relative;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border: 3px solid #44b3ff;
+    padding: 10px;
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.3);
+    height: 200px;
+    width: 350px;
+}
+
+.button{
+    position: absolute;
+    height: 50px;
+    width: 300px;
+    left: 50%;
+    transform: translateX(-50%);
+    --ui-fg : 64, 255, 64;
+    --ui-border-color: 60, 120, 55;
+    --ui-border-color-hover: 39, 213, 23;
+
+    &#host{
+        top: 10px;
+    }
+
+    &#contestant{
+        top: 70px;
+    }
+
+    &#terminate{
+        top: 130px;
+    }
 }

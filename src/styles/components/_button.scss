@@ -15,7 +15,6 @@
   }
 
   &:hover {
-    position: relative;
     border-color: rgb(var(--ui-border-color-hover));
     background-color: rgba(var(--ui-fg), 0.9);
   }
@@ -25,5 +24,9 @@
     color: #6e6e6e;
     background-color: rgba(138, 138, 138, 0.6);
     pointer-events: none;
+  }
+
+  &.hidden {
+    display: none;
   }
 }

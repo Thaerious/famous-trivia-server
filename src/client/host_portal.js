@@ -1,7 +1,8 @@
 import FileOps from "./modules/FileOps.js";
 import Authenticate from "./modules/Authenticate.js";
 import HostPortalView from "./HostPortalView.js";
-import HostPortalController from "./HostPortalController";
+import PortalController from "./PortalController";
+import connectWebsocket from "./connectWebsocket.js";
 
 let fileOps = new FileOps();
 let model = null;
@@ -20,7 +21,7 @@ window.onload = async () => {
         await fileOps.loadClient();
         await sendTokenToServer();
         let ws = await connectWebsocket();
-        new HostPortalController(ws, window.hostView);
+        new PortalController(ws, window.hostView);
 
         document.querySelector("menu-container").addEventListener("add-players", ()=>{
             ws.send(JSON.stringify({action : "join", data : {name : "Adam"}}));
@@ -70,20 +71,5 @@ function sendTokenToServer(){
         xhttp.open("POST", "connect-host");
         xhttp.setRequestHeader("Content-type", "application/json");
         xhttp.send(JSON.stringify({token: token}));
-    });
-}
-
-function connectWebsocket(){
-    let url = window.origin;
-    if (url.startsWith("http:")){
-        url = "ws" + url.substr(4) + "/game-service.ws";
-    } else {
-        url = "wss" + url.substr(5) + "/game-service.ws";
-    }
-
-    return new Promise((resolve, reject)=>{
-        let socket = new WebSocket(url);
-        socket.addEventListener('error', (event) => reject(event));
-        socket.addEventListener('open', (event) => resolve(socket));
     });
 }

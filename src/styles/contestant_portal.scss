@@ -1,23 +1,19 @@
-// editor.scss
+// contestant_portal.scss
 
-@import 'editor/layout';
-@import 'editor/buttons';
-@import 'components/menu';
+@import 'portal/layout';
+@import 'components/button';
+@import 'components/bg';
 
-:root{
-    --ui-border-color : #44d1dc;
-    --ui-background-hover : #3f43d8;
-    --ui-background : #1117d9;
-    --ui-background-selected : #3f43d8;
-    --ui-background-disabled : #808080;
-}
+:root {
+    --ui-border-color: #44d1dc;
+    --ui-background-hover: #3f43d8;
+    --ui-background: #1117d9;
+    --ui-background-selected: #3f43d8;
+    --ui-background-disabled: #808080;
 
-body{
-    background-color: #091158;
-}
-
-* {
-    box-sizing: border-box;
+    --menu-font-family: Arial Black, serif;
+    --menu-font-size: 2vh;
+    --menu-width: 200px;
 }
 
 @font-face {
@@ -29,3 +25,48 @@ body{
     font-weight: normal;
     font-style: normal;
 }
+
+.bg {
+    background-image: url("../../assets/images/BG01.jpg");
+}
+
+#buzz{
+    position: absolute;
+    width: 40vh;
+    height: 14vh;
+    bottom: -9.5vh;
+    background-color: #ebff43;
+
+    .text {
+        font-size: 10vh;
+    }
+
+    &:hover {
+        background-color: #ecff8c;
+    }
+
+    &.right {
+        left: 50%;
+        transform: translateX(40%);
+    }
+}
+
+trivia-timer {
+    position: absolute;
+    right: calc(75 / 9 * 8vh); // middle of board
+    bottom: -9.5vh;
+    width: 14vh;
+    height: 14vh;
+    z-index: 10;
+
+    font-family: "Arial Black", serif;
+    font-size: 6vh;
+}
+
+#self-panel{
+    position: absolute;
+    width: 25vh;
+    left: 10vh;
+    top: 2vh;
+}
+

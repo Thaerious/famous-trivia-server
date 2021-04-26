@@ -22,7 +22,7 @@ class TriviaTimer extends NidgetElement{
     show(value){
         this.querySelector(".outer").classList.remove("cycle");
         if (value) {
-            this.querySelector("#current-tick").innerHTML = value;
+            this.querySelector("#current-tick .text").innerHTML = value;
         }
         super.show();
     }
@@ -35,7 +35,7 @@ class TriviaTimer extends NidgetElement{
         );
 
         setTimeout(
-            ()=>this.querySelector("#current-tick").innerHTML = this.querySelector("#prev-tick").innerHTML,
+            ()=>this.querySelector("#current-tick .text").innerHTML = this.querySelector("#prev-tick").innerHTML,
             500
         );
     }
@@ -48,7 +48,7 @@ class TriviaTimer extends NidgetElement{
     }
 
     set(value){
-        this.querySelector("#prev-tick").innerHTML = value;
+        this.querySelector("#prev-tick .text").innerHTML = value;
         this.spin();
     }
 
@@ -63,7 +63,7 @@ class TriviaTimer extends NidgetElement{
         );
 
         setTimeout(
-            ()=>this.querySelector("#current-tick").innerHTML = nextValue,
+            ()=>this.querySelector("#current-tick .text").innerHTML = nextValue,
             900
         );
     }

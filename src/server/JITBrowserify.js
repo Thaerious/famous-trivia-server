@@ -12,15 +12,15 @@ class JITBrowserify {
         }
     }
 
-    run(req, res, next){
+    run(req, res, next) {
         let path = req.path.slice(5);
         let name = path.substr(0, path.length - 3);
 
         res.setHeader('Content-Type', 'text/javascript');
-        let filepath = './src/client/'+ path;
-        let b = browserify(filepath, {debug : true});
+        let filepath = './src/client/' + path;
 
-        let dependencies = this.nidgetPreprocessor.getDependencies("./views/pages/"+ name + ".ejs");
+        let b = browserify(filepath, {debug: true});
+        let dependencies = this.nidgetPreprocessor.getDependencies("./views/pages/" + name + ".ejs");
 
         for (let dep of dependencies) {
             let path = getScriptPath("./src/client/modules/", dep);
@@ -28,7 +28,12 @@ class JITBrowserify {
         }
 
         b.transform("babelify");
-        b.bundle().pipe(res);
+        b.bundle()
+            .on('error', function (err) {
+                console.log(err.message);
+                this.emit('end'); // end this stream
+            })
+            .pipe(res);
     }
 }
 
@@ -37,8 +42,8 @@ class JITBrowserify {
  * @param nidget
  * @returns {string}
  */
-function getScriptPath(root, name){
-    if (fs.existsSync(root + name + ".js")){
+function getScriptPath(root, name) {
+    if (fs.existsSync(root + name + ".js")) {
         return root + name + ".js";
     }
 
@@ -47,7 +52,7 @@ function getScriptPath(root, name){
         split[i] = split[i].charAt(0).toUpperCase() + split[i].slice(1);
     }
 
-    if (fs.existsSync(root + (split.join('')) + ".js")){
+    if (fs.existsSync(root + (split.join('')) + ".js")) {
         return root + (split.join('')) + ".js";
     }
 

@@ -2,7 +2,6 @@ import Authenticate from './modules/Authenticate.js';
 import parseURLParameters from './parseURLParameters.js';
 
 window.addEventListener("load", ()=>{
-    parseURLParameters();
     new Authenticate().loadClient();
 
     document.querySelector("#contestant_link").innerText = `${window.location.host}/contestant_join.ejs?hash=${window.parameters.hash}`;

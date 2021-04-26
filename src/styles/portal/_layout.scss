@@ -139,17 +139,3 @@ check-box {
   }
 }
 
-trivia-timer {
-  position: absolute;
-  right: calc(75 / 9 * 8vh); // middle of board
-  top: 75vh;
-  transform: translate(50%, -50%);
-  width: 14vh;
-  height: 14vh;
-  z-index: 10;
-
-  font-family: "Arial Black", serif;
-  font-size: 2em;
-  line-height: 65px;
-}
-

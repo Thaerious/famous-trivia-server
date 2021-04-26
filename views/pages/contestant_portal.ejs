@@ -4,30 +4,28 @@
     <%- include('../partials/head'); %>
 </head>
 <body>
-<%- include('../nidgets/question-pane'); %>
-<%- include('../nidgets/game-board'); %>
-<%- include('../nidgets/multiple-choice-pane'); %>
+<%- include('../partials/nidget-templates'); %>
 
 <a id="download-anchor" class="hidden-anchor" download="download.json" type="text/json"></a>
+<div class="bg"></div>
 
 <div class="top-bar" id="top-bar">
-    <div class="game-name" id="game-name" contenteditable="true">Game Name</div>
+    <menu-container src="assets/images/menu.png">
+        <menu-item event-name="exit">Exit</menu-item>
+    </menu-container>
+</div>
 
-    <div class="menu" id="menu">
-        <img class="menu-icon" id="menu-icon" src="assets/images/menu.png"/>
-        <div class="menu-area hidden" id="outer">
-            <nidget-element class="menu-item" id="menu-home-screen">Exit</nidget-element>
-        </div>
+<div id="main-container">
+    <player-container id="player-container-left"></player-container>
+    <question-pane id="question-pane" class="hidden" template-id="question-pane-template"></question-pane>
+    <game-board id="game-board" class="hidden"></game-board>
+    <multiple-choice-present id="multiple-choice-present" class="hidden"></multiple-choice-present>
+
+    <div class="button-dock">
+        <player-panel id="self-panel"></player-panel>
+        <trivia-timer class="hidden"></trivia-timer>
+        <nidget-element class="button hidden right" id="buzz"><div class="text"> BUZZ</div></nidget-element>
     </div>
 </div>
-
-<div class="round-number" id="round-number">
-    <nidget-text class="text">Round 1</nidget-text>
-</div>
-
-<question-pane id="question-pane" class="hidden" template-id="question-pane-template"></question-pane>
-<game-board id="game-board" class="hidden" template-id="game-board-template"></game-board>
-<multiple-choice-pane id="multiple-choice-pane" class="hidden" template-id="multiple-choice-pane-template"></multiple-choice-pane>
-
 </body>
 </html>

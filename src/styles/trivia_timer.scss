@@ -40,6 +40,13 @@
     text-align: center;
     height: 80%;
     top: -150%;
+
+    .text{
+      position: absolute;
+      top: 0%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
   }
 }
 

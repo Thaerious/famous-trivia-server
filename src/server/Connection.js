@@ -24,7 +24,12 @@ class Connection{
 
     async addPlayer(){
         let name = await this.req.session.get("name");
-        this.game.addPlayer(name);
+        this.game.onInput({
+            action : "join",
+            data : {
+                name : name
+            }
+        });
     }
 
     async connect(name){
@@ -38,9 +43,6 @@ class Connection{
         console.log("Client Connection Established");
 
         this.ws.on('message', (message) => {
-            console.log("Message from client:");
-            console.log(message);
-            console.log("-----------------------------------");
             try {
                 this.parseMessage(message);
             } catch (err) {
@@ -53,7 +55,12 @@ class Connection{
             }
         });
 
-        this.send({action : "connection_established"});
+        this.send({
+            action : "connection_established",
+            data : {
+                name : name
+            }
+        });
         setInterval(()=>this.ping(), 15000);
     }
 
@@ -67,13 +74,18 @@ class Connection{
      */
     async checkRole(){
         if (await this.req.session.get("role") === "host"){
-            this.connect("@HOST");
+            console.log(`Host connected`);
+            this.name = "@HOST";
+            await this.connect(this.name);
         }
-        else if (await this.req.session.has("role") === "contestant"){
-            await this.connect();
+        else if (await this.req.session.has("name") === true){
+            this.name = await this.req.session.get("name");
+            console.log(`Contestant ${this.name} connected`);
+            await this.connect(this.name);
             await this.addPlayer();
         }
         else {
+            console.log(`Connection terminated`);
             this.ws.close();
         }
     }
@@ -88,7 +100,7 @@ class Connection{
 
     parseMessage(json){
         let msg = JSON.parse(json);
-        msg.playerIndex = this.index;
+        msg.player = this.name;
 
         switch (msg.action){
             case "request_model":

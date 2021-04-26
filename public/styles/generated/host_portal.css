@@ -120,19 +120,6 @@ check-box {
   background-color: #ecff8c;
 }
 
-trivia-timer {
-  position: absolute;
-  right: calc(75 / 9 * 8vh);
-  top: 75vh;
-  transform: translate(50%, -50%);
-  width: 14vh;
-  height: 14vh;
-  z-index: 10;
-  font-family: "Arial Black", serif;
-  font-size: 2em;
-  line-height: 65px;
-}
-
 .nav-button {
   display: inline-block;
   width: 22vh;
@@ -178,6 +165,18 @@ body {
   src: url("../font/OPTIKorinna-Agency.ttf.woff") format("woff"), url("../font/OPTIKorinna-Agency.ttf.svg#OPTIKorinna-Agency") format("svg"), url("../font/OPTIKorinna-Agency.ttf.eot"), url("../font/OPTIKorinna-Agency.ttf.eot?#iefix") format("embedded-opentype");
   font-weight: normal;
   font-style: normal;
+}
+trivia-timer {
+  position: absolute;
+  right: calc(75 / 9 * 8vh);
+  top: 75vh;
+  transform: translate(50%, -50%);
+  width: 14vh;
+  height: 14vh;
+  z-index: 10;
+  font-family: "Arial Black", serif;
+  font-size: 2em;
+  line-height: 65px;
 }
 
 /*# sourceMappingURL=host_portal.css.map */

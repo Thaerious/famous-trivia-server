@@ -43,6 +43,10 @@ class PlayerPanel extends NidgetElement {
         else this.querySelector("#buzz-light").classList.remove("active");
     }
 
+    hideClock(){
+        this.DOM.clock.classList.add("hidden");
+    }
+
     buzz(){
         this.querySelector("#buzz-light").classList.add("sweep-right");
     }

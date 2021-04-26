@@ -71,15 +71,22 @@ class GameManagerEndpoint {
 
     async ['set-name'] (req, res) {
         let name = this.validateName(req.body['name']);
-
-        if (await this.gameManager.hasContestant(name, req.body['game-hash'])){
+        if (name === null){
+            res.json({
+                result: 'rejected',
+                reason : 'invalid name'
+            });
+        }
+        else if (await this.gameManager.hasContestant(name, req.body['game-hash'])){
             res.json({
                 result: 'rejected',
                 reason : 'name is already in use'
             });
-        } else {
+        }
+        else {
             await this.gameManager.addContestant(name, req.body['game-hash']);
-            req.session.set("name", name);
+            await req.session.set("name", name);
+            await req.session.set("game-hash", req.body['game-hash']);
             res.json({
                 result: 'success',
                 name : req.session.get("name")
@@ -88,6 +95,7 @@ class GameManagerEndpoint {
     }
 
     validateName(source){
+        if (!name.match(/^[ a-zA-Z_-]{0,15}$/)) return null;
         return source.toUpperCase();
     }
 }

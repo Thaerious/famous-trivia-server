@@ -1,6 +1,5 @@
 import fs from 'fs';
 import {JSDOM} from 'jsdom';
-import browserify from 'browserify';
 
 class NidgetPreprocessor {
     constructor(modulePath, debug = false) {

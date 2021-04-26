@@ -1,5 +1,5 @@
 
-class HostPortalController {
+class PortalController {
     constructor(ws, view) {
         this.ws = ws;
         this.view = view;
@@ -9,14 +9,6 @@ class HostPortalController {
 
         this.view.addEventListener('click', (event)=>this.send(event.detail));
         this.view.addEventListener('cell-select', (event)=>this.send(event.detail));
-
-        window.buzz = function(name){
-            this.send({action : "buzz", data : {name : name}});
-        }.bind(this);
-    }
-
-    onUpdate(){
-
     }
 
     /**
@@ -28,6 +20,7 @@ class HostPortalController {
         switch (message.action) {
             case "connection_established":
                 this.send({action : "request_model"});
+                if (this.view.setName) this.view.setName(message.data.name);
                 break;
             case "update_model":
                 this.view.updateModel(message.data);
@@ -54,4 +47,4 @@ class HostPortalController {
     }
 }
 
-export default HostPortalController;
+export default PortalController;

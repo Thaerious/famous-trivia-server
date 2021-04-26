@@ -1,12 +1,5 @@
 import AbstractView from "./AbstractView.js"
-
-class ViewEvent extends CustomEvent{
-    constructor(action, data = null) {
-        super('click',
-            {detail : {action : action, data : data}}
-        );
-    }
-}
+import ViewEvent from "./ViewEvent.js";
 
 /**
  * HostPortalView has methods to control the visibility/details of DOM objects.

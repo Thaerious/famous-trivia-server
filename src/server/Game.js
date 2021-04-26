@@ -100,6 +100,9 @@ class Game {
      * @param input {action : string, data : {}}
      */
     onInput(input) {
+        console.log(input);
+        console.log("-----------------------------------");
+
         switch(input.action){
             case "next_round":
                 this.model.nextRound();
@@ -274,6 +277,7 @@ class Game {
                 this.broadcast();
                 break;
             case "select":
+                if (input.player !== "@HOST" && this.model.activePlayer.name !== input.player) return;
                 if (!this.model.getRound().isSpent(input.data.col, input.data.row)) {
                     this.model.getRound().setQuestionState(input.data.col, input.data.row);
                     this.updateState(5);
@@ -289,6 +293,7 @@ class Game {
                 this.broadcast();
                 break;
             case "continue":
+                if (input.player !== "@HOST") return;
                 this.model.getRound().setSpent();
                 this.updateState(6);
                 this.timer.start(Timer.TIMES.ANSWER);

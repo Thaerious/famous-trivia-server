@@ -1,7 +1,7 @@
 "use strict"
 
 class AbstractView extends EventTarget{
-    constructor(){
+    constructor() {
         super();
         this.DOM = {};
 
@@ -17,15 +17,6 @@ class AbstractView extends EventTarget{
         this.DOM.menuLogout = document.querySelector("#menu-logout");
 
         this.DOM.playerContainer = document.querySelector("#player-container-left");
-
-        this.assertDOM();
-        // this.setupMenu();
-    }
-
-    assertDOM(){
-        for (let key in this.DOM){
-            console.assert(this.DOM[key] !== undefined, key);
-        }
     }
 
     startTimer(update){

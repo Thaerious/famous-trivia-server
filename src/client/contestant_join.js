@@ -6,7 +6,7 @@ window.addEventListener("load", async(event)=>{
     const response = await GameManagerService.joinGame(window.parameters.hash);
 
     if (response === "success"){
-        // window.location = `contestant_portal.ejs`;
+        window.location = `contestant_portal.ejs`;
     }
 
     document.querySelector("#name").addEventListener("enter-pressed", event=>{

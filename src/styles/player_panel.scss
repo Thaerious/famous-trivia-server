@@ -60,6 +60,10 @@
     background-color: grey;
     margin-top: 5px;
 
+    &.hidden{
+      display: none;
+    }
+
     #buzz-light {
       position: absolute;
       height: 2vh;
