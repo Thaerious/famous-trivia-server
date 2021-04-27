@@ -3,8 +3,9 @@ import {Game} from './Game.js';
 import GameModel from './GameModel.js';
 
 class GameManagerEndpoint {
-    constructor(gameManager) {
+    constructor(gameManager, sessionManager) {
         this.gameManager = gameManager;
+        this.sessionManager = sessionManager;
     }
 
     get middleware() {

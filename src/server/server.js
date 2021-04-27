@@ -6,7 +6,6 @@ import helmet from 'helmet';
 import UserAgent from 'express-useragent';                // Request source machine details
 import cors from './cors.js';
 import BodyParser from 'body-parser';                     // Extract JSON from non-rendering endpoints
-import launcher from './launcher.js';
 import connectHost from './connectHost.js';
 import GameManagerEndpoint from './GameManagerEndpoint.js';
 import GameManager from "./GameManager.js";
@@ -38,10 +37,6 @@ app.use('/game-manager-service', sessionManager.middleware);
 /** -------------------------------------------------- **/
 
 /** non-rendering end-points **/
-    // launch a new game, called from host.js
-    app.use("/launch", BodyParser.json());
-    app.use("/launch", launcher(gameManager));
-
     // called from host.js, launch_console.js
     app.use("/game-manager-service", BodyParser.json());
     app.use("/game-manager-service", new GameManagerEndpoint(gameManager).middleware);

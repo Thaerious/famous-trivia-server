@@ -1,4 +1,5 @@
 // gameModelTest.js
+// noinspection JSUnresolvedFunction
 
 import assert from 'assert';
 import fs from 'fs';

@@ -30,11 +30,6 @@ class CLI {
         process.exit(0);
     }
 
-    help(){
-        console.log("exit, x : terminate server");
-        console.log("list, l : list all lauched games");
-    }
-
     command(command) {
         let split = command.split(/[ ]+/);
 
@@ -43,9 +38,6 @@ class CLI {
             case "exit":
                 this.exit();
             break;
-            case "help":
-                this.help();
-                break;
             case "l":
             case "list":
                 this.gameManager.list();
@@ -61,14 +53,22 @@ class CLI {
                 break
             case "":
                 break;
+            case "help":
+            case "?":
             default:
-                console.log("Unknown command");
+                console.log("exit, x : terminate server");
+                console.log("list, l : list all lauched games");
+                console.log("session, s : sessions submenu");
                 break;
         }
     }
 
     sessionCommand(split){
         switch (split[1]) {
+            case "clear":
+            case "c":
+                this.sessionManager.clearAll();
+                break;
             case "list":
             case "l":
                 let r = this.sessionManager.listHashes();
@@ -76,6 +76,13 @@ class CLI {
                 for (let s of r) console.log(s);
                 console.log("-----------------");
                 console.log("size " + r.length);
+                break;
+            case "help":
+            case "?":
+            default:
+                console.log("clear, c : clear all sessions");
+                console.log("list, l : list all sessions");
+                break;
         }
     }
 }

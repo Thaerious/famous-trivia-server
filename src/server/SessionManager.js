@@ -1,6 +1,9 @@
+// noinspection SqlNoDataSourceInspection,SqlDialectInspection
+
 import crypto from "crypto";
 import sqlite3 from "sqlite3";
 import constants from "./constants.js";
+import HasDB from './HasDB.js';
 
 /**
  * The Session Manager will add a cookie to all pages that use it.
@@ -12,9 +15,9 @@ import constants from "./constants.js";
  * Having a session variable does not automatically mean the user is verified.
  * Other endpoints will take care of that.
  */
-class SessionManager {
+class SessionManager extends HasDB{
     constructor(path) {
-        this.path = path;
+        super(path);
         this.sessions = {};
     }
 
@@ -23,7 +26,6 @@ class SessionManager {
      * @returns {Promise<void>}
      */
     async load(){
-        await this.connect();
         this.sessions = {};
 
         let sessionRows = await this.all("SELECT session FROM Sessions");
@@ -31,70 +33,6 @@ class SessionManager {
             this.sessions[sessionRow.session] = new SessionInstance(this, sessionRow.session);
             await this.sessions[sessionRow.session].load();
         }
-    }
-
-    /**
-     * Open the db.
-     * @param path
-     * @returns {Promise<unknown>}
-     */
-    async connect() {
-        return new Promise((resolve, reject) => {
-            this.db = new sqlite3.Database(this.path, (err) => {
-                if (err) reject(new Error(err));
-                else resolve();
-            });
-        });
-    }
-
-    /**
-     * Close the db
-     * @returns {Promise<unknown>}
-     */
-    async disconnect() {
-        return new Promise((resolve, reject) => {
-            this.db.close((err) => {
-                if (err) reject(new Error(err));
-                else resolve();
-            });
-        });
-    }
-
-    async exec(cmd) {
-        return new Promise((resolve, reject) => {
-            this.db.exec(cmd, (err) => {
-                if (err) reject(new Error(err));
-                else resolve();
-            });
-        });
-    }
-
-    async get(cmd){
-        return new Promise((resolve, reject) => {
-            this.db.exec(cmd, (err, row) => {
-                if (err) {
-                    console.log(cmd);
-                    reject(new Error(err));
-                }
-                else{
-                    resolve(row);
-                }
-            });
-        });
-    }
-
-    async all(cmd){
-        return new Promise((resolve, reject) => {
-            this.db.all(cmd, (err, rows) => {
-                if (err) {
-                    console.log(cmd);
-                    reject(new Error(err));
-                }
-                else{
-                    resolve(rows);
-                }
-            });
-        });
     }
 
     /**
@@ -109,15 +47,27 @@ class SessionManager {
         }
     }
 
+    async clearAll(){
+        this.sessions = {};
+        await this.run("DELETE FROM 'sessions'");
+    }
+
     async applyTo(req, res){
         let cookies = new Cookies(req.headers.cookie);
         let sessionHash = "";
         let expires = new Date().getTime() + constants.SESSION_EXPIRE_HOURS * 60 * 60 * 1000;
 
+        this.createSessionIf()
+
         if (!cookies.has(constants.SESSION_COOKIE_NAME)) {
             sessionHash = crypto.randomBytes(64).toString('hex');
             res.cookie(constants.SESSION_COOKIE_NAME, sessionHash, {maxAge : constants.SESSION_EXPIRE_HOURS * 60 * 60 * 1000});
-        } else {
+        }
+        else if (!this.sessions[cookies.get(constants.SESSION_COOKIE_NAME)]){
+            sessionHash = crypto.randomBytes(64).toString('hex');
+            res.cookie(constants.SESSION_COOKIE_NAME, sessionHash, {maxAge : constants.SESSION_EXPIRE_HOURS * 60 * 60 * 1000});
+        }
+        else {
             sessionHash = cookies.get(constants.SESSION_COOKIE_NAME);
         }
 
@@ -139,18 +89,15 @@ class SessionManager {
     }
 
     /**
-     * Store a session has in the database
+     * Store a session hash in the database.
      * @param session
      * @param expires
      * @returns {Promise<void>}
      */
     async saveHash(session, expires) {
-        let hostHash = crypto.randomBytes(20).toString('hex');
-        let contHash = crypto.randomBytes(20).toString('hex');
-
-        await this.connect();
-        await this.exec(`REPLACE INTO sessions VALUES ('${session}', '${expires}')`);
-        await this.disconnect();
+        let cmd = `REPLACE INTO sessions VALUES (?, ?)`;
+        let values = [session, expires];
+        await this.run(cmd, values);
     }
 
     listHashes(){
@@ -164,7 +111,7 @@ class SessionManager {
 
 class SessionInstance {
     constructor(sessionManager, hash) {
-        this.sm = sessionManager;
+        this.DB = sessionManager;
         this._hash = hash;
         this.values = {};
     }
@@ -174,7 +121,10 @@ class SessionInstance {
      * @returns {Promise<void>}
      */
     async load(){
-        let valueRows = await this.sm.all(`SELECT name, value FROM parameters WHERE session = '${this.hash}'`);
+        let cmd = `SELECT name, value FROM parameters WHERE session = (?)`;
+        let values = [this.hash];
+        let valueRows = await this.DB.all(cmd, values);
+        
         for (let valueRow of valueRows){
             this.values[valueRow.name] = valueRow.value;
         }
@@ -194,10 +144,11 @@ class SessionInstance {
 
     async set(key, value) {
         this.values[key] = value;
-        const cmd = `REPLACE INTO parameters VALUES ('${this.hash}', '${key}', '${value}') `;
-        await this.sm.connect();
-        await this.sm.exec(cmd);
-        await this.sm.disconnect();
+        let cmd = `REPLACE INTO parameters VALUES (?, ?, ?)`;
+        let values = [this.hash, key, value];
+        console.log(cmd);
+        console.log(values);
+        await this.DB.run(cmd, values);
     }
 
     get hash() {
