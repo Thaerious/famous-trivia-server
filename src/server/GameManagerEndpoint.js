@@ -143,6 +143,17 @@ class GameManagerEndpoint {
             res.end();
             return;
         }
+
+        try {
+            let user = await verify(token);
+            await this.gameManager.deleteGame(user);
+            res.json({result: "success"});
+            res.end();
+        } catch (err) {
+            console.log(err);
+            res.json({error: err.toString()});
+            res.end();
+        }
     }
 
     validateName(source) {
