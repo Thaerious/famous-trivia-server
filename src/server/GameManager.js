@@ -103,9 +103,9 @@ class GameManager {
 
     /**
      * Associate a host with a game.
-     * Will generate a hash value to recall the game with.
-     * @param user
-     * @param game
+     * Generates a hash value to recall the game with.
+     * @param user the user object returned from verify.js
+     * @param game a game object from Game.js
      * @returns {boolean} true if a new game was created.
      */
     async setGame(user, game) {
@@ -117,6 +117,7 @@ class GameManager {
 
     /**
      * List all the users with an game in the db.
+     * The user will match with a userid returned from verify.js.
      * @returns {Promise<unknown>}
      */
     async listGames() {
@@ -127,8 +128,8 @@ class GameManager {
     }
 
     /**
-     * True if the game has been saved.
-     * @param user
+     * True if the game has been saved for the given host.
+     * @param user the user object returned from verify.js
      * @returns {Promise<unknown>}
      */
     async hasGame(user) {
@@ -139,8 +140,8 @@ class GameManager {
     }
 
     /**
-     * Retrieve the saved JSON of a game.
-     * @param user
+     * Retrieve the saved JSON of a game for a host.
+     * @param user the user object returned from verify.js
      * @returns {Promise<unknown>}
      */
     async getGame(user) {
@@ -152,8 +153,8 @@ class GameManager {
     }
 
     /**
-     * Remove a game from the db.
-     * @param user
+     * Remove a hosted game from the db.
+     * @param user the user object returned from verify.js
      * @returns {Promise<unknown>}
      */
     async deleteGame(user) {
@@ -163,8 +164,8 @@ class GameManager {
     }
 
     /**
-     * Retrieve the hash for a game.
-     * @param user
+     * Retrieve the public hash for a game.
+     * @param user the user object returned from verify.js
      * @returns {Promise<unknown>}
      */
     async getHash(user) {
@@ -176,24 +177,10 @@ class GameManager {
     }
 
     /**
-     * Retrieve the user id for a given hash.
-     * Hash can be host or contestant.
-     * @param user
-     * @returns {Promise<unknown>}
-     */
-    async getUser(hash) {
-        let cmd = `SELECT userId FROM games where hash = (?)`;
-        let values = [hash];
-        let r = await this.get(`SELECT userId FROM games where hash = '${hash}'`);
-        if (!r) return undefined;
-        return r.userId;
-    }
-
-    /**
-     * Return the game object from a hash value.
+     * Return the live game object.
      * This will retrieve it from the database if this is the first time getLive is called
-     * for the given game.  The has can be either the user or contestant hash.
-     * @param hash
+     * for the given game.
+     * @param hash The public hash for a game.
      */
     async getLive(hash){
         if (!this.liveGames[hash]){
@@ -219,6 +206,12 @@ class GameManager {
         await this.run(statement, values);
     }
 
+    /**
+     * Determine if a game has the contestant name.
+     * @param name The name in question.
+     * @param hash The public hash for the game.
+     * @returns {Promise<boolean>}
+     */
     async hasContestant(name, hash){
         let cmd = "SELECT * FROM contestants where contestant_name = (?) and game_hash = (?)";
         let values = [name, hash];
@@ -226,6 +219,14 @@ class GameManager {
         return rows.length >= 1;
     }
 
+    /**
+     * Remove a name from the game.
+     * This does not remove the player from the game it's self, only the db record of the
+     * player name.
+     * @param name The name in question.
+     * @param hash The public hash for the game.
+     * @returns {Promise<boolean>}
+     */
     async removeContestant(name, hash){
         let cmd = "DELETE FROM contestants where contestant_name = (?) and game_hash = (?)";
         let values = [name, hash];

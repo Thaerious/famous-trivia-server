@@ -60,7 +60,7 @@ window.onload = async () => {
 function sendTokenToServer(){
     return new Promise((resolve, reject)=> {
         let token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
-        var xhttp = new XMLHttpRequest();
+        let xhttp = new XMLHttpRequest();
 
         xhttp.addEventListener("load", (event) => {
             let response = JSON.parse(xhttp.responseText);

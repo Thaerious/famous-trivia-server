@@ -1,5 +1,8 @@
 import Authenticate from './modules/Authenticate.js';
 import parseURLParameters from './parseURLParameters.js';
+import GameManagerService from "./services/GameManagerService.js"
+
+const gameManagerService = new GameManagerService();
 
 window.addEventListener("load", ()=>{
     new Authenticate().loadClient();
@@ -16,19 +19,8 @@ window.addEventListener("load", ()=>{
 
     document.querySelector("#terminate").addEventListener("click", ()=>{
             let token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
+            gameManagerService.terminate(token);
 
-            let xhttp = new XMLHttpRequest();
-
-            xhttp.addEventListener("load", (event) => {
-                window.location = `host.ejs`;
-            });
-
-            xhttp.open("POST", "game-manager-service");
-            xhttp.setRequestHeader("Content-type", "application/json");
-            xhttp.send(JSON.stringify({
-                token: token,
-                action : "terminate"
-            }));
     });
 });
 

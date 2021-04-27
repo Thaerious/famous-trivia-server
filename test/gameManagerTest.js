@@ -68,18 +68,6 @@ describe('class GameManager', async function () {
         });
     });
 
-    describe(`#getUser()`, function () {
-        it(`has hash`, async function () {
-            let r = await gameManager.getHash({userId: "test-user"});
-            let userId = await gameManager.getUser(r);
-            assert.equal(userId, "test-user");
-        });
-        it(`doesn't exist`, async function () {
-            let userId = await gameManager.getUser("");
-            assert.equal(userId, undefined);
-        });
-    });
-
     describe(`#getLive()`, function () {
         it(`has hash`, async function () {
             let r = await gameManager.getHash({userId: "test-user"});

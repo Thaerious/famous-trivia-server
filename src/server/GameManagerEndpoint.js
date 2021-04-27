@@ -27,7 +27,6 @@ class GameManagerEndpoint {
             }
 
             console.log("GAME MANAGER ENDPOINT>" + action);
-            console.log(req.body);
             await this[action](req, res);
         }
     }
@@ -56,45 +55,97 @@ class GameManagerEndpoint {
         }
     }
 
-    async ['join-game'] (req, res) {
-        if (!req.session.has("name")){
+    async ['join-game'](req, res) {
+        if (!req.session.has("name")) {
             res.json({
                 result: 'request_name'
             });
         } else {
             res.json({
                 result: 'success',
-                name : req.session.get("name")
+                name: req.session.get("name")
             });
         }
     }
 
-    async ['set-name'] (req, res) {
+    async ['set-name'](req, res) {
         let name = this.validateName(req.body['name']);
-        if (name === null){
+        if (name === null) {
             res.json({
                 result: 'rejected',
-                reason : 'invalid name'
+                reason: 'invalid name'
             });
-        }
-        else if (await this.gameManager.hasContestant(name, req.body['game-hash'])){
+        } else if (await this.gameManager.hasContestant(name, req.body['game-hash'])) {
             res.json({
                 result: 'rejected',
-                reason : 'name is already in use'
+                reason: 'name is already in use'
             });
-        }
-        else {
+        } else {
             await this.gameManager.addContestant(name, req.body['game-hash']);
             await req.session.set("name", name);
             await req.session.set("game-hash", req.body['game-hash']);
             res.json({
                 result: 'success',
-                name : req.session.get("name")
+                name: req.session.get("name")
             });
         }
     }
 
-    validateName(source){
+    /**
+     * Requires a model (json with game description) and a token (Google auth token),
+     * responds with result : success, hash : game-hash.  The game hash is passed to
+     * players so they can connect.
+     * @returns {Promise<void>}
+     */
+    async ['launch'](req, res) {
+        let model = req.body.model;
+        let token = req.body.token;
+
+        if (!model) {
+            res.json({error: "missing field: model"});
+            res.end();
+            return;
+        }
+
+        if (!token) {
+            res.json({error: "missing field: token"});
+            res.end();
+            return;
+        }
+
+        try {
+            let user = await verify(token);
+            let game = new Game(new GameModel(model));
+            await this.gameManager.setGame(user, game)
+            let hash = await this.gameManager.getHash(user);
+            res.json({
+                result: "success",
+                hash: hash
+            });
+            res.end();
+        } catch (err) {
+            console.log(err);
+            res.json({error: err.toString()});
+            res.end();
+        }
+    }
+
+    /**
+     * Requires a token (Google auth token), responds with result : success.
+     * Clears the game from the DB, and all associated player parameters.
+     * @returns {Promise<void>}
+     */
+    async ['terminate'](req, res){
+        let token = req.body.token;
+
+        if (!token) {
+            res.json({error: "missing field: token"});
+            res.end();
+            return;
+        }
+    }
+
+    validateName(source) {
         if (!source.match(/^[ a-zA-Z_-]{0,15}$/)) return null;
         return source.toUpperCase();
     }

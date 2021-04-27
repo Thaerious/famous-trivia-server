@@ -1,9 +1,11 @@
 import GameManagerService from "./services/GameManagerService.js";
 import parseURLParameters from './parseURLParameters.js';
 
+let gameManagerService = new GameManagerService();
+
 window.addEventListener("load", async(event)=>{
     /* attempt to join game, if already joined, forward to the game page */
-    const response = await GameManagerService.joinGame(window.parameters.hash);
+    const response = await gameManagerService.joinGame(window.parameters.hash);
 
     if (response === "success"){
         window.location = `contestant_portal.ejs`;
@@ -24,7 +26,7 @@ window.addEventListener("load", async(event)=>{
 
 async function submit(){
     const name =  document.querySelector("#name").content;
-    const response = await GameManagerService.setName(window.parameters.hash, name);
+    const response = await gameManagerService.setName(window.parameters.hash, name);
     console.log(response);
     if (response.result === "rejected"){
         document.querySelector("#alert").show(response.reason);

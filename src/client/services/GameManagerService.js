@@ -20,6 +20,36 @@ class GameManagerService {
         });
     }
 
+    /**
+     * Stop a hosted game and clear players.
+     * @param token Google API user token
+     * @returns {Promise<unknown>}
+     */
+    async launch(token, model) {
+        return await this.send({
+            token: token,
+            model: model,
+            action: "launch"
+        });
+    }
+
+    /**
+     * Stop a hosted game and clear players.
+     * @param token Google API user token
+     * @returns {Promise<unknown>}
+     */
+    async terminate(token) {
+        return await this.send({
+            token: token,
+            action: "terminate"
+        });
+    }
+
+    /**
+     * Determine if a game as been hosted.
+     * @param token Google API user token
+     * @returns {Promise<unknown>}
+     */
     async checkForGame(token) {
         return await this.send({
             token: token,
@@ -45,4 +75,4 @@ class GameManagerService {
 }
 
 GameManagerService.URL = "game-manager-service";
-module.exports = new GameManagerService();
+module.exports = GameManagerService;

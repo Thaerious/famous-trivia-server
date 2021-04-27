@@ -9,6 +9,7 @@ import GameManagerService from "./services/GameManagerService.js";
 let folderId = null;
 let fileOps = new FileOps();
 window.fileOps = fileOps;
+const gameManagerService = new GameManagerService();
 
 // main called from renderButton.js
 window.main = async function () {
@@ -25,7 +26,7 @@ function onLoad(event) {
 
 async function checkForGame() {
     let token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
-    let response = await GameManagerService.checkForGame(token);
+    let response = await gameManagerService.checkForGame(token);
     if (response.result === "success") {
         window.location = `launch_console.ejs?hash=${response['hash']}`;
     }
@@ -38,26 +39,13 @@ async function onLaunch(event) {
     let model = JSON.parse(file.body);
     let token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
 
-    let xhttp = new XMLHttpRequest();
-    xhttp.addEventListener("load", (event) => {
-        let response = JSON.parse(xhttp.responseText);
+    let response = await gameManagerService.launch(token, model);
+    if (response.result === "success") {
+        window.location = `launch_console.ejs`;
+    } else {
+        window.alert("Error launching game");
         console.log(response);
-
-        if (response.result === "success") {
-            window.location = `launch_console.ejs`;
-        } else {
-            window.alert("Error launching game");
-            console.log(response);
-        }
-    });
-
-    xhttp.open("POST", "launch");
-    xhttp.setRequestHeader("Content-type", "application/json");
-    xhttp.send(JSON.stringify({
-        model: model,
-        token: token,
-        action: "launch"
-    }));
+    }
 }
 
 async function launchVerify() {
