@@ -110,46 +110,6 @@ class GameManager extends HasDB{
 
         return this.liveGames[hash];
     }
-
-    /**
-     * Associate a contestant with a game.
-     * @param name
-     * @param hash
-     * @returns {Promise<boolean>} True if the name was added.
-     */
-    async addContestant(name, hash){
-        let statement = "INSERT INTO contestants (contestant_name, game_hash) VALUES (?, ?)";
-        let values = [name, hash];
-        await this.run(statement, values);
-    }
-
-    /**
-     * Determine if a game has the contestant name.
-     * @param name The name in question.
-     * @param hash The public hash for the game.
-     * @returns {Promise<boolean>}
-     */
-    async hasContestant(name, hash){
-        let cmd = "SELECT * FROM contestants where contestant_name = (?) and game_hash = (?)";
-        let values = [name, hash];
-        let rows = await this.all(cmd, values);
-        return rows.length >= 1;
-    }
-
-    /**
-     * Remove a name from the game.
-     * This does not remove the player from the game it's self, only the db record of the
-     * player name.
-     * @param name The name in question.
-     * @param hash The public hash for the game.
-     * @returns {Promise<boolean>}
-     */
-    async removeContestant(name, hash){
-        let cmd = "DELETE FROM contestants where contestant_name = (?) and game_hash = (?)";
-        let values = [name, hash];
-        let rows = await this.run(cmd, values);
-    }
-
 }
 
 export default GameManager;

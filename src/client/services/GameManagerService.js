@@ -50,7 +50,7 @@ class GameManagerService {
      * @param token Google API user token
      * @returns {Promise<unknown>}
      */
-    async checkForGame(token) {
+    async hasGame(token) {
         return await this.send({
             token: token,
             action: "has-game"
@@ -62,7 +62,7 @@ class GameManagerService {
             'game-hash': hash,
             action: "join-game"
         });
-        return response.result;
+        return response;
     }
 
     async setName(hash, name) {

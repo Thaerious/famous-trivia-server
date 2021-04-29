@@ -28,10 +28,17 @@ class GameManagerEndpoint {
             }
 
             console.log("GAME MANAGER ENDPOINT>" + action);
+            console.log(req.body);
             await this[action](req, res);
         }
     }
 
+    /**
+     * Determine if a host has started a game.
+     * @param req
+     * @param res
+     * @returns {Promise<void>}
+     */
     async ['has-game'](req, res) {
         let token = req.body.token;
         try {
@@ -56,40 +63,85 @@ class GameManagerEndpoint {
         }
     }
 
+    /**
+     * Attempt to have a contestant join a game.
+     * @param req
+     * @param res
+     * @returns {Promise<void>}
+     */
     async ['join-game'](req, res) {
-        if (!req.session.has("name")) {
-            res.json({
-                result: 'request_name'
-            });
+        let hash = req.body['game-hash'];
+
+        if (req.session.has("game-hash")) {
+            if (req.session.get("game-hash") === hash) {
+                res.json({
+                    result: 'success'
+                });
+            } else {
+                res.json({
+                    result: 'rejected',
+                    reason: 'Contestant already in another game'
+                });
+            }
         } else {
             res.json({
-                result: 'success',
-                name: req.session.get("name")
+                result: 'request_name'
             });
         }
     }
 
     async ['set-name'](req, res) {
-        let name = this.validateName(req.body['name']);
+        let name = req.body['name'];
+        let gameHash = req.body['game-hash'];
+
+        if (!name) {
+            res.json({error: "missing field: name"});
+            res.end();
+            return;
+        }
+
+        if (!gameHash) {
+            res.json({error: "missing field: game-hash"});
+            res.end();
+            return;
+        }
+
+        name = this.validateName(req.body['name']);
+
         if (name === null) {
             res.json({
                 result: 'rejected',
                 reason: 'invalid name'
             });
-        } else if (await this.gameManager.hasContestant(name, req.body['game-hash'])) {
+            return;
+        } else if (await this.nameInUse(name, req.body['game-hash'])) {
             res.json({
                 result: 'rejected',
                 reason: 'name is already in use'
             });
         } else {
-            await this.gameManager.addContestant(name, req.body['game-hash']);
             await req.session.set("name", name);
             await req.session.set("game-hash", req.body['game-hash']);
             res.json({
-                result: 'success',
-                name: req.session.get("name")
+                result: 'success'
             });
         }
+    }
+
+    async nameInUse(name, gameHash){
+        console.log("name in use: " + name);
+        let sessions = await this.sessionManager.reverseLookup("game-hash", gameHash);
+        console.log(sessions);
+        for (const session of sessions){
+            console.log(await this.sessionManager.getSession(session.values));
+            console.log(await this.sessionManager.getSession(session).get("name"));
+            if (await this.sessionManager.getSession(session).get("name") === name){
+                console.log("true");
+                return true;
+            }
+        }
+        console.log("false");
+        return false;
     }
 
     /**

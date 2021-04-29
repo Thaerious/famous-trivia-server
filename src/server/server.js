@@ -39,7 +39,7 @@ app.use('/game-manager-service', sessionManager.middleware);
 /** non-rendering end-points **/
     // called from host.js, launch_console.js
     app.use("/game-manager-service", BodyParser.json());
-    app.use("/game-manager-service", new GameManagerEndpoint(gameManager).middleware);
+    app.use("/game-manager-service", new GameManagerEndpoint(gameManager, sessionManager).middleware);
 
     // verifies the host and marks the cookie with {role : "host"}
     app.use('/connect-host', sessionManager.middleware);

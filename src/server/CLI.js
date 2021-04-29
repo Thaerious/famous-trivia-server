@@ -65,6 +65,10 @@ class CLI {
 
     sessionCommand(split){
         switch (split[1]) {
+            case "reload":
+            case "r":
+                this.sessionManager.load();
+                break;
             case "clear":
             case "c":
                 this.sessionManager.clearAll();

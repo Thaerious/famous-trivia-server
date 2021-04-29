@@ -6,14 +6,12 @@ import Parameters from "./modules/Parameters.js";
 import FileList from "./modules/FileList.js";
 import GameManagerService from "./services/GameManagerService.js";
 
-let folderId = null;
 let fileOps = new FileOps();
-window.fileOps = fileOps;
 const gameManagerService = new GameManagerService();
 
 // main called from renderButton.js
 window.main = async function () {
-    await checkForGame();
+    await hasGame();
     await fileOps.load();
     addMenuListeners();
     setupFileList();
@@ -24,9 +22,9 @@ function onLoad(event) {
     window.location = `editor.ejs?action=load&fileId=${id}`;
 }
 
-async function checkForGame() {
+async function hasGame() {
     let token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
-    let response = await gameManagerService.checkForGame(token);
+    let response = await gameManagerService.hasGame(token);
     if (response.result === "success") {
         window.location = `launch_console.ejs?hash=${response['hash']}`;
     }

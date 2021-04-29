@@ -1,7 +1,6 @@
 // noinspection SqlNoDataSourceInspection,SqlDialectInspection
 
 import crypto from "crypto";
-import sqlite3 from "sqlite3";
 import constants from "./constants.js";
 import HasDB from './HasDB.js';
 
@@ -15,7 +14,7 @@ import HasDB from './HasDB.js';
  * Having a session variable does not automatically mean the user is verified.
  * Other endpoints will take care of that.
  */
-class SessionManager extends HasDB{
+class SessionManager extends HasDB {
     constructor(path) {
         super(path);
         this.sessions = {};
@@ -25,14 +24,58 @@ class SessionManager extends HasDB{
      * Read session information from the DB to the live server.
      * @returns {Promise<void>}
      */
-    async load(){
+    async load() {
         this.sessions = {};
+        await this.clearOldSessions();
+
+        if (SessionManager.SETTINGS.SESSION_CLEAR_DELAY_MIN >= 0) {
+            this.interval = setInterval(() => this.clearOldSessions(), SessionManager.SETTINGS.SESSION_CLEAR_DELAY_MIN * 60 * 1000);
+        }
 
         let sessionRows = await this.all("SELECT session FROM Sessions");
-        for (let sessionRow of sessionRows){
+        for (let sessionRow of sessionRows) {
             this.sessions[sessionRow.session] = new SessionInstance(this, sessionRow.session);
             await this.sessions[sessionRow.session].load();
         }
+    }
+
+    /**
+     * Remove all Live and DB session information.
+     * @returns {Promise<void>}
+     */
+    async clearAll() {
+        await this.clearLive();
+        await this.clearDB();
+    }
+
+    /**
+     * Remove all Live session information.
+     * @returns {Promise<void>}
+     */
+    async clearLive() {
+        this.sessions = {};
+    }
+
+    /**
+     * Remove all DB session information.
+     * @returns {Promise<void>}
+     */
+    async clearDB() {
+        await this.run("DELETE FROM 'sessions'");
+        await this.run("DELETE FROM 'parameters'");
+    }
+
+    /**
+     * Remove all expired sessions from the DB.
+     */
+    async clearOldSessions() {
+        let expired = new Date().getTime();
+        await this.run(`DELETE
+                        FROM sessions
+                        WHERE expires < ${expired};`);
+        await this.run(`DELETE
+                        FROM parameters
+                        WHERE session NOT IN (SELECT session FROM sessions);`)
     }
 
     /**
@@ -47,40 +90,51 @@ class SessionManager extends HasDB{
         }
     }
 
-    async clearAll(){
-        this.sessions = {};
-        await this.run("DELETE FROM 'sessions'");
+    /**
+     * Call #validateSession with values from the http request.
+     * @param req
+     * @param res
+     * @returns {Promise<void>}
+     */
+    async applyTo(req, res) {
+        let cookies = new Cookies(req.headers.cookie);
+        let sessionHash = undefined;
+        if (cookies.has(SessionManager.SETTINGS.SESSION_COOKIE_NAME)) {
+            sessionHash = cookies.get(SessionManager.SETTINGS.SESSION_COOKIE_NAME);
+        }
+
+        sessionHash = this.validateSession(sessionHash);
+        res.cookie(SessionManager.SETTINGS.SESSION_COOKIE_NAME, sessionHash, {maxAge: SessionManager.SETTINGS.SESSION_EXPIRE_HOURS * 60 * 60 * 1000});
+
+        if (!req.session) {
+            req.session = this.getSession(sessionHash);
+        }
     }
 
-    async applyTo(req, res){
-        let cookies = new Cookies(req.headers.cookie);
-        let sessionHash = "";
-        let expires = new Date().getTime() + constants.SESSION_EXPIRE_HOURS * 60 * 60 * 1000;
+    /**
+     * If hash is omitted, or found to be expired, create a new session.
+     * This session is added to both Live and the DB.
+     * @returns {String} Session hash to send to the client, may or may not be new.
+     */
+    async validateSession(sessionHash) {
+        let expires = new Date().getTime() + SessionManager.SETTINGS.SESSION_EXPIRE_HOURS * 60 * 60 * 1000;
 
-        this.createSessionIf()
-
-        if (!cookies.has(constants.SESSION_COOKIE_NAME)) {
+        if (!sessionHash || !this.sessions[sessionHash]) {
             sessionHash = crypto.randomBytes(64).toString('hex');
-            res.cookie(constants.SESSION_COOKIE_NAME, sessionHash, {maxAge : constants.SESSION_EXPIRE_HOURS * 60 * 60 * 1000});
-        }
-        else if (!this.sessions[cookies.get(constants.SESSION_COOKIE_NAME)]){
-            sessionHash = crypto.randomBytes(64).toString('hex');
-            res.cookie(constants.SESSION_COOKIE_NAME, sessionHash, {maxAge : constants.SESSION_EXPIRE_HOURS * 60 * 60 * 1000});
-        }
-        else {
-            sessionHash = cookies.get(constants.SESSION_COOKIE_NAME);
         }
 
         if (!this.sessions[sessionHash]) {
             await this.saveHash(sessionHash, expires);
         }
-
-        if (!req.session){
-            req.session = this.getSession(sessionHash);
-        }
+        return sessionHash;
     }
 
-    getSession(sessionHash){
+    /**
+     * Retrieve a session
+     * @param sessionHash
+     * @returns {*}
+     */
+    getSession(sessionHash) {
         if (!this.sessions[sessionHash]) {
             this.sessions[sessionHash] = new SessionInstance(this, sessionHash);
         }
@@ -95,17 +149,47 @@ class SessionManager extends HasDB{
      * @returns {Promise<void>}
      */
     async saveHash(session, expires) {
-        let cmd = `REPLACE INTO sessions VALUES (?, ?)`;
+        let cmd = `REPLACE INTO sessions
+                   VALUES (?, ?)`;
         let values = [session, expires];
         await this.run(cmd, values);
     }
 
-    listHashes(){
+    /**
+     * Returns a list of truncated session hashes.
+     * Used for CLI
+     * @returns {*[]}
+     */
+    listHashes() {
         let r = [];
-        for (let key of Object.keys(this.sessions)){
+        for (let key of Object.keys(this.sessions)) {
             r.push(key.substring(0, 6));
         }
         return r;
+    }
+
+    /**
+     * Return all sessions that has the parameter 'key' set.
+     * @param key The parameter in question.
+     * @param value If set, only return parameters that match.
+     * @returns {*[]}
+     */
+    reverseLookup(key, value = undefined) {
+        let sessions = [];
+
+        if (!value) {
+            for (const hash in this.sessions) {
+                const sessionInstance = this.sessions[hash];
+                if (sessionInstance.has(key)) sessions.push(hash);
+            }
+        } else {
+            for (const hash in this.sessions) {
+                const sessionInstance = this.sessions[hash];
+                if (sessionInstance.has(key, value)) sessions.push(hash);
+            }
+        }
+
+        return sessions;
     }
 }
 
@@ -120,34 +204,62 @@ class SessionInstance {
      * Read saved parameters from the DB to the live server for this session.
      * @returns {Promise<void>}
      */
-    async load(){
-        let cmd = `SELECT name, value FROM parameters WHERE session = (?)`;
+    async load() {
+        let cmd = `SELECT name, value
+                   FROM parameters
+                   WHERE session = (?)`;
         let values = [this.hash];
         let valueRows = await this.DB.all(cmd, values);
-        
-        for (let valueRow of valueRows){
+
+        for (let valueRow of valueRows) {
             this.values[valueRow.name] = valueRow.value;
         }
     }
 
-    listKeys(){
+    /**
+     * List all keys for which there is a value.
+     * @returns {string[]}
+     */
+    listKeys() {
         return Object.keys(this.values);
     }
 
-    has(key){
-        return this.values[key] !== undefined;
+    /**
+     * Determine is a key has an assigned value.
+     * @param key
+     * @returns {boolean}
+     */
+    has(key, value = undefined) {
+        if (!value) {
+            return this.values[key] !== undefined;
+        } else {
+            return this.values[key] === value;
+        }
     }
 
+    /**
+     * Retrieve a key's assigned value.
+     * Return undefined if there is no key.
+     * @param key
+     * @returns {*}
+     */
     get(key) {
+        if (!this.has(key)) return undefined;
         return this.values[key];
     }
 
+    /**
+     * Assign a value to a key.
+     * Replaces any value that was previously assigned.
+     * @param key
+     * @param value
+     * @returns {Promise<void>}
+     */
     async set(key, value) {
         this.values[key] = value;
-        let cmd = `REPLACE INTO parameters VALUES (?, ?, ?)`;
+        let cmd = `REPLACE INTO parameters
+                   VALUES (?, ?, ?)`;
         let values = [this.hash, key, value];
-        console.log(cmd);
-        console.log(values);
         await this.DB.run(cmd, values);
     }
 
@@ -175,5 +287,8 @@ class Cookies {
         return this.cookies[key] !== undefined;
     }
 }
+
+SessionManager.SETTINGS = {};
+Object.assign(SessionManager.SETTINGS, constants.sessions);
 
 export default SessionManager;

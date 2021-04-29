@@ -20,8 +20,6 @@ class ContestantPortalView extends AbstractView {
 
     updateModel(update) {
         super.updateModel(update);
-        // this.DOM.buzzButton.hide();
-        // this.DOM.timer.show();
 
         for (let player of update.model.players) {
             if (player.name === this.name) {

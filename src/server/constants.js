@@ -5,6 +5,11 @@ export default {
         BUZZ: 10,
         MULTIPLE_CHOICE: 5
     },
-    SESSION_EXPIRE_HOURS : 24,
-    SESSION_COOKIE_NAME : "trivia-session"
+    sessions : {
+        SESSION_EXPIRE_HOURS: 24,
+        SESSION_COOKIE_NAME: "trivia-session",
+        SESSION_CLEAR_DELAY_MIN: 30
+    }
 };
+
+// set SESSION_CLEAR_DELAY_MIN to -1 to disable.

@@ -38,7 +38,7 @@ class PortalController {
     }
 
     onClose(event){
-
+        window.location = "contestant_join.ejs";
     }
 
     send(msg){
