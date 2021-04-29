@@ -84,30 +84,6 @@ describe('class GameManager', async function () {
         });
     });
 
-    describe(`#addContestant()`, function () {
-        it(`doesn't error`, async function () {
-            let gameHash = await gameManager.getHash({userId: "test-user"});
-            await gameManager.addContestant("ima-name", gameHash);
-        });
-
-        it(`add => has`, async function () {
-            let gameHash = await gameManager.getHash({userId: "test-user"});
-            await gameManager.hasContestant("ima-name", gameHash);
-        });
-    });
-
-    describe(`#removeContestant()`, function () {
-        it(`doesn't error`, async function () {
-            let gameHash = await gameManager.getHash({userId: "test-user"});
-            await gameManager.removeContestant("ima-name", gameHash);
-        });
-
-        it(`add => !has`, async function () {
-            let gameHash = await gameManager.getHash({userId: "test-user"});
-            await gameManager.hasContestant("ima-name", gameHash);
-        });
-    });
-
     describe(`#deleteGame()`, function () {
         it(`is deleted`, async function () {
             await gameManager.deleteGame({userId: "test-user"});

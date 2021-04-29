@@ -37,7 +37,11 @@ class HasDB {
         return new Promise(async (resolve, reject) => {
             await this.connect();
             this.db.run(cmd, values, async err => {
-                if (err) reject(new Error(err));
+                if (err){
+                    console.log("SQL ERROR");
+                    console.log(cmd);
+                    reject(new Error(err));
+                }
                 else {
                     try {
                         await this.disconnect();
@@ -56,7 +60,11 @@ class HasDB {
         return new Promise(async (resolve, reject) => {
             await this.connect();
             this.db.all(cmd, values, async (err, rows) => {
-                if (err) reject(new Error(err));
+                if (err){
+                    console.log("SQL ERROR");
+                    console.log(cmd);
+                    reject(new Error(err));
+                }
                 else {
                     try {
                         await this.disconnect();
@@ -76,6 +84,7 @@ class HasDB {
             await this.connect();
             this.db.get(cmd, values, async (err, row) => {
                 if (err) {
+                    console.log("SQL ERROR");
                     console.log(cmd);
                     reject(new Error(err));
                 } else {

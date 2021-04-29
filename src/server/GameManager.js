@@ -15,7 +15,7 @@ class GameManager extends HasDB{
      * @returns {Promise<unknown>}
      */
     async clearAll() {
-        await this.run("DELETE FROM (?)", ["games"]);
+        await this.run("DELETE FROM games");
     }
 
     /**

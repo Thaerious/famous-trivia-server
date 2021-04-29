@@ -1,4 +1,5 @@
 // gameTest.js
+// noinspection DuplicatedCode
 
 import assert from 'assert';
 import fs from 'fs';
@@ -61,7 +62,7 @@ describe('Game', function () {
 
     describe('host clicks continue', function(){
         it('changes state', function(){
-            game.onInput({action : "continue"});
+            game.onInput({action : "continue", player : "@HOST"});
             let update = game.getUpdate().data;
             assert.equal(update.state, 2);
         });
@@ -124,9 +125,9 @@ describe('Game', function () {
         });
     });
 
-    describe('host presses continue', function(){
+    describe('host presses continue (1)', function(){
         it('state changes', function(){
-            game.onInput({action : "continue"});
+            game.onInput({action : "continue", player : "@HOST"});
             let update = game.getUpdate().data;
             assert.equal(update.state, 4);
         });
@@ -154,7 +155,7 @@ describe('Game', function () {
 
     describe('select question (first cat, $200)', function(){
         it('state changes', function(){
-            game.onInput({action : "select", data : {col : 0, row : 1}});
+            game.onInput({action : "select", data : {col : 0, row : 1}, player : "@HOST"});
             let update = game.getUpdate().data;
             assert.equal(update.state, 5);
         });
@@ -207,7 +208,7 @@ describe('Game', function () {
 
     describe('select question (first cat, $200)', function(){
         it('state changes', function(){
-            game.onInput({action : "select", data : {col : 0, row : 1}});
+            game.onInput({action : "select", data : {col : 0, row : 1}, player : "@HOST"});
             let update = game.getUpdate().data;
             assert.equal(update.state, 5);
         });
@@ -242,9 +243,9 @@ describe('Game', function () {
         });
     });
 
-    describe('host presses continue', function(){
+    describe('host presses continue (2)', function(){
         it('state changes', function(){
-            game.onInput({action : "continue"});
+            game.onInput({action : "continue", player : "@HOST"});
             let update = game.getUpdate().data;
             assert.equal(update.state, 6);
         });
@@ -277,9 +278,9 @@ describe('Game', function () {
         });
     });
 
-    describe('host presses continue', function(){
+    describe('host presses continue (3)', function(){
         it('state changes', function(){
-            game.onInput({action : "continue"});
+            game.onInput({action : "continue", player : "@HOST"});
             let update = game.getUpdate().data;
             assert.equal(update.state, 4);
         });
@@ -325,7 +326,7 @@ describe('Game', function () {
 
     describe('select question (first cat, $400)', function(){
         it('state changes', function(){
-            game.onInput({action : "select", data : {col : 0, row : 3}});
+            game.onInput({action : "select", data : {col : 0, row : 3}, player : "@HOST"});
             let update = game.getUpdate().data;
             assert.equal(update.state, 5);
         });
@@ -371,7 +372,7 @@ describe('Game', function () {
                 }
             });
 
-            game.onInput({action : "continue"});
+            game.onInput({action : "continue", player : "@HOST"});
             let update = game.getUpdate().data;
             assert.equal(update.state, 6);
         });
@@ -392,14 +393,14 @@ describe('Game', function () {
     describe('player buzzes in', function(){
         describe('player has already answered', function(){
             it('no state change', function(){
-                game.onInput({action : "buzz", data:{name : "alex"}});
+                game.onInput({action : "buzz", player : "alex"});
                 let update = game.getUpdate().data;
                 assert.equal(update.state, 7);
             });
         });
         describe('player has not already answered', function(){
             it('change state', function(){
-                game.onInput({action : "buzz", data:{name : "pat"}});
+                game.onInput({action : "buzz", player : "pat"});
                 let update = game.getUpdate().data;
                 assert.equal(update.state, 8);
             });

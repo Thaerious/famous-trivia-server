@@ -227,7 +227,7 @@ class Game {
                 break;
             case "continue":
                 this.updateState(2);
-                // this.timer.start(Timer.TIMES.MULTIPLE_CHOICE);
+                this.timer.start(Timer.TIMES.MULTIPLE_CHOICE);
                 this.model.getRound().setAnswerState();
                 break;
         }
@@ -342,10 +342,8 @@ class Game {
                 this.broadcast();
                 break;
             case "buzz":
-                console.log("BUZZ: " + input.data.name);
-                console.log(this.model.getRound().hasPlayer(input.data.name));
-                if (this.model.getRound().hasPlayer(input.data.name)) {
-                    this.model.getRound().setCurrentPlayer(input.data.name);
+                if (this.model.getRound().hasPlayer(input.player)) {
+                    this.model.getRound().setCurrentPlayer(input.player);
                     this.timer.start(Timer.TIMES.ANSWER);
                     this.updateState(8);
                 }
