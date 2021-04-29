@@ -171,4 +171,11 @@ describe(`Session Manager`, async () => {
         });
     });
 
+    describe(`clear value`, async () => {
+        it(`clear => doesn't have`, async () => {
+            let session = sessionManager.getSession(newHash);
+            session.clear("number");
+            assert.strictEqual(session.has("number"), false);
+        });
+    });
 });

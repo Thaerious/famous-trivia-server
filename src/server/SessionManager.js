@@ -103,8 +103,11 @@ class SessionManager extends HasDB {
             sessionHash = cookies.get(SessionManager.SETTINGS.SESSION_COOKIE_NAME);
         }
 
-        sessionHash = this.validateSession(sessionHash);
-        res.cookie(SessionManager.SETTINGS.SESSION_COOKIE_NAME, sessionHash, {maxAge: SessionManager.SETTINGS.SESSION_EXPIRE_HOURS * 60 * 60 * 1000});
+        sessionHash = await this.validateSession(sessionHash);
+
+        if (res) {
+            res.cookie(SessionManager.SETTINGS.SESSION_COOKIE_NAME, sessionHash, {maxAge: SessionManager.SETTINGS.SESSION_EXPIRE_HOURS * 60 * 60 * 1000});
+        }
 
         if (!req.session) {
             req.session = this.getSession(sessionHash);
@@ -235,6 +238,16 @@ class SessionInstance {
         } else {
             return this.values[key] === value;
         }
+    }
+
+    /**
+     * Remove the specified key.
+     */
+    async clear(key) {
+        delete this.values[key];
+        const cmd = "DELETE FROM parameters WHERE name = (?)";
+        const values = [key];
+        await this.DB.run(cmd, values);
     }
 
     /**

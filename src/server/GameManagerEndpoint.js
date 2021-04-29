@@ -28,7 +28,6 @@ class GameManagerEndpoint {
             }
 
             console.log("GAME MANAGER ENDPOINT>" + action);
-            console.log(req.body);
             await this[action](req, res);
         }
     }
@@ -91,22 +90,10 @@ class GameManagerEndpoint {
     }
 
     async ['set-name'](req, res) {
-        let name = req.body['name'];
-        let gameHash = req.body['game-hash'];
+        if (!verifyParameter(req, req, "name")) return;
+        if (!verifyParameter(req, req, "game-hash")) return;
 
-        if (!name) {
-            res.json({error: "missing field: name"});
-            res.end();
-            return;
-        }
-
-        if (!gameHash) {
-            res.json({error: "missing field: game-hash"});
-            res.end();
-            return;
-        }
-
-        name = this.validateName(req.body['name']);
+        let name = this.validateName(req.body['name']);
 
         if (name === null) {
             res.json({
@@ -129,18 +116,12 @@ class GameManagerEndpoint {
     }
 
     async nameInUse(name, gameHash){
-        console.log("name in use: " + name);
         let sessions = await this.sessionManager.reverseLookup("game-hash", gameHash);
-        console.log(sessions);
         for (const session of sessions){
-            console.log(await this.sessionManager.getSession(session.values));
-            console.log(await this.sessionManager.getSession(session).get("name"));
             if (await this.sessionManager.getSession(session).get("name") === name){
-                console.log("true");
                 return true;
             }
         }
-        console.log("false");
         return false;
     }
 
@@ -189,20 +170,23 @@ class GameManagerEndpoint {
      * @returns {Promise<void>}
      */
     async ['terminate'](req, res){
-        let token = req.body.token;
-
-        if (!token) {
-            res.json({error: "missing field: token"});
-            res.end();
-            return;
-        }
+        if (!verifyParameter(req, req, "token")) return;
 
         try {
-            let user = await verify(token);
+            let user = await verify(req.body['token']);
+            const gameHash = await this.gameManager.getHash(user);
             await this.gameManager.deleteGame(user);
+
+            let sessionHashes = this.sessionManager.reverseLookup("game-hash", gameHash);
+            console.log(sessionHashes);
+            for (const sessionHash of sessionHashes){
+                await this.sessionManager.getSession(sessionHash).clear("game-hash");
+            }
+
             res.json({result: "success"});
             res.end();
         } catch (err) {
+            console.trace();
             console.log(err);
             res.json({error: err.toString()});
             res.end();
@@ -213,6 +197,17 @@ class GameManagerEndpoint {
         if (!source.match(/^[ a-zA-Z_-]{0,15}$/)) return null;
         return source.toUpperCase();
     }
+}
+
+function verifyParameter(req, res, parameter){
+    let value = req.body[parameter];
+
+    if (!value) {
+        res.json({error: `missing parameter: ${parameter}`});
+        res.end();
+        return false;
+    }
+    return true;
 }
 
 export default GameManagerEndpoint;

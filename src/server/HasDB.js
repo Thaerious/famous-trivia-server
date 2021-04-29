@@ -39,8 +39,14 @@ class HasDB {
             this.db.run(cmd, values, async err => {
                 if (err) reject(new Error(err));
                 else {
-                    await this.disconnect();
-                    resolve();
+                    try {
+                        await this.disconnect();
+                        resolve();
+                    } catch (err){
+                        console.log("SQL ERROR");
+                        console.log(cmd);
+                        reject(err);
+                    }
                 }
             });
         });
@@ -52,8 +58,14 @@ class HasDB {
             this.db.all(cmd, values, async (err, rows) => {
                 if (err) reject(new Error(err));
                 else {
-                    await this.disconnect();
-                    resolve(rows);
+                    try {
+                        await this.disconnect();
+                        resolve(rows);
+                    } catch (err){
+                        console.log("SQL ERROR");
+                        console.log(cmd);
+                        reject(err);
+                    }
                 }
             });
         });
@@ -67,8 +79,14 @@ class HasDB {
                     console.log(cmd);
                     reject(new Error(err));
                 } else {
-                    await this.disconnect();
-                    resolve(row);
+                    try {
+                        await this.disconnect();
+                        resolve(row);
+                    } catch (err){
+                        console.log("SQL ERROR");
+                        console.log(cmd);
+                        reject(err);
+                    }
                 }
             });
         });
