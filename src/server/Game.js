@@ -380,7 +380,7 @@ class Game {
             case "expire":
                 break;
             case "accept":
-                this.model.getPlayer(this.model.getRound().getCurrent()).score += this.model.getRound().getValue();
+                this.model.getPlayer(this.model.getRound().getCurrentPlayer()).score += this.model.getRound().getValue();
                 this.model.getRound().setRevealState();
                 this.timer.stop();
                 this.updateState(9);

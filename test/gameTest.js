@@ -442,4 +442,37 @@ describe('Game', function () {
             assert.equal(update.model.round.state, 'reveal');
         });
     });
+
+    describe('answer rejected, player buzzes in, answer accepted', function(){
+        it('host continues, becomes state 4', function(){
+            game.onInput({action : "continue", player : "@HOST"});
+            let update = game.getUpdate().data;
+            assert.equal(update.state, 4);
+        });
+        it('select question, becomes state 5', function(){
+            game.onInput({action : "select", data : {col : 1, row : 3}, player : "@HOST"});
+            let update = game.getUpdate().data;
+            assert.equal(update.state, 5);
+        });
+        it('host continues, becomes state 6', function(){
+            game.onInput({action : "continue", player : "@HOST"});
+            let update = game.getUpdate().data;
+            assert.equal(update.state, 6);
+        });
+        it('host rejects, becomes state 7', function(){
+            game.onInput({action : "reject", player : "@HOST"});
+            let update = game.getUpdate().data;
+            assert.equal(update.state, 7);
+        });
+        it('player buzzes in, becomes state 8', function(){
+            game.onInput({action : "buzz", player : "robin"});
+            let update = game.getUpdate().data;
+            assert.equal(update.state, 8);
+        });
+        it('host accepts answer, becomes state 9', function(){
+            game.onInput({action : "accept", player : "@HOST"});
+            let update = game.getUpdate().data;
+            assert.equal(update.state, 9);
+        });
+    });
 });
