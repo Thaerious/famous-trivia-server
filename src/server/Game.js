@@ -100,7 +100,7 @@ class Game {
      * @param input {action : string, data : {}}
      */
     onInput(input) {
-        console.log(input);
+        console.log(`(${this.state}) - ${JSON.stringify(input)}`);
         console.log("-----------------------------------");
 
         switch(input.action){
@@ -166,10 +166,6 @@ class Game {
         }
     }
 
-    isQuestionDone() {
-        return this.model.getRound().countPlayers !== 0;
-    }
-
     updateMCScores() {
         let values = this.model.getRound().getValues();
         for (let name in this.playersData) {
@@ -226,9 +222,10 @@ class Game {
                 this.broadcast();
                 break;
             case "continue":
-                this.updateState(2);
-                this.timer.start(Timer.TIMES.MULTIPLE_CHOICE);
                 this.model.getRound().setAnswerState();
+                this.updateState(2);
+                // this.timer.start(Timer.TIMES.MULTIPLE_CHOICE);
+                this.timer.start(0);
                 break;
         }
     }
@@ -241,8 +238,8 @@ class Game {
                 break;
             case "continue":
             case "expire":
-                this.updateState(3);
                 this.model.getRound().setRevealState();
+                this.updateState(3);
                 this.updateMCScores();
                 break;
             case "update":
@@ -312,10 +309,10 @@ class Game {
                 this.broadcast();
                 break;
             case "reject":
+                this.model.getRound().setPlayerSpent();
                 this.model.getRound().clearCurrentPlayer();
                 this.timer.stop();
-
-                if (this.isQuestionDone()){
+                if (this.model.getRound().countUnspentPlayers() > 0){
                     this.timer.start(Timer.TIMES.BUZZ);
                     this.updateState(7);
                 } else {
@@ -356,7 +353,7 @@ class Game {
         }
     }
 
-    [8](input) { // awaiting answer
+    [8](input) { // awaiting answer to jeopardy question
         switch (input.action) {
             case "join":
                 this.model.addPlayer(input.data.name);
@@ -367,9 +364,11 @@ class Game {
                 let player = this.model.getPlayer(currentPlayer);
                 player.score -= (this.model.getRound().getValue() / 2);
                 this.timer.stop();
+
+                this.model.getRound().setPlayerSpent();
                 this.model.getRound().clearCurrentPlayer();
 
-                if (this.isQuestionDone()){
+                if (this.model.getRound().countUnspentPlayers() > 0){
                     this.timer.start(Timer.TIMES.BUZZ);
                     this.updateState(7);
                 } else {

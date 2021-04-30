@@ -43,6 +43,8 @@ class AbstractView extends EventTarget{
         this.fillPlayers(update);
         this.lastUpdate = update;
 
+        this.DOM.multipleChoice.hide();
+
         switch (update.state){
             case 0:
                 break;

@@ -414,6 +414,7 @@ describe('Game', function () {
             });
         });
     });
+
     describe('answer rejected (not active player)', function(){
         it('state changes', function(){
             game.onInput({action : "reject"});
@@ -426,6 +427,7 @@ describe('Game', function () {
             assert.equal(score, -100);
         });
     });
+
     describe('timer expires no buzz in', function(){
         it('state changes', function(done){
             this.timeout(5000);
@@ -471,6 +473,67 @@ describe('Game', function () {
         });
         it('host accepts answer, becomes state 9', function(){
             game.onInput({action : "accept", player : "@HOST"});
+            let update = game.getUpdate().data;
+            assert.equal(update.state, 9);
+        });
+    });
+
+    describe('all players answers rejected', function(){
+        it('host continues, becomes state 4', function(){
+            game.onInput({action : "continue", player : "@HOST"});
+            let update = game.getUpdate().data;
+            assert.equal(update.state, 4);
+            console.log(JSON.stringify(update, null, 2));
+        });
+        it('select question, becomes state 5', function(){
+            game.onInput({action : "select", data : {col : 1, row : 4}, player : "@HOST"});
+            let update = game.getUpdate().data;
+            assert.equal(update.state, 5);
+        });
+        it('host continues, becomes state 6', function(){
+            game.onInput({action : "continue", player : "@HOST"});
+            let update = game.getUpdate().data;
+            assert.equal(update.state, 6);
+        });
+        it('host rejects, becomes state 7', function(){
+            game.onInput({action : "reject", player : "@HOST"});
+            let update = game.getUpdate().data;
+            assert.equal(update.state, 7);
+        });
+        it('player that answered becomes spent', function(){
+            let update = game.getUpdate().data;
+            assert.equal(game.model.getRound().isPlayerSpent("robin"), true)
+            assert.notEqual(update.model.round.spentPlayers.indexOf("robin"), -1);
+        });
+        it('player buzzes in, becomes state 8', function(){
+            game.onInput({action : "buzz", player : "alex"});
+            let update = game.getUpdate().data;
+            assert.equal(update.state, 8);
+        });
+        it('host rejects, becomes state 7', function(){
+            game.onInput({action : "reject", player : "@HOST"});
+            let update = game.getUpdate().data;
+            assert.equal(update.state, 7);
+        });
+        it('player that buzzed becomes spent', function(){
+            let update = game.getUpdate().data;
+            assert.equal(game.model.getRound().isPlayerSpent("alex"), true)
+            assert.notEqual(update.model.round.spentPlayers.indexOf("alex"), -1);
+        });
+        it('player buzzes in, becomes state 8', function(){
+            game.onInput({action : "buzz", player : "pat"});
+            let update = game.getUpdate().data;
+            assert.equal(update.state, 8);
+        });
+        it('host rejects', function(){
+            game.onInput({action : "reject", player : "@HOST"});
+        });
+        it('player that buzzed becomes spent', function(){
+            let update = game.getUpdate().data;
+            assert.equal(game.model.getRound().isPlayerSpent("pat"), true)
+            assert.notEqual(update.model.round.spentPlayers.indexOf("pat"), -1);
+        });
+        it('becomes state 9', function(){
             let update = game.getUpdate().data;
             assert.equal(update.state, 9);
         });

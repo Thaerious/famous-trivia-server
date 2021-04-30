@@ -71,6 +71,7 @@ class JeopardyModel {
     }
 
     setPlayerSpent(name) {
+        name = name ?? this.currentPlayer;
         if (!this.parent.hasPlayer(name)) return false;
         if (this.isPlayerSpent(name)) return false;
         this.spentPlayers.push(name);

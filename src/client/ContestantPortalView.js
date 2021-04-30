@@ -20,6 +20,7 @@ class ContestantPortalView extends AbstractView {
 
     updateModel(update) {
         super.updateModel(update);
+        this.DOM.buzzButton.hide();
 
         for (let player of update.model.players) {
             if (player.name === this.name) {
@@ -40,11 +41,7 @@ class ContestantPortalView extends AbstractView {
                 break;
             case 7:
                 let check = update.model.round.spentPlayers.indexOf(this.name);
-                console.log(this.name);
-                console.log(update.model.round.spentPlayers);
-                console.log(check);
                 if (update.model.round.spentPlayers.indexOf(this.name) === -1) {
-                    console.log("HERE");
                     this.DOM.buzzButton.show();
                 }
                 break;

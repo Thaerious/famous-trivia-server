@@ -10,14 +10,6 @@ window.addEventListener("load", async(event)=>{
         window.location = `contestant_portal.ejs`;
     }
 
-    const response = await gameManagerService.joinGame(window.parameters.hash);
-    if (response.result === "success"){
-        window.location = `contestant_portal.ejs`;
-    }
-    else if (response.result === "rejected"){
-        document.querySelector("#alert").show(response.reason);
-    }
-
     document.querySelector("#name").addEventListener("enter-pressed", event=>{
         let element = document.querySelector("#name");
         const tabindex = element.tabIndex;

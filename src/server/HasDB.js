@@ -1,8 +1,10 @@
 import sqlite3 from "sqlite3";
+import {Mutex} from 'async-mutex';
 
 class HasDB {
     constructor(path) {
         this.path = path;
+        this.mutex = new Mutex();
     }
 
     /**
@@ -13,6 +15,7 @@ class HasDB {
     async connect(path) {
         path = path ?? this.path;
         return new Promise((resolve, reject) => {
+            console.log("CONNECT DB");
             this.db = new sqlite3.Database(path, (err) => {
                 if (err) reject(new Error(err));
                 else resolve(this.db);
@@ -26,6 +29,7 @@ class HasDB {
      */
     async disconnect() {
         return new Promise((resolve, reject) => {
+            console.log("DISCONNECT DB");
             this.db.close((err) => {
                 if (err) reject(new Error(err));
                 else resolve();
@@ -37,16 +41,15 @@ class HasDB {
         return new Promise(async (resolve, reject) => {
             await this.connect();
             this.db.run(cmd, values, async err => {
-                if (err){
+                if (err) {
                     console.log("SQL ERROR");
                     console.log(cmd);
                     reject(new Error(err));
-                }
-                else {
+                } else {
                     try {
                         await this.disconnect();
                         resolve();
-                    } catch (err){
+                    } catch (err) {
                         console.log("SQL ERROR");
                         console.log(cmd);
                         reject(err);
@@ -60,16 +63,15 @@ class HasDB {
         return new Promise(async (resolve, reject) => {
             await this.connect();
             this.db.all(cmd, values, async (err, rows) => {
-                if (err){
+                if (err) {
                     console.log("SQL ERROR");
                     console.log(cmd);
                     reject(new Error(err));
-                }
-                else {
+                } else {
                     try {
                         await this.disconnect();
                         resolve(rows);
-                    } catch (err){
+                    } catch (err) {
                         console.log("SQL ERROR");
                         console.log(cmd);
                         reject(err);
@@ -91,7 +93,7 @@ class HasDB {
                     try {
                         await this.disconnect();
                         resolve(row);
-                    } catch (err){
+                    } catch (err) {
                         console.log("SQL ERROR");
                         console.log(cmd);
                         reject(err);

@@ -3,6 +3,7 @@ class PortalController {
     constructor(ws, view) {
         this.ws = ws;
         this.view = view;
+        this.name = "";
 
         this.ws.addEventListener('message', (event) => this.process(JSON.parse(event.data)));
         this.ws.addEventListener('close', (event) => this.onClose(event));
@@ -20,6 +21,8 @@ class PortalController {
         switch (message.action) {
             case "connection_established":
                 this.send({action : "request_model"});
+                this.name = message.data.name;
+                console.log(this.name);
                 if (this.view.setName) this.view.setName(message.data.name);
                 break;
             case "update_model":
@@ -38,7 +41,11 @@ class PortalController {
     }
 
     onClose(event){
-        window.location = "contestant_join.ejs";
+        if (this.name === "@HOST"){
+            window.location = "host.ejs";
+        } else {
+            window.location = "contestant_join.ejs";
+        }
     }
 
     send(msg){
