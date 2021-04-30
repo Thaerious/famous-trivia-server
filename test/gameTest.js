@@ -294,7 +294,7 @@ describe('Game', function () {
         });
         it('one option spent', function(){
             let update = game.getUpdate().data;
-            update.model.round.spent[0][1] === true;
+            assert.equal(update.model.round.spent[0][1], true);
         });
         it('active player order updates', function(){
             let update = game.getUpdate().data;

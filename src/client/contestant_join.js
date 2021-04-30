@@ -5,6 +5,11 @@ let gameManagerService = new GameManagerService();
 
 window.addEventListener("load", async(event)=>{
     /* attempt to join game, if already joined, forward to the game page */
+    const gameHashResp = await gameManagerService.getGameHash();
+    if (gameHashResp.result === "success"){
+        window.location = `contestant_portal.ejs`;
+    }
+
     const response = await gameManagerService.joinGame(window.parameters.hash);
     if (response.result === "success"){
         window.location = `contestant_portal.ejs`;

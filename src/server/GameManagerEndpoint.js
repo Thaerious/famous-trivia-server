@@ -68,23 +68,16 @@ class GameManagerEndpoint {
      * @param res
      * @returns {Promise<void>}
      */
-    async ['join-game'](req, res) {
-        let hash = req.body['game-hash'];
-
+    async ['get-game-hash'](req, res) {
         if (req.session.has("game-hash")) {
-            if (req.session.get("game-hash") === hash) {
-                res.json({
-                    result: 'success'
-                });
-            } else {
-                res.json({
-                    result: 'rejected',
-                    reason: 'Contestant already in another game'
-                });
-            }
+            res.json({
+                'result': 'success',
+                'game-hash': req.session.get("game-hash")
+            })
         } else {
             res.json({
-                result: 'request_name'
+                result: 'rejected',
+                reason: 'Contestant is not in a game.'
             });
         }
     }
@@ -115,10 +108,10 @@ class GameManagerEndpoint {
         }
     }
 
-    async nameInUse(name, gameHash){
+    async nameInUse(name, gameHash) {
         let sessions = await this.sessionManager.reverseLookup("game-hash", gameHash);
-        for (const session of sessions){
-            if (await this.sessionManager.getSession(session).get("name") === name){
+        for (const session of sessions) {
+            if (await this.sessionManager.getSession(session).get("name") === name) {
                 return true;
             }
         }
@@ -169,7 +162,7 @@ class GameManagerEndpoint {
      * Clears the game from the DB, and all associated player parameters.
      * @returns {Promise<void>}
      */
-    async ['terminate'](req, res){
+    async ['terminate'](req, res) {
         if (!verifyParameter(req, req, "token")) return;
 
         try {
@@ -179,7 +172,7 @@ class GameManagerEndpoint {
 
             let sessionHashes = this.sessionManager.reverseLookup("game-hash", gameHash);
             console.log(sessionHashes);
-            for (const sessionHash of sessionHashes){
+            for (const sessionHash of sessionHashes) {
                 await this.sessionManager.getSession(sessionHash).clear("game-hash");
             }
 
@@ -199,7 +192,7 @@ class GameManagerEndpoint {
     }
 }
 
-function verifyParameter(req, res, parameter){
+function verifyParameter(req, res, parameter) {
     let value = req.body[parameter];
 
     if (!value) {

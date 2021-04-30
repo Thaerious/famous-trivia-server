@@ -21,6 +21,17 @@ class GameManagerService {
     }
 
     /**
+     * Retrieve the public game-hash associated with this
+     * session.
+     * @returns {Promise<unknown>}
+     */
+    async getGameHash() {
+        return await this.send({
+            action: "get-game-hash"
+        });
+    }
+
+    /**
      * Stop a hosted game and clear players.
      * @param token Google API user token
      * @returns {Promise<unknown>}
@@ -55,14 +66,6 @@ class GameManagerService {
             token: token,
             action: "has-game"
         });
-    }
-
-    async joinGame(hash, name) {
-        let response = await this.send({
-            'game-hash': hash,
-            action: "join-game"
-        });
-        return response;
     }
 
     async setName(hash, name) {
