@@ -14,11 +14,18 @@ class HasDB {
      */
     async connect(path) {
         path = path ?? this.path;
+
+        this.release = await this.mutex.acquire();
+
         return new Promise((resolve, reject) => {
             console.log("CONNECT DB");
             this.db = new sqlite3.Database(path, (err) => {
-                if (err) reject(new Error(err));
-                else resolve(this.db);
+                if (err) {
+                    this.release();
+                    reject(new Error(err));
+                } else {
+                    resolve(this.db);
+                }
             });
         });
     }
@@ -31,8 +38,14 @@ class HasDB {
         return new Promise((resolve, reject) => {
             console.log("DISCONNECT DB");
             this.db.close((err) => {
-                if (err) reject(new Error(err));
-                else resolve();
+                if (err) {
+                    this.release();
+                    reject(new Error(err));
+                }
+                else {
+                    this.release();
+                    resolve();
+                }
             });
         });
     }
