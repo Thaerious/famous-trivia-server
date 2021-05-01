@@ -243,7 +243,7 @@ class Game {
                 this.updateMCScores();
                 break;
             case "update":
-                let name = input.data.name;
+                let name = input.player;
                 let index = parseInt(input.data.index);
                 let value = parseInt(input.data.value);
 

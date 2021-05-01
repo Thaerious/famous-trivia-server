@@ -62,6 +62,15 @@ class TextInput extends NidgetElement {
             this.setCaret(this.prevCaret);
             event.stopPropagation();
             event.preventDefault();
+        } else {
+            this.dispatchEvent(new CustomEvent(
+                "text-update",
+                {
+                    bubbles : true,
+                    composed : true,
+                    detail : {console : this.content}
+                }
+            ));
         }
     }
 
@@ -69,8 +78,14 @@ class TextInput extends NidgetElement {
         if (event.which === 13){
             event.stopPropagation();
             event.preventDefault();
-
-            this.dispatchEvent(new CustomEvent("enter-pressed"));
+            this.dispatchEvent(new CustomEvent(
+                "text-enter",
+                {
+                    bubbles : true,
+                    composed : true,
+                    detail : {console : this.content}
+                }
+            ));
         }
 
         this.prevContent = this.content;

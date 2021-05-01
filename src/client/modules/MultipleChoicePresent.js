@@ -9,50 +9,49 @@ class ValueUpdate extends CustomEvent {
     }
 }
 
-class QuestionClick extends CustomEvent {
-    constructor() {
-        super('button-question');
-    }
-}
-
 class MultipleChoicePresent extends NidgetElement {
     constructor() {
         super("multiple-choice-present-template");
+        this.timeouts = [];
+    }
+
+    setTimeout(index, value){
+        if (this.timeouts[index]) clearTimeout(this.timeouts[index]);
+        this.timeouts[index] = setTimeout(()=>{
+            const event = new ValueUpdate(index, value);
+            this.dispatchEvent(event);
+            this.timeouts[index] = undefined;
+        }, 300);
     }
 
     async ready() {
         await super.ready();
 
-        for (let element of this.querySelectorAll(".wager")){
+        for (const element of this.querySelectorAll(".wager")){
             element.addEventListener("click", event=>element.content = "");
         }
+``
+        for (const element of this.querySelectorAll(".wager")){
+            element.addEventListener("text-update", event => {
+                if(element.content !== "0"){
+                    const index = element.parentElement.getAttribute("data-index");
+                    element.parentElement.querySelector("check-box").checked = true;
+                    this.setTimeout(index, element.content)
+                }
+            });
 
-        for (let element of this.querySelectorAll(".wager")){
             element.addEventListener("blur", event =>{
                 if(element.content === ""){
                     element.content = '0';
-                    element.parentElement.querySelector("check-box").checked = false;
-                }  else {
-                    element.parentElement.querySelector("check-box").checked = true;
                 }
             });
         }
-
-        for (let element of this.querySelectorAll("check-box")){
-            element.addEventListener("value-update", event =>{
-                if(event.detail.value === "false"){
-                    element.parentElement.querySelector(".wager").content = 0;
-                }
-            });
-        }
-
-        // for (let element of this.querySelectorAll(".answer > nidget-text")){
-        //     element.fitText.lock = "vh";
-        //     element.addEventListener("keypress", (event)=>this.txtListener(event));
-        //     element.addEventListener("blur", (event)=>{
-        //         let index = event.target.getAttribute("data-index");
-        //         let text = this.querySelector(`nidget-text[data-index="${index}"]`).text;
-        //         this.dispatchEvent(new TextUpdate(index, text))
+        //
+        // for (let element of this.querySelectorAll("check-box")){
+        //     element.addEventListener("value-update", event =>{
+        //         if(event.detail.value === "false"){
+        //             element.parentElement.querySelector(".wager").content = 0;
+        //         }
         //     });
         // }
         //
@@ -63,10 +62,6 @@ class MultipleChoicePresent extends NidgetElement {
         //         this.dispatchEvent(new ValueUpdate(index, value));
         //     });
         // }
-        //
-        // this.querySelector("#show-question").addEventListener("click", ()=>{
-        //     this.dispatchEvent(new QuestionClick());
-        // });
     }
 
     setMode(mode) {
@@ -79,26 +74,6 @@ class MultipleChoicePresent extends NidgetElement {
                 this.classList.remove("show-mode");
                 break;
         }
-    }
-
-    txtListener(event) {
-        if (event.which === 13) {
-            event.stopPropagation();
-            event.preventDefault();
-
-            let index = window.getComputedStyle(event.target).getPropertyValue("--index");
-            index = parseInt(index);
-            if (index >= 5) {
-                event.target.blur();
-            } else {
-                let selector = `nidget-text[data-index="${index + 1}"]`;
-                this.querySelector(selector).focus();
-            }
-
-            return false;
-        }
-        event.target.fitText.notify(1, 1);
-        return true;
     }
 
     setAnswerText(index, text) {

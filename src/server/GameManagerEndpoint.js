@@ -83,8 +83,8 @@ class GameManagerEndpoint {
     }
 
     async ['set-name'](req, res) {
-        if (!verifyParameter(req, req, "name")) return;
-        if (!verifyParameter(req, req, "game-hash")) return;
+        if (!verifyParameter(req, res, "name")) return;
+        if (!verifyParameter(req, res, "game-hash")) return;
 
         let name = this.validateName(req.body['name']);
 
@@ -163,7 +163,7 @@ class GameManagerEndpoint {
      * @returns {Promise<void>}
      */
     async ['terminate'](req, res) {
-        if (!verifyParameter(req, req, "token")) return;
+        if (!verifyParameter(req, res, "token")) return;
 
         try {
             let user = await verify(req.body['token']);

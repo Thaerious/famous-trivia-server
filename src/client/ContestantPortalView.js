@@ -9,6 +9,7 @@ class ContestantPortalView extends AbstractView {
 
         this.DOM.buzzButton.addEventListener("click", e => this.dispatchEvent(new ViewEvent("buzz")));
         this.DOM.gameBoard.addEventListener("cell-select", e => this.dispatchEvent(new ViewEvent("select", e.detail)));
+        this.DOM.multipleChoice.addEventListener("value-update", e => this.dispatchEvent(new ViewEvent("update", e.detail)));
 
         this.DOM.selfPanel.hideClock();
     }

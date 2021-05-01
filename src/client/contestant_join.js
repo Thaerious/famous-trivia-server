@@ -10,7 +10,7 @@ window.addEventListener("load", async(event)=>{
         window.location = `contestant_portal.ejs`;
     }
 
-    document.querySelector("#name").addEventListener("enter-pressed", event=>{
+    document.querySelector("#name").addEventListener("text-enter", event=>{
         let element = document.querySelector("#name");
         const tabindex = element.tabIndex;
         if (tabindex === -1) return;

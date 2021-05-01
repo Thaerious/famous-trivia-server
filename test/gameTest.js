@@ -82,11 +82,11 @@ describe('Game', function () {
 
     describe('answer values (bets) submitted', function(){
         it('updates player data (unseen until next state)', function(){
-            game.onInput({action : "update", data : {name: "robin", index: "0", value: "100"}}); // incorrect
-            game.onInput({action : "update", data : {name: "robin", index: "2", value: "200"}}); // correct
-            game.onInput({action : "update", data : {name: "alex", index: "0", value: "100"}}); // can't be has 0
-            game.onInput({action : "update", data : {name: "pat", index: "0", value: "100"}}); // bet not ignored
-            game.onInput({action : "update", data : {name: "pat", index: "1", value: "200"}}); // bet ignored, over amount
+            game.onInput({action : "update", player: "robin", data : {index: "0", value: "100"}}); // incorrect
+            game.onInput({action : "update", player: "robin", data : {index: "2", value: "200"}}); // correct
+            game.onInput({action : "update", player: "alex", data : {index: "0", value: "100"}}); // can't be has 0
+            game.onInput({action : "update", player: "pat", data : {index: "0", value: "100"}}); // bet not ignored
+            game.onInput({action : "update", player: "pat", data : {index: "1", value: "200"}}); // bet ignored, over amount
         });
         it('state doesn\'t change', function(){
             let update = game.getUpdate().data;
