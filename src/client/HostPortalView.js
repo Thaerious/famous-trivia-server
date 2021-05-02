@@ -62,6 +62,7 @@ class HostPortalView extends AbstractView{
             case 6:
                 this.DOM.acceptButton.show();
                 this.DOM.rejectButton.show();
+                this.DOM.timer.show();
                 break;
             case 7:
                 break;

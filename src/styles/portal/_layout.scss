@@ -1,5 +1,54 @@
 // host_portal/layout
 
+:root {
+  --ui-border-color: #44d1dc;
+  --ui-background-hover: #3f43d8;
+  --ui-background: #1117d9;
+  --ui-background-selected: #3f43d8;
+  --ui-background-disabled: #808080;
+
+  --menu-font-family: Arial Black, serif;
+  --menu-font-size: 2vh;
+  --menu-width: 200px;
+}
+
+@font-face {
+  font-family: 'OPTIKorinna-Agency';
+  src: url('../font/OPTIKorinna-Agency.ttf.woff') format('woff'),
+  url('../font/OPTIKorinna-Agency.ttf.svg#OPTIKorinna-Agency') format('svg'),
+  url('../font/OPTIKorinna-Agency.ttf.eot'),
+  url('../font/OPTIKorinna-Agency.ttf.eot?#iefix') format('embedded-opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.bg {
+  background-image: url("../../assets/images/BG01.jpg");
+}
+
+body {
+  background-color: #091158;
+  height: 100vh;
+  width: 100vh;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+trivia-timer {
+  position: absolute;
+  right: calc(75 / 9 * 8vh); // middle of board
+  transform: translateX(50%);
+  bottom: -9.5vh;
+  width: 14vh;
+  height: 14vh;
+  z-index: 10;
+
+  font-family: "Arial Black", serif;
+  font-size: 6vh;
+}
+
 check-box {
   position: absolute;
   width: 5%;
@@ -81,7 +130,7 @@ check-box {
   bottom: -5vh;
   height: 5vh;
 
-  .nav-button {
+  .button {
     position: absolute;
     bottom: -1vh;
 
@@ -91,12 +140,12 @@ check-box {
 
     &.left {
       left: 50%;
-      transform: translateX(-140%);
+      transform: translateX(-150%);
     }
 
     &.right {
       left: 50%;
-      transform: translateX(40%);
+      transform: translateX(50%);
     }
 
     &.center {
@@ -104,38 +153,7 @@ check-box {
       transform: translateX(-50%);
     }
 
-    &#accept {
-      background-color: #8cffa0;
 
-      &:hover {
-        background-color: #c8fbd1;
-      }
-    }
-
-    &#reject {
-      background-color: #e24ab4;
-
-      &:hover {
-        background-color: #df7bc2;
-      }
-    }
-
-    &#continue {
-      background-color: #ebff43;
-
-      &:hover {
-        background-color: #ecff8c;
-      }
-    }
-
-    &#next {
-      width: 40vh;
-      background-color: #ebff43;
-
-      &:hover {
-        background-color: #ecff8c;
-      }
-    }
   }
 }
 

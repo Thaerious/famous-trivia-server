@@ -51,6 +51,10 @@ class CLI {
             case "s":
                 this.sessionCommand(split);
                 break
+            case "player":
+            case "p":
+                this.playerCommand(split);
+                break
             case "":
                 break;
             case "help":
@@ -59,6 +63,7 @@ class CLI {
                 console.log("exit, x : terminate server");
                 console.log("list, l : list all lauched games");
                 console.log("session, s : sessions submenu");
+                console.log("player, p : player submenu");
                 break;
         }
     }
@@ -86,6 +91,20 @@ class CLI {
             default:
                 console.log("clear, c : clear all sessions");
                 console.log("list, l : list all sessions");
+                break;
+        }
+    }
+
+    playerCommand(split){
+        switch (split[1]) {
+            case "list":
+            case "l":
+                // for (const player in this.game.gameModel.players)
+                break;
+            case "help":
+            case "?":
+            default:
+                console.log("list, l : list all players");
                 break;
         }
     }

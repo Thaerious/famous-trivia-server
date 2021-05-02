@@ -36,7 +36,7 @@ class MultipleChoicePresent extends NidgetElement {
                 if(element.content !== "0"){
                     const index = element.parentElement.getAttribute("data-index");
                     element.parentElement.querySelector("check-box").checked = true;
-                    this.setTimeout(index, element.content)
+                    this.setTimeout(index, element.content);
                 }
             });
 
@@ -46,20 +46,21 @@ class MultipleChoicePresent extends NidgetElement {
                 }
             });
         }
-        //
+
         // for (let element of this.querySelectorAll("check-box")){
         //     element.addEventListener("value-update", event =>{
         //         if(event.detail.value === "false"){
-        //             element.parentElement.querySelector(".wager").content = 0;
+        //             const index = element.parentElement.getAttribute("data-index");
+        //             const event = new ValueUpdate(index, 0);
+        //             element.parentElement.querySelector(".wager").content = "";
+        //             this.dispatchEvent(event);
         //         }
-        //     });
-        // }
-        //
-        // for (let element of this.querySelectorAll("check-box")){
-        //     element.addEventListener("value-update", (event)=>{
-        //         let index = window.getComputedStyle(event.target).getPropertyValue("--index");
-        //         let value = event.detail.value;
-        //         this.dispatchEvent(new ValueUpdate(index, value));
+        //         else {
+        //             const index = element.parentElement.getAttribute("data-index");
+        //             const event = new ValueUpdate(index, 0);
+        //             element.parentElement.querySelector(".wager").content = "0";
+        //             this.dispatchEvent(event);
+        //         }
         //     });
         // }
     }

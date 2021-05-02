@@ -27,7 +27,6 @@ class GameManagerEndpoint {
                 return;
             }
 
-            console.log("GAME MANAGER ENDPOINT>" + action);
             await this[action](req, res);
         }
     }
@@ -171,7 +170,6 @@ class GameManagerEndpoint {
             await this.gameManager.deleteGame(user);
 
             let sessionHashes = this.sessionManager.reverseLookup("game-hash", gameHash);
-            console.log(sessionHashes);
             for (const sessionHash of sessionHashes) {
                 await this.sessionManager.getSession(sessionHash).clear("game-hash");
             }

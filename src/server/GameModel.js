@@ -479,6 +479,10 @@ class GameModel {
         return this.getPlayer(name).enabled;
     }
 
+    /**
+     * Get a non-reflective list of players.
+     * @returns {*[]}
+     */
     get players() {
         return [...this._players];
     }

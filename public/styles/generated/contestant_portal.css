@@ -1,3 +1,46 @@
+:root {
+  --ui-border-color: #44d1dc;
+  --ui-background-hover: #3f43d8;
+  --ui-background: #1117d9;
+  --ui-background-selected: #3f43d8;
+  --ui-background-disabled: #808080;
+  --menu-font-family: Arial Black, serif;
+  --menu-font-size: 2vh;
+  --menu-width: 200px;
+}
+
+@font-face {
+  font-family: "OPTIKorinna-Agency";
+  src: url("../font/OPTIKorinna-Agency.ttf.woff") format("woff"), url("../font/OPTIKorinna-Agency.ttf.svg#OPTIKorinna-Agency") format("svg"), url("../font/OPTIKorinna-Agency.ttf.eot"), url("../font/OPTIKorinna-Agency.ttf.eot?#iefix") format("embedded-opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+.bg {
+  background-image: url("../../assets/images/BG01.jpg");
+}
+
+body {
+  background-color: #091158;
+  height: 100vh;
+  width: 100vh;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+trivia-timer {
+  position: absolute;
+  right: calc(75 / 9 * 8vh);
+  transform: translateX(50%);
+  bottom: -9.5vh;
+  width: 14vh;
+  height: 14vh;
+  z-index: 10;
+  font-family: "Arial Black", serif;
+  font-size: 6vh;
+}
+
 check-box {
   position: absolute;
   width: 5%;
@@ -75,49 +118,24 @@ check-box {
   bottom: -5vh;
   height: 5vh;
 }
-.button-dock .nav-button {
+.button-dock .button {
   position: absolute;
   bottom: -1vh;
 }
-.button-dock .nav-button.hidden {
+.button-dock .button.hidden {
   display: none;
 }
-.button-dock .nav-button.left {
+.button-dock .button.left {
   left: 50%;
-  transform: translateX(-140%);
+  transform: translateX(-150%);
 }
-.button-dock .nav-button.right {
+.button-dock .button.right {
   left: 50%;
-  transform: translateX(40%);
+  transform: translateX(50%);
 }
-.button-dock .nav-button.center {
+.button-dock .button.center {
   left: 50%;
   transform: translateX(-50%);
-}
-.button-dock .nav-button#accept {
-  background-color: #8cffa0;
-}
-.button-dock .nav-button#accept:hover {
-  background-color: #c8fbd1;
-}
-.button-dock .nav-button#reject {
-  background-color: #e24ab4;
-}
-.button-dock .nav-button#reject:hover {
-  background-color: #df7bc2;
-}
-.button-dock .nav-button#continue {
-  background-color: #ebff43;
-}
-.button-dock .nav-button#continue:hover {
-  background-color: #ecff8c;
-}
-.button-dock .nav-button#next {
-  width: 40vh;
-  background-color: #ebff43;
-}
-.button-dock .nav-button#next:hover {
-  background-color: #ecff8c;
 }
 
 .button {
@@ -169,27 +187,6 @@ body, html {
   overflow: hidden;
 }
 
-:root {
-  --ui-border-color: #44d1dc;
-  --ui-background-hover: #3f43d8;
-  --ui-background: #1117d9;
-  --ui-background-selected: #3f43d8;
-  --ui-background-disabled: #808080;
-  --menu-font-family: Arial Black, serif;
-  --menu-font-size: 2vh;
-  --menu-width: 200px;
-}
-
-@font-face {
-  font-family: "OPTIKorinna-Agency";
-  src: url("../font/OPTIKorinna-Agency.ttf.woff") format("woff"), url("../font/OPTIKorinna-Agency.ttf.svg#OPTIKorinna-Agency") format("svg"), url("../font/OPTIKorinna-Agency.ttf.eot"), url("../font/OPTIKorinna-Agency.ttf.eot?#iefix") format("embedded-opentype");
-  font-weight: normal;
-  font-style: normal;
-}
-.bg {
-  background-image: url("../../assets/images/BG01.jpg");
-}
-
 #buzz {
   position: absolute;
   width: 40vh;
@@ -206,17 +203,6 @@ body, html {
 #buzz.right {
   left: 50%;
   transform: translateX(40%);
-}
-
-trivia-timer {
-  position: absolute;
-  right: calc(75 / 9 * 8vh);
-  bottom: -9.5vh;
-  width: 14vh;
-  height: 14vh;
-  z-index: 10;
-  font-family: "Arial Black", serif;
-  font-size: 6vh;
 }
 
 #self-panel {

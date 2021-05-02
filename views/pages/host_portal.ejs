@@ -7,6 +7,8 @@
 <body>
 <%- include('../partials/nidget-templates'); %>
 
+<div class="bg"></div>
+
 <div class="top-bar" id="top-bar">
     <menu-container src="assets/images/menu.png">
         <menu-item event-name="terminate">Terminate Hosting</menu-item>
@@ -28,12 +30,12 @@
     <trivia-timer class="hidden"></trivia-timer>
 
     <div class="button-dock">
-        <nidget-element class="nav-button hidden left" id="accept">ACCEPT</nidget-element>
-        <nidget-element class="nav-button hidden right" id="reject">REJECT</nidget-element>
-        <nidget-element class="nav-button hidden left" id="back">BACK</nidget-element>
-        <nidget-element class="nav-button hidden right" id="continue">CONTINUE</nidget-element>
-        <nidget-element class="nav-button hidden center" id="next">NEXT ROUND</nidget-element>
-        <nidget-element class="nav-button hidden center" id="start">START</nidget-element>
+        <nidget-element class="button hidden left" id="accept"><div class="text">ACCEPT</div></nidget-element>
+        <nidget-element class="button hidden right" id="reject"><div class="text">REJECT</div></nidget-element>
+        <nidget-element class="button hidden left" id="back"><div class="text">BACK</div></nidget-element>
+        <nidget-element class="button hidden right" id="continue"><div class="text">CONTINUE</div></nidget-element>
+        <nidget-element class="button hidden center" id="next"><div class="text">NEXT ROUND</div></nidget-element>
+        <nidget-element class="button hidden center" id="start"><div class="text">START</div></nidget-element>
     </div>
 </div>
 

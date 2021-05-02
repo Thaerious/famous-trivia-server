@@ -17,6 +17,7 @@ class ContestantPortalView extends AbstractView {
     setName(name) {
         this.name = name;
         this.DOM.selfPanel.name = "Score";
+        document.title = name;
     }
 
     updateModel(update) {

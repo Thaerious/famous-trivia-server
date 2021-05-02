@@ -18,7 +18,6 @@ class HasDB {
         this.release = await this.mutex.acquire();
 
         return new Promise((resolve, reject) => {
-            console.log("CONNECT DB");
             this.db = new sqlite3.Database(path, (err) => {
                 if (err) {
                     this.release();
@@ -36,7 +35,6 @@ class HasDB {
      */
     async disconnect() {
         return new Promise((resolve, reject) => {
-            console.log("DISCONNECT DB");
             this.db.close((err) => {
                 if (err) {
                     this.release();

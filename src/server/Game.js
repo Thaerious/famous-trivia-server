@@ -1,5 +1,6 @@
 import GameModel from "./GameModel.js";
 import constants from "./constants.js";
+import crypto from "crypto";
 
 class Timer {
     constructor(game) {
@@ -169,7 +170,9 @@ class Game {
     updateMCScores() {
         let values = this.model.getRound().getValues();
         for (let name in this.playersData) {
+            if (this.sumMCBet(name) > this.model.getPlayer(name).score) continue;
             for (let index = 0; index < this.playersData[name].length; index++) {
+                if (this.playersData[name][index] === "") continue;
                 if (values[index]) {
                     this.model.getPlayer(name).score += this.playersData[name][index];
                 } else {
@@ -194,6 +197,8 @@ class Game {
     getUpdate() {
         return {
             action: "update_model",
+            'id-hash': crypto.randomBytes(8).toString('hex'),
+            'time-stamp': new Date(),
             data: {
                 model: this.model.getUpdate(),
                 state: this.state
@@ -239,16 +244,21 @@ class Game {
             case "continue":
             case "expire":
                 this.model.getRound().setRevealState();
-                this.updateState(3);
                 this.updateMCScores();
+                this.updateState(3);
                 break;
             case "update":
                 let name = input.player;
                 let index = parseInt(input.data.index);
-                let value = parseInt(input.data.value);
 
-                if (value < 0) value = 0;
-                if (this.sumMCBet(name) + value <= this.model.getPlayer(name).score) {
+                console.log("UPDATE");
+                console.log("'" + index + "', '" + input.data.value + "'");
+
+                if (input.data.value === ""){
+                    this.playersData[name][index] = "";
+                } else {
+                    let value = parseInt(input.data.value);
+                    if (value < 0) value = 0;
                     this.playersData[name][index] = value;
                 }
                 break;
@@ -324,6 +334,7 @@ class Game {
                 break;
             case "accept":
                 let currentPlayer = this.model.getRound().getCurrentPlayer();
+                console.log(currentPlayer);
                 this.model.getPlayer(currentPlayer).score += this.model.getRound().getValue();
                 this.model.getRound().setRevealState();
                 this.timer.stop();

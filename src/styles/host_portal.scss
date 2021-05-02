@@ -1,55 +1,52 @@
 // host_portal.scss
 
 @import 'portal/layout';
-@import 'editor/buttons';
+@import 'components/button';
+@import 'components/bg';
 
-:root {
-  --ui-border-color: #44d1dc;
-  --ui-background-hover: #3f43d8;
-  --ui-background: #1117d9;
-  --ui-background-selected: #3f43d8;
-  --ui-background-disabled: #808080;
+.button {
+  width: 27vh;
+  height: 5vh;
+  background-color: white;
 
-  --menu-font-family: Arial Black, serif;
-  --menu-font-size: 2vh;
-  --menu-width: 200px;
-}
+  .text {
+    font-size: 4vh;
+  }
 
+  &:hover {
+    background-color: #ecff8c;
+  }
 
-body {
-  background-color: #091158;
-  background-image: url("../../assets/images/background-2.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-size: 100% 100%;
-  height: 100vh;
-  width: 100vh;
-}
+  &#accept {
+    background-color: #8cffa0;
 
-* {
-  box-sizing: border-box;
-}
+    &:hover {
+      background-color: #c8fbd1;
+    }
+  }
 
-@font-face {
-  font-family: 'OPTIKorinna-Agency';
-  src: url('../font/OPTIKorinna-Agency.ttf.woff') format('woff'),
-  url('../font/OPTIKorinna-Agency.ttf.svg#OPTIKorinna-Agency') format('svg'),
-  url('../font/OPTIKorinna-Agency.ttf.eot'),
-  url('../font/OPTIKorinna-Agency.ttf.eot?#iefix') format('embedded-opentype');
-  font-weight: normal;
-  font-style: normal;
-}
+  &#reject {
+    background-color: #e24ab4;
 
-trivia-timer {
-  position: absolute;
-  right: calc(75 / 9 * 8vh); // middle of board
-  top: 75vh;
-  transform: translate(50%, -50%);
-  width: 14vh;
-  height: 14vh;
-  z-index: 10;
+    &:hover {
+      background-color: #df7bc2;
+    }
+  }
 
-  font-family: "Arial Black", serif;
-  font-size: 2em;
-  line-height: 65px;
+  &#continue {
+    background-color: #ebff43;
+
+    &:hover {
+      background-color: #ecff8c;
+    }
+  }
+
+  &#next {
+    width: 40vh;
+    background-color: #ebff43;
+
+    &:hover {
+      background-color: #ecff8c;
+    }
+  }
 }

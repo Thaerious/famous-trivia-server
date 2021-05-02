@@ -1,6 +1,6 @@
 const NidgetElement = require("@Thaerious/nidget").NidgetElement;
 
-class ValueUpadate extends  CustomEvent{
+class ValueUpdate extends  CustomEvent{
     constructor(value) {
         super('value-update',
             {detail : {value : value}}
@@ -29,8 +29,9 @@ class CheckBox extends NidgetElement {
     }
 
     set checked(value){
+        if (value === this.checked) return;
         this.setAttribute(CheckBox.CHECKED_ATTRIBUTE, value);
-        this.dispatchEvent(new ValueUpadate(value));
+        this.dispatchEvent(new ValueUpdate(value));
     }
 }
 

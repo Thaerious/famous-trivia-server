@@ -40,8 +40,6 @@ class Connection{
             this.ws.send(JSON.stringify(msg));
         });
 
-        console.log("Client Connection Established");
-
         this.ws.on('message', (message) => {
             try {
                 this.parseMessage(message);
@@ -74,13 +72,11 @@ class Connection{
      */
     async checkRole(){
         if (await this.req.session.get("role") === "host"){
-            console.log(`Host connected`);
             this.name = "@HOST";
             await this.connect(this.name);
         }
         else if (await this.req.session.has("name") === true){
             this.name = await this.req.session.get("name");
-            console.log(`Contestant ${this.name} connected`);
             await this.connect(this.name);
             await this.addPlayer();
         }

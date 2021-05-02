@@ -1,3 +1,46 @@
+:root {
+  --ui-border-color: #44d1dc;
+  --ui-background-hover: #3f43d8;
+  --ui-background: #1117d9;
+  --ui-background-selected: #3f43d8;
+  --ui-background-disabled: #808080;
+  --menu-font-family: Arial Black, serif;
+  --menu-font-size: 2vh;
+  --menu-width: 200px;
+}
+
+@font-face {
+  font-family: "OPTIKorinna-Agency";
+  src: url("../font/OPTIKorinna-Agency.ttf.woff") format("woff"), url("../font/OPTIKorinna-Agency.ttf.svg#OPTIKorinna-Agency") format("svg"), url("../font/OPTIKorinna-Agency.ttf.eot"), url("../font/OPTIKorinna-Agency.ttf.eot?#iefix") format("embedded-opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+.bg {
+  background-image: url("../../assets/images/BG01.jpg");
+}
+
+body {
+  background-color: #091158;
+  height: 100vh;
+  width: 100vh;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+trivia-timer {
+  position: absolute;
+  right: calc(75 / 9 * 8vh);
+  transform: translateX(50%);
+  bottom: -9.5vh;
+  width: 14vh;
+  height: 14vh;
+  z-index: 10;
+  font-family: "Arial Black", serif;
+  font-size: 6vh;
+}
+
 check-box {
   position: absolute;
   width: 5%;
@@ -75,108 +118,110 @@ check-box {
   bottom: -5vh;
   height: 5vh;
 }
-.button-dock .nav-button {
+.button-dock .button {
   position: absolute;
   bottom: -1vh;
 }
-.button-dock .nav-button.hidden {
+.button-dock .button.hidden {
   display: none;
 }
-.button-dock .nav-button.left {
+.button-dock .button.left {
   left: 50%;
-  transform: translateX(-140%);
+  transform: translateX(-150%);
 }
-.button-dock .nav-button.right {
+.button-dock .button.right {
   left: 50%;
-  transform: translateX(40%);
+  transform: translateX(50%);
 }
-.button-dock .nav-button.center {
+.button-dock .button.center {
   left: 50%;
   transform: translateX(-50%);
 }
-.button-dock .nav-button#accept {
-  background-color: #8cffa0;
-}
-.button-dock .nav-button#accept:hover {
-  background-color: #c8fbd1;
-}
-.button-dock .nav-button#reject {
-  background-color: #e24ab4;
-}
-.button-dock .nav-button#reject:hover {
-  background-color: #df7bc2;
-}
-.button-dock .nav-button#continue {
-  background-color: #ebff43;
-}
-.button-dock .nav-button#continue:hover {
-  background-color: #ecff8c;
-}
-.button-dock .nav-button#next {
-  width: 40vh;
-  background-color: #ebff43;
-}
-.button-dock .nav-button#next:hover {
-  background-color: #ecff8c;
-}
 
-.nav-button {
-  display: inline-block;
-  width: 22vh;
-  height: 5vh;
-  border: 0.33vh solid black;
-  background-color: white;
-  border-radius: 1vh;
-  text-align: center;
-  font-family: "Arial Black", serif;
-  font-weight: bold;
-  line-height: 4vh;
-  font-size: 3vh;
+.button {
+  border: 3px solid rgb(var(--ui-border-color));
+  border-radius: 15px;
   cursor: pointer;
+  background-color: rgba(var(--ui-bg), 0.6);
 }
-
-:root {
-  --ui-border-color: #44d1dc;
-  --ui-background-hover: #3f43d8;
-  --ui-background: #1117d9;
-  --ui-background-selected: #3f43d8;
-  --ui-background-disabled: #808080;
-  --menu-font-family: Arial Black, serif;
-  --menu-font-size: 2vh;
-  --menu-width: 200px;
+.button .text {
+  position: relative;
+  text-align: center;
+  font-size: 20px;
+  font-family: "Arial Black", serif;
+  line-height: 0;
+  top: 50%;
 }
-
-body {
-  background-color: #091158;
-  background-image: url("../../assets/images/background-2.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-size: 100% 100%;
-  height: 100vh;
-  width: 100vh;
+.button:hover {
+  border-color: rgb(var(--ui-border-color-hover));
+  background-color: rgba(var(--ui-bg), 0.9);
+}
+.button.disabled {
+  border-color: #6e6e6e;
+  color: #6e6e6e;
+  background-color: rgba(var(--ui-bg-dis, 138, 138, 138), 0.6);
+  pointer-events: none;
+}
+.button.hidden {
+  display: none;
 }
 
 * {
   box-sizing: border-box;
 }
 
-@font-face {
-  font-family: "OPTIKorinna-Agency";
-  src: url("../font/OPTIKorinna-Agency.ttf.woff") format("woff"), url("../font/OPTIKorinna-Agency.ttf.svg#OPTIKorinna-Agency") format("svg"), url("../font/OPTIKorinna-Agency.ttf.eot"), url("../font/OPTIKorinna-Agency.ttf.eot?#iefix") format("embedded-opentype");
-  font-weight: normal;
-  font-style: normal;
+body, html {
+  height: 100%;
+  overflow: hidden;
 }
-trivia-timer {
+
+.bg {
   position: absolute;
-  right: calc(75 / 9 * 8vh);
-  top: 75vh;
-  transform: translate(50%, -50%);
-  width: 14vh;
-  height: 14vh;
-  z-index: 10;
-  font-family: "Arial Black", serif;
-  font-size: 2em;
-  line-height: 65px;
+  width: 100%;
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+.button {
+  width: 27vh;
+  height: 5vh;
+  background-color: white;
+}
+.button .text {
+  font-size: 4vh;
+}
+.button:hover {
+  background-color: #ecff8c;
+}
+.button#accept {
+  background-color: #8cffa0;
+}
+.button#accept:hover {
+  background-color: #c8fbd1;
+}
+.button#reject {
+  background-color: #e24ab4;
+}
+.button#reject:hover {
+  background-color: #df7bc2;
+}
+.button#continue {
+  background-color: #ebff43;
+}
+.button#continue:hover {
+  background-color: #ecff8c;
+}
+.button#next {
+  width: 40vh;
+  background-color: #ebff43;
+}
+.button#next:hover {
+  background-color: #ecff8c;
 }
 
 /*# sourceMappingURL=host_portal.css.map */
