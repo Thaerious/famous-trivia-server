@@ -9,6 +9,9 @@ export default {
         SESSION_EXPIRE_HOURS: 24,
         SESSION_COOKIE_NAME: "trivia-session",
         SESSION_CLEAR_DELAY_MIN: 30
+    },
+    nidgets : {
+        SCRIPT_PATH: "./src/client/nidgets"
     }
 };
 

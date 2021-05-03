@@ -1,5 +1,7 @@
 import fs from "fs";
 import browserify from "browserify";
+import constants from "./constants.js";
+import Path from "path";
 
 class JITBrowserify {
     constructor(nidgetPreprocessor) {
@@ -23,7 +25,7 @@ class JITBrowserify {
         let dependencies = this.nidgetPreprocessor.getDependencies("./views/pages/" + name + ".ejs");
 
         for (let dep of dependencies) {
-            let path = getScriptPath("./src/client/modules/", dep);
+            let path = getScriptPath(constants.nidgets.SCRIPT_PATH, dep);
             b.add(path);
         }
 
@@ -43,17 +45,20 @@ class JITBrowserify {
  * @returns {string}
  */
 function getScriptPath(root, name) {
-    if (fs.existsSync(root + name + ".js")) {
-        return root + name + ".js";
+    // look for .js file with exact name of html element (element-name.js).
+    let baseCase = Path.join(root, name + ".js");
+    if (fs.existsSync(baseCase)) {
+        return baseCase;
     }
 
+    // look for .js file with camelcase name of html element (ElementName.js).
     let split = name.split("-");
     for (let i = 0; i < split.length; i++) {
         split[i] = split[i].charAt(0).toUpperCase() + split[i].slice(1);
     }
-
-    if (fs.existsSync(root + (split.join('')) + ".js")) {
-        return root + (split.join('')) + ".js";
+    let camelCase = Path.join(root, (split.join('')) + ".js");
+    if (fs.existsSync(camelCase)) {
+        return camelCase;
     }
 
     throw new Error("Nidget Script File Not Found:" + root + ", " + name);

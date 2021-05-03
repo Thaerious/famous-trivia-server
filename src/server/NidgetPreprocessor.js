@@ -1,5 +1,6 @@
 import fs from 'fs';
 import {JSDOM} from 'jsdom';
+import constants from "./constants.js";
 
 class NidgetPreprocessor {
     constructor(modulePath, debug = false) {
@@ -79,8 +80,8 @@ class NidgetPreprocessor {
 }
 
 function getScriptName(nidget){
-    if (fs.existsSync(NidgetPreprocessor.settings.MODULE_SCRIPT_PATH + nidget + ".js")){
-        return NidgetPreprocessor.settings.MODULE_SCRIPT_PATH + nidget + ".js";
+    if (fs.existsSync(constants.nidgets.SCRIPT_PATH + nidget + ".js")){
+        return constants.nidgets.SCRIPT_PATH + nidget + ".js";
     }
 
     let split = nidget.split("-");
@@ -88,16 +89,12 @@ function getScriptName(nidget){
         split[i] = split[i].charAt(0).toUpperCase() + split[i].slice(1);
     }
 
-    if (fs.existsSync(NidgetPreprocessor.settings.MODULE_SCRIPT_PATH + (split.join('')) + ".js")){
-        return NidgetPreprocessor.settings.MODULE_SCRIPT_PATH + (split.join('')) + ".js";
+    let path = constants.nidgets.SCRIPT_PATH + (split.join('')) + ".js";
+    if (fs.existsSync(path)){
+        return path;
     }
 
-    throw new Error("Nidget Script File Not Found:" + nidget);
+    throw new Error("Nidget Script File Not Found for '" + nidget + "' :" + path);
 }
-
-NidgetPreprocessor.settings = {
-    MODULE_SCRIPT_PATH : "./src/client/modules/"
-};
-
 
 export default NidgetPreprocessor;
