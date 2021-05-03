@@ -35,6 +35,14 @@ class Connection{
     async connect(name){
         let hash = await this.req.session.get("game-hash");
         this.game = await this.gm.getLive(hash);
+        if (!this.game){
+            this.ws.send({
+                action : "error",
+                text : "Game not found"
+            });
+            this.ws.close();
+            return;
+        }
 
         this.game.addListener(name, msg => {
             this.ws.send(JSON.stringify(msg));

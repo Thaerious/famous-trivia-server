@@ -149,6 +149,7 @@ class EditorPane {
         this.model = model;
         this.fileOps = fileOps;
         this.fileId = fileId;
+        this.DOM = DOM;
 
         DOM.multipleChoicePane = document.querySelector("#multiple-choice-pane");
         DOM.triangleRight = document.querySelector("#triangle-right");
@@ -156,11 +157,12 @@ class EditorPane {
         DOM.roundLabel = document.querySelector("#round-number > .text");
         DOM.gameName = document.querySelector("#game-name");
         DOM.gameBoard = document.querySelector("#game-board");
-        DOM.questionPane = document.querySelector("#question-pane")
-        DOM.menuIncreaseValue = document.querySelector("#menu-value-plus")
-        DOM.menuDecreaseValue = document.querySelector("#menu-value-minus")
+        DOM.questionPane = document.querySelector("#question-pane");
+        DOM.menu = document.querySelector("#menu");
+        DOM.menuIncreaseValue = DOM.menu.querySelector("#menu-increase-value");
+        DOM.menuDecreaseValue = DOM.menu.querySelector("#menu-decrease-value");
 
-        document.querySelector("#menu-download").addEventListener("click", ()=>{
+        DOM.menu.addEventListener("menu-download", ()=>{
             const json = JSON.stringify(this.model.gameModel, null, 2);
             const blob = new Blob([json], {type: "application/json"});
             const url = window.URL.createObjectURL(blob);
@@ -170,7 +172,7 @@ class EditorPane {
             anchor.click();
         });
 
-        document.querySelector("#menu-move-right").addEventListener("click", ()=>{
+        DOM.menu.addEventListener("menu-move-right", ()=>{
             if (this.model.currentRound >= this.model.roundCount - 1) return;
             this.model.setRoundIndex(this.model.currentRound, this.model.currentRound + 1);
             this.model.incrementRound();
@@ -178,7 +180,7 @@ class EditorPane {
             this.onSave();
         });
 
-        document.querySelector("#menu-move-left").addEventListener("click", ()=>{
+        DOM.menu.addEventListener("menu-move-left", ()=>{
             if (this.model.currentRound <= 0) return;
             this.model.setRoundIndex(this.model.currentRound, this.model.currentRound - 1);
             this.model.decrementRound();
@@ -186,27 +188,39 @@ class EditorPane {
             this.onSave();
         });
 
-        document.querySelector("#menu-remove-round").addEventListener("click", () => {
+        DOM.menu.addEventListener("menu-remove-round", ()=>{
             this.model.removeRound();
             this.updateTriangleView();
             this.onSave();
             this.updateView();
         });
 
-        document.querySelector("#menu-home-screen").addEventListener("click", () => {
+        DOM.menu.addEventListener("menu-home-screen", ()=>{
             location.href = "host.ejs";
         });
 
-        DOM.menuIncreaseValue.addEventListener("click", () => {
+        DOM.menu.addEventListener("menu-increase-value", ()=>{
             this.model.increaseValue();
             this.onSave();
             this.updateView();
         });
 
-        DOM.menuDecreaseValue.addEventListener("click", () => {
+        DOM.menu.addEventListener("menu-decrease-value", ()=>{
             this.model.decreaseValue();
             this.onSave();
             this.updateView();
+        });
+
+        DOM.menu.addEventListener("menu-add-jeopardy", ()=>{
+            this.model.addCategoryRound();
+            this.updateView();
+            this.onSave();
+        });
+
+        DOM.menu.addEventListener("menu-add-mc", ()=>{
+            this.model.addMultipleChoiceRound();
+            this.updateView();
+            this.onSave();
         });
 
         DOM.triangleRight.addEventListener("click", () => {
@@ -224,24 +238,13 @@ class EditorPane {
                 event.stopPropagation();
                 event.preventDefault();
                 document.body.focus();
-
-                this.model.name = DOM.gameName.innerText;
-                await this.fileOps.rename(this.fileId, this.model.name + ".json");
-                await this.onSave();
+                await this.rename(DOM.gameName.innerText);
                 return false;
             }
         });
 
-        document.querySelector("#menu-add-category").addEventListener("click", () => {
-            this.model.addCategoryRound();
-            this.updateView();
-            this.onSave();
-        });
-
-        document.querySelector("#menu-add-multiple-choice").addEventListener("click", () => {
-            this.model.addMultipleChoiceRound();
-            this.updateView();
-            this.onSave();
+        DOM.gameName.addEventListener("blur", async (event) => {
+            await this.rename(DOM.gameName.innerText);
         });
 
         // game-board change category text
@@ -269,8 +272,14 @@ class EditorPane {
         this.updateView();
     }
 
-    onSave() {
-        this.fileOps.setBody(this.fileId, this.model);
+    async rename(newName){
+        this.model.name = newName;
+        await this.fileOps.rename(this.fileId, newName + ".json");
+        await this.onSave();
+    }
+
+    async onSave() {
+        await this.fileOps.setBody(this.fileId, this.model);
     }
 
     hideNavigation() {
@@ -303,8 +312,8 @@ class EditorPane {
     }
 
     categoryView(model) {
-        DOM.menuDecreaseValue.show();
-        DOM.menuIncreaseValue.show();
+        // DOM.menuDecreaseValue.show();
+        // DOM.menuIncreaseValue.show();
         DOM.gameBoard.show();
 
         for (let col = 0; col < 6; col++) {

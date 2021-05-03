@@ -1,27 +1,5 @@
 // host_portal/layout
 
-:root {
-  --ui-border-color: #44d1dc;
-  --ui-background-hover: #3f43d8;
-  --ui-background: #1117d9;
-  --ui-background-selected: #3f43d8;
-  --ui-background-disabled: #808080;
-
-  --menu-font-family: Arial Black, serif;
-  --menu-font-size: 2vh;
-  --menu-width: 200px;
-}
-
-@font-face {
-  font-family: 'OPTIKorinna-Agency';
-  src: url('../font/OPTIKorinna-Agency.ttf.woff') format('woff'),
-  url('../font/OPTIKorinna-Agency.ttf.svg#OPTIKorinna-Agency') format('svg'),
-  url('../font/OPTIKorinna-Agency.ttf.eot'),
-  url('../font/OPTIKorinna-Agency.ttf.eot?#iefix') format('embedded-opentype');
-  font-weight: normal;
-  font-style: normal;
-}
-
 .bg {
   background-image: url("../../assets/images/BG01.jpg");
 }
@@ -97,6 +75,10 @@ check-box {
     right: 0px;
     width: 5vh;
     height: 5vh;
+
+    .menu-area {
+      width: 200px;
+    }
   }
 }
 
@@ -117,10 +99,6 @@ check-box {
     left: 50%;
     transform: translateX(-50%);
   }
-}
-
-.menu-area {
-  width: 200px;
 }
 
 .button-dock {

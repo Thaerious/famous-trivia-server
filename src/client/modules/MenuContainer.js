@@ -8,14 +8,13 @@ class MenuContainer extends NidgetElement{
 
     async ready() {
         await super.ready();
-        this.querySelector("#menu-icon")
-            .setAttribute("src",  this.getAttribute("src"));
+        this.querySelector("#menu-icon").setAttribute("src",  this.getAttribute("image-src"));
 
         for (let item of this.outerSelectorAll("menu-item")){
             item.detach();
             this.menuArea.append(item);
             item.addEventListener("click", (event)=>{
-                this.dispatchEvent(new CustomEvent(item.getAttribute("event-name")))
+                this.dispatchEvent(new CustomEvent(item.getAttribute("event-name"), {bubbles: true, composed: true}));
             });
         }
 
