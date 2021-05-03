@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <%- include('../partials/head'); %>
+    <script type="text/javascript" src="jit/index.js" defer></script>
 </head>
 
 <body>
@@ -38,14 +38,28 @@
         display: inline-block;
         width: 200px;
         height: 40px;
-        left: 50%;
+        left:0;
         top: 50%;
-        background-color: white;
         font-family: "Arial Black", serif;
+        font-size: 20px;
+    }
+
+    .b1{
+        --ui-button-color: 255, 255, 0;
+    }
+
+    .b2{
+        --ui-button-color: 0, 255, 255;
+    }
+
+    .b3{
+        --ui-button-color: 255, 0, 0;
     }
 </style>
 
-<nidget-button button-style="round">IMA BUTTON</nidget-button>
+<nidget-button class="b1 round">IMA BUTTON</nidget-button>
+<nidget-button class="b2 round">IMA BUTTON</nidget-button>
+<nidget-button class="b3 round">IMA BUTTON</nidget-button>
 
 </body>
 </html>
