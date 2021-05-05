@@ -1,6 +1,9 @@
 import Model from "./Model.js";
 const DOM = {/* see EditorPane.constructor */};
 
+/**
+ * Multiple Choice Answer State Controller
+ */
 class MCAnswerCtrl {
     static run(model, saveCB) {
         MCAnswerCtrl.model  = model;
@@ -18,12 +21,16 @@ class MCAnswerCtrl {
 
         DOM.triangleRight.addEventListener("click", MCAnswerCtrl.cleanup);
         DOM.triangleLeft.addEventListener("click", MCAnswerCtrl.cleanup);
-        DOM.multipleChoicePane.addEventListener("text-update", MCAnswerCtrl.textList);
+        DOM.multipleChoicePane.addEventListener("answer-update", MCAnswerCtrl.textList);
         DOM.multipleChoicePane.addEventListener("value-update", MCAnswerCtrl.valueList);
-        DOM.multipleChoicePane.addEventListener("button-question", MCAnswerCtrl.questList);
+        DOM.buttonShowQuestion.addEventListener("click", MCAnswerCtrl.questList);
+
+        DOM.buttonShowQuestion.enable();
+        DOM.buttonShowAnswer.disable();
     }
 
     static textList(event) {
+        console.log(event);
         let index = parseInt(event.detail.index);
         MCAnswerCtrl.model.answers[index].text = event.detail.text;
         MCAnswerCtrl.saveCB();
@@ -39,18 +46,23 @@ class MCAnswerCtrl {
         MCAnswerCtrl.saveCB();
         MCAnswerCtrl.cleanup();
         MCQuestionCtrl.run(MCAnswerCtrl.model, MCAnswerCtrl.saveCB);
+        window.parameters.subtype = "question";
+        pushParameters();
     }
 
     static cleanup() {
         DOM.multipleChoicePane.hide();
-        DOM.multipleChoicePane.removeEventListener("text-update", MCAnswerCtrl.textList);
+        DOM.multipleChoicePane.removeEventListener("answer-update", MCAnswerCtrl.textList);
         DOM.multipleChoicePane.removeEventListener("value-update", MCAnswerCtrl.valueList);
-        DOM.multipleChoicePane.removeEventListener("button-question", MCAnswerCtrl.questList);
+        DOM.buttonShowQuestion.removeEventListener("click", MCAnswerCtrl.questList);
         DOM.triangleRight.removeEventListener("click", MCAnswerCtrl.cleanup);
         DOM.triangleLeft.removeEventListener("click", MCAnswerCtrl.cleanup);
     }
 }
 
+/**
+ * Multiple Choice Question State Controller
+ */
 class MCQuestionCtrl {
     static run(model, saveCB) {
         MCQuestionCtrl.model  = model;
@@ -62,13 +74,17 @@ class MCQuestionCtrl {
         DOM.questionPane.setText(model.question);
         DOM.gameBoard.hide();
         DOM.questionPane.show();
-        DOM.questionPane.boardButton = false;
-        DOM.questionPane.highlight('question');
 
         DOM.triangleRight.addEventListener("click", MCQuestionCtrl.cleanup);
         DOM.triangleLeft.addEventListener("click", MCQuestionCtrl.cleanup);
         DOM.questionPane.addEventListener("text-update", MCQuestionCtrl.textList);
-        DOM.questionPane.addEventListener("button-answer", MCQuestionCtrl.answerList);
+        DOM.buttonShowAnswer.addEventListener("click", MCQuestionCtrl.answerList);
+
+        DOM.buttonShowAnswer.show();
+        DOM.buttonShowQuestion.show();
+        DOM.buttonShowAnswer.enable();
+        DOM.buttonShowQuestion.disable();
+        DOM.buttonShowBoard.hide();
     }
 
     static textList(event) {
@@ -79,20 +95,26 @@ class MCQuestionCtrl {
     static answerList() {
         MCQuestionCtrl.cleanup();
         MCAnswerCtrl.run(MCQuestionCtrl.model, MCQuestionCtrl.saveCB);
+        window.parameters.subtype = "answer";
+        pushParameters();
     }
 
     static cleanup() {
         DOM.questionPane.removeEventListener("text-update", MCQuestionCtrl.textList);
-        DOM.questionPane.removeEventListener("button-answer", MCQuestionCtrl.answerList);
+        DOM.buttonShowAnswer.removeEventListener("click", MCQuestionCtrl.answerList);
         DOM.triangleRight.removeEventListener("click", MCQuestionCtrl.cleanup);
         DOM.triangleLeft.removeEventListener("click", MCQuestionCtrl.cleanup);
+        pushParameters();
     }
 }
 
+/**
+ * Jeopardy Question & Answer State Controller
+ */
 class QuestionPaneCtrl {
     /**
      * @param model - the question model object
-     * @param field - which model field to read/write from {'a', 'q'}
+     * @param field - which model field to read/write from {'answer', 'question'}
      * @param saveCB - call this method to save the model
      */
     static run(field, model, saveCB, closeCB) {
@@ -105,15 +127,25 @@ class QuestionPaneCtrl {
         DOM.menuIncreaseValue.show();
 
         DOM.questionPane.setText(QuestionPaneCtrl.model[QuestionPaneCtrl.field.substr(0, 1)]);
-        DOM.questionPane.boardButton = true;
         DOM.questionPane.show();
         DOM.gameBoard.hide();
 
         DOM.questionPane.addEventListener("text-update", QuestionPaneCtrl.textList);
-        DOM.questionPane.addEventListener("button-board", QuestionPaneCtrl.boardList);
-        DOM.questionPane.addEventListener(`button-question`, QuestionPaneCtrl.questionList);
-        DOM.questionPane.addEventListener(`button-answer`, QuestionPaneCtrl.answerList);
-        DOM.questionPane.highlight(QuestionPaneCtrl.field);
+        DOM.buttonShowBoard.addEventListener("click", QuestionPaneCtrl.boardList);
+        DOM.buttonShowQuestion.addEventListener(`click`, QuestionPaneCtrl.questionList);
+        DOM.buttonShowAnswer.addEventListener(`click`, QuestionPaneCtrl.answerList);
+
+        DOM.buttonShowBoard.show();
+        DOM.buttonShowQuestion.show();
+        DOM.buttonShowAnswer.show();
+
+        if (field === 'answer'){
+            DOM.buttonShowAnswer.disable();
+            DOM.buttonShowQuestion.enable();
+        } else {
+            DOM.buttonShowAnswer.enable();
+            DOM.buttonShowQuestion.disable();
+        }
     }
 
     static textList(event) {
@@ -124,23 +156,38 @@ class QuestionPaneCtrl {
     static boardList(event) {
         QuestionPaneCtrl.cleanup();
         QuestionPaneCtrl.closeCB();
+
+        delete window.parameters.subtype;
+        delete window.parameters.row;
+        delete window.parameters.col;
+        pushParameters();
     }
 
     static answerList(event) {
         QuestionPaneCtrl.cleanup();
         QuestionPaneCtrl.run('answer');
+
+        window.parameters.subtype = "answer";
+        pushParameters();
     }
 
     static questionList(vent) {
         QuestionPaneCtrl.cleanup();
         QuestionPaneCtrl.run('question');
+
+        window.parameters.subtype = "question";
+        pushParameters();
     }
 
     static cleanup() {
         DOM.questionPane.removeEventListener("text-update", QuestionPaneCtrl.textList);
-        DOM.questionPane.removeEventListener("button-board", QuestionPaneCtrl.boardList);
-        DOM.questionPane.removeEventListener("button-answer", QuestionPaneCtrl.answerList);
-        DOM.questionPane.removeEventListener("button-question", QuestionPaneCtrl.questionList);
+        DOM.buttonShowBoard.removeEventListener("click", QuestionPaneCtrl.boardList);
+        DOM.buttonShowAnswer.removeEventListener("click", QuestionPaneCtrl.answerList);
+        DOM.buttonShowQuestion.removeEventListener("click", QuestionPaneCtrl.questionList);
+
+        DOM.buttonShowBoard.hide();
+        DOM.buttonShowAnswer.hide();
+        DOM.buttonShowQuestion.hide();
     }
 }
 
@@ -161,6 +208,13 @@ class EditorPane {
         DOM.menu = document.querySelector("#menu");
         DOM.menuIncreaseValue = DOM.menu.querySelector("#menu-increase-value");
         DOM.menuDecreaseValue = DOM.menu.querySelector("#menu-decrease-value");
+        DOM.buttonShowQuestion = document.querySelector("#show-question");
+        DOM.buttonShowAnswer = document.querySelector("#show-answer");
+        DOM.buttonShowBoard = document.querySelector("#show-board");
+
+        DOM.buttonShowBoard.hide();
+        DOM.buttonShowAnswer.hide();
+        DOM.buttonShowQuestion.hide();
 
         DOM.menu.addEventListener("menu-download", ()=>{
             const json = JSON.stringify(this.model.gameModel, null, 2);
@@ -261,6 +315,11 @@ class EditorPane {
             let col = event.detail.col;
             this.hideNavigation();
 
+            window.parameters.subtype = "question";
+            window.parameters.row = row;
+            window.parameters.col = col;
+            pushParameters();
+
             QuestionPaneCtrl.run(
                 'question',
                 this.model.getCell(row, col),
@@ -269,7 +328,58 @@ class EditorPane {
             );
         });
 
-        this.updateView();
+        if (window.parameters.round){
+            this.model.setRound(window.parameters.round);
+        } else {
+            window.parameters.round = 0;
+            pushParameters();
+        }
+
+        if (!window.parameters.type){
+            this.updateView();
+        }
+
+        if (window.parameters.type === "jeopardy"){
+            if (window.parameters.subtype === 'question'){
+                const row = window.parameters.row;
+                const col = window.parameters.col;
+                QuestionPaneCtrl.run(
+                    'question',
+                    this.model.getCell(row, col),
+                    () => this.onSave(),
+                    () => this.updateView()
+                );
+            }
+            else if (window.parameters.subtype === 'answer'){
+                const row = window.parameters.row;
+                const col = window.parameters.col;
+                QuestionPaneCtrl.run(
+                    'answer',
+                    this.model.getCell(row, col),
+                    () => this.onSave(),
+                    () => this.updateView()
+                );
+            } else {
+                this.updateView();
+            }
+        }
+        else {
+            if (window.parameters.subtype === 'answer'){
+                MCAnswerCtrl.run(this.model.getRound(), () => this.onSave());
+            }
+            else if (window.parameters.subtype === 'question'){
+                MCQuestionCtrl.run(this.model.getRound(), () => this.onSave());
+            }
+        }
+
+        if (window.parameters.mcstate){
+            console.log(window.parameters.mcstate);
+            if (window.parameters.mcstate === 'answer'){
+                MCAnswerCtrl.run(this.model.getRound(), () => this.onSave());
+            } else if (window.parameters.mcstate === 'question'){
+                MCQuestionCtrl.run(this.model.getRound(), () => this.onSave());
+            }
+        }
     }
 
     async rename(newName){
@@ -291,11 +401,14 @@ class EditorPane {
         model = model ?? this.model;
         this.updateTriangleView();
 
+        window.parameters.round = model.currentRound;
+        pushParameters();
+
         DOM.questionPane.hide();
         DOM.gameBoard.hide();
         DOM.multipleChoicePane.hide();
 
-        if (model.getRound().type === Model.questionType.CATEGORY) this.categoryView(model);
+        if (model.getRound().type === Model.questionType.CATEGORY) this.jeopardyView(model);
         if (model.getRound().type === Model.questionType.MULTIPLE_CHOICE) this.multipleChoiceView(model);
     }
 
@@ -308,13 +421,21 @@ class EditorPane {
     }
 
     multipleChoiceView(model) {
+        window.parameters.type = "mc";
+        window.parameters.subtype = "question";
+        pushParameters();
+
         MCQuestionCtrl.run(this.model.getRound(), () => this.onSave());
     }
 
-    categoryView(model) {
-        // DOM.menuDecreaseValue.show();
-        // DOM.menuIncreaseValue.show();
+    jeopardyView(model) {
+        DOM.menuDecreaseValue.show();
+        DOM.menuIncreaseValue.show();
         DOM.gameBoard.show();
+
+        window.parameters.type = "jeopardy";
+        delete window.parameters.subtype;
+        pushParameters();
 
         for (let col = 0; col < 6; col++) {
             let column = model.getColumn(col);

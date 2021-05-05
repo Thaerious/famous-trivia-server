@@ -1,5 +1,5 @@
 :host(nidget-button.hidden) {
-  display: none;
+  display: none !important;
 }
 
 :host(nidget-button:hover.round){
@@ -16,7 +16,7 @@
 }
 
 :host(nidget-button:active.round){
-  background-color: rgba(var(--ui-button-color), 0.75);
+  background-color: rgba(var(--ui-button-color), 1.0);
   box-shadow: none;
 
   .mask{
@@ -34,7 +34,7 @@
   border-style: solid;
   border-color: rgba(var(--ui-button-color), 0.5);
   border-radius: 15px;
-  background-color: rgba(var(--ui-button-color), 0.75);
+  background-color: rgba(var(--ui-button-color), 1.0);
   user-select: none;
 
   .mask{

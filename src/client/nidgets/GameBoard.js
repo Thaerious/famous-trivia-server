@@ -58,7 +58,6 @@ class GameBoard extends NidgetElement {
     setHeader(index, value, fontSize, lock = false){
         let element = this.getHeader(index);
         element.text = value;
-        console.log(fontSize);
         if (fontSize) element.style["font-size"] = fontSize;
         if (lock){
             element.setAttribute("contentEditable", "false");

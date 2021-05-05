@@ -108,21 +108,6 @@ check-box {
   width: 200px;
 }
 
-.nav-button {
-  display: inline-block;
-  width: 22vh;
-  height: 5vh;
-  border: 0.33vh solid black;
-  background-color: white;
-  border-radius: 1vh;
-  text-align: center;
-  font-family: "Arial Black", serif;
-  font-weight: bold;
-  line-height: 4vh;
-  font-size: 3vh;
-  cursor: pointer;
-}
-
 * {
   box-sizing: border-box;
 }
@@ -172,6 +157,32 @@ body, html {
 .hidden-anchor {
   position: relative;
   left: -1000px;
+}
+
+.button-container {
+  position: relative;
+  top: 90vh;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-block;
+}
+.button-container nidget-button {
+  position: relative;
+  display: inline-block;
+  width: 200px;
+  height: 7vh;
+  font-family: "Arial Black", serif;
+  font-size: 20px;
+  z-index: 10;
+}
+.button-container nidget-button#show-question {
+  --ui-button-color: 255, 200, 0;
+}
+.button-container nidget-button#show-answer {
+  --ui-button-color: 255, 200, 0;
+}
+.button-container nidget-button#show-board {
+  --ui-button-color: 255, 200, 0;
 }
 
 /*# sourceMappingURL=editor.css.map */

@@ -70,3 +70,15 @@ function parseURLParameters() {
         window.parameters[split[0]] = split[1] ?? "";
     }
 }
+
+function pushParameters(){
+    let url = window.location.origin + window.location.pathname;
+    let delim = "?";
+    for (let p in window.parameters){
+        url = url + delim + p + "=" + window.parameters[p];
+        delim = "&";
+    }
+    window.history.pushState("", "", url);
+}
+
+window.pushParameters = pushParameters;

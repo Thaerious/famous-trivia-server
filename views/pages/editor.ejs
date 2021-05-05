@@ -11,35 +11,39 @@
 <div class="bg"></div>
 <a id="download-anchor" class="hidden-anchor" download="download.json" type="text/json"></a>
 
-<div class="top-bar" id="top-bar">
-    <div class="game-name" id="game-name" contenteditable="true">Game Name</div>
+<div id="editor-pane">
+    <div class="top-bar" id="top-bar">
+        <div class="game-name" id="game-name" contenteditable="true">Game Name</div>
 
-    <menu-container id="menu" image-src="assets/images/menu.png">
-        <menu-item event-name="menu-home-screen">Home Screen</menu-item>
-        <menu-item event-name="menu-add-jeopardy">Add Jeopardy Round</menu-item>
-        <menu-item event-name="menu-add-mc">Add Multiple-Choice Round</menu-item>
-        <menu-item event-name="menu-remove-round">Remove Round</menu-item>
-        <menu-item event-name="menu-move-left">Move Round Left</menu-item>
-        <menu-item event-name="menu-move-right">Move Round Right</menu-item>
-        <menu-item event-name="menu-download">Download</menu-item>
-        <menu-item id="menu-increase-value" event-name="menu-increase-value">Increase Value</menu-item>
-        <menu-item id="menu-decrease-value" event-name="menu-decrease-value">Decrease Value</menu-item>
-    </menu-container>
+        <menu-container id="menu" image-src="assets/images/menu.png">
+            <menu-item event-name="menu-home-screen">Home Screen</menu-item>
+            <menu-item event-name="menu-add-jeopardy">Add Jeopardy Round</menu-item>
+            <menu-item event-name="menu-add-mc">Add Multiple-Choice Round</menu-item>
+            <menu-item event-name="menu-remove-round">Remove Round</menu-item>
+            <menu-item event-name="menu-move-left">Move Round Left</menu-item>
+            <menu-item event-name="menu-move-right">Move Round Right</menu-item>
+            <menu-item event-name="menu-download">Download</menu-item>
+            <menu-item id="menu-increase-value" event-name="menu-increase-value">Increase Value</menu-item>
+            <menu-item id="menu-decrease-value" event-name="menu-decrease-value">Decrease Value</menu-item>
+        </menu-container>
+    </div>
+
+    <div class="round-number" id="round-number">
+        <img class="triangle-indicator" id="triangle-right" src="assets/images/right_triangle.png"/>
+        <nidget-text class="text">Round 1</nidget-text>
+        <img class="triangle-indicator" id="triangle-left" src="assets/images/left_triangle.png"/>
+    </div>
+
+    <question-pane id="question-pane" class="hidden"></question-pane>
+    <game-board id="game-board" class="hidden"></game-board>
+    <multiple-choice-compose id="multiple-choice-pane" class="hidden"></multiple-choice-compose>
+
+    <div class="button-container">
+        <nidget-button id="show-question" class="round">Show Question</nidget-button>
+        <nidget-button id="show-answer" class="round">Show Answer</nidget-button>
+        <nidget-button id="show-board" class="round">Show Board</nidget-button>
+    </div>
 </div>
-
-<div class="round-number" id="round-number">
-    <img class="triangle-indicator" id="triangle-right" src="assets/images/right_triangle.png"/>
-    <nidget-text class="text">Round 1</nidget-text>
-    <img class="triangle-indicator" id="triangle-left" src="assets/images/left_triangle.png"/>
-</div>
-
-<question-pane id="question-pane" class="hidden" template-id="question-pane-template"></question-pane>
-<game-board id="game-board" class="hidden" template-id="game-board-template"></game-board>
-<multiple-choice-pane id="multiple-choice-pane" class="hidden" template-id="multiple-choice-pane-template"></multiple-choice-pane>
-
-<nidget-button id="show_question">Show Question</nidget-button>
-<nidget-button id="show_answer">Show Answer</nidget-button>
-<nidget-button id="show_board">Show Board</nidget-button>
 
 </body>
 </html>

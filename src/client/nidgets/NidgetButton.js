@@ -10,6 +10,14 @@ class NidgetButton extends  NidgetElement{
        this.DOM.text.innerHTML = this.innerHTML;
        this.innerHTML = "";
     }
+
+    disable(){
+        this.classList.add("disabled");
+    }
+
+    enable(){
+        this.classList.remove("disabled");
+    }
 }
 
 window.customElements.define('nidget-button', NidgetButton);

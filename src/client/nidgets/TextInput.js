@@ -19,6 +19,10 @@ class TextInput extends NidgetElement {
 
         this.content = this.sourceInnerHTML;
 
+        this.addEventListener("focus", ()=>{
+            this.DOM['content'].focus();
+        });
+
         this.DOM['content'].addEventListener("click", ()=>{
             this.DOM['hint'].innerHTML = "";
         });

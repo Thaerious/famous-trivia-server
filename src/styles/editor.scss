@@ -1,6 +1,5 @@
 // editor.scss
 @import 'editor/layout';
-@import 'editor/buttons';
 @import 'components/bg';
 @import 'components/shared';
 
@@ -15,4 +14,34 @@
 .hidden-anchor{
     position: relative;
     left: -1000px;
+}
+
+.button-container {
+    position: relative;
+    top: 90vh;
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-block;
+
+    nidget-button {
+        position: relative;
+        display: inline-block;
+        width: 200px;
+        height: 7vh;
+        font-family: "Arial Black", serif;
+        font-size: 20px;
+        z-index: 10;
+
+        &#show-question {
+            --ui-button-color: 255, 200, 0;
+        }
+
+        &#show-answer {
+            --ui-button-color: 255, 200, 0;
+        }
+
+        &#show-board {
+            --ui-button-color: 255, 200, 0;
+        }
+    }
 }

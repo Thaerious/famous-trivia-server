@@ -1,0 +1,59 @@
+@import 'editor/buttons';
+
+* {
+  box-sizing: border-box;
+}
+
+:host(multiple-choice-compose.hidden) {
+  display: none;
+}
+
+.outer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  font-family: Arial Black, serif;
+  background-color: #1117d9;
+  z-index: 0;
+
+  border: 3px solid black;
+  border-radius: 10px;
+  background-image: url("../../assets/images/jeopardy_cell_bg.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  check-box, .answer{
+    top: calc((var(--index) * 12%) + 7.5%);
+  }
+
+  check-box {
+    position: absolute;
+    width: 5%;
+    --nidget-aspect-ratio: 1-1;
+    left: 4%;
+  }
+
+  .answer {
+    position: absolute;
+    width: 85%;
+    right: 4%;
+    height: 10%;
+    color: #eee;
+    font-size: 6vh;
+    font-family: OPTIKorinna-Agency, serif;
+    text-transform: uppercase;
+    text-shadow: 4px 4px #000;
+    text-align: left;
+    white-space: pre-line;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #e0f2ff;
+  }
+
+  #bonus-container{
+    top: calc((6 * 12%) + 7.5%);
+  }
+}
+

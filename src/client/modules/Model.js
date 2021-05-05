@@ -103,6 +103,12 @@ class Model {
         return this.gameModel.rounds.length;
     }
 
+    setRound(value){
+        this.currentRound = value;
+        if (this.currentRound < 0) this.currentRound = 0
+        if (this.currentRound >= this.roundCount) this.currentRound = this.roundCount - 1;
+    }
+
     incrementRound(){
         this.currentRound++;
         if (this.currentRound >= this.roundCount) this.currentRound = this.roundCount - 1;
