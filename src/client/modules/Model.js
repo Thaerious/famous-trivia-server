@@ -59,15 +59,10 @@ class Model {
         let round = {
             type: Model.questionType.MULTIPLE_CHOICE,
             question : "",
-            answers : []
+            answers : ["", "", "", "", "", ""],
+            values : ["false", "false", "false", "false", "false", "false"],
+            bonus : 0
         };
-
-        for (let i = 0; i < 6; i++){
-            round.answers[i] = {
-                text : "",
-                isTrue : false
-            }
-        }
 
         this.gameModel.rounds.push(round);
         return round;

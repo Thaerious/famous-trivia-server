@@ -5,31 +5,22 @@
       "type": "multiple_choice",
       "question": "MC-QUESTION",
       "answers": [
-        {
-          "text": "MC-ANSWER1",
-          "isTrue": "false"
-        },
-        {
-          "text": "MC-ANSWER2",
-          "isTrue": "false"
-        },
-        {
-          "text": "MC-ANSWER3",
-          "isTrue": "true"
-        },
-        {
-          "text": "MC-ANSWER4",
-          "isTrue": "false"
-        },
-        {
-          "text": "MC-ANSWER5",
-          "isTrue": "false"
-        },
-        {
-          "text": "MC-ANSWER6",
-          "isTrue": "false"
-        }
-      ]
+          "MC-ANSWER1",
+          "MC-ANSWER2",
+          "MC-ANSWER3",
+          "MC-ANSWER4",
+          "MC-ANSWER5",
+          "MC-ANSWER6"
+      ],
+      "values": [
+        "false",
+        "false",
+        "true",
+        "false",
+        "false",
+        "false"
+      ],
+      "bonus": 100
     },
     {
       "type": "choice",

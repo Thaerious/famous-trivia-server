@@ -22,7 +22,7 @@
   background-repeat: no-repeat;
   background-size: cover;
 
-  check-box, .answer{
+  check-box, .answer {
     top: calc((var(--index) * 12%) + 7.5%);
   }
 
@@ -52,8 +52,40 @@
     border-color: #e0f2ff;
   }
 
-  #bonus-container{
+  #bonus-container {
+    position: absolute;
     top: calc((6 * 12%) + 7.5%);
+    left: 4%;
+    width: 92%;
+    height: 10%;
+
+    .label{
+      position: absolute;
+      display: inline-block;
+      font-family: Arial Black, serif;
+      color: #000;
+      font-size: 6vh;
+      text-transform: uppercase;
+      text-align: left;
+      white-space: pre-line;
+      left: 7.5%;
+    }
+
+    .bonus {
+      position: absolute;
+      display: inline-block;
+      color: #eee;
+      font-size: 6vh;
+      font-family: OPTIKorinna-Agency, serif;
+      text-transform: uppercase;
+      text-shadow: 4px 4px #000;
+      text-align: left;
+      height: 100%;
+      width: 17.5%;
+      left: 30%;
+      top: 12.5%;
+      white-space: pre-line;
+    }
   }
 }
 

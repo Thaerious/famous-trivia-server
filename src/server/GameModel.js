@@ -1,5 +1,4 @@
 import fs from 'fs';
-import getPrototypeOf from "@babel/runtime/helpers/esm/getPrototypeOf";
 
 class EndOfGame {
 
@@ -297,19 +296,11 @@ class MultipleChoiceModel {
     }
 
     getAnswers() {
-        let answers = [];
-        for (let i in this.model.answers) {
-            answers[i] = this.model.answers[i].text;
-        }
-        return answers;
+        return [...this.model.answers];
     }
 
     getValues() {
-        let values = [];
-        for (let i in this.model.answers) {
-            values[i] = this.model.answers[i].isTrue === 'true';
-        }
-        return values;
+        return [...this.model.values];
     }
 
     getValue(index) {
@@ -318,6 +309,7 @@ class MultipleChoiceModel {
 
     /**
      * Set the state showing the players the answers.
+     * This hides the values (in/correct answers).
      * @param col
      * @param row
      * @returns question text
@@ -382,6 +374,7 @@ class GameModel {
             players: this._players
         }
         if (this.getRound()) {
+            console.log(this.getRound());
             result.round = this.getRound().getUpdate()
         }
         return result;

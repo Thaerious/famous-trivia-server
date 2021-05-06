@@ -10,15 +10,15 @@ class ValueUpdate extends  CustomEvent{
 
 class CheckBox extends NidgetElement {
     async connectedCallback(){
-        super.connectedCallback();
+        await super.connectedCallback();
         this.addEventListener("click", ()=>{
             this.toggle();
         });
     }
 
-    toggle(){
-        if (this.checked === 'true') this.checked = 'false';
-        else this.checked = 'true'
+    toggle(dispatch = true){
+        if (this.checked === 'true') this.setChecked('false', dispatch);
+        else this.setChecked('true', dispatch);
     }
 
     get checked(){
@@ -32,6 +32,12 @@ class CheckBox extends NidgetElement {
         if (value === this.checked) return;
         this.setAttribute(CheckBox.CHECKED_ATTRIBUTE, value);
         this.dispatchEvent(new ValueUpdate(value));
+    }
+
+    setChecked(value, dispatch = true){
+        if (value === this.checked) return;
+        this.setAttribute(CheckBox.CHECKED_ATTRIBUTE, value);
+        if (dispatch) this.dispatchEvent(new ValueUpdate(value));
     }
 }
 

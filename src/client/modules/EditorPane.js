@@ -11,12 +11,11 @@ class MCAnswerCtrl {
 
         DOM.menuDecreaseValue.hide();
         DOM.menuIncreaseValue.hide();
-
         DOM.multipleChoicePane.show();
 
         for (let i = 0; i < 6; i++) {
-            DOM.multipleChoicePane.setText(i, model.answers[i].text);
-            DOM.multipleChoicePane.setChecked(i, model.answers[i].isTrue);
+            DOM.multipleChoicePane.setText(i, model.answers[i]);
+            DOM.multipleChoicePane.setChecked(i, model.values[i]);
         }
 
         DOM.triangleRight.addEventListener("click", MCAnswerCtrl.cleanup);
@@ -25,6 +24,10 @@ class MCAnswerCtrl {
         DOM.multipleChoicePane.addEventListener("value-update", MCAnswerCtrl.valueList);
         DOM.buttonShowQuestion.addEventListener("click", MCAnswerCtrl.questList);
 
+        DOM.buttonShowQuestion.show();
+        DOM.buttonShowAnswer.show();
+        DOM.buttonShowBoard.hide();
+
         DOM.buttonShowQuestion.enable();
         DOM.buttonShowAnswer.disable();
     }
@@ -32,13 +35,13 @@ class MCAnswerCtrl {
     static textList(event) {
         console.log(event);
         let index = parseInt(event.detail.index);
-        MCAnswerCtrl.model.answers[index].text = event.detail.text;
+        MCAnswerCtrl.model.answers[index] = event.detail.text;
         MCAnswerCtrl.saveCB();
     }
 
     static valueList(event) {
         let index = parseInt(event.detail.index);
-        MCAnswerCtrl.model.answers[index].isTrue = event.detail.value;
+        MCAnswerCtrl.model.values[index]= event.detail.value;
         MCAnswerCtrl.saveCB();
     }
 

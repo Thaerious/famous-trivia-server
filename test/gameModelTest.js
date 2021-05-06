@@ -1,5 +1,5 @@
 // gameModelTest.js
-// noinspection JSUnresolvedFunction
+// noinspection JSUnresolvedFunction,DuplicatedCode
 
 import assert from 'assert';
 import fs from 'fs';
@@ -316,8 +316,8 @@ describe('MultipleChoiceModel', function () {
             assert.notEqual(mcModel.state.values, undefined);
         });
         it('contains values (from file)', function () {
-            assert.strictEqual(mcModel.state.values[0], false);
-            assert.strictEqual(mcModel.state.values[2], true);
+            assert.strictEqual(mcModel.state.values[0], "false");
+            assert.strictEqual(mcModel.state.values[2], "true");
         });
         it('has state style set to multiple choice', function(){
             let state = new GameModel(data).setRound(0).state;
