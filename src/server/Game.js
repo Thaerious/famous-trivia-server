@@ -167,18 +167,33 @@ class Game {
         }
     }
 
+    /**
+     * Calculate the player scores based upon the MC answers
+     * Blank values are considered to be false.
+     * >= 0 are considered to be true.
+     */
     updateMCScores() {
         let values = this.model.getRound().getValues();
+
         for (let name in this.playersData) {
+            // the sum of bets must be <= the players available score
             if (this.sumMCBet(name) > this.model.getPlayer(name).score) continue;
+
+            let bonusFlag = true;
             for (let index = 0; index < this.playersData[name].length; index++) {
-                if (this.playersData[name][index] === "") continue;
-                if (values[index]) {
+                if (this.playersData[name][index] === ""){
+                    if (values[index] === "true") bonusFlag = false;
+                    continue;
+                }
+
+                if (values[index] === "true") {
                     this.model.getPlayer(name).score += this.playersData[name][index];
                 } else {
+                    bonusFlag = false;
                     this.model.getPlayer(name).score -= this.playersData[name][index];
                 }
             }
+            if (bonusFlag) this.model.getPlayer(name).score += this.model.getUpdate().bonus;
         }
     }
 
@@ -229,7 +244,7 @@ class Game {
             case "continue":
                 this.model.getRound().setAnswerState();
                 this.updateState(2);
-                // this.timer.start(Timer.TIMES.MULTIPLE_CHOICE);
+                this.timer.start(Timer.TIMES.MULTIPLE_CHOICE);
                 this.timer.start(0);
                 break;
         }

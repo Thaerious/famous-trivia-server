@@ -317,7 +317,8 @@ class MultipleChoiceModel {
     setAnswerState() {
         Object.assign(this.stateData, {
             state: GameModel.STATES.ANSWER,
-            answers: this.getAnswers()
+            answers: this.getAnswers(),
+            bonus: this.model.bonus
         });
 
         return this.stateData;
@@ -330,7 +331,8 @@ class MultipleChoiceModel {
         this.setAnswerState();
         Object.assign(this.stateData, {
             state: GameModel.STATES.REVEAL,
-            values: this.getValues()
+            values: this.getValues(),
+            bonus: this.model.bonus
         });
         return this.stateData;
     }

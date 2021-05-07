@@ -68,11 +68,11 @@ class PlayerContainer extends NidgetElement {
         let player = this.getPlayer(name);
         player.detach();
 
-        let otherPlayers = this.querySelectorAll("player-panel");
-        this.clear();
+        // let otherPlayers = this.querySelectorAll("player-panel");
+        // this.clear();
 
-        this.addPlayer(player.name, player.score);
-        for (let p of otherPlayers) this.addPlayer(p.name, p.score);
+        // this.addPlayer(player.name, player.score);
+        // for (let p of otherPlayers) this.addPlayer(p.name, p.score);
 
         return player;
     }

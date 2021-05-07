@@ -17,7 +17,11 @@ class PortalController {
      * @param message
      */
     process(message){
-        if (message.action !== "ping") console.log(message);
+        if (message.action !== "ping" && message.action !== "update_timer"){
+            console.log(message);
+            window.lastMessage = message;
+        }
+
         switch (message.action) {
             case "connection_established":
                 this.send({action : "request_model"});
@@ -34,7 +38,6 @@ class PortalController {
                 this.view.updateTimer(message.data);
                 break;
             case "stop_timer":
-                this.view.stopTimer(message.data);
                 break;
         }
     }

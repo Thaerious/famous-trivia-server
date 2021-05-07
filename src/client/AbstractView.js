@@ -35,10 +35,6 @@ class AbstractView extends EventTarget{
         }
     }
 
-    stopTimer(update){
-
-    }
-
     updateModel(update){
         this.fillPlayers(update);
         this.lastUpdate = update;
@@ -89,6 +85,7 @@ class AbstractView extends EventTarget{
                 this.DOM.gameBoard.hide();
                 this.DOM.questionPane.show();
                 this.DOM.questionPane.setText(update.model.round.question);
+                this.DOM.playerContainer.moveToTop(update.model.round.current_player);
                 break;
             case 7:
                 this.DOM.gameBoard.hide();
@@ -99,6 +96,7 @@ class AbstractView extends EventTarget{
                 this.DOM.gameBoard.hide();
                 this.DOM.questionPane.show();
                 this.DOM.questionPane.setText(update.model.round.question);
+                this.DOM.playerContainer.moveToTop(update.model.round.current_player);
                 break;
             case 9:
                 this.DOM.gameBoard.hide();
@@ -124,12 +122,19 @@ class AbstractView extends EventTarget{
         for (let player of update.model.players){
             this.DOM.playerContainer.addPlayer(player.name, player.score);
 
+            console.log(player.name);
+            console.log(update.model.round.spentPlayers.indexOf(player.name));
+
             if (update.model.round && update.model.round.style === 'j') { // TODO remove magic string
+                console.log("A");
                 if (update.model.round.current_player === player.name) {
+                    console.log("B");
                     this.DOM.playerContainer.getPlayer(player.name).highlight = true;
                     this.DOM.playerContainer.getPlayer(player.name).active = true;
                 } else if (update.model.round.spentPlayers.indexOf(player.name) !== -1) {
+                    console.log("C");
                     this.DOM.playerContainer.getPlayer(player.name).dim = true;
+                    window.x = this.DOM.playerContainer.getPlayer(player.name);
                 }
             }
         }
