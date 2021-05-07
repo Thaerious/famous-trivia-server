@@ -29,26 +29,45 @@ class PlayerContainer extends NidgetElement {
         let expandButton = this.querySelector("#expand-button");
 
         let playerPanel = document.createElement("player-panel");
-        let currentInner = this.querySelector(".inner:last-child");
         expandButton.hide();
-
-        if (!currentInner || currentInner.childElementCount === 6){
-            currentInner = document.createElement("nidget-element");
-            currentInner.classList.add("inner");
-            currentInner.classList.add("extra");
-            currentInner.setAttribute("style", `--index: ${outer.childElementCount - 1}`);
-            outer.append(currentInner);
-        }
-
-        if (outer.childElementCount > 1){
-            expandButton.show();
-        }
-
-        playerPanel.setAttribute("style", `--index: ${currentInner.childElementCount}`);
-        currentInner.append(playerPanel);
         playerPanel.name = name;
         playerPanel.score = score;
+
+        this.addPlayerPanel(playerPanel);
+        window.lastPanel = playerPanel;
+
         return playerPanel;
+    }
+
+    addInner(){
+        const outer = this.querySelector(".outer");
+        const nextIndex = this.querySelector(".inner").length;
+
+        const element = document.createElement("nidget-element");
+        element.classList.add("inner");
+        element.classList.add("extra");
+        element.setAttribute("style", `--index: ${nextIndex}`);
+        element.setAttribute("data-index", nextIndex);
+        outer.append(element);
+        return element;
+    }
+
+    getInner(index){
+        while (this.querySelector(".inner").length <= index){
+            this.addInner();
+        }
+        return this.querySelector(`.inner[data-index='${index}']`)
+    }
+
+    addPlayerPanel(element){
+        const innerIndex = Math.trunc((this.size + 1) / 6);
+        const innerElement = this.getInner(innerIndex);
+        element.setAttribute("style", `--index: ${this.size % 6}`);
+        innerElement.append(element);
+    }
+
+    get size(){
+        return this.querySelectorAll("player-panel").length;
     }
 
     topPlayer(){
@@ -64,17 +83,21 @@ class PlayerContainer extends NidgetElement {
     }
 
     moveToTop(name){
-        let currentInner = this.querySelector(".inner.first");
-        let player = this.getPlayer(name);
-        player.detach();
+        const components = [];
 
-        // let otherPlayers = this.querySelectorAll("player-panel");
-        // this.clear();
+        components.push(this.getPlayer(name));
+        this.getPlayer(name).detach();
 
-        // this.addPlayer(player.name, player.score);
-        // for (let p of otherPlayers) this.addPlayer(p.name, p.score);
+        for (const element of this.querySelectorAll("player-panel")){
+            components.push(element);
+            element.detach();
+        }
 
-        return player;
+        for (let component of components){
+            this.addPlayerPanel(component);
+        }
+
+        return components[0];
     }
 
     clear(){

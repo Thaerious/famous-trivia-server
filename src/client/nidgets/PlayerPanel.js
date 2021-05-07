@@ -13,19 +13,20 @@ class PlayerPanel extends NidgetElement {
     }
 
     set name(value){
-        this.querySelector("#name").text = value;
+        console.log(value);
+        this.querySelector("#name").innerHTML = value;
     }
 
     set score(value){
-        this.querySelector("#score").text = value;
+        this.querySelector("#score").innerHTML = value;
     }
 
     get name(){
-        return this.querySelector("#name").text;
+        return this.querySelector("#name").innerHTML;
     }
 
     get score(){
-        return this.querySelector("#score").text;
+        return this.querySelector("#score").innerHTML;
     }
 
     set dim(value){
