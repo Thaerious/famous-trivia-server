@@ -1,6 +1,6 @@
 import Picker from "./modules/Picker.js";
 import FilePicker from "./modules/FilePicker.js";
-import Model from "./modules/Model.js";
+import GameDescriptionModel from "./modules/GameDescriptionModel.js";
 import FileOps from "./modules/FileOps.js";
 import Parameters from "./modules/Parameters.js";
 import FileList from "./modules/FileList.js";
@@ -81,7 +81,7 @@ function addMenuListeners() {
 
     document.querySelector("#create").addEventListener("click", async (e) => {
         busyBox.classList.remove("hidden");
-        let model = new Model().init("Game Name");
+        let model = new GameDescriptionModel().init("Game Name");
         let fp = await fileOps.create();
         await fileOps.setBody(fp, JSON.stringify(model.get(), null, 2));
         location.href = location.origin + "/editor.ejs?action=load&fileId=" + fp;

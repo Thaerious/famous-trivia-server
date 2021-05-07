@@ -1,4 +1,4 @@
-import Model from "./Model.js";
+import GameDescriptionModel from "./GameDescriptionModel.js";
 const DOM = {/* see EditorPane.constructor */};
 
 /**
@@ -18,10 +18,13 @@ class MCAnswerCtrl {
             DOM.multipleChoicePane.setChecked(i, model.values[i]);
         }
 
+        DOM.multipleChoicePane.setBonus(model.bonus);
+
         DOM.triangleRight.addEventListener("click", MCAnswerCtrl.cleanup);
         DOM.triangleLeft.addEventListener("click", MCAnswerCtrl.cleanup);
         DOM.multipleChoicePane.addEventListener("answer-update", MCAnswerCtrl.textList);
         DOM.multipleChoicePane.addEventListener("value-update", MCAnswerCtrl.valueList);
+        DOM.multipleChoicePane.addEventListener("bonus-update", MCAnswerCtrl.bonusList);
         DOM.buttonShowQuestion.addEventListener("click", MCAnswerCtrl.questList);
 
         DOM.buttonShowQuestion.show();
@@ -45,6 +48,12 @@ class MCAnswerCtrl {
         MCAnswerCtrl.saveCB();
     }
 
+    static bonusList(event){
+        console.log(event);
+        MCAnswerCtrl.model.bonus = event.detail.value;
+        MCAnswerCtrl.saveCB();
+    }
+
     static questList(event) {
         MCAnswerCtrl.saveCB();
         MCAnswerCtrl.cleanup();
@@ -57,6 +66,7 @@ class MCAnswerCtrl {
         DOM.multipleChoicePane.hide();
         DOM.multipleChoicePane.removeEventListener("answer-update", MCAnswerCtrl.textList);
         DOM.multipleChoicePane.removeEventListener("value-update", MCAnswerCtrl.valueList);
+        DOM.multipleChoicePane.removeEventListener("bonus-update", MCAnswerCtrl.bonusList);
         DOM.buttonShowQuestion.removeEventListener("click", MCAnswerCtrl.questList);
         DOM.triangleRight.removeEventListener("click", MCAnswerCtrl.cleanup);
         DOM.triangleLeft.removeEventListener("click", MCAnswerCtrl.cleanup);
@@ -411,8 +421,8 @@ class EditorPane {
         DOM.gameBoard.hide();
         DOM.multipleChoicePane.hide();
 
-        if (model.getRound().type === Model.questionType.CATEGORY) this.jeopardyView(model);
-        if (model.getRound().type === Model.questionType.MULTIPLE_CHOICE) this.multipleChoiceView(model);
+        if (model.getRound().type === GameDescriptionModel.questionType.CATEGORY) this.jeopardyView(model);
+        if (model.getRound().type === GameDescriptionModel.questionType.MULTIPLE_CHOICE) this.multipleChoiceView(model);
     }
 
     updateTriangleView() {

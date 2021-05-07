@@ -50,27 +50,16 @@ class MultipleChoiceCompose extends NidgetElement {
                 this.dispatchEvent(new ValueUpdate(index, value));
             });
         }
-    }
 
-    // txtListener(event) {
-    //     if (event.which === 13){
-    //         event.stopPropagation();
-    //         event.preventDefault();
-    //
-    //         let index = window.getComputedStyle(event.target).getPropertyValue("--index");
-    //         index = parseInt(index);
-    //         if (index >= 5){
-    //             event.target.blur();
-    //         } else {
-    //             let selector = `nidget-text[data-index="${index + 1}"]`;
-    //             this.querySelector(selector).focus();
-    //         }
-    //
-    //         return false;
-    //     }
-    //     event.target.fitText.notify(1, 1);
-    //     return true;
-    // }
+        this.querySelector(".bonus")
+            .addEventListener("blur",
+                e => this.dispatchEvent(
+                    new CustomEvent("bonus-update", {detail : {
+                        value : this.querySelector(".bonus").content
+                    }})
+                )
+            );
+    }
 
     /**
      * @param button {'question', 'answer'}
@@ -82,6 +71,10 @@ class MultipleChoiceCompose extends NidgetElement {
 
     setText(index, text){
         this.querySelector(`.inner[data-index="${index}"] text-input`).content = text;
+    }
+
+    setBonus(value){
+        this.querySelector(`#bonus-container text-input`).content = value;
     }
 
     setChecked(index, value){

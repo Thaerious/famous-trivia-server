@@ -72,7 +72,7 @@ class TextInput extends NidgetElement {
                 {
                     bubbles : true,
                     composed : true,
-                    detail : {console : this.content}
+                    detail : {content : this.content}
                 }
             ));
         }
@@ -87,7 +87,7 @@ class TextInput extends NidgetElement {
                 {
                     bubbles : true,
                     composed : true,
-                    detail : {console : this.content}
+                    detail : {content : this.content}
                 }
             ));
         }

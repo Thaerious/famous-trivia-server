@@ -3,7 +3,7 @@ import Authenticate from "./modules/Authenticate.js";
 import Menu from "./nidgets/MenuContainer.js";
 import QuestionPane from "./nidgets/QuestionPane.js";
 import EditorPane from "./modules/EditorPane.js";
-import Model from "./modules/Model";
+import GameDescriptionModel from "./modules/GameDescriptionModel";
 const Nidget = require("@thaerious/nidget")
 
 let fileOps = new FileOps();
@@ -29,7 +29,7 @@ async function setup(){
     }
 
     let file = await fileOps.get(window.parameters.fileId);
-    let model = new Model(fileOps).set(JSON.parse(file.body));
+    let model = new GameDescriptionModel(fileOps).set(JSON.parse(file.body));
     window.model = model;
 
     document.querySelector("#game-name").textContent = model.name;
