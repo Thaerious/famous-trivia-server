@@ -12,6 +12,9 @@ export default {
     },
     nidgets : {
         SCRIPT_PATH: "./src/client/nidgets"
+    },
+    locations : {
+        HOST : "host.ejs"
     }
 };
 

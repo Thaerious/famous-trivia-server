@@ -251,9 +251,6 @@ class Game {
                 let name = input.player;
                 let index = parseInt(input.data.index);
 
-                console.log("UPDATE");
-                console.log("'" + index + "', '" + input.data.value + "'");
-
                 if (input.data.value === ""){
                     this.playersData[name][index] = "";
                 } else {
@@ -334,7 +331,6 @@ class Game {
                 break;
             case "accept":
                 let currentPlayer = this.model.getRound().getCurrentPlayer();
-                console.log(currentPlayer);
                 this.model.getPlayer(currentPlayer).score += this.model.getRound().getValue();
                 this.model.getRound().setRevealState();
                 this.timer.stop();

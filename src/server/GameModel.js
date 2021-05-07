@@ -374,7 +374,6 @@ class GameModel {
             players: this._players
         }
         if (this.getRound()) {
-            console.log(this.getRound());
             result.round = this.getRound().getUpdate()
         }
         return result;

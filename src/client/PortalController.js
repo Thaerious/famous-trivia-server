@@ -22,7 +22,6 @@ class PortalController {
             case "connection_established":
                 this.send({action : "request_model"});
                 this.name = message.data.name;
-                console.log(this.name);
                 if (this.view.setName) this.view.setName(message.data.name);
                 break;
             case "update_model":

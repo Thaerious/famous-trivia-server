@@ -3,7 +3,10 @@ import Authenticate from "./modules/Authenticate.js";
 import HostPortalView from "./HostPortalView.js";
 import PortalController from "./PortalController";
 import connectWebsocket from "./connectWebsocket.js";
+import GameManagerService from "./services/GameManagerService";
+import constants from "../server/constants.js";
 
+let gameManagerService = new GameManagerService();
 let fileOps = new FileOps();
 let model = null;
 let questionPane = null;
@@ -11,17 +14,14 @@ let editorPane = null;
 
 window.onload = async () => {
     let start = new Date();
-
-    window.hostView = new HostPortalView();
-
-    // new Menu().init("#menu")host_portal.js;
+    const hostView = new HostPortalView();
 
     try {
         await new Authenticate().loadClient();
         await fileOps.loadClient();
         await sendTokenToServer();
         let ws = await connectWebsocket();
-        new PortalController(ws, window.hostView);
+        new PortalController(ws, hostView);
 
         document.querySelector("menu-container").addEventListener("add-players", ()=>{
             ws.send(JSON.stringify({action : "join", data : {name : "Adam"}}));
@@ -35,6 +35,12 @@ window.onload = async () => {
 
         document.querySelector("menu-container").addEventListener("prev", ()=>{
             ws.send(JSON.stringify({action : "prev_round"}));
+        });
+
+        document.querySelector("menu-container").addEventListener("terminate", ()=>{
+            let token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
+            gameManagerService.terminate(token);
+            window.location = constants.locations.HOST;
         });
 
         window.addPlayers = function(){

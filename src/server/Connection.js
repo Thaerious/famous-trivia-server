@@ -36,10 +36,11 @@ class Connection{
         let hash = await this.req.session.get("game-hash");
         this.game = await this.gm.getLive(hash);
         if (!this.game){
-            this.ws.send({
+            const msg = {
                 action : "error",
                 text : "Game not found"
-            });
+            };
+            this.ws.send(JSON.stringify(msg));
             this.ws.close();
             return;
         }
