@@ -49,6 +49,11 @@ class GameBoard extends NidgetElement {
         }
     }
 
+    readyHeaders(){
+        let headers = this.querySelectorAll("[data-row='h'] > nidget-text");
+        for (let header of headers) header.fitText.notify();
+    }
+
     /**
      * Set the category text.
      * @param index The column to set

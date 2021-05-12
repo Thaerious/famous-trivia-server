@@ -385,14 +385,14 @@ class EditorPane {
             }
         }
 
-        if (window.parameters.mcstate){
-            console.log(window.parameters.mcstate);
-            if (window.parameters.mcstate === 'answer'){
-                MCAnswerCtrl.run(this.model.getRound(), () => this.onSave());
-            } else if (window.parameters.mcstate === 'question'){
-                MCQuestionCtrl.run(this.model.getRound(), () => this.onSave());
-            }
-        }
+        // if (window.parameters.mcstate){
+        //     console.log(window.parameters.mcstate);
+        //     if (window.parameters.mcstate === 'answer'){
+        //         MCAnswerCtrl.run(this.model.getRound(), () => this.onSave());
+        //     } else if (window.parameters.mcstate === 'question'){
+        //         MCQuestionCtrl.run(this.model.getRound(), () => this.onSave());
+        //     }
+        // }
     }
 
     async rename(newName){

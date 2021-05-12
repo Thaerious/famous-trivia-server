@@ -36,6 +36,7 @@ async function setup(){
     document.querySelector("#game-name").textContent = model.name;
     editorPane = new EditorPane(model, fileOps, window.parameters.fileId);
     editorPane.onSave = saveModel;
+    editorPane.DOM.gameBoard.readyHeaders();
     window.editorPane = editorPane;
 
     let end = new Date();
