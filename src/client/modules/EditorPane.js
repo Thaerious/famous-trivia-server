@@ -446,6 +446,10 @@ class EditorPane {
         DOM.menuIncreaseValue.show();
         DOM.gameBoard.show();
 
+        DOM.buttonShowAnswer.hide();
+        DOM.buttonShowQuestion.hide();
+        DOM.buttonShowBoard.hide();
+
         window.parameters.type = "jeopardy";
         delete window.parameters.subtype;
         pushParameters();

@@ -39,12 +39,9 @@
   width: 100%;
   top: 50%;
   transform: translateY(-50%);
-  word-spacing: 30px;
-  font-size: 7vh;
   font-family: OPTIKorinna-Agency, serif;
   text-transform: uppercase;
   color: #eee;
-  text-shadow: 4px 4px #000;
   text-align: center;
   white-space: pre-line;
   z-index: 0;

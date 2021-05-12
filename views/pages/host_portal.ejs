@@ -9,33 +9,44 @@
 
 <div class="bg"></div>
 
-<div class="top-bar" id="top-bar">
-    <menu-container image-src="assets/images/menu.png">
-        <menu-item event-name="terminate">Terminate Hosting</menu-item>
-        <menu-item event-name="next">Next Round</menu-item>
-        <menu-item event-name="prev">Previous Round</menu-item>
-        <menu-item event-name="add-players">Add Players</menu-item>
-    </menu-container>
-</div>
+<div id="page-container" class="aspect-fit">
+    <div class="top-bar" id="top-bar">
+        <menu-container image-src="assets/images/menu.png">
+            <menu-item event-name="terminate">Terminate Hosting</menu-item>
+            <menu-item event-name="next">Next Round</menu-item>
+            <menu-item event-name="prev">Previous Round</menu-item>
+            <menu-item event-name="add-players">Add Players</menu-item>
+        </menu-container>
+        <nidget-text class="round-number-text">Round 1</nidget-text>
+    </div>
 
-<div class="round-number" id="round-number">
-    <nidget-text class="text">Round 1</nidget-text>
-</div>
+    <div id="main-container">
+        <player-container id="player-container-left"></player-container>
+        <question-pane id="question-pane" class="hidden" template-id="question-pane-template"></question-pane>
+        <game-board id="game-board" class="hidden"></game-board>
+        <multiple-choice-present id="multiple-choice-present" class="hidden"></multiple-choice-present>
+        <trivia-timer class="hidden"></trivia-timer>
 
-<div id="main-container">
-    <player-container id="player-container-left"></player-container>
-    <question-pane id="question-pane" class="hidden" template-id="question-pane-template"></question-pane>
-    <game-board id="game-board" class="hidden"></game-board>
-    <multiple-choice-present id="multiple-choice-present" class="hidden"></multiple-choice-present>
-    <trivia-timer class="hidden"></trivia-timer>
-
-    <div class="button-dock">
-        <nidget-element class="button hidden left" id="accept"><div class="text">ACCEPT</div></nidget-element>
-        <nidget-element class="button hidden right" id="reject"><div class="text">REJECT</div></nidget-element>
-        <nidget-element class="button hidden left" id="back"><div class="text">BACK</div></nidget-element>
-        <nidget-element class="button hidden right" id="continue"><div class="text">CONTINUE</div></nidget-element>
-        <nidget-element class="button hidden center" id="next"><div class="text">NEXT ROUND</div></nidget-element>
-        <nidget-element class="button hidden center" id="start"><div class="text">START</div></nidget-element>
+        <div class="button-dock">
+            <nidget-element class="button hidden left" id="accept">
+                <div class="text">ACCEPT</div>
+            </nidget-element>
+            <nidget-element class="button hidden right" id="reject">
+                <div class="text">REJECT</div>
+            </nidget-element>
+            <nidget-element class="button hidden left" id="back">
+                <div class="text">BACK</div>
+            </nidget-element>
+            <nidget-element class="button hidden right" id="continue">
+                <div class="text">CONTINUE</div>
+            </nidget-element>
+            <nidget-element class="button hidden center" id="next">
+                <div class="text">NEXT ROUND</div>
+            </nidget-element>
+            <nidget-element class="button hidden center" id="start">
+                <div class="text">START</div>
+            </nidget-element>
+        </div>
     </div>
 </div>
 

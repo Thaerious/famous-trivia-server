@@ -84,6 +84,7 @@ class PlayerContainer extends NidgetElement {
 
     moveToTop(name){
         const components = [];
+        if (!this.getPlayer(name)) return;
 
         components.push(this.getPlayer(name));
         this.getPlayer(name).detach();

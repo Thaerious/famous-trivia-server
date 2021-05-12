@@ -14,13 +14,37 @@ body {
   box-sizing: border-box;
 }
 
+#page-container{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(140, 255, 160, 0.25);
+
+  &.aspect-fit{
+    height: 100vh;
+    width: calc(16/9 * 100vh);
+    font-size: 5vh;
+
+    --cell-font-size: 6.5vh;
+  }
+
+  &.shrink-horz{
+    height: calc(9/16 * 100vw);
+    width: 100vw;
+    font-size: calc(9/16 * 5vw);
+
+    --cell-font-size: calc(9/16 * 6.5vw);
+  }
+}
+
 trivia-timer {
   position: absolute;
   right: calc(75 / 9 * 8vh); // middle of board
   transform: translateX(50%);
-  bottom: -9.5vh;
-  width: 14vh;
-  height: 14vh;
+  bottom: -9.5%;
+  width: 14%;
+  height: calc(9/16 * 100%);
   z-index: 10;
 
   font-family: "Arial Black", serif;
@@ -38,36 +62,36 @@ check-box {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  top: 8vh;
-  height: 75vh;
-  width: calc(27vh + (75 / 9 * 16vh));
+  top: 8%;
+  height: 75%;
+  width: 90%;
 
   #player-container-left {
     position: absolute;
-    width: 25vh;
-    height: 75vh;
+    width: 13.5%;
+    height: 100%;
     top: 0;
     left: 0;
-    z-index: 2000;
+    z-index: 100;
   }
 
   #game-board, #multiple-choice-present, #question-pane {
     position: absolute;
     top: 0;
     right: 0;
-    width: calc(75 / 9 * 16vh); // 16:9 w:h
-    height: 75vh;
-    z-index: 5;
+    width: 85%;
+    height: 100%;
+    z-index: 50;
   }
 }
 
 #top-bar {
   position: absolute;
-  top: 1vh;
+  top: 1%;
   left: 50%;
   transform: translateX(-50%);
-  width: calc(27vh + (75 / 9 * 16vh));
-  height: 5vh;
+  width: 85%;
+  height: 5%;
   z-index: 100;
 
   menu-container {
@@ -82,23 +106,16 @@ check-box {
   }
 }
 
-#round-number {
+.round-number-text{
   position: absolute;
-  top: 1vh;
+  top: 50%;
   left: 50%;
-  width: calc(75 * 1.11vh);
-  height: 5vh;
-  transform: translateX(-50%);
-
-  .text {
-    position: absolute;
-    font-family: Arial Black, serif;
-    font-size: 4vh;
-    color: #e8e8e8;
-    text-align: center;
-    left: 50%;
-    transform: translateX(-50%);
-  }
+  height: 100%;
+  transform: translate(-50%, -50%);
+  font-family: Arial Black, serif;
+  font-size: 80%;
+  color: #e8e8e8;
+  text-align: center;
 }
 
 .button-dock {
@@ -130,8 +147,6 @@ check-box {
       left: 50%;
       transform: translateX(-50%);
     }
-
-
   }
 }
 

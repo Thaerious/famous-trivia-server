@@ -50,15 +50,18 @@ class GameBoard extends NidgetElement {
     }
 
     /**
-     * Set the value of a category
-     * @param index
-     * @param value
-     * @param value
+     * Set the category text.
+     * @param index The column to set
+     * @param value The text to set it to.
+     * @param fontSize
+     * @param lock turn off content-editable, default false (on).
      */
     setHeader(index, value, fontSize, lock = false){
         let element = this.getHeader(index);
         element.text = value;
-        if (fontSize) element.style["font-size"] = fontSize;
+        // if (fontSize) element.style["font-size"] = fontSize;
+        // element.fitText.notify(1, 1);
+
         if (lock){
             element.setAttribute("contentEditable", "false");
         }

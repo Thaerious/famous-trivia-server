@@ -346,6 +346,7 @@ class Game {
                 break;
             case "accept":
                 let currentPlayer = this.model.getRound().getCurrentPlayer();
+                if (!currentPlayer) return;
                 this.model.getPlayer(currentPlayer).score += this.model.getRound().getValue();
                 this.model.getRound().setRevealState();
                 this.timer.stop();

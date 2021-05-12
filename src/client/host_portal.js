@@ -1,3 +1,5 @@
+// noinspection SpellCheckingInspection
+
 import FileOps from "./modules/FileOps.js";
 import Authenticate from "./modules/Authenticate.js";
 import HostPortalView from "./HostPortalView.js";
@@ -5,6 +7,7 @@ import PortalController from "./PortalController";
 import connectWebsocket from "./connectWebsocket.js";
 import GameManagerService from "./services/GameManagerService";
 import constants from "../server/constants.js";
+import setupSizeListener from "./modules/SetupSizeListener";
 
 let gameManagerService = new GameManagerService();
 let fileOps = new FileOps();
@@ -15,6 +18,8 @@ let editorPane = null;
 window.onload = async () => {
     let start = new Date();
     const hostView = new HostPortalView();
+
+    setupSizeListener();
 
     try {
         await new Authenticate().loadClient();

@@ -78,7 +78,7 @@
                     transform: translateY(-50%);
                     text-align: center;
                     width: 100%;
-                    font-size: 6.5vh;
+                    font-size: var(--cell-font-size);
                     color: #ffdc18;
 
                     &[data-complete='false']{

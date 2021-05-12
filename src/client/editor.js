@@ -4,7 +4,7 @@ import Menu from "./nidgets/MenuContainer.js";
 import QuestionPane from "./nidgets/QuestionPane.js";
 import EditorPane from "./modules/EditorPane.js";
 import GameDescriptionModel from "./modules/GameDescriptionModel";
-const Nidget = require("@thaerious/nidget")
+import setupSizeListener from "./modules/SetupSizeListener";
 
 let fileOps = new FileOps();
 let model = null;
@@ -12,7 +12,8 @@ let questionPane = null;
 let editorPane = null;
 
 window.onload = async () => {
-    setup();
+    await setup();
+    setupSizeListener();
 }
 
 async function setup(){
