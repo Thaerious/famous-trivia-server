@@ -33,12 +33,22 @@ class GameBoard extends NidgetElement {
 
     async ready(){
         await super.ready();
+
+        for (let element of this.querySelectorAll(".text-buffer")){
+            const value = element.querySelector(".value");
+            element.addEventListener("click", e => value.focus());
+        }
+
         for (let col = 0; col < 6; col++) {
-            this.getHeader(col).addEventListener("input", (event)=>event.target.fitText.notify(1, 1));
+            this.getHeader(col).addEventListener("input", (event)=>{
+                event.target.fitText.notify();
+            });
 
             this.getHeader(col).addEventListener("blur", (event)=>{
                 let fontSize = event.target.style["font-size"];
                 this.dispatchEvent(new HeaderUpdateEvent(col, event.target.text, fontSize));
+                event.target.innerHTML = event.target.text.trim();
+                event.target.fitText.notify();
             });
 
             for (let row = 0; row < 5; row++) {
@@ -50,7 +60,7 @@ class GameBoard extends NidgetElement {
     }
 
     readyHeaders(){
-        let headers = this.querySelectorAll("[data-row='h'] > nidget-text");
+        let headers = this.querySelectorAll("[data-row='h'] .value");
         for (let header of headers) header.fitText.notify();
     }
 
@@ -64,8 +74,6 @@ class GameBoard extends NidgetElement {
     setHeader(index, value, fontSize, lock = false){
         let element = this.getHeader(index);
         element.text = value;
-        // if (fontSize) element.style["font-size"] = fontSize;
-        // element.fitText.notify(1, 1);
 
         if (lock){
             element.setAttribute("contentEditable", "false");
@@ -79,7 +87,7 @@ class GameBoard extends NidgetElement {
      */
     getHeader(index){
         if (typeof index !== "number" || index < 0 || index > 6) throw new Error("Invalid index: " + index);
-        let selector = `[data-row='h'][data-col='${index}'] > .value`;
+        let selector = `[data-row='h'][data-col='${index}'] .value`;
         return this.querySelector(selector);
     }
 
@@ -94,7 +102,7 @@ class GameBoard extends NidgetElement {
     }
 
     getCell(row, col){
-        let selector = `[data-row="${row}"][data-col="${col}"] > .value`;
+        let selector = `[data-row="${row}"][data-col="${col}"] .value`;
         return this.querySelector(selector);
     }
 

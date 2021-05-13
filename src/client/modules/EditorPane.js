@@ -12,6 +12,7 @@ class MCAnswerCtrl {
         DOM.menuDecreaseValue.hide();
         DOM.menuIncreaseValue.hide();
         DOM.multipleChoicePane.show();
+        DOM.questionPane.hide();
 
         for (let i = 0; i < 6; i++) {
             DOM.multipleChoicePane.setText(i, model.answers[i]);
@@ -211,7 +212,7 @@ class EditorPane {
         this.fileId = fileId;
         this.DOM = DOM;
 
-        DOM.multipleChoicePane = document.querySelector("#multiple-choice-pane");
+        DOM.multipleChoicePane = document.querySelector("#multiple-choice-compose");
         DOM.triangleRight = document.querySelector("#triangle-right");
         DOM.triangleLeft = document.querySelector("#triangle-left");
         DOM.roundLabel = document.querySelector("#round-number > .text");
@@ -318,7 +319,7 @@ class EditorPane {
         DOM.gameBoard.addEventListener("header-update", event => {
             let col = event.detail.col;
             this.model.getColumn(col).category = event.detail.value;
-            this.model.getColumn(col).fontSize = event.detail.fontSize;
+            this.model.getColumn(col).fontCoefficient = event.detail.fontCoefficient;
             this.onSave();
         });
 

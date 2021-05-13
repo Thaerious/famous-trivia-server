@@ -14,6 +14,12 @@ let editorPane = null;
 window.onload = async () => {
     await setup();
     setupSizeListener();
+    clearBusy();
+}
+
+function clearBusy(){
+    document.querySelector(".bg").classList.remove("busy");
+    document.querySelector(".busy-box").classList.add("hidden");
 }
 
 async function setup(){

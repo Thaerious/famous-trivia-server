@@ -8,10 +8,15 @@
 <body>
 <%- include('../partials/nidget-templates'); %>
 
-<div class="bg"></div>
+<div class="bg busy"></div>
+<div class="busy-box">
+    <img src="assets\images\busy.gif"/>
+</div>
+
 <a id="download-anchor" class="hidden-anchor" download="download.json" type="text/json"></a>
 
 <div id="page-container">
+
     <div class="top-bar" id="top-bar">
         <div class="game-name" id="game-name" contenteditable="true">Game Name</div>
         <menu-container id="menu" image-src="assets/images/menu.png">
@@ -33,7 +38,7 @@
     </div>
     <question-pane id="question-pane" class="hidden"></question-pane>
     <game-board id="game-board" class="hidden"></game-board>
-    <multiple-choice-compose id="multiple-choice-pane" class="hidden"></multiple-choice-compose>
+    <multiple-choice-compose id="multiple-choice-compose" class="hidden"></multiple-choice-compose>
     <div class="button-container">
         <nidget-button id="show-question" class="round">Show Question</nidget-button>
         <nidget-button id="show-answer" class="round">Show Answer</nidget-button>
