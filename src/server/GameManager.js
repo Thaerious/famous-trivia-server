@@ -98,6 +98,7 @@ class GameManager extends HasDB{
      * This will retrieve it from the database if this is the first time getLive is called
      * for the given game.
      * @param hash The public hash for a game.
+     * @return The live game object or undefined if no game found.
      */
     async getLive(hash){
         if (!this.liveGames[hash]){
@@ -109,6 +110,10 @@ class GameManager extends HasDB{
         }
 
         return this.liveGames[hash];
+    }
+
+    async hasLive(hash){
+        return await this.getLive(hash) !== undefined;
     }
 }
 

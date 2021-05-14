@@ -24,6 +24,16 @@ class Connection{
 
     async addPlayer(){
         let name = await this.req.session.get("name");
+        if (!this.game){
+            const msg = {
+                action : "error",
+                text : "Game not found"
+            };
+            this.ws.send(JSON.stringify(msg));
+            this.ws.close();
+            return;
+        }
+
         this.game.onInput({
             action : "join",
             data : {
@@ -33,6 +43,7 @@ class Connection{
     }
 
     async connect(name){
+        console.log(`Connection.connect(${name})`)
         let hash = await this.req.session.get("game-hash");
         this.game = await this.gm.getLive(hash);
         if (!this.game){

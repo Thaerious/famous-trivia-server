@@ -1,53 +1,37 @@
 // host_portal.scss
 
 @import 'portal/layout';
-@import 'components/button';
 @import 'components/bg';
 @import 'components/shared';
 
-.button {
-  width: 27vh;
-  height: 5vh;
-  background-color: white;
+.button-container {
+  position: absolute;
+  bottom: -10%;
+  right: 0;
+  width: 85%;
+  height: 7%;
+  z-index: 50;
 
-  .text {
-    font-size: 4vh;
-  }
+  .button {
+    position: absolute;
+    width: 20%;
+    height: 100%;
+    left: 50%;
+    bottom: 0;
+    font-family: "Arial Black", serif;
+    font-size: calc(0.8 * var(--base-font-size));
+    --ui-button-color: 255, 200, 0;
 
-  &:hover {
-    background-color: #ecff8c;
-  }
-
-  &#accept {
-    background-color: #8cffa0;
-
-    &:hover {
-      background-color: #c8fbd1;
+    &.left {
+      transform: translateX(-160%);
     }
-  }
 
-  &#reject {
-    background-color: #e24ab4;
-
-    &:hover {
-      background-color: #df7bc2;
+    &.center {
+      transform: translateX(-50%);
     }
-  }
 
-  &#continue {
-    background-color: #ebff43;
-
-    &:hover {
-      background-color: #ecff8c;
-    }
-  }
-
-  &#next {
-    width: 40vh;
-    background-color: #ebff43;
-
-    &:hover {
-      background-color: #ecff8c;
+    &.right {
+      transform: translateX(60%);
     }
   }
 }

@@ -36,7 +36,10 @@ class GameBoard extends NidgetElement {
 
         for (let element of this.querySelectorAll(".text-buffer")){
             const value = element.querySelector(".value");
-            element.addEventListener("click", e => value.focus());
+            element.addEventListener("click", e =>{
+                if (value.innerHTML === "") value.innerHTML = " "; // makes the cursor show up when focused
+                value.focus();
+            });
         }
 
         for (let col = 0; col < 6; col++) {
@@ -45,10 +48,13 @@ class GameBoard extends NidgetElement {
             });
 
             this.getHeader(col).addEventListener("blur", (event)=>{
-                let fontSize = event.target.style["font-size"];
-                this.dispatchEvent(new HeaderUpdateEvent(col, event.target.text, fontSize));
                 event.target.innerHTML = event.target.text.trim();
-                event.target.fitText.notify();
+                event.target.fitText.notify(fontSize=>{
+                    console.log("blur");
+                    console.log(this.getHeader(col).text);
+                    console.log(fontSize);
+                    this.dispatchEvent(new HeaderUpdateEvent(col, this.getHeader(col).text, fontSize));
+                });
             });
 
             for (let row = 0; row < 5; row++) {
@@ -72,8 +78,9 @@ class GameBoard extends NidgetElement {
      * @param lock turn off content-editable, default false (on).
      */
     setHeader(index, value, fontSize, lock = false){
-        let element = this.getHeader(index);
+        const element = this.getHeader(index);
         element.text = value;
+        element.style.fontSize = fontSize;
 
         if (lock){
             element.setAttribute("contentEditable", "false");

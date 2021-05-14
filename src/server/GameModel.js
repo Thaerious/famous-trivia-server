@@ -27,6 +27,7 @@ class JeopardyModel {
     constructor(parent, model) {
         this.parent = parent;
         this.model = model;
+        this.spentPlayers = [];
 
         if (this.parent.players.length > 0) {
             this.spentPlayers = [this.parent.players[0].name];
@@ -91,7 +92,7 @@ class JeopardyModel {
     }
 
     resetSpentAndCurrentPlayers() {
-        if (this.parent.players.length >= 0) {
+        if (this.parent.players.length > 0) {
             this.spentPlayers = [this.parent.players[0].name];
             this.currentPlayer = this.parent.players[0].name;
         }

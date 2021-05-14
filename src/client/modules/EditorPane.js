@@ -319,7 +319,6 @@ class EditorPane {
         DOM.gameBoard.addEventListener("header-update", event => {
             let col = event.detail.col;
             this.model.getColumn(col).category = event.detail.value;
-            this.model.getColumn(col).fontCoefficient = event.detail.fontCoefficient;
             this.onSave();
         });
 
@@ -403,7 +402,7 @@ class EditorPane {
     }
 
     async onSave() {
-        await this.fileOps.setBody(this.fileId, this.model);
+        await this.fileOps.setBody(this.fileId, JSON.stringify(this.model.get(), null, 2));
     }
 
     hideNavigation() {
@@ -457,8 +456,6 @@ class EditorPane {
 
         for (let col = 0; col < 6; col++) {
             let column = model.getColumn(col);
-
-            DOM.gameBoard.getHeader(col).fitText.lock = "vh";
             DOM.gameBoard.setHeader(col, column.category, column.fontSize);
 
             for (let row = 0; row < 5; row++) {

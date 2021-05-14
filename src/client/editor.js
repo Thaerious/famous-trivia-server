@@ -17,6 +17,10 @@ window.onload = async () => {
     clearBusy();
 }
 
+window.addEventListener("beforeunload", ()=>{
+    editorPane.onSave();
+});
+
 function clearBusy(){
     document.querySelector(".bg").classList.remove("busy");
     document.querySelector(".busy-box").classList.add("hidden");
@@ -41,20 +45,12 @@ async function setup(){
 
     document.querySelector("#game-name").textContent = model.name;
     editorPane = new EditorPane(model, fileOps, window.parameters.fileId);
-    editorPane.onSave = saveModel;
     editorPane.DOM.gameBoard.readyHeaders();
     window.editorPane = editorPane;
 
     let end = new Date();
     let time = end - start;
     console.log("Load Time " + time + " ms");
-}
-
-/**
- * Save the model to the google app data folder.
- */
-function saveModel() {
-    fileOps.setBody(window.parameters.fileId, JSON.stringify(window.model.get(), null, 2));
 }
 
 /**

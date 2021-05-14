@@ -25,27 +25,16 @@
         <question-pane id="question-pane" class="hidden" template-id="question-pane-template"></question-pane>
         <game-board id="game-board" class="hidden"></game-board>
         <multiple-choice-present id="multiple-choice-present" class="hidden"></multiple-choice-present>
-        <trivia-timer class="hidden"></trivia-timer>
 
-        <div class="button-dock">
-            <nidget-element class="button hidden left" id="accept">
-                <div class="text">ACCEPT</div>
-            </nidget-element>
-            <nidget-element class="button hidden right" id="reject">
-                <div class="text">REJECT</div>
-            </nidget-element>
-            <nidget-element class="button hidden left" id="back">
-                <div class="text">BACK</div>
-            </nidget-element>
-            <nidget-element class="button hidden right" id="continue">
-                <div class="text">CONTINUE</div>
-            </nidget-element>
-            <nidget-element class="button hidden center" id="next">
-                <div class="text">NEXT ROUND</div>
-            </nidget-element>
-            <nidget-element class="button hidden center" id="start">
-                <div class="text">START</div>
-            </nidget-element>
+        <div class="button-container">
+            <trivia-timer class="hidden"></trivia-timer>
+
+            <nidget-button id="accept" class="round left button">ACCEPT</nidget-button>
+            <nidget-button id="reject" class="round right button">REJECT</nidget-button>
+            <nidget-button id="back" class="round left button">BACK</nidget-button>
+            <nidget-button id="continue" class="round right button">CONTINUE</nidget-button>
+            <nidget-button id="next" class="round center button">NEXT ROUND</nidget-button>
+            <nidget-button id="start" class="round center button">START</nidget-button>
         </div>
     </div>
 </div>
