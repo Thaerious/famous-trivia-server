@@ -12,6 +12,8 @@ class CheckBox extends NidgetElement {
     async connectedCallback(){
         await super.connectedCallback();
         this.addEventListener("click", ()=>{
+            console.log(typeof(this.locked));
+            if (this.locked) return;
             this.toggle();
         });
     }
@@ -39,8 +41,25 @@ class CheckBox extends NidgetElement {
         this.setAttribute(CheckBox.CHECKED_ATTRIBUTE, value);
         if (dispatch) this.dispatchEvent(new ValueUpdate(value));
     }
+
+    /**
+     * Set the locked attribute.
+     * If true prevents changing value.
+     * @param value
+     */
+    set locked(value){
+        this.setAttribute(CheckBox.LOCKED_ATTRIBUTE, value);
+    }
+
+    /**
+     * Retrieve the locked attribute.
+     */
+    get locked(){
+        return this.getAttribute(CheckBox.LOCKED_ATTRIBUTE) === "true";
+    }
 }
 
 CheckBox.CHECKED_ATTRIBUTE = "checked";
+CheckBox.LOCKED_ATTRIBUTE = "locked";
 window.customElements.define('check-box', CheckBox);
 module.exports = CheckBox;

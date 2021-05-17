@@ -13,7 +13,6 @@ class PlayerPanel extends NidgetElement {
     }
 
     set name(value){
-        console.log(value);
         this.querySelector("#name").innerHTML = value;
     }
 

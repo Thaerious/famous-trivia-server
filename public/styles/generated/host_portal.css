@@ -46,7 +46,7 @@ trivia-timer {
   height: calc(0.08 * var(--width-value));
   z-index: 10;
   font-family: "Arial Black", serif;
-  font-size: 6vh;
+  font-size: calc(1.2 * var(--base-font-size));
 }
 
 check-box {
@@ -71,6 +71,10 @@ check-box {
   top: 0;
   left: 0;
   z-index: 100;
+  font-family: Arial Black, serif;
+  font-size: calc(0.75 * var(--base-font-size));
+  font-variant: small-caps;
+  text-shadow: 4px 4px 2px rgba(0, 0, 0, 0.75);
 }
 #main-container #game-board, #main-container #multiple-choice-present, #main-container #question-pane {
   position: absolute;
@@ -93,8 +97,8 @@ check-box {
 #top-bar menu-container {
   position: absolute;
   right: 0px;
-  width: 5vh;
-  height: 5vh;
+  width: calc(0.06 * var(--height-value));
+  height: calc(0.06 * var(--height-value));
 }
 #top-bar menu-container .menu-area {
   width: 200px;
@@ -139,6 +143,34 @@ check-box {
   transform: translateX(-50%);
 }
 
+.button-container {
+  position: absolute;
+  bottom: -10%;
+  right: 0;
+  width: 85%;
+  height: 7%;
+  z-index: 50;
+}
+.button-container .button {
+  position: absolute;
+  width: 20%;
+  height: 100%;
+  left: 50%;
+  bottom: 0;
+  font-family: "Arial Black", serif;
+  font-size: calc(0.8 * var(--base-font-size));
+  --ui-button-color: 255, 200, 0;
+}
+.button-container .button.left {
+  transform: translateX(-160%);
+}
+.button-container .button.center {
+  transform: translateX(-50%);
+}
+.button-container .button.right {
+  transform: translateX(60%);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -176,33 +208,6 @@ body, html {
   src: url("../font/OPTIKorinna-Agency.ttf.woff") format("woff"), url("../font/OPTIKorinna-Agency.ttf.svg#OPTIKorinna-Agency") format("svg"), url("../font/OPTIKorinna-Agency.ttf.eot"), url("../font/OPTIKorinna-Agency.ttf.eot?#iefix") format("embedded-opentype");
   font-weight: normal;
   font-style: normal;
-}
-.button-container {
-  position: absolute;
-  bottom: -10%;
-  right: 0;
-  width: 85%;
-  height: 7%;
-  z-index: 50;
-}
-.button-container .button {
-  position: absolute;
-  width: 20%;
-  height: 100%;
-  left: 50%;
-  bottom: 0;
-  font-family: "Arial Black", serif;
-  font-size: calc(0.8 * var(--base-font-size));
-  --ui-button-color: 255, 200, 0;
-}
-.button-container .button.left {
-  transform: translateX(-160%);
-}
-.button-container .button.center {
-  transform: translateX(-50%);
-}
-.button-container .button.right {
-  transform: translateX(60%);
 }
 
 /*# sourceMappingURL=host_portal.css.map */

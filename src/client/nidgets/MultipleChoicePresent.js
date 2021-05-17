@@ -2,9 +2,9 @@ const NidgetElement = require("@Thaerious/nidget").NidgetElement;
 require("./CheckBox.js");
 
 class ValueUpdate extends CustomEvent {
-    constructor(index, value) {
+    constructor(index, value, checked) {
         super('value-update',
-            {detail: {index: index, value: value}}
+            {detail: {index: index, value: value, checked: checked}}
         );
     }
 }
@@ -18,7 +18,7 @@ class MultipleChoicePresent extends NidgetElement {
     setTimeout(index, value){
         if (this.timeouts[index]) clearTimeout(this.timeouts[index]);
         this.timeouts[index] = setTimeout(()=>{
-            const event = new ValueUpdate(index, value);
+            const event = new ValueUpdate(index, value, true);
             this.dispatchEvent(event);
             this.timeouts[index] = undefined;
         }, 300);
@@ -27,42 +27,26 @@ class MultipleChoicePresent extends NidgetElement {
     async ready() {
         await super.ready();
 
-        for (const element of this.querySelectorAll(".wager")){
-            element.addEventListener("click", event=>element.content = "");
-        }
-``
-        for (const element of this.querySelectorAll(".wager")){
-            element.addEventListener("text-update", event => {
-                if(element.content !== "0"){
-                    const index = element.parentElement.getAttribute("data-index");
-                    element.parentElement.querySelector("check-box").checked = true;
-                    this.setTimeout(index, element.content);
-                }
-            });
-
-            element.addEventListener("blur", event =>{
-                if(element.content === ""){
-                    element.content = '0';
-                }
+        for (const element of this.querySelectorAll("check-box")){
+            element.addEventListener("value-update", event => {
+                const index = element.parentElement.getAttribute("data-index");
+                const checked = event.detail.value === "true";
+                const value = element.parentElement.querySelector(".wager").content;
+                element.parentElement.querySelector(".wager").disabled = !checked;
+                this.dispatchEvent(new ValueUpdate(index, parseInt(value), checked));
             });
         }
 
-        // for (let element of this.querySelectorAll("check-box")){
-        //     element.addEventListener("value-update", event =>{
-        //         if(event.detail.value === "false"){
-        //             const index = element.parentElement.getAttribute("data-index");
-        //             const event = new ValueUpdate(index, 0);
-        //             element.parentElement.querySelector(".wager").content = "";
-        //             this.dispatchEvent(event);
-        //         }
-        //         else {
-        //             const index = element.parentElement.getAttribute("data-index");
-        //             const event = new ValueUpdate(index, 0);
-        //             element.parentElement.querySelector(".wager").content = "0";
-        //             this.dispatchEvent(event);
-        //         }
-        //     });
-        // }
+        for (const element of this.querySelectorAll(".wager")){
+            element.addEventListener("click", event=>{
+                element.content = "";
+            });
+            element.addEventListener("text-update", event=>{
+                const index = element.parentElement.getAttribute("data-index");
+                const value = event.detail.content;
+                this.dispatchEvent(new ValueUpdate(index, parseInt(value), true));
+            });
+        }
     }
 
     setMode(mode) {

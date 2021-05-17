@@ -24,19 +24,29 @@
   &.dim {
     #name, #score {
       color: grey;
+      text-shadow: none;
     }
   }
 
+  #name{
+    top: -5%;
+  }
+
+  #score{
+    top: 33%;
+  }
+
+  #clock{
+    bottom: 0;
+  }
+
   #name, #score {
-    position: relative;
+    position: absolute;
     display: block;
-    font-family: Arial Black, serif;
     table-layout: fixed;
-    font-size: 3vh;
-    font-variant: small-caps;
-    color: whitesmoke;
     text-align: center;
-    text-shadow: 4px 4px #000;
+    width: 100%;
+    color: whitesmoke;
 
     &.active {
       color: #f5f500;
@@ -54,11 +64,10 @@
   }
 
   #clock {
-    position: relative;
+    position: absolute;
     width: 100%;
-    height: 2vh;
+    height: 20%;
     background-color: grey;
-    margin-top: 5px;
 
     &.hidden{
       display: none;
@@ -66,9 +75,8 @@
 
     #buzz-light {
       position: absolute;
-      height: 2vh;
+      height: 100%;
       background-color: greenyellow;
-      margin-top: 5px;
       bottom: 0;
       width: 0;
 

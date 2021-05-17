@@ -26,7 +26,7 @@ trivia-timer {
   z-index: 10;
 
   font-family: "Arial Black", serif;
-  font-size: 6vh;
+  font-size: calc(1.2 * var(--base-font-size));
 }
 
 check-box {
@@ -51,6 +51,11 @@ check-box {
     top: 0;
     left: 0;
     z-index: 100;
+
+    font-family: Arial Black, serif;
+    font-size: calc(0.75 * var(--base-font-size));
+    font-variant: small-caps;
+    text-shadow: 4px 4px 2px rgba(0, 0, 0, 0.75);
   }
 
   #game-board, #multiple-choice-present, #question-pane {
@@ -75,8 +80,8 @@ check-box {
   menu-container {
     position: absolute;
     right: 0px;
-    width: 5vh;
-    height: 5vh;
+    width: calc(0.06 * var(--height-value));
+    height: calc(0.06 * var(--height-value));
 
     .menu-area {
       width: 200px;

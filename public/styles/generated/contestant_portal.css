@@ -46,7 +46,7 @@ trivia-timer {
   height: calc(0.08 * var(--width-value));
   z-index: 10;
   font-family: "Arial Black", serif;
-  font-size: 6vh;
+  font-size: calc(1.2 * var(--base-font-size));
 }
 
 check-box {
@@ -71,6 +71,10 @@ check-box {
   top: 0;
   left: 0;
   z-index: 100;
+  font-family: Arial Black, serif;
+  font-size: calc(0.75 * var(--base-font-size));
+  font-variant: small-caps;
+  text-shadow: 4px 4px 2px rgba(0, 0, 0, 0.75);
 }
 #main-container #game-board, #main-container #multiple-choice-present, #main-container #question-pane {
   position: absolute;
@@ -93,8 +97,8 @@ check-box {
 #top-bar menu-container {
   position: absolute;
   right: 0px;
-  width: 5vh;
-  height: 5vh;
+  width: calc(0.06 * var(--height-value));
+  height: calc(0.06 * var(--height-value));
 }
 #top-bar menu-container .menu-area {
   width: 200px;
@@ -139,32 +143,32 @@ check-box {
   transform: translateX(-50%);
 }
 
-.button {
-  border: 3px solid rgb(var(--ui-border-color));
-  border-radius: 15px;
-  cursor: pointer;
-  background-color: rgba(var(--ui-bg), 0.6);
+.button-container {
+  position: absolute;
+  bottom: -10%;
+  right: 0;
+  width: 85%;
+  height: 7%;
+  z-index: 50;
 }
-.button .text {
-  position: relative;
-  text-align: center;
-  font-size: 20px;
+.button-container .button {
+  position: absolute;
+  width: 20%;
+  height: 100%;
+  left: 50%;
+  bottom: 0;
   font-family: "Arial Black", serif;
-  line-height: 0;
-  top: 50%;
+  font-size: calc(0.8 * var(--base-font-size));
+  --ui-button-color: 255, 200, 0;
 }
-.button:hover {
-  border-color: rgb(var(--ui-border-color-hover));
-  background-color: rgba(var(--ui-bg), 0.9);
+.button-container .button.left {
+  transform: translateX(-160%);
 }
-.button.disabled {
-  border-color: #6e6e6e;
-  color: #6e6e6e;
-  background-color: rgba(var(--ui-bg-dis, 138, 138, 138), 0.6);
-  pointer-events: none;
+.button-container .button.center {
+  transform: translateX(-50%);
 }
-.button.hidden {
-  display: none;
+.button-container .button.right {
+  transform: translateX(60%);
 }
 
 * {
@@ -188,29 +192,34 @@ body, html {
   overflow: hidden;
 }
 
-#buzz {
-  position: absolute;
-  width: 40vh;
-  height: 14vh;
-  bottom: -9.5vh;
-  background-color: #ebff43;
-}
-#buzz .text {
-  font-size: 10vh;
-}
-#buzz:hover {
-  background-color: #ecff8c;
-}
-#buzz.right {
-  left: 50%;
-  transform: translateX(40%);
+:root {
+  --ui-border-color: #44d1dc;
+  --ui-background-hover: #3f43d8;
+  --ui-background: #1117d9;
+  --ui-background-selected: #3f43d8;
+  --ui-background-disabled: #808080;
+  --menu-font-family: Arial Black, serif;
+  --menu-font-size: 2vh;
+  --menu-width: 200px;
 }
 
+@font-face {
+  font-family: "OPTIKorinna-Agency";
+  src: url("../font/OPTIKorinna-Agency.ttf.woff") format("woff"), url("../font/OPTIKorinna-Agency.ttf.svg#OPTIKorinna-Agency") format("svg"), url("../font/OPTIKorinna-Agency.ttf.eot"), url("../font/OPTIKorinna-Agency.ttf.eot?#iefix") format("embedded-opentype");
+  font-weight: normal;
+  font-style: normal;
+}
 #self-panel {
   position: absolute;
-  width: 25vh;
-  left: 10vh;
-  top: 2vh;
+  width: 13.5%;
+  height: calc(1/6 * 100%);
+  bottom: calc(-2.5% + -1/6 * 100%);
+  left: 0;
+  z-index: 100;
+  font-family: Arial Black, serif;
+  font-size: calc(0.75 * var(--base-font-size));
+  font-variant: small-caps;
+  text-shadow: 4px 4px 2px rgba(0, 0, 0, 0.75);
 }
 
 /*# sourceMappingURL=contestant_portal.css.map */

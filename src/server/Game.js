@@ -67,11 +67,19 @@ Timer.TIMES = {};
 Object.assign(Timer.TIMES, constants.TIMES);
 
 class Game {
+
+    /**
+     *
+     * @param model GameDescriptionModel
+     */
     constructor(model) {
         this.timer = new Timer(this);
         this.listeners = {};
-        if (model) this.model = model;
         this.state = 0;
+        if (model){
+            this.model = model;
+            this.lastUpdate = this.getUpdate();
+        }
     }
 
     /**
@@ -93,6 +101,7 @@ class Game {
         let game = new Game();
         Object.assign(game, json);
         game.model = GameModel.fromJSON(game.model);
+        game.lastUpdate = game.getUpdate();
 
         return game;
     }
@@ -119,9 +128,11 @@ class Game {
         }
     }
 
-    updateState(state){
+    updateState(state, extraData = {}){
         this.state = state;
-        let update = this.getUpdate();
+        const update = this.getUpdate()
+        update.data = {...update.data, ... extraData};
+        this.lastUpdate = update;
         this.broadcast(update);
     }
 
@@ -134,7 +145,7 @@ class Game {
     }
 
     broadcast(msg) {
-        msg = msg ?? this.getUpdate();
+        msg = msg ?? this.lastUpdate;
 
         for (let name in this.listeners) {
             this.listeners[name](msg);
@@ -148,8 +159,10 @@ class Game {
     createPlayerData() {
         let data = {};
         for (let player of this.model.players) {
-            data[player.name] = new Array(this.model.getRound().getAnswers().length);
-            data[player.name].fill(0);
+            data[player.name] = {
+                bets : [0, 0, 0, 0, 0, 0],
+                total : 0
+            }
         }
         return data;
     }
@@ -177,23 +190,32 @@ class Game {
 
         for (let name in this.playersData) {
             // the sum of bets must be <= the players available score
-            if (this.sumMCBet(name) > this.model.getPlayer(name).score) continue;
 
+            this.playersData[name].bonus = true;
             let bonusFlag = true;
-            for (let index = 0; index < this.playersData[name].length; index++) {
-                if (this.playersData[name][index] === ""){
-                    if (values[index] === "true") bonusFlag = false;
-                    continue;
-                }
 
-                if (values[index] === "true") {
-                    this.model.getPlayer(name).score += this.playersData[name][index];
+            if (this.sumMCBet(name) > this.model.getPlayer(name).score){
+                this.playersData[name].bonus = false;
+                continue;
+            }
+
+            for (let index = 0; index < this.playersData[name].bets.length; index++) {
+                if (this.playersData[name].bets[index] === ""){
+                    if (values[index] === "true") bonusFlag = false;
+                    this.playersData[name].bonus = false;
+                }
+                else if (values[index] === "true") {
+                    this.playersData[name].total += this.playersData[name].bets[index];
                 } else {
                     bonusFlag = false;
-                    this.model.getPlayer(name).score -= this.playersData[name][index];
+                    this.playersData[name].total -= this.playersData[name].bets[index];
                 }
             }
-            if (bonusFlag) this.model.getPlayer(name).score += this.model.getUpdate().bonus;
+            if (bonusFlag){
+                this.playersData[name].total += parseInt(this.model.getUpdate().round.bonus);
+            }
+
+            this.model.getPlayer(name).score += this.playersData[name].total;
         }
     }
 
@@ -203,8 +225,8 @@ class Game {
      */
     sumMCBet(name) {
         let r = 0;
-        for (let index = 0; index < this.playersData[name].length; index++) {
-            r = r + this.playersData[name][index];
+        for (let index = 0; index < this.playersData[name].bets.length; index++) {
+            r = r + parseInt(this.playersData[name].bets[index]);
         }
         return r;
     }
@@ -244,8 +266,7 @@ class Game {
             case "continue":
                 this.model.getRound().setAnswerState();
                 this.updateState(2);
-                this.timer.start(Timer.TIMES.MULTIPLE_CHOICE);
-                this.timer.start(0);
+                // this.timer.start(Timer.TIMES.MULTIPLE_CHOICE);
                 break;
         }
     }
@@ -260,18 +281,17 @@ class Game {
             case "expire":
                 this.model.getRound().setRevealState();
                 this.updateMCScores();
-                this.updateState(3);
+                this.updateState(3, {bets : this.playersData});
                 break;
             case "update":
                 let name = input.player;
                 let index = parseInt(input.data.index);
-
-                if (input.data.value === ""){
-                    this.playersData[name][index] = "";
-                } else {
+                if (input.data.checked){
                     let value = parseInt(input.data.value);
                     if (value < 0) value = 0;
-                    this.playersData[name][index] = value;
+                    this.playersData[name].bets[index] = value;
+                } else {
+                    this.playersData[name].bets[index] = "";
                 }
                 break;
         }

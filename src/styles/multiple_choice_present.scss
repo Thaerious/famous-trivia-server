@@ -1,58 +1,56 @@
 @import 'editor/buttons';
 
 * {
+    position: absolute;
     box-sizing: border-box;
     display: block;
     user-select: none;
+
+    color: #eee;
+    font-size: calc(1.0 * var(--base-font-size));
+    line-height: calc(0.07 * var(--height-value));
+    font-family: OPTIKorinna-Agency, serif;
+    text-transform: uppercase;
 }
 
-:host(multiple-choice-present.hidden){
+.hidden, :host(multiple-choice-present.hidden){
     display: none;
 }
 
 :host(multiple-choice-present.show-mode){
-    .outer {
-        .inner{
-            .wager{
-                display: none;
-            }
-        }
+    .wager, .total{
+        display: none;
     }
 }
 
 .outer {
-    position: absolute;
-    box-sizing: border-box;
     width: 100%;
     height: 100%;
     font-family: Arial Black, serif;
     table-layout: fixed;
-    background-color: #1117d9;
+    background-color: #262096;
     z-index: 0;
     border: 3px solid black;
     border-radius: 10px;
-
-    background-image: url("../../assets/images/jeopardy_cell_bg.png");
-    background-repeat: no-repeat;
-    background-size: cover;
+    box-shadow: inset 0 0 15px #000;
 
     .inner {
-        position: absolute;
         width: 94%;
         left: 3%;
-        top: calc((var(--index) * 12%) + 15.75%);
+        top: calc((var(--index) * 12%) + 5.75%);
         height: 10%;
 
-        check-box {
-            position: absolute;
-            width: 5%;
-            left: 0;
-            --nidget-aspect-ratio: 1-1;
+        check-box, .label{
+            left: 14%;
         }
 
-        .wager {
-            position: absolute;
-            left: 6%;
+        check-box {
+            width: calc(0.06 * var(--height-value));
+            height: calc(0.06 * var(--height-value));
+        }
+
+        .wager, .amount{
+            left: 0;
             width: 12%;
             height: 100%;
             top: 0;
@@ -65,22 +63,11 @@
         }
 
         .answer {
-            //background-color: rgba(0, 0, 255, 0.5);
-            position: absolute;
-            left: 21%;
-            width: 81%;
+            left: 23%;
+            width: 78%;
             height: 100%;
-            text-align: center;
+            text-align: left;
             border-bottom: 1px dotted #878787;
-        }
-
-        .wager, .answer {
-            color: #eee;
-            font-size: 5vh;
-            line-height: 7vh;
-            font-family: OPTIKorinna-Agency, serif;
-            text-transform: uppercase;
-            white-space: pre-line;
         }
     }
 }

@@ -43,7 +43,7 @@ class TextInput extends NidgetElement {
     }
 
     set content(value){
-        return this.DOM['content'].innerHTML = value;
+        return this.DOM['content'].text = value;
     }
 
     setCaret(index) {

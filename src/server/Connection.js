@@ -94,6 +94,7 @@ class Connection{
         if (await this.req.session.get("role") === "host"){
             this.name = "@HOST";
             await this.connect(this.name);
+            this.send(this.game.getUpdate());
         }
         else if (await this.req.session.has("name") === true){
             this.name = await this.req.session.get("name");

@@ -24,7 +24,6 @@ class PortalController {
 
         switch (message.action) {
             case "connection_established":
-                this.send({action : "request_model"});
                 this.name = message.data.name;
                 if (this.view.setName) this.view.setName(message.data.name);
                 break;
