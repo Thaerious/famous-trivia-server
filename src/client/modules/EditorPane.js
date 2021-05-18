@@ -1,4 +1,5 @@
 import GameDescriptionModel from "./GameDescriptionModel.js";
+
 const DOM = {/* see EditorPane.constructor */};
 
 /**
@@ -6,7 +7,7 @@ const DOM = {/* see EditorPane.constructor */};
  */
 class MCAnswerCtrl {
     static run(model, saveCB) {
-        MCAnswerCtrl.model  = model;
+        MCAnswerCtrl.model = model;
         MCAnswerCtrl.saveCB = saveCB;
 
         DOM.menuDecreaseValue.hide();
@@ -45,11 +46,11 @@ class MCAnswerCtrl {
 
     static valueList(event) {
         let index = parseInt(event.detail.index);
-        MCAnswerCtrl.model.values[index]= event.detail.value;
+        MCAnswerCtrl.model.values[index] = event.detail.value;
         MCAnswerCtrl.saveCB();
     }
 
-    static bonusList(event){
+    static bonusList(event) {
         console.log(event);
         MCAnswerCtrl.model.bonus = event.detail.value;
         MCAnswerCtrl.saveCB();
@@ -79,7 +80,11 @@ class MCAnswerCtrl {
  */
 class MCQuestionCtrl {
     static run(model, saveCB) {
-        MCQuestionCtrl.model  = model;
+        window.parameters.type = "mc";
+        window.parameters.subtype = "question";
+        pushParameters();
+
+        MCQuestionCtrl.model = model;
         MCQuestionCtrl.saveCB = saveCB;
 
         DOM.menuDecreaseValue.hide();
@@ -125,35 +130,37 @@ class MCQuestionCtrl {
 /**
  * Jeopardy Question & Answer State Controller
  */
-class QuestionPaneCtrl {
+class JeopardyCtrl {
+
     /**
      * @param model - the question model object
      * @param field - which model field to read/write from {'answer', 'question'}
      * @param saveCB - call this method to save the model
+     * @param closeCB - call this method when controller is terminated.
      */
     static run(field, model, saveCB, closeCB) {
-        QuestionPaneCtrl.model   = model ?? QuestionPaneCtrl.model;
-        QuestionPaneCtrl.field   = field ?? QuestionPaneCtrl.field;
-        QuestionPaneCtrl.saveCB  = saveCB ?? QuestionPaneCtrl.saveCB;
-        QuestionPaneCtrl.closeCB = closeCB ?? QuestionPaneCtrl.closeCB;
+        JeopardyCtrl.model = model ?? JeopardyCtrl.model;
+        JeopardyCtrl.field = field ?? JeopardyCtrl.field;
+        JeopardyCtrl.saveCB = saveCB ?? JeopardyCtrl.saveCB;
+        JeopardyCtrl.closeCB = closeCB ?? JeopardyCtrl.closeCB;
 
         DOM.menuDecreaseValue.show();
         DOM.menuIncreaseValue.show();
 
-        DOM.questionPane.setText(QuestionPaneCtrl.model[QuestionPaneCtrl.field.substr(0, 1)]);
+        DOM.questionPane.setText(JeopardyCtrl.model[JeopardyCtrl.field.substr(0, 1)]);
         DOM.questionPane.show();
         DOM.gameBoard.hide();
 
-        DOM.questionPane.addEventListener("text-update", QuestionPaneCtrl.textList);
-        DOM.buttonShowBoard.addEventListener("click", QuestionPaneCtrl.boardList);
-        DOM.buttonShowQuestion.addEventListener(`click`, QuestionPaneCtrl.questionList);
-        DOM.buttonShowAnswer.addEventListener(`click`, QuestionPaneCtrl.answerList);
+        DOM.questionPane.addEventListener("text-update", JeopardyCtrl.textList);
+        DOM.buttonShowBoard.addEventListener("click", JeopardyCtrl.boardList);
+        DOM.buttonShowQuestion.addEventListener(`click`, JeopardyCtrl.questionList);
+        DOM.buttonShowAnswer.addEventListener(`click`, JeopardyCtrl.answerList);
 
         DOM.buttonShowBoard.show();
         DOM.buttonShowQuestion.show();
         DOM.buttonShowAnswer.show();
 
-        if (field === 'answer'){
+        if (field === 'answer') {
             DOM.buttonShowAnswer.disable();
             DOM.buttonShowQuestion.enable();
         } else {
@@ -163,13 +170,13 @@ class QuestionPaneCtrl {
     }
 
     static textList(event) {
-        QuestionPaneCtrl.model[QuestionPaneCtrl.field.substr(0, 1)] = event.detail.text;
-        QuestionPaneCtrl.saveCB();
+        JeopardyCtrl.model[JeopardyCtrl.field.substr(0, 1)] = event.detail.text;
+        JeopardyCtrl.saveCB();
     }
 
     static boardList(event) {
-        QuestionPaneCtrl.cleanup();
-        QuestionPaneCtrl.closeCB();
+        JeopardyCtrl.cleanup();
+        JeopardyCtrl.closeCB();
 
         delete window.parameters.subtype;
         delete window.parameters.row;
@@ -178,30 +185,63 @@ class QuestionPaneCtrl {
     }
 
     static answerList(event) {
-        QuestionPaneCtrl.cleanup();
-        QuestionPaneCtrl.run('answer');
+        JeopardyCtrl.cleanup();
+        JeopardyCtrl.run('answer');
 
         window.parameters.subtype = "answer";
         pushParameters();
     }
 
     static questionList(vent) {
-        QuestionPaneCtrl.cleanup();
-        QuestionPaneCtrl.run('question');
+        JeopardyCtrl.cleanup();
+        JeopardyCtrl.run('question');
 
         window.parameters.subtype = "question";
         pushParameters();
     }
 
     static cleanup() {
-        DOM.questionPane.removeEventListener("text-update", QuestionPaneCtrl.textList);
-        DOM.buttonShowBoard.removeEventListener("click", QuestionPaneCtrl.boardList);
-        DOM.buttonShowAnswer.removeEventListener("click", QuestionPaneCtrl.answerList);
-        DOM.buttonShowQuestion.removeEventListener("click", QuestionPaneCtrl.questionList);
+        DOM.questionPane.removeEventListener("text-update", JeopardyCtrl.textList);
+        DOM.buttonShowBoard.removeEventListener("click", JeopardyCtrl.boardList);
+        DOM.buttonShowAnswer.removeEventListener("click", JeopardyCtrl.answerList);
+        DOM.buttonShowQuestion.removeEventListener("click", JeopardyCtrl.questionList);
 
         DOM.buttonShowBoard.hide();
         DOM.buttonShowAnswer.hide();
         DOM.buttonShowQuestion.hide();
+    }
+}
+
+class JeopardyBoardCtrl {
+
+    static run(model) {
+        DOM.questionPane.hide();
+        DOM.gameBoard.hide();
+        DOM.multipleChoicePane.hide();
+
+        DOM.menuDecreaseValue.show();
+        DOM.menuIncreaseValue.show();
+        DOM.gameBoard.show();
+
+        DOM.buttonShowAnswer.hide();
+        DOM.buttonShowQuestion.hide();
+        DOM.buttonShowBoard.hide();
+
+        window.parameters.type = "jeopardy";
+        delete window.parameters.subtype;
+        pushParameters();
+
+        for (let col = 0; col < 6; col++) {
+            let column = model.getColumn(col);
+            DOM.gameBoard.setHeader(col, column.category, column.fontSize);
+
+            for (let row = 0; row < 5; row++) {
+                DOM.gameBoard.setCell(row, col, column.cell[row].value);
+                if (column.cell[row].q === "") DOM.gameBoard.setComplete(row, col, "false");
+                else if (column.cell[row].a === "") DOM.gameBoard.setComplete(row, col, "partial");
+                else DOM.gameBoard.setComplete(row, col, "true");
+            }
+        }
     }
 }
 
@@ -230,7 +270,7 @@ class EditorPane {
         DOM.buttonShowAnswer.hide();
         DOM.buttonShowQuestion.hide();
 
-        DOM.menu.addEventListener("menu-download", ()=>{
+        DOM.menu.addEventListener("menu-download", () => {
             const json = JSON.stringify(this.model.gameModel, null, 2);
             const blob = new Blob([json], {type: "application/json"});
             const url = window.URL.createObjectURL(blob);
@@ -240,7 +280,7 @@ class EditorPane {
             anchor.click();
         });
 
-        DOM.menu.addEventListener("menu-move-right", ()=>{
+        DOM.menu.addEventListener("menu-move-right", () => {
             if (this.model.currentRound >= this.model.roundCount - 1) return;
             this.model.setRoundIndex(this.model.currentRound, this.model.currentRound + 1);
             this.model.incrementRound();
@@ -248,7 +288,7 @@ class EditorPane {
             this.onSave();
         });
 
-        DOM.menu.addEventListener("menu-move-left", ()=>{
+        DOM.menu.addEventListener("menu-move-left", () => {
             if (this.model.currentRound <= 0) return;
             this.model.setRoundIndex(this.model.currentRound, this.model.currentRound - 1);
             this.model.decrementRound();
@@ -256,36 +296,36 @@ class EditorPane {
             this.onSave();
         });
 
-        DOM.menu.addEventListener("menu-remove-round", ()=>{
+        DOM.menu.addEventListener("menu-remove-round", () => {
             this.model.removeRound();
             this.updateTriangleView();
             this.onSave();
             this.updateView();
         });
 
-        DOM.menu.addEventListener("menu-home-screen", ()=>{
+        DOM.menu.addEventListener("menu-home-screen", () => {
             location.href = "host.ejs";
         });
 
-        DOM.menu.addEventListener("menu-increase-value", ()=>{
+        DOM.menu.addEventListener("menu-increase-value", () => {
             this.model.increaseValue();
             this.onSave();
             this.updateView();
         });
 
-        DOM.menu.addEventListener("menu-decrease-value", ()=>{
+        DOM.menu.addEventListener("menu-decrease-value", () => {
             this.model.decreaseValue();
             this.onSave();
             this.updateView();
         });
 
-        DOM.menu.addEventListener("menu-add-jeopardy", ()=>{
+        DOM.menu.addEventListener("menu-add-jeopardy", () => {
             this.model.addCategoryRound();
             this.updateView();
             this.onSave();
         });
 
-        DOM.menu.addEventListener("menu-add-mc", ()=>{
+        DOM.menu.addEventListener("menu-add-mc", () => {
             this.model.addMultipleChoiceRound();
             this.updateView();
             this.onSave();
@@ -333,7 +373,7 @@ class EditorPane {
             window.parameters.col = col;
             pushParameters();
 
-            QuestionPaneCtrl.run(
+            JeopardyCtrl.run(
                 'question',
                 this.model.getCell(row, col),
                 () => this.onSave(),
@@ -341,32 +381,36 @@ class EditorPane {
             );
         });
 
-        if (window.parameters.round){
+        this.loadURLState();
+    }
+
+    loadURLState(){
+
+        if (window.parameters.round) {
             this.model.setRound(window.parameters.round);
         } else {
             window.parameters.round = 0;
             pushParameters();
         }
 
-        if (!window.parameters.type){
+        if (!window.parameters.type) {
             this.updateView();
         }
 
-        if (window.parameters.type === "jeopardy"){
-            if (window.parameters.subtype === 'question'){
+        if (window.parameters.type === "jeopardy") {
+            if (window.parameters.subtype === 'question') {
                 const row = window.parameters.row;
                 const col = window.parameters.col;
-                QuestionPaneCtrl.run(
+                JeopardyCtrl.run(
                     'question',
                     this.model.getCell(row, col),
                     () => this.onSave(),
                     () => this.updateView()
                 );
-            }
-            else if (window.parameters.subtype === 'answer'){
+            } else if (window.parameters.subtype === 'answer') {
                 const row = window.parameters.row;
                 const col = window.parameters.col;
-                QuestionPaneCtrl.run(
+                JeopardyCtrl.run(
                     'answer',
                     this.model.getCell(row, col),
                     () => this.onSave(),
@@ -375,27 +419,16 @@ class EditorPane {
             } else {
                 this.updateView();
             }
-        }
-        else {
-            if (window.parameters.subtype === 'answer'){
+        } else {
+            if (window.parameters.subtype === 'answer') {
                 MCAnswerCtrl.run(this.model.getRound(), () => this.onSave());
-            }
-            else if (window.parameters.subtype === 'question'){
+            } else if (window.parameters.subtype === 'question') {
                 MCQuestionCtrl.run(this.model.getRound(), () => this.onSave());
             }
         }
-
-        // if (window.parameters.mcstate){
-        //     console.log(window.parameters.mcstate);
-        //     if (window.parameters.mcstate === 'answer'){
-        //         MCAnswerCtrl.run(this.model.getRound(), () => this.onSave());
-        //     } else if (window.parameters.mcstate === 'question'){
-        //         MCQuestionCtrl.run(this.model.getRound(), () => this.onSave());
-        //     }
-        // }
     }
 
-    async rename(newName){
+    async rename(newName) {
         this.model.name = newName;
         await this.fileOps.rename(this.fileId, newName + ".json");
         await this.onSave();
@@ -415,14 +448,13 @@ class EditorPane {
         this.updateTriangleView();
 
         window.parameters.round = model.currentRound;
-        pushParameters();
 
-        DOM.questionPane.hide();
-        DOM.gameBoard.hide();
-        DOM.multipleChoicePane.hide();
-
-        if (model.getRound().type === GameDescriptionModel.questionType.CATEGORY) this.jeopardyView(model);
-        if (model.getRound().type === GameDescriptionModel.questionType.MULTIPLE_CHOICE) this.multipleChoiceView(model);
+        if (model.getRound().type === GameDescriptionModel.questionType.CATEGORY){
+            JeopardyBoardCtrl.run(model);
+        }
+        if (model.getRound().type === GameDescriptionModel.questionType.MULTIPLE_CHOICE){
+            MCQuestionCtrl.run(this.model.getRound(), () => this.onSave());
+        }
     }
 
     updateTriangleView() {
@@ -431,40 +463,6 @@ class EditorPane {
         if (this.model.currentRound === 0) DOM.triangleLeft.classList.add("hidden");
         if (this.model.currentRound >= this.model.roundCount - 1) DOM.triangleRight.classList.add("hidden");
         DOM.roundLabel.textContent = "Round " + (this.model.currentRound + 1);
-    }
-
-    multipleChoiceView(model) {
-        window.parameters.type = "mc";
-        window.parameters.subtype = "question";
-        pushParameters();
-
-        MCQuestionCtrl.run(this.model.getRound(), () => this.onSave());
-    }
-
-    jeopardyView(model) {
-        DOM.menuDecreaseValue.show();
-        DOM.menuIncreaseValue.show();
-        DOM.gameBoard.show();
-
-        DOM.buttonShowAnswer.hide();
-        DOM.buttonShowQuestion.hide();
-        DOM.buttonShowBoard.hide();
-
-        window.parameters.type = "jeopardy";
-        delete window.parameters.subtype;
-        pushParameters();
-
-        for (let col = 0; col < 6; col++) {
-            let column = model.getColumn(col);
-            DOM.gameBoard.setHeader(col, column.category, column.fontSize);
-
-            for (let row = 0; row < 5; row++) {
-                DOM.gameBoard.setCell(row, col, column.cell[row].value);
-                if (column.cell[row].q === "") DOM.gameBoard.setComplete(row, col, "false");
-                else if (column.cell[row].a === "") DOM.gameBoard.setComplete(row, col, "partial");
-                else DOM.gameBoard.setComplete(row, col, "true");
-            }
-        }
     }
 }
 
