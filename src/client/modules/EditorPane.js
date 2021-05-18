@@ -359,6 +359,7 @@ class EditorPane {
         DOM.gameBoard.addEventListener("header-update", event => {
             let col = event.detail.col;
             this.model.getColumn(col).category = event.detail.value;
+            this.model.getColumn(col).fontSize = event.detail.fontSize;
             this.onSave();
         });
 
