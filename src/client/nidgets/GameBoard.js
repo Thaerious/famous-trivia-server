@@ -50,9 +50,6 @@ class GameBoard extends NidgetElement {
             this.getHeader(col).addEventListener("blur", (event)=>{
                 event.target.innerHTML = event.target.text.trim();
                 event.target.fitText.notify(fontSize=>{
-                    console.log("blur");
-                    console.log(this.getHeader(col).text);
-                    console.log(fontSize);
                     this.dispatchEvent(new HeaderUpdateEvent(col, this.getHeader(col).text, fontSize));
                 });
             });
@@ -63,11 +60,6 @@ class GameBoard extends NidgetElement {
                 });
             }
         }
-    }
-
-    readyHeaders(){
-        let headers = this.querySelectorAll("[data-row='h'] .value");
-        for (let header of headers) header.fitText.notify();
     }
 
     /**
