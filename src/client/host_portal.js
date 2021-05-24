@@ -32,6 +32,16 @@ window.onload = async () => {
             ws.send(JSON.stringify({action : "join", data : {name : "Adam"}}));
             ws.send(JSON.stringify({action : "join", data : {name : "Bert"}}));
             ws.send(JSON.stringify({action : "join", data : {name : "Carol"}}));
+            ws.send(JSON.stringify({action : "join", data : {name : "Dave"}}));
+            ws.send(JSON.stringify({action : "join", data : {name : "Edith"}}));
+            ws.send(JSON.stringify({action : "join", data : {name : "Fran"}}));
+            ws.send(JSON.stringify({action : "join", data : {name : "Garth"}}));
+            ws.send(JSON.stringify({action : "join", data : {name : "Herbert"}}));
+            ws.send(JSON.stringify({action : "join", data : {name : "Ira"}}));
+            ws.send(JSON.stringify({action : "join", data : {name : "Jill"}}));
+            ws.send(JSON.stringify({action : "join", data : {name : "Keith"}}));
+            ws.send(JSON.stringify({action : "join", data : {name : "Lisa"}}));
+            ws.send(JSON.stringify({action : "join", data : {name : "Matt"}}));
         });
 
         document.querySelector("menu-container").addEventListener("next", ()=>{
@@ -52,11 +62,11 @@ window.onload = async () => {
             ws.send(JSON.stringify({action : "join", data : {name : "Adam"}}));
             ws.send(JSON.stringify({action : "join", data : {name : "Bert"}}));
             ws.send(JSON.stringify({action : "join", data : {name : "Carol"}}));
-            // ws.send(JSON.stringify({action : "join", data : {name : "Dave"}}));
-            // ws.send(JSON.stringify({action : "join", data : {name : "Edith"}}));
-            // ws.send(JSON.stringify({action : "join", data : {name : "Fran"}}));
-            // ws.send(JSON.stringify({action : "join", data : {name : "Garth"}}));
-            // ws.send(JSON.stringify({action : "join", data : {name : "Herbert"}}));
+            ws.send(JSON.stringify({action : "join", data : {name : "Dave"}}));
+            ws.send(JSON.stringify({action : "join", data : {name : "Edith"}}));
+            ws.send(JSON.stringify({action : "join", data : {name : "Fran"}}));
+            ws.send(JSON.stringify({action : "join", data : {name : "Garth"}}));
+            ws.send(JSON.stringify({action : "join", data : {name : "Herbert"}}));
         }
 
     } catch (err) {

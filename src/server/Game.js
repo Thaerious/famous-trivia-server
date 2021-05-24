@@ -322,6 +322,14 @@ class Game {
                     this.model.getRound().setQuestionState(input.data.col, input.data.row);
                     this.updateState(5);
                 }
+                this.notify("@HOST", {
+                    action: "provide_answer",
+                    'id-hash': crypto.randomBytes(8).toString('hex'),
+                    'time-stamp': new Date(),
+                    data: {
+                        answer: this.model.getRound().getAnswer()
+                    }
+                });
                 break;
         }
     }
@@ -366,6 +374,7 @@ class Game {
                 break;
             case "accept":
                 let currentPlayer = this.model.getRound().getCurrentPlayer();
+                console.log(currentPlayer);
                 if (!currentPlayer) return;
                 this.model.getPlayer(currentPlayer).score += this.model.getRound().getValue();
                 this.model.getRound().setRevealState();

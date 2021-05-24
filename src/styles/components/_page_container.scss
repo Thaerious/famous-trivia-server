@@ -6,7 +6,7 @@
   height: calc(var(--height-value));
   width: calc(var(--width-value));
   font-size: calc(var(--base-font-size));
-  background-color: rgba(128, 128, 128, 0.33);
+  //background-color: rgba(128, 128, 128, 0.33);
 
   &.aspect-fit{
     --height-value: 100vh;

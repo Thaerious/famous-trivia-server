@@ -1,33 +1,33 @@
 const NidgetElement = require("@Thaerious/nidget").NidgetElement;
 
-class TextUpdate extends  CustomEvent{
+class TextUpdate extends CustomEvent {
     constructor(text) {
         super('text-update',
-            {detail : {text : text}}
+            {detail: {text: text}}
         );
     }
 }
 
-class QuestionPane extends NidgetElement{
+class QuestionPane extends NidgetElement {
     constructor() {
         super("question-pane-template");
     }
 
-    async ready(){
+    async ready() {
         await super.ready();
-        this.addEventListener("click", ()=>this.querySelector(".text-contents").focus());
+        this.addEventListener("click", () => this.querySelector(".text-contents").focus());
 
-        this.querySelector("#text-contents").addEventListener("blur", async ()=>{
+        this.querySelector("#text-contents").addEventListener("blur", async () => {
             let text = this.querySelector(".text-contents").text;
             this.dispatchEvent(new TextUpdate(text.trim()));
         });
     }
 
-    clear(){
+    clear() {
         this.querySelector(".text-contents").text = "";
     }
 
-    setText(text){
+    setText(text) {
         this.querySelector(".text-contents").text = text;
     }
 }

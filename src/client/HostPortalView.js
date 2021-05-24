@@ -19,6 +19,7 @@ class HostPortalView extends AbstractView{
         this.DOM.continueButton = document.querySelector("#continue");
         this.DOM.nextButton = document.querySelector("#next");
         this.DOM.startButton = document.querySelector("#start");
+        this.DOM.answer = document.querySelector("#answer");
 
         this.DOM.acceptButton.addEventListener("click",  e => this.dispatchEvent(new ViewEvent("accept")));
         this.DOM.rejectButton.addEventListener("click",  e => this.dispatchEvent(new ViewEvent("reject")));
@@ -37,6 +38,7 @@ class HostPortalView extends AbstractView{
         this.DOM.continueButton.hide();
         this.DOM.nextButton.hide();
         this.DOM.startButton.hide();
+        this.DOM.answer.hide();
 
         this.DOM.continueButton.classList.remove("center");
         this.DOM.continueButton.classList.add("right");
@@ -65,17 +67,20 @@ class HostPortalView extends AbstractView{
                 this.DOM.continueButton.show();
                 this.DOM.continueButton.classList.add("right");
                 this.DOM.continueButton.classList.remove("center");
+                this.DOM.answer.show();
                 break;
             case 6:
                 this.DOM.acceptButton.show();
                 this.DOM.rejectButton.show();
                 this.DOM.timer.show();
+                this.DOM.answer.show();
                 break;
             case 7:
                 break;
             case 8:
                 this.DOM.acceptButton.show();
                 this.DOM.rejectButton.show();
+                this.DOM.answer.show();
                 break;
             case 9:
                 this.DOM.continueButton.show();
@@ -85,6 +90,10 @@ class HostPortalView extends AbstractView{
             default:
                 break;
         }
+    }
+
+    updateAnswer(answer){
+        this.DOM.answer.text = answer;
     }
 }
 

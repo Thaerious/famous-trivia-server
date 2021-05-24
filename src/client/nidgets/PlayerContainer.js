@@ -6,20 +6,26 @@ import PlayerPanel from "./PlayerPanel.js";
 class PlayerContainer extends NidgetElement {
     constructor(templateId = "player-container-template") {
         super(templateId);
-        this.hiddenExpanded = true;
+        this.extraPlayersHidden = true;
     }
 
     async ready(){
         await super.ready();
-        this.querySelector("#expand-button").addEventListener("click", event=>{
-            if (this.hiddenExpanded){
-                this.querySelector(".outer").classList.remove("hide-extra");
-                this.querySelector("#expand-button .text").innerHTML = "&#9664;";
-                this.hiddenExpanded = false;
-            } else {
+
+        document.body.addEventListener("click", event => {
+                if (this.extraPlayersHidden) return;
                 this.querySelector(".outer").classList.add("hide-extra");
                 this.querySelector("#expand-button .text").innerHTML = "&#9654;";
-                this.hiddenExpanded = true;
+                this.extraPlayersHidden = true;
+            }
+        );
+
+        this.querySelector("#expand-button").addEventListener("click", event => {
+            if (this.extraPlayersHidden){
+                this.querySelector(".outer").classList.remove("hide-extra");
+                this.querySelector("#expand-button .text").innerHTML = "&#9664;";
+                this.extraPlayersHidden = false;
+                event.stopPropagation();
             }
         });
     }
@@ -29,19 +35,19 @@ class PlayerContainer extends NidgetElement {
         let expandButton = this.querySelector("#expand-button");
 
         let playerPanel = document.createElement("player-panel");
-        expandButton.hide();
         playerPanel.name = name;
         playerPanel.score = score;
 
         this.addPlayerPanel(playerPanel);
         window.lastPanel = playerPanel;
 
+        if (this.size > 6) expandButton.show();
         return playerPanel;
     }
 
     addInner(){
         const outer = this.querySelector(".outer");
-        const nextIndex = this.querySelector(".inner").length;
+        const nextIndex = this.querySelectorAll(".inner").length;
 
         const element = document.createElement("nidget-element");
         element.classList.add("inner");
@@ -53,14 +59,16 @@ class PlayerContainer extends NidgetElement {
     }
 
     getInner(index){
-        while (this.querySelector(".inner").length <= index){
+        while (this.querySelectorAll(".inner").length <= index){
             this.addInner();
         }
-        return this.querySelector(`.inner[data-index='${index}']`)
+        let selector = `.inner[data-index='${index}']`
+        const element = this.querySelector(`.inner[data-index='${index}']`);
+        return element;
     }
 
     addPlayerPanel(element){
-        const innerIndex = Math.trunc((this.size + 1) / 6);
+        const innerIndex = Math.trunc((this.size) / 6);
         const innerElement = this.getInner(innerIndex);
         element.setAttribute("style", `--index: ${this.size % 6}`);
         innerElement.append(element);

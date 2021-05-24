@@ -27,6 +27,9 @@ class PortalController {
                 this.name = message.data.name;
                 if (this.view.setName) this.view.setName(message.data.name);
                 break;
+            case "provide_answer":
+                this.view.updateAnswer(message.data.answer);
+                break;
             case "update_model":
                 this.view.updateModel(message.data);
                 break;
