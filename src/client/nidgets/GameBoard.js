@@ -8,7 +8,7 @@
         header-update (value, col, fontsize) : when the header text changes (and blurs)
  **/
 
-const NidgetElement = require("@Thaerious/nidget").NidgetElement;
+const NidgetElement = require("@thaerious/nidget").NidgetElement;
 
 class CellSelectEvent extends CustomEvent{
     constructor(row, col) {
