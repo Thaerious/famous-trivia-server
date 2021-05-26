@@ -1,0 +1,14 @@
+[Unit]
+Description=trivia.js
+Documentation=https://example.com
+After=network.target
+
+[Service]
+Environment=TRIVIA_PORT=8000
+Type=simple
+User=trivia_user
+ExecStart=/usr/bin/node /home/trivia_user/trivia/server/src/server.js
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
