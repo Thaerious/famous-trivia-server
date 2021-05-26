@@ -38,6 +38,8 @@ class NidgetPreprocessor {
             console.log("Known Nidgets:");
             for (let nidget in this.knownNidgets){
                 console.log(" -- " + nidget);
+                console.log(this.knownNidgets[nidget].dependencies);
+                console.log("");
             }
         }
 
