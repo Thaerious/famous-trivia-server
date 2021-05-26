@@ -1,3 +1,5 @@
+// noinspection SpellCheckingInspection
+
 import fs from "fs";
 import browserify from "browserify";
 import constants from "./constants.js";
@@ -14,15 +16,36 @@ class JITBrowserify {
         }
     }
 
+    /**
+     * Create a browserified .js file on demand.
+     * THe source path is determined from the path in the request header.
+     *
+     * @param req
+     * @param res
+     * @param next
+     */
     run(req, res, next) {
         let path = req.path.slice(5);
         let name = path.substr(0, path.length - 3);
 
         res.setHeader('Content-Type', 'text/javascript');
         let filepath = './src/client/' + path;
+        this.browserify(filepath)
+            .on('error', err => {
+                this.emit('end'); // end this stream
+                reject(err);
+            })
+            .pipe(res);
+    }
 
-        let b = browserify(filepath, {debug: true});
-        let dependencies = this.nidgetPreprocessor.getDependencies("./views/pages/" + name + ".ejs");
+    /**
+     * Browserify the file found at 'filepath'
+     * @param filepath
+     * @returns {Readable}
+     */
+    browserify(filepath){
+        const b = browserify(filepath, {debug: true});
+        const dependencies = this.nidgetPreprocessor.getDependencies(filepath);
 
         for (let dep of dependencies) {
             let path = getScriptPath(constants.nidgets.SCRIPT_PATH, dep);
@@ -30,12 +53,22 @@ class JITBrowserify {
         }
 
         b.transform("babelify");
-        b.bundle()
-            .on('error', function (err) {
-                console.log(err.message);
+        const rs = b.bundle();
+        return rs;
+    }
+
+    async syncBrowserify(filepath, outStream){
+        return new Promise((resolve, reject) => {
+            const rs = this.browserify(filepath);
+
+            rs.on('error', err => {
                 this.emit('end'); // end this stream
-            })
-            .pipe(res);
+                reject(err);
+            });
+            rs.on("end", ()=>resolve());
+
+            rs.pipe(outStream);
+        });
     }
 }
 

@@ -2,6 +2,9 @@ import fs from 'fs';
 import {JSDOM} from 'jsdom';
 import constants from "./constants.js";
 
+/**
+ * Creates lists of .js dependencies from nidget .ejs files.
+ */
 class NidgetPreprocessor {
     constructor(modulePath, debug = false) {
         this.modulePath = modulePath;
@@ -9,6 +12,12 @@ class NidgetPreprocessor {
         this.debug = debug;
     }
 
+    /**
+     * Look at all files in the module path to determine which nidgets will
+     * be used.  Lists of nidget (js) dependencies are placed in the
+     * 'knownNidgets' field.
+     * @returns {NidgetPreprocessor}
+     */
     setup(){
         let files = fs.readdirSync(this.modulePath);
 

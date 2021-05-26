@@ -1,4 +1,6 @@
-to create database:
-sqlite3 assets/trivia.db
-sqlite> .read scripts/create_tables.sql
-sqlite> .exit
+systemctl status nginx
+systemctl start nginx
+systemctl stop nginx
+systemctl restart nginx
+systemctl enable nginx
+systemctl disable nginx
