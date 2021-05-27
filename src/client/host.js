@@ -26,7 +26,7 @@ async function hasGame() {
     let token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
     let response = await gameManagerService.hasGame(token);
     if (response.result === "success") {
-        window.location = `launch_console.ejs?hash=${response['hash']}`;
+        window.location = `launch_console.ejs`;
     }
 }
 
@@ -71,7 +71,7 @@ function setupFileList() {
         } catch (err) {
             console.log(err);
         }
-        populateFileList();
+        await populateFileList();
         fileList.busy = false;
     });
 }
@@ -107,13 +107,13 @@ function addMenuListeners() {
 
 
     document.querySelector("#load").addEventListener("click", async (e) => {
-        populateFileList();
+        await populateFileList();
         let fileList = document.querySelector("file-list");
         fileList.addEventListener("select-file", onLoad, {once: true});
     });
 
     document.querySelector("#launch").addEventListener("click", async (e) => {
-        populateFileList();
+        await populateFileList();
         let fileList = document.querySelector("file-list");
         fileList.addEventListener("select-file", onLaunch, {once: true});
     });

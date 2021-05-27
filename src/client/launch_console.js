@@ -5,14 +5,15 @@ const gameManagerService = new GameManagerService();
 
 window.addEventListener("load", async ()=>{
     await new Authenticate().loadClient();
-    let token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
+    const token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
 
-    let response = await gameManagerService.hasGame(token);
+    const response = await gameManagerService.hasGame(token);
     if (response['result'] === "failure"){
         window.location = "/host.ejs";
     }
 
-    let url = `${window.location.host}/contestant_join.ejs?hash=${response['hash']}`;
+    const len = location.href.lastIndexOf("/");
+    const url = `${location.href.substr(0, len)}/contestant_join.ejs?hash=${response['hash']}`;
     document.querySelector("#contestant_link").innerText = url;
 
     document.querySelector("#host").addEventListener("click", ()=>{
