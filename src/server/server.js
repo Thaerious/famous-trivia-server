@@ -98,11 +98,14 @@ wss.on('connection', async (ws, req) => {
 });
 /** -------------------------------------------------- **/
 
-/** Star the server **/
+/** Start the server **/
 server.listen(port, () => {
     console.log(`HTTP listener started on port ${port}`);
 });
-new CLI(gameManager, sessionManager);
+
+if (process.argv.indexOf("-i") !== -1) {
+    new CLI(gameManager, sessionManager);
+}
 /** -------------------------------------------------- **/
 
 async function preBrowserify(){
