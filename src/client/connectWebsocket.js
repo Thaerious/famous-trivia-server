@@ -1,10 +1,14 @@
 function connectWebsocket(){
-    let url = window.origin;
-    if (url.startsWith("http:")){
-        url = "ws" + url.substr(4) + "/game-service.ws";
-    } else {
-        url = "wss" + url.substr(5) + "/game-service.ws";
+    let prefix = "wss://";
+
+    if (location.protocol === "http:"){
+        prefix = "ws://";
     }
+
+    const len = location.pathname.lastIndexOf("/") + 1;
+    const path = location.pathname.substr(0, len);
+    const port = location.port;
+    const url = `${prefix}${location.hostname}:${port}${path}game-service.ws`
 
     return new Promise((resolve, reject)=>{
         let socket = new WebSocket(url);
