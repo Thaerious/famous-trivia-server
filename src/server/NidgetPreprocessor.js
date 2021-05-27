@@ -6,10 +6,9 @@ import constants from "./constants.js";
  * Creates lists of .js dependencies from nidget .ejs files.
  */
 class NidgetPreprocessor {
-    constructor(modulePath, debug = false) {
+    constructor(modulePath) {
         this.modulePath = modulePath;
         this.knownNidgets = {};
-        this.debug = debug;
     }
 
     /**
@@ -33,16 +32,6 @@ class NidgetPreprocessor {
             let filePath = this.modulePath + "/" + nidget + ".ejs";
             this.seekDependencies(filePath, this.knownNidgets[nidget].dependencies);
         }
-
-        if (this.debug){
-            console.log("Known Nidgets:");
-            for (let nidget in this.knownNidgets){
-                console.log(" -- " + nidget);
-                console.log(this.knownNidgets[nidget].dependencies);
-                console.log("");
-            }
-        }
-
         return this;
     }
 

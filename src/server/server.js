@@ -26,7 +26,7 @@ const server = http.createServer(app);
 const gameManager = await new GameManager("assets/trivia.db");
 const sessionManager = new SessionManager("assets/trivia.db");
 await sessionManager.load();
-const nidgetPreprocessor = new NidgetPreprocessor("views/nidgets", true).setup();
+const nidgetPreprocessor = new NidgetPreprocessor("views/nidgets").setup();
 
 app.use(helmet());            // automatic security settings (outgoing response headers)
 app.use(UserAgent.express()); // used to determine what the connection is using (phone,browser etc)
