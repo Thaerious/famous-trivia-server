@@ -83,30 +83,6 @@ class Game {
     }
 
     /**
-     * Create JSON representation for saving.
-     * Use fromJSON to restore the objects state.
-     */
-    toJSON() {
-        let sanitized = Object.assign({}, this);
-        delete sanitized.timer;
-        delete sanitized.listeners;
-        return sanitized;
-    }
-
-    static fromJSON(json) {
-        if (typeof json === "string") {
-            json = JSON.parse(json);
-        }
-
-        let game = new Game();
-        Object.assign(game, json);
-        game.model = GameModel.fromJSON(game.model);
-        game.lastUpdate = game.getUpdate();
-
-        return game;
-    }
-
-    /**
      * @param input {action : string, data : {}}
      */
     onInput(input) {

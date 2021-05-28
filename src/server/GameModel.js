@@ -1,7 +1,6 @@
 import fs from 'fs';
 
 class EndOfGame {
-
     constructor(parent) {
         this.parent = parent;
 
@@ -349,27 +348,6 @@ class GameModel {
         this.roundIndex = -1;
         this._players = []; // name, score, enabled
         this._currentRound = null;
-    }
-
-    static fromJSON(json) {
-        if (typeof json === "string") {
-            json = JSON.parse(json);
-        }
-
-        let gameModel = new GameModel()
-        Object.assign(gameModel, json);
-
-        if (gameModel._currentRound) {
-
-            let type = gameModel._currentRound.model.type;
-            if (type === "multiple_choice") {
-                Object.setPrototypeOf(gameModel._currentRound, MultipleChoiceModel.prototype);
-            } else if (type === "choice") {
-                Object.setPrototypeOf(gameModel._currentRound, JeopardyModel.prototype);
-            }
-        }
-
-        return gameModel;
     }
 
     getUpdate() {
