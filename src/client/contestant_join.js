@@ -10,14 +10,7 @@ window.addEventListener("load", async(event)=>{
         window.location = `contestant_portal.ejs`;
     }
 
-    document.querySelector("#name").addEventListener("text-enter", event=>{
-        let element = document.querySelector("#name");
-        const tabindex = element.tabIndex;
-        if (tabindex === -1) return;
-        const next = document.querySelector(`[tabindex='${tabindex + 1}']`);
-        if (next) next.focus();
-    });
-
+    document.querySelector("#name").addEventListener("text-enter", e=>submit());
     document.querySelector("#join").addEventListener("click", e=>submit());
     document.querySelector("#join").addEventListener("keypress", e=>submit());
 });
