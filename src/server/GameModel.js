@@ -133,14 +133,12 @@ class JeopardyModel {
     }
 
     isSpent(col, row) {
-        col = col ?? this.stateData.col;
-        row = row ?? this.stateData.row;
+        [col, row] = this.checkTableBounds(col, row);
         return this.spent[col][row];
     }
 
     setSpent(col, row) {
-        col = col ?? this.stateData.col;
-        row = row ?? this.stateData.row;
+        [col, row] = this.checkTableBounds(col, row);
         this.spent[col][row] = true;
     }
 
@@ -151,6 +149,8 @@ class JeopardyModel {
      * @returns question text
      */
     setBoardState(col, row) {
+        [col, row] = this.checkTableBounds(col, row);
+
         this.stateData = {
             style: GameModel.STYLE.JEOPARDY,
             state: GameModel.STATES.BOARD,
@@ -167,6 +167,8 @@ class JeopardyModel {
      * @returns question text
      */
     setQuestionState(col, row) {
+        [col, row] = this.checkTableBounds(col, row);
+
         this.stateData = {
             style: GameModel.STYLE.JEOPARDY,
             state: GameModel.STATES.QUESTION,
@@ -181,8 +183,7 @@ class JeopardyModel {
     }
 
     getQuestion(col, row) {
-        col = col ?? this.stateData.col;
-        row = row ?? this.stateData.row;
+        [col, row] = this.checkTableBounds(col, row);
         return this.model.column[col].cell[row].q;
     }
 
@@ -195,8 +196,7 @@ class JeopardyModel {
      * @returns game state update object
      */
     setRevealState(col, row) {
-        col = col ?? this.stateData.col;
-        row = row ?? this.stateData.row;
+        [col, row] = this.checkTableBounds(col, row);
 
         this.setQuestionState(col, row);
         Object.assign(this.stateData, {
@@ -215,8 +215,7 @@ class JeopardyModel {
      * @returns game state update object
      */
     getAnswer(col, row) {
-        col = col ?? this.stateData.col;
-        row = row ?? this.stateData.row;
+        [col, row] = this.checkTableBounds(col, row);
         return this.model.column[col].cell[row].a;
     }
 
@@ -229,8 +228,7 @@ class JeopardyModel {
      * @returns {*}
      */
     getValue(col, row) {
-        col = col ?? this.stateData.col;
-        row = row ?? this.stateData.row;
+        [col, row] = this.checkTableBounds(col, row);
         return this.model.column[col].cell[row].value;
     }
 
@@ -243,8 +241,7 @@ class JeopardyModel {
      * @returns game state update object
      */
     getType(col, row) {
-        col = col ?? this.stateData.col;
-        row = row ?? this.stateData.row;
+        [col, row] = this.checkTableBounds(col, row);
         return this.model.column[col].cell[row].type;
     }
 
@@ -265,7 +262,18 @@ class JeopardyModel {
         r.values = this.values;
         return r;
     }
+
+    checkTableBounds(col, row){
+        col = col ?? this.stateData.col;
+        row = row ?? this.stateData.row;
+
+        if (col < 0 || col > 5) throw new Error(`Column out of range: ${col}`);
+        if (row < 0 || row > 4) throw new Error(`Row out of range: ${row}`);
+        return [col, row];
+    }
 }
+
+
 
 class MultipleChoiceModel {
     constructor(model) {
@@ -350,6 +358,11 @@ class GameModel {
         this._currentRound = null;
     }
 
+    /**
+     * Return a new object that is intended to be sent to the client.
+     * This object will be used to update the client view.
+     * @returns {{players: []}}
+     */
     getUpdate() {
         let result = {
             players: this._players
@@ -360,18 +373,10 @@ class GameModel {
         return result;
     }
 
-    save(filepath) {
-        fs.writeFileSync(filepath, JSON.stringify(this));
-    }
-
-    load(filepath) {
-        let json = fs.readFileSync(filepath);
-        let obj = JSON.parse(json);
-        for (let field in obj) {
-            this[field] = obj[field];
-        }
-    }
-
+    /**
+     * Set the currently active round by index.
+     * @param value
+     */
     set round(value) {
         if (value < 0) value = 0;
         if (value >= this.model.rounds.length) value = this.model.rounds.length - 1;
@@ -389,8 +394,13 @@ class GameModel {
         return this._currentRound;
     }
 
+    /**
+     * Set the currently active round by index.
+     * Will reset the current the round object.
+     * @param value
+     * @return current round object.
+     */
     setRound(index) {
-        console.log("set round" + index);
         if (index < 0 || index > this.model.rounds.length) return this._currentRound;
 
         this.roundIndex = index;
@@ -398,6 +408,7 @@ class GameModel {
             this._currentRound = new EndOfGame(this);
             return this._currentRound;
         }
+
         const roundModel = this.model.rounds[index];
 
         if (roundModel.type === "multiple_choice") {

@@ -86,8 +86,8 @@ class Game {
      * @param input {action : string, data : {}}
      */
     onInput(input) {
-        console.log(`(${this.state}) - ${JSON.stringify(input)}`);
-        console.log("-----------------------------------");
+        // console.log(`(${this.state}) - ${JSON.stringify(input)}`);
+        // console.log("-----------------------------------");
 
         switch(input.action){
             case "next_round":
@@ -97,6 +97,10 @@ class Game {
             case "prev_round":
                 this.model.prevRound();
                 this.startRound();
+                break;
+            case "join":
+                this.model.addPlayer(input.data.name);
+                this.broadcast();
                 break;
             default:
                 this[this.state](input);
@@ -129,7 +133,9 @@ class Game {
     }
 
     notify(name, msg) {
-        this.listeners[name](msg);
+        if (this.listeners[name]) {
+            this.listeners[name](msg);
+        }
     }
 
     createPlayerData() {
@@ -242,7 +248,7 @@ class Game {
             case "continue":
                 this.model.getRound().setAnswerState();
                 this.updateState(2);
-                // this.timer.start(Timer.TIMES.MULTIPLE_CHOICE);
+                this.timer.start(Timer.TIMES.MULTIPLE_CHOICE);
                 break;
         }
     }
@@ -350,7 +356,6 @@ class Game {
                 break;
             case "accept":
                 let currentPlayer = this.model.getRound().getCurrentPlayer();
-                console.log(currentPlayer);
                 if (!currentPlayer) return;
                 this.model.getPlayer(currentPlayer).score += this.model.getRound().getValue();
                 this.model.getRound().setRevealState();

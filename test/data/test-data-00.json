@@ -2,27 +2,6 @@
   "name": "April 43",
   "rounds": [
     {
-      "type": "multiple_choice",
-      "question": "MC-QUESTION",
-      "answers": [
-          "MC-ANSWER1",
-          "MC-ANSWER2",
-          "MC-ANSWER3",
-          "MC-ANSWER4",
-          "MC-ANSWER5",
-          "MC-ANSWER6"
-      ],
-      "values": [
-        "false",
-        "false",
-        "true",
-        "false",
-        "false",
-        "false"
-      ],
-      "bonus": 100
-    },
-    {
       "type": "choice",
       "column": [
         {
@@ -245,6 +224,27 @@
           "fontSize": "16px"
         }
       ]
+    },
+    {
+      "type": "multiple_choice",
+      "question": "MCQ",
+      "answers": [
+        "MCA1",
+        "MCA2",
+        "MCA3",
+        "MCA4",
+        "MCA5",
+        "MCA6"
+      ],
+      "values": [
+        "false",
+        "true",
+        "true",
+        "false",
+        "false",
+        "false"
+      ],
+      "bonus": "500"
     }
   ]
 }
