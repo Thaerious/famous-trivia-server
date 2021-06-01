@@ -15,7 +15,24 @@ Timer.TIMES = {
     MULTIPLE_CHOICE: 1
 }
 
-describe(`Game`, () => {
+describe(`One player in state 6 (picked a question), answer rejected`, () => {
+    describe('situation setup', function () {
+        let gameModel = new GameModel(data);
+        let game = new Game(gameModel);
+        game.onInput({action: "join", data: {name: "Adam"}});
+        game.onInput({action: "start"});
+        game.onInput({action: "select", data: {col: 0, row: 1}, player: "@HOST"});
+        game.onInput({action: "continue", player: "@HOST"});
+        game.onInput({action: "reject", player: "@HOST"});
+
+        it(`State changes to 9 - waiting for host to continue`, ()=>{
+            let update = game.getUpdate().data;
+            assert.strictEqual(update.state, 9);
+        });
+    });
+});
+
+describe(`Game Mock-Up`, () => {
     let gameModel = new GameModel(data);
     let game = new Game(gameModel);
 
@@ -73,7 +90,6 @@ describe(`Game`, () => {
                     done();
                 }
             });
-
             game.onInput({action: "select", data: {col: 0, row: 1}, player: "@HOST"});
         });
 
@@ -331,4 +347,241 @@ describe(`Game`, () => {
             assert.strictEqual(update.state, 4);
         });
     });
+
+    describe(`Player joins (state 4) while waiting for question pick`, function () {
+        it(`player joins`, function () {
+            game.onInput({action: "join", data: {name: "Dave"}});
+            let update = game.getUpdate().data;
+        });
+
+        it('has 4 players', function () {
+            let update = game.getUpdate().data;
+            assert.strictEqual(update.model.players.length, 4);
+        });
+
+        it('only the current player is spent', function () {
+            let update = game.getUpdate().data;
+            assert.strictEqual(update.model.players.length, 4);
+        });
+
+        it('new player is last player', function () {
+            let update = game.getUpdate().data;
+            assert.strictEqual(update.model.players[update.model.players.length - 1].name, "Dave");
+        });
+    });
+
+    describe(`Player joins with same name (not changes made to game)`, function () {
+        it(`player joins`, function () {
+            game.onInput({action: "join", data: {name: "Dave"}});
+            let update = game.getUpdate().data;
+        });
+
+        it('has 4 players', function () {
+            let update = game.getUpdate().data;
+            assert.strictEqual(update.model.players.length, 4);
+        });
+
+        it('only the current player is spent', function () {
+            let update = game.getUpdate().data;
+            assert.strictEqual(update.model.players.length, 4);
+        });
+
+        it('new player is last player', function () {
+            let update = game.getUpdate().data;
+            assert.strictEqual(update.model.players[update.model.players.length - 1].name, "Dave");
+        });
+    });
+
+    describe(`Player chooses question, timer expires`, function () {
+        describe(`Player chooses question`, function () {
+            it(`state changes to 5`, ()=>{
+                game.onInput({action: "select", data: {col: 1, row: 4}, player: "Charles"});
+                assert.strictEqual(game.getUpdate().data.state, 5);
+            });
+        });
+
+        describe(`Host presses continue`, function () {
+            it(`state changes to 6`, ()=>{
+                game.onInput({action: "continue", player: "@HOST"});
+                assert.strictEqual(game.getUpdate().data.state, 6);
+            });
+        });
+
+        describe(`Timer expires`, function () {
+            it(`state stays at 6`, ()=>{
+                game.onInput({action: "expire"});
+                assert.strictEqual(game.getUpdate().data.state, 6);
+            });
+        });
+
+        describe(`Host rejects, another player buzzes in and expires, then host rejects again`, function () {
+            it(`host rejects, state changes to 7`, ()=>{
+                game.onInput({action: "reject", player: "@HOST"});
+                assert.strictEqual(game.getUpdate().data.state, 7);
+            });
+            it(`player buzzes in, state becomes 8`, ()=>{
+                game.onInput({action: "buzz", player: "Adam"});
+                assert.strictEqual(game.getUpdate().data.state, 8);
+            });
+            it(`timer expires, state remains in 8 awaiting host's judgment`, ()=>{
+                game.onInput({action: "expire"});
+                assert.strictEqual(game.getUpdate().data.state, 8);
+            });
+            it(`host rejects, state becomes 7`, ()=>{
+                game.onInput({action: "reject", player: "@HOST"});
+                assert.strictEqual(game.getUpdate().data.state, 7);
+            });
+            it(`Adam becomes spent`, ()=>{
+                assert.notStrictEqual(game.getUpdate().data.model.round.spentPlayers.indexOf("Adam"), -1);
+            });
+            it(`Adam has 500 less points (200 - 500 = -300)`, ()=>{
+                const player = getPlayerByName(game.getUpdate(), "Adam");
+                assert.notStrictEqual(player.score, -300);
+            });
+        });
+    });
+
+    describe(`Remaining players buzz in and get rejected`, function () {
+        it(`State becomes 9 - show answer & wait for continue`, ()=>{
+            game.onInput({action: "buzz", player: "Beth"});
+            game.onInput({action: "expire"});
+            game.onInput({action: "reject", player: "@HOST"});
+
+            game.onInput({action: "buzz", player: "Dave"});
+            game.onInput({action: "expire"});
+            game.onInput({action: "reject", player: "@HOST"});
+
+            assert.strictEqual(game.getUpdate().data.state, 9);
+        });
+    });
+
+    describe(`Player buzzes in and gets answer correct`, function () {
+        it('situation setup', function () {
+            game.onInput({action: "continue", player: "@HOST"});
+            game.onInput({action: "select", data: {col: 3, row: 0}, player: "@HOST"});
+            game.onInput({action: "continue", player: "@HOST"});
+            game.onInput({action: "reject", player: "@HOST"});
+            
+            game.onInput({action: "buzz", player: "Dave"});
+            game.onInput({action: "accept", player: "@HOST"});
+        });
+
+        it(`State changes to 9 - waiting for host to continue`, ()=>{
+            let update = game.getUpdate().data;
+            assert.strictEqual(update.state, 9);
+        });
+
+        it(`Dave's score increases by 100`, ()=>{
+            const scoreAfter = getPlayerByName(game.getUpdate(), "Dave").score;
+            assert.strictEqual(scoreAfter, -150);
+        });
+    });
+
+    describe('start next round', function(){
+        it(`doesn't work if it doesn't come from the host`, function(){
+            game.onInput({action : "next_round", player : "Dave"});
+            let update = game.getUpdate().data;
+            assert.strictEqual(update.state, 9);
+        });
+
+        it(`changes the state (in this case to 1)`, function(){
+            game.onInput({action : "next_round", player : "@HOST"});
+            let update = game.getUpdate().data;
+            assert.strictEqual(update.state, 1);
+        });
+
+        it('loads correct (mc) round', function(){
+            game.onInput({action : "start"});
+            let update = game.getUpdate().data;
+            assert.strictEqual(update.model.round.style, GameModel.STYLE.MULTIPLE_CHOICE);
+        });
+        it('multiple choice starts in question state', function(){
+            game.onInput({action : "start"});
+            let update = game.getUpdate().data;
+            assert.strictEqual(update.model.round.state, GameModel.STATES.QUESTION);
+        });
+        it('has correct question from file', function(){
+            game.onInput({action : "start"});
+            let update = game.getUpdate().data;
+            assert.strictEqual(update.model.round.question, "MCQ");
+        });
+    });
+
+    describe('host clicks continue', function(){
+        it('changes state', function(){
+            game.onInput({action : "continue", player : "@HOST"});
+            let update = game.getUpdate().data;
+            assert.strictEqual(update.state, 2);
+        });
+    });
+
+    describe('answer values (bets) submitted', function(){
+        it('updates player data (unseen until next state)', function(){
+            // #s 1 & 2 are correct with a bonus of 500
+            game.onInput({action : "update", player: "Adam", data : {index: "0", checked: "true", value: "100"}}); // incorrect
+            game.onInput({action : "update", player: "Adam", data : {index: "2", checked: "true", value: "200"}}); // correct
+            game.onInput({action : "update", player: "Beth", data : {index: "1", checked: "true", value: "100"}}); // can't be has 0
+            game.onInput({action : "update", player: "Charles", data : {index: "1", checked: "true", value: "250"}}); // bet not ignored
+            game.onInput({action : "update", player: "Charles", data : {index: "2", checked: "true", value: "250"}}); // bet ignored, over amount
+        });
+        it('state doesn\'t change', function(){
+            let update = game.getUpdate().data;
+            assert.strictEqual(update.state, 2);
+        });
+    });
+
+    describe('timer expires after bets submitted', function(){
+        it('mock up scores', function(){
+            game.model.getPlayer("Adam").score = 500;
+            game.model.getPlayer("Beth").score = 400;
+            game.model.getPlayer("Charles").score = 500;
+            game.model.getPlayer("Dave").score = 100;
+        });
+
+        it('state changes', function(done){
+            this.timeout(5000);
+            game.addListener("test", msg =>{
+                if (msg.action === 'update_model') {
+                    assert.strictEqual(msg.data.state, 3);
+                    game.removeListener("test");
+                    done();
+                }
+            });
+        });
+
+        it('player #1 gains some loses some', function(){
+            // 500 + 200 - 100
+            let update = game.getUpdate();
+            assert.strictEqual(getPlayerByName(update, "Adam").score, 600);
+        });
+        it('player #2 wins only 1', function(){
+            // 400 + 100
+            let update = game.getUpdate();
+            assert.strictEqual(getPlayerByName(update, "Beth").score, 500);
+        });
+        it('player #3 wins both', function(){
+            // 500 + 250 + 250 + 500
+            let update = game.getUpdate();
+            assert.strictEqual(getPlayerByName(update, "Charles").score, 1500);
+        });
+        it(`player #4 didn't enter a bet`, function(){
+            let update = game.getUpdate();
+            assert.strictEqual(getPlayerByName(update, "Dave").score, 100);
+        });
+    });
+
+    describe('host clicks continue', function(){
+        it('changes state to 10 (end of game)', function(){
+            game.onInput({action : "continue", player : "@HOST"});
+            let update = game.getUpdate().data;
+            assert.strictEqual(update.state, 10);
+        });
+    });
 });
+
+function getPlayerByName(update, name){
+    for (let p of update.data.model.players){
+        if (p.name === name) return p;
+    }
+    return undefined;
+}

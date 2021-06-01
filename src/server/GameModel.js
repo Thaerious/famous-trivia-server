@@ -245,10 +245,6 @@ class JeopardyModel {
         return this.model.column[col].cell[row].type;
     }
 
-    getState() {
-        return this.stateData.state;
-    }
-
     getUpdate() {
         let r = Object.assign({}, this.stateData);
         r.spentPlayers = [];
@@ -284,10 +280,6 @@ class MultipleChoiceModel {
         this.setQuestionState();
     }
 
-    get state() {
-        return Object.assign({}, this.stateData);
-    }
-
     /**
      * Set the state data for the specified question question.
      * @param col
@@ -309,10 +301,6 @@ class MultipleChoiceModel {
 
     getValues() {
         return [...this.model.values];
-    }
-
-    getValue(index) {
-        return this.model.answers[index].isTrue;
     }
 
     /**
@@ -371,16 +359,6 @@ class GameModel {
             result.round = this.getRound().getUpdate()
         }
         return result;
-    }
-
-    /**
-     * Set the currently active round by index.
-     * @param value
-     */
-    set round(value) {
-        if (value < 0) value = 0;
-        if (value >= this.model.rounds.length) value = this.model.rounds.length - 1;
-        this.roundIndex = value;
     }
 
     /**
@@ -469,14 +447,6 @@ class GameModel {
      */
     get players() {
         return [...this._players];
-    }
-
-    /**
-     * Return a count of enabled players.
-     * @returns {number}
-     */
-    playerCount() {
-        return this._players.length;
     }
 
     /**
