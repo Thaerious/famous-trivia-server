@@ -3,6 +3,10 @@ require("./CheckBox.js");
 
 class ValueUpdate extends CustomEvent {
     constructor(index, value, checked) {
+        if (typeof index !== "number") index = parseInt(index);
+        if (typeof value !== "number") index = parseInt(value);
+        if (typeof checked !== "boolean") checked = (checked === "true");
+
         super('value-update',
             {detail: {index: index, value: value, checked: checked}}
         );
@@ -30,7 +34,7 @@ class MultipleChoicePresent extends NidgetElement {
         for (const element of this.querySelectorAll("check-box")){
             element.addEventListener("value-update", event => {
                 const index = element.parentElement.getAttribute("data-index");
-                const checked = event.detail.value === "true";
+                const checked = (event.detail.value === true);
                 const value = element.parentElement.querySelector(".wager").content;
                 element.parentElement.querySelector(".wager").disabled = !checked;
                 this.dispatchEvent(new ValueUpdate(index, parseInt(value), checked));

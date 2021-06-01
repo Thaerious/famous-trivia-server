@@ -235,7 +235,7 @@ class Game {
             }
 
             let bonusFlag = true;
-
+console.log(this.model.getPlayer(name));
             for (let i = 0; i < 6; i++){
                 let answer = this.mcBetsData[name].answers[i];
                 let bet = parseInt(answer.amount);
@@ -263,8 +263,9 @@ class Game {
             }
 
             if (bonusFlag) {
-                this.model.getPlayer(name).score += this.model.getUpdate().round.bonus;
-                this.mcBetsData[name].bonus = this.model.getUpdate().round.bonus;
+                let bonus = parseInt(this.model.getUpdate().round.bonus);
+                this.model.getPlayer(name).score += bonus;
+                this.mcBetsData[name].bonus = bonus;
             }
         }
 
@@ -299,7 +300,7 @@ class Game {
             case "continue":
                 this.model.getRound().setAnswerState();
                 this.updateState(2);
-                this.timer.start(Timer.TIMES.MULTIPLE_CHOICE);
+                // this.timer.start(Timer.TIMES.MULTIPLE_CHOICE);
                 break;
         }
     }
@@ -316,7 +317,7 @@ class Game {
                 let name = input.player;
                 let index = parseInt(input.data.index);
 
-                if (typeof input.data.checked === "string") input.data.checked = input.data.checked === "true";
+                if (typeof input.data.checked === "string") input.data.checked = (input.data.checked === "true");
                 if (typeof input.data.value === "string") input.data.value = parseInt(input.data.value);
 
                 this.mcBetsData[name].answers[index] = {
