@@ -12,6 +12,9 @@ const NidgetElement = require("@thaerious/nidget").NidgetElement;
 
 class CellSelectEvent extends CustomEvent{
     constructor(row, col) {
+        row = parseInt(row);
+        col = parseInt(col);
+
         super('cell-select',
               {detail : {row : row, col : col }}
         );
@@ -20,6 +23,8 @@ class CellSelectEvent extends CustomEvent{
 
 class HeaderUpdateEvent extends  CustomEvent{
     constructor(col, value, fontSize) {
+        col = parseInt(col);
+
         super('header-update',
             {detail : {value : value, col : col, fontSize : fontSize}}
         );

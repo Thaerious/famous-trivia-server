@@ -3,6 +3,8 @@ require("./CheckBox.js");
 
 class AnswerUpdate extends CustomEvent{
     constructor(index, text) {
+        index = parseInt(index);
+
         super('answer-update',
             {detail : {index : index, text : text}}
         );
@@ -11,6 +13,9 @@ class AnswerUpdate extends CustomEvent{
 
 class ValueUpdate extends  CustomEvent{
     constructor(index, value) {
+        index = parseInt(index);
+        if (typeof value !== "boolean") value = (value === "true");
+
         super('value-update',
             {detail : {index : index, value : value}}
         );
@@ -78,7 +83,7 @@ class MultipleChoiceCompose extends NidgetElement {
     }
 
     setChecked(index, value){
-        this.querySelector(`.inner[data-index="${index}"] check-box`).checked = value;
+        this.querySelector(`.inner[data-index="${index}"] check-box`).setChecked(value, false);
     }
 }
 

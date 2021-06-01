@@ -2,6 +2,8 @@ const NidgetElement = require("@thaerious/nidget").NidgetElement;
 
 class ValueUpdate extends  CustomEvent{
     constructor(value) {
+        if (typeof value !== "boolean") value = (value === "true");
+
         super('value-update',
             {detail : {value : value}}
         );
@@ -12,7 +14,6 @@ class CheckBox extends NidgetElement {
     async connectedCallback(){
         await super.connectedCallback();
         this.addEventListener("click", ()=>{
-            console.log(typeof(this.locked));
             if (this.locked) return;
             this.toggle();
         });
