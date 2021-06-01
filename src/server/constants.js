@@ -3,7 +3,7 @@ export default {
     TIMES : {
         ANSWER: 10,
         BUZZ: 10,
-        MULTIPLE_CHOICE: 5
+        MULTIPLE_CHOICE: 15
     },
     sessions : {
         SESSION_EXPIRE_HOURS: 24,

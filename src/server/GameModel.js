@@ -68,7 +68,6 @@ class JeopardyModel {
     }
 
     addPlayer(index, player){
-        console.log("addPlayer", index);
         if (index == 0){
             this.spentPlayers = [player.name];
             this.currentPlayer = player.name;
@@ -381,6 +380,13 @@ class GameModel {
         this.rounds.push(new EndOfGame(this));
     }
 
+    toJSON(){
+        let sanitized = Object.assign({}, this);
+        delete sanitized.listeners;
+        delete sanitized.rounds;
+        return sanitized;
+    }
+
     static fromJSON(json) {
         if (typeof json === "string") {
             json = JSON.parse(json);
@@ -388,8 +394,7 @@ class GameModel {
 
         let gameModel = new GameModel()
         Object.assign(gameModel, json);
-
-        this.setupRounds();
+        gameModel.setupRounds();
 
         return gameModel;
     }

@@ -623,6 +623,22 @@ describe(`Game Mock-Up`, () => {
             // 500 + 200 - 100
             let update = game.getUpdate();
             assert.strictEqual(getPlayerByName(update, "Adam").score, 600);
+            console.log("------------------------");
+            console.log(JSON.stringify(update.data.bets["Adam"], null, 2));
+            console.log("------------------------");
+            const bets = update.data.bets["Adam"].answers;
+            assert.strictEqual(bets[0].checked, true);
+            assert.strictEqual(bets[0].amount, -100);
+            assert.strictEqual(bets[0].result, "incorrect");
+            assert.strictEqual(bets[1].checked, false);
+            assert.strictEqual(bets[1].amount, 0);
+            assert.strictEqual(bets[1].result, "incorrect");
+            assert.strictEqual(bets[2].checked, true);
+            assert.strictEqual(bets[2].amount, 200);
+            assert.strictEqual(bets[2].result, "correct");
+            assert.strictEqual(bets[3].checked, false);
+            assert.strictEqual(bets[3].amount, 0);
+            assert.strictEqual(bets[3].result, "correct");
         });
         it('player #2 wins only 1', function(){
             // 400 + 100

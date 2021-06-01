@@ -49,10 +49,10 @@ class ContestantPortalView extends AbstractView {
                 else {
                     this.DOM.multipleChoice.querySelector(".inner.bonus > .amount").text = 0;
                 }
-
+                console.log(update.bets[this.name].answers);
                 for (let i = 0; i < 6; i++) {
                     let wagerElement = this.DOM.multipleChoice.querySelector(`[data-index="${i}"] .wager`);
-                    let value = update.bets[this.name].bets[i];
+                    let value = update.bets[this.name].answers[i].amount;
 
                     if (value !== ""){
                         wagerElement.content = parseInt(value);

@@ -237,14 +237,14 @@
         "MCA6"
       ],
       "values": [
-        "false",
-        "true",
-        "true",
-        "false",
-        "false",
-        "false"
+        false,
+        true,
+        true,
+        false,
+        false,
+        false
       ],
-      "bonus": "500"
+      "bonus": 500
     }
   ]
 }

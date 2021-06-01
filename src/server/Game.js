@@ -72,7 +72,7 @@ class Game {
         this.state = 0;
         if (model) {
             this.model = model;
-            this.lastUpdate = this.getUpdate();
+            this.updateState(0);
         }
     }
 
@@ -134,11 +134,31 @@ class Game {
     }
 
     updateState(state, extraData = {}) {
-        this.state = state;
-        const update = this.getUpdate()
-        update.data = {...update.data, ...extraData};
+        if (state) this.state = state;
+
+        const update = {
+            action: "update_model",
+            'id-hash': crypto.randomBytes(8).toString('hex'),
+            'time-stamp': new Date(),
+            data: {
+                model: this.model.getUpdate(),
+                state: this.state,
+                ...extraData
+            }
+        }
+
         this.lastUpdate = update;
         this.broadcast(update);
+    }
+
+    /**
+     * Get the previous update, with new model data.
+     * @returns {*}
+     */
+    getUpdate() {
+        const update = {...this.lastUpdate};
+        update.data.model = this.model.getUpdate();
+        return this.lastUpdate;
     }
 
     addListener(name, cb) {
@@ -173,7 +193,7 @@ class Game {
 
             for (let i = 0; i < 6; i++) {
                 data[player.name].answers[i] = {
-                    checked: "false",
+                    checked: false,
                     amount: 0
                 }
             };
@@ -202,6 +222,12 @@ class Game {
     updateMCScores() {
         let values = this.model.getRound().getValues();
 
+        console.log("UpdateMCScores -----------------------------");
+        console.log(JSON.stringify(this.mcBetsData, null, 2));
+        console.log("--------------------------------------------");
+        console.log(JSON.stringify(values, null, 2));
+        console.log("--------------------------------------------");
+
         for (let name in this.mcBetsData) {
             // the sum of bets must be <= the players available score
             if (this.sumMCBet(name) > this.model.getPlayer(name).score) {
@@ -214,28 +240,36 @@ class Game {
                 let answer = this.mcBetsData[name].answers[i];
                 let bet = parseInt(answer.amount);
 
-                if (answer.checked === "true" && values[i] === "true"){
+                if (answer.checked === true && values[i] === true){
                     this.model.getPlayer(name).score += bet;
                     answer.result = "correct";
                 }
-                else if (answer.checked === "true" && values[i] === "false"){
+                else if (answer.checked === true && values[i] === false){
                     this.model.getPlayer(name).score -= bet;
                     bonusFlag = false;
                     answer.result = "incorrect";
+                    answer.amount = -1 * answer.amount;
                 }
-                else if (answer.checked === "false" && values[i] === "true"){
+                else if (answer.checked === false && values[i] === true){
                     bonusFlag = false;
                     answer.result = "incorrect";
-                } else {
+                }
+                else if (answer.checked === false && values[i] === false){
                     answer.result = "correct";
+                }
+                else{
+                    throw new Error("index " + i + " failed");
                 }
             }
 
             if (bonusFlag) {
-                this.model.getPlayer(name).score += parseInt(this.model.getUpdate().round.bonus);
-                this.mcBetsData[name].bonus = parseInt(this.model.getUpdate().round.bonus);
+                this.model.getPlayer(name).score += this.model.getUpdate().round.bonus;
+                this.mcBetsData[name].bonus = this.model.getUpdate().round.bonus;
             }
         }
+
+        console.log(JSON.stringify(this.mcBetsData, null, 2));
+        console.log("--------------------------------------------");
     }
 
     /**
@@ -248,18 +282,6 @@ class Game {
             r = r + parseInt(this.mcBetsData[name][index].amount);
         }
         return r;
-    }
-
-    getUpdate() {
-        return {
-            action: "update_model",
-            'id-hash': crypto.randomBytes(8).toString('hex'),
-            'time-stamp': new Date(),
-            data: {
-                model: this.model.getUpdate(),
-                state: this.state
-            }
-        }
     }
 
     [0](input) {
@@ -293,6 +315,9 @@ class Game {
             case "update":
                 let name = input.player;
                 let index = parseInt(input.data.index);
+
+                if (typeof input.data.checked === "string") input.data.checked = input.data.checked === "true";
+                if (typeof input.data.value === "string") input.data.value = parseInt(input.data.value);
 
                 this.mcBetsData[name].answers[index] = {
                     checked: input.data.checked,
