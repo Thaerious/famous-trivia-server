@@ -15,6 +15,76 @@ Timer.TIMES = {
     MULTIPLE_CHOICE: 1
 }
 
+describe(`Player joins game before it has started, host selects question, it's accepted`, () => {
+    describe('situation setup', function () {
+        let gameModel = new GameModel(data);
+        let game = new Game(gameModel);
+
+        it(`Adam joins game`, ()=> {
+            game.onInput({action: "join", data: {name: "Adam"}});
+        });
+
+        it(`Host starts game`, ()=> {
+            game.onInput({action: "start"});
+            assert.strictEqual(game.getUpdate().data.state, 4);
+        });
+
+        it(`Adam is the current player`, ()=> {
+            assert.strictEqual(game.getUpdate().data.model.round.current_player, "Adam");
+        });
+
+        it(`Host selects question`, ()=> {
+            game.onInput({action: "select", data: {col: 0, row: 0}, player: "@HOST"});
+            assert.strictEqual(game.getUpdate().data.state, 5);
+        });
+
+        it(`Host presses continue`, ()=> {
+            game.onInput({action: "continue", player: "@HOST"});
+            assert.strictEqual(game.getUpdate().data.state, 6);
+        });
+
+        it(`Host accepts answer`, ()=> {
+            game.onInput({action: "accept", player: "@HOST"});
+            assert.strictEqual(game.getUpdate().data.state, 9);
+        });
+    });
+});
+
+describe(`Player joins game after it has started, host selects question, it's accepted`, () => {
+    describe('situation setup', function () {
+        let gameModel = new GameModel(data);
+        let game = new Game(gameModel);
+
+        it(`Host starts game`, ()=> {
+            game.onInput({action: "start"});
+            assert.strictEqual(game.getUpdate().data.state, 4);
+        });
+
+        it(`Adam joins game`, ()=> {
+            game.onInput({action: "join", data: {name: "Adam"}});
+        });
+
+        it(`Adam is the current player`, ()=> {
+            assert.strictEqual(game.getUpdate().data.model.round.current_player, "Adam");
+        });
+
+        it(`Host selects question`, ()=> {
+            game.onInput({action: "select", data: {col: 0, row: 0}, player: "@HOST"});
+            assert.strictEqual(game.getUpdate().data.state, 5);
+        });
+
+        it(`Host presses continue`, ()=> {
+            game.onInput({action: "continue", player: "@HOST"});
+            assert.strictEqual(game.getUpdate().data.state, 6);
+        });
+
+        it(`Host accepts answer`, ()=> {
+            game.onInput({action: "accept", player: "@HOST"});
+            assert.strictEqual(game.getUpdate().data.state, 9);
+        });
+    });
+});
+
 describe(`One player in state 6 (picked a question), answer rejected`, () => {
     describe('situation setup', function () {
         let gameModel = new GameModel(data);

@@ -77,9 +77,41 @@ class Game {
     }
 
     /**
+     * Create JSON representation for saving.
+     * Use fromJSON to restore the objects state.
+     */
+    toJSON() {
+        let sanitized = Object.assign({}, this);
+        delete sanitized.timer;
+        delete sanitized.listeners;
+        return sanitized;
+    }
+
+    /**
+     * Create a new Game object from json string or object.
+     * @param json A string or object.
+     * @returns {Game}
+     */
+    static fromJSON(json) {
+        if (typeof json === "string") {
+            json = JSON.parse(json);
+        }
+
+        let game = new Game();
+        Object.assign(game, json);
+        game.model = GameModel.fromJSON(game.model);
+        game.lastUpdate = game.getUpdate();
+
+        return game;
+    }
+
+    /**
      * @param input {action : string, data : {}}
      */
     onInput(input) {
+        // console.log(`(${this.state}) - ${JSON.stringify(input)}`);
+        // console.log("-----------------------------------");
+
         switch (input.action) {
             case "next_round":
                 if (input.player !== "@HOST") return;
@@ -234,7 +266,7 @@ class Game {
         switch (input.action) {
             case "start":
                 this.broadcast({action: "start_game"});
-                this.model.nextRound();
+                this.model.setRound(0);
                 this.startRound();
                 break;
         }

@@ -63,6 +63,16 @@ class JeopardyModel {
                 valueCol.push(cell.value);
             }
         }
+
+        this.parent.addListener("player-added", (index, player)=>this.addPlayer(index, player));
+    }
+
+    addPlayer(index, player){
+        console.log("addPlayer", index);
+        if (index == 0){
+            this.spentPlayers = [player.name];
+            this.currentPlayer = player.name;
+        }
     }
 
     isPlayerSpent(name) {
@@ -269,8 +279,6 @@ class JeopardyModel {
     }
 }
 
-
-
 class MultipleChoiceModel {
     constructor(model) {
         this.model = model;
@@ -341,9 +349,49 @@ class MultipleChoiceModel {
 class GameModel {
     constructor(model) {
         this.model = model;
-        this.roundIndex = -1;
         this._players = []; // name, score, enabled
-        this._currentRound = null;
+        this.listeners = {};
+        if (model) this.setupRounds();
+    }
+
+    addListener(event, cb){
+        if (!this.listeners[event]) this.listeners[event] = [];
+        this.listeners[event].push(cb);
+    }
+
+    dispatchEvent(event, ...argList){
+        if (!this.listeners[event]) return;
+        for (const list of this.listeners[event]){
+            list(...argList);
+        }
+    }
+
+    setupRounds(){
+        this.rounds = [];
+        this.roundIndex = -1;
+
+        for(let roundModel of this.model.rounds){
+            if (roundModel.type === "multiple_choice") {
+                this.rounds.push(new MultipleChoiceModel(roundModel));
+            } else if (roundModel.type === "choice") {
+                this.rounds.push(new JeopardyModel(this, roundModel));
+            }
+        }
+
+        this.rounds.push(new EndOfGame(this));
+    }
+
+    static fromJSON(json) {
+        if (typeof json === "string") {
+            json = JSON.parse(json);
+        }
+
+        let gameModel = new GameModel()
+        Object.assign(gameModel, json);
+
+        this.setupRounds();
+
+        return gameModel;
     }
 
     /**
@@ -368,33 +416,20 @@ class GameModel {
      * @param index
      * @returns {*}
      */
-    getRound() {
-        return this._currentRound;
+    getRound(index) {
+        index = index ?? this.roundIndex;
+        return this.rounds[index];
     }
 
     /**
      * Set the currently active round by index.
-     * Will reset the current the round object.
      * @param value
      * @return current round object.
      */
     setRound(index) {
-        if (index < 0 || index > this.model.rounds.length) return this._currentRound;
-
+        if (index < 0 || index > this.model.rounds.length) return this.getRound();
         this.roundIndex = index;
-        if (index === this.model.rounds.length) {
-            this._currentRound = new EndOfGame(this);
-            return this._currentRound;
-        }
-
-        const roundModel = this.model.rounds[index];
-
-        if (roundModel.type === "multiple_choice") {
-            this._currentRound = new MultipleChoiceModel(roundModel);
-        } else if (roundModel.type === "choice") {
-            this._currentRound = new JeopardyModel(this, roundModel);
-        }
-        return this._currentRound;
+        return this.getRound();
     }
 
     nextRound() {
@@ -409,7 +444,7 @@ class GameModel {
      * Add a new player to the model
      * If the name already exists, make no change
      * @param name
-     * @returns {number} index of the player
+     * @returns the added player
      */
     addPlayer(name) {
         if (this.hasPlayer(name)) {
@@ -423,6 +458,7 @@ class GameModel {
         };
 
         this._players.push(player);
+        this.dispatchEvent("player-added", this._players.length - 1, player);
         return player;
     }
 

@@ -43,7 +43,7 @@ class ContestantPortalView extends AbstractView {
                 this.DOM.multipleChoice.querySelector(".inner.total").show();
                 this.DOM.multipleChoice.querySelector(".inner.total > .amount").text = update.bets[this.name].total;
 
-                if (update.bets[this.name].bonus === "true") {
+                if (update.bets[this.name].bonus !== 0) {
                     this.DOM.multipleChoice.querySelector(".inner.bonus > .amount").text = update.model.round.bonus;
                 }
                 else {
