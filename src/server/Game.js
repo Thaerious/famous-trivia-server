@@ -222,12 +222,6 @@ class Game {
     updateMCScores() {
         let values = this.model.getRound().getValues();
 
-        console.log("UpdateMCScores -----------------------------");
-        console.log(JSON.stringify(this.mcBetsData, null, 2));
-        console.log("--------------------------------------------");
-        console.log(JSON.stringify(values, null, 2));
-        console.log("--------------------------------------------");
-
         for (let name in this.mcBetsData) {
             // the sum of bets must be <= the players available score
             if (this.sumMCBet(name) > this.model.getPlayer(name).score) {
@@ -279,8 +273,8 @@ console.log(this.model.getPlayer(name));
      */
     sumMCBet(name) {
         let r = 0;
-        for (let index = 0; index < this.mcBetsData[name].length; index++) {
-            r = r + parseInt(this.mcBetsData[name][index].amount);
+        for (let index = 0; index < this.mcBetsData[name].answers.length; index++) {
+            r = r + parseInt(this.mcBetsData[name].answers[index].amount);
         }
         return r;
     }
@@ -344,15 +338,15 @@ console.log(this.model.getPlayer(name));
                 if (!this.model.getRound().isSpent(input.data.col, input.data.row)) {
                     this.model.getRound().setQuestionState(input.data.col, input.data.row);
                     this.updateState(5);
+                    this.notify("@HOST", {
+                        action: "provide_answer",
+                        'id-hash': crypto.randomBytes(8).toString('hex'),
+                        'time-stamp': new Date(),
+                        data: {
+                            answer: this.model.getRound().getAnswer()
+                        }
+                    });
                 }
-                this.notify("@HOST", {
-                    action: "provide_answer",
-                    'id-hash': crypto.randomBytes(8).toString('hex'),
-                    'time-stamp': new Date(),
-                    data: {
-                        answer: this.model.getRound().getAnswer()
-                    }
-                });
                 break;
         }
     }
