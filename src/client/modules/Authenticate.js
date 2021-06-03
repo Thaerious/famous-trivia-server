@@ -38,7 +38,6 @@ class Authenticate {
     signOut(){
         gapi.auth2.getAuthInstance().signOut();
     }
-
 }
 
 module.exports = Authenticate;
