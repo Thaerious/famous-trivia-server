@@ -4,5 +4,5 @@ public/styles/generated/*
 public/scripts/jit/*
 logs/
 gimp/
-assets/
+db/*
 coverage/
