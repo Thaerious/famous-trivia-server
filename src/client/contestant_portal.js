@@ -1,6 +1,6 @@
 import ContestantPortalView from "./modules/ContestantPortalView.js";
 import PortalController from "./modules/PortalController";
-import connectWebsocket from "./connectWebsocket.js";
+import connectWebsocket from "./modules/connectWebsocket.js";
 import setupSizeListener from "./modules/SetupSizeListener";
 
 window.onload = async () => {

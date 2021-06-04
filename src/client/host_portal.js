@@ -4,7 +4,7 @@ import FileOps from "./modules/FileOps.js";
 import Authenticate from "./modules/Authenticate.js";
 import HostPortalView from "./modules/HostPortalView.js";
 import PortalController from "./modules/PortalController";
-import connectWebsocket from "./connectWebsocket.js";
+import connectWebsocket from "./modules/connectWebsocket.js";
 import GameManagerService from "./services/GameManagerService";
 import constants from "../server/constants.js";
 import setupSizeListener from "./modules/SetupSizeListener";
