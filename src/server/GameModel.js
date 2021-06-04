@@ -112,10 +112,6 @@ class JeopardyModel {
         return this.isPlayerSpent(name) === false;
     }
 
-    hasCurrentPlayer() {
-        return this.currentPlayer !== '';
-    }
-
     getCurrentPlayer() {
         return this.currentPlayer;
     }
@@ -126,10 +122,6 @@ class JeopardyModel {
      */
     countUnspentPlayers() {
         return this.parent.players.length - this.spentPlayers.length;
-    }
-
-    get state() {
-        return Object.assign({}, this.stateData);
     }
 
     hasUnspent() { // TODO TEST
@@ -416,8 +408,6 @@ class GameModel {
 
     /**
      * Get the current round or the round by index.
-     * Setting the index value to a new index will create a new round instance.
-     * Otherwise it will return the previous one.
      * @param index
      * @returns {*}
      */
