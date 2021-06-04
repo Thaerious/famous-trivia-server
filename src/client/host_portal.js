@@ -2,8 +2,8 @@
 
 import FileOps from "./modules/FileOps.js";
 import Authenticate from "./modules/Authenticate.js";
-import HostPortalView from "./HostPortalView.js";
-import PortalController from "./PortalController";
+import HostPortalView from "./modules/HostPortalView.js";
+import PortalController from "./modules/PortalController";
 import connectWebsocket from "./connectWebsocket.js";
 import GameManagerService from "./services/GameManagerService";
 import constants from "../server/constants.js";

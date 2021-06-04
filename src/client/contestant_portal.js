@@ -1,5 +1,5 @@
-import ContestantPortalView from "./ContestantPortalView.js";
-import PortalController from "./PortalController";
+import ContestantPortalView from "./modules/ContestantPortalView.js";
+import PortalController from "./modules/PortalController";
 import connectWebsocket from "./connectWebsocket.js";
 import setupSizeListener from "./modules/SetupSizeListener";
 
