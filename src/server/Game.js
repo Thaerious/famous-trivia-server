@@ -229,7 +229,7 @@ class Game {
             }
 
             let bonusFlag = true;
-console.log(this.model.getPlayer(name));
+
             for (let i = 0; i < 6; i++){
                 let answer = this.mcBetsData[name].answers[i];
                 let bet = parseInt(answer.amount);
@@ -294,7 +294,7 @@ console.log(this.model.getPlayer(name));
             case "continue":
                 this.model.getRound().setAnswerState();
                 this.updateState(2);
-                // this.timer.start(Timer.TIMES.MULTIPLE_CHOICE);
+                this.timer.start(Timer.TIMES.MULTIPLE_CHOICE);
                 break;
         }
     }
