@@ -21,7 +21,7 @@ class HasDB {
             this.db = new sqlite3.Database(path, (err) => {
                 if (err) {
                     this.release();
-                    reject(new Error(err));
+                    reject(new Error(`Could not connect to database: ${path}`));
                 } else {
                     resolve(this.db);
                 }
