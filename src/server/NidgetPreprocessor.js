@@ -1,6 +1,6 @@
 import fs from 'fs';
 import {JSDOM} from 'jsdom';
-import constants from "./constants.js";
+import constants from "../constants.js";
 
 /**
  * Creates lists of .js dependencies from nidget .ejs files.

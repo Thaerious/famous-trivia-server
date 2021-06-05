@@ -4,7 +4,7 @@ import GameDescriptionModel from "./modules/GameDescriptionModel.js";
 import FileOps from "./modules/FileOps.js";
 import Parameters from "./modules/Parameters.js";
 import FileList from "./modules/FileList.js";
-import GameManagerService from "./services/GameManagerService.js";
+import GameManagerService from "./modules/GameManagerService.js";
 
 let fileOps = new FileOps();
 const gameManagerService = new GameManagerService();

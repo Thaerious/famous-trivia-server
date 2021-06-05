@@ -2,7 +2,7 @@
 
 import fs from 'fs';
 import browserify from 'browserify';
-import constants from './constants.js';
+import constants from '../constants.js';
 import Path from 'path';
 
 class JITBrowserify {
@@ -65,7 +65,7 @@ class JITBrowserify {
             const rs = this.browserify(jsFilePath, htmlFilePath);
 
             rs.on('error', err => {
-                this.emit('end'); // end this stream
+                if (this?.emit) this.emit('end'); // end this stream
                 reject(err);
             });
             rs.on('end', ()=>resolve());

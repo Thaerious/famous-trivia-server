@@ -1,3 +1,4 @@
+import constants from "../../constants";
 
 class PortalController {
     constructor(ws, view) {
@@ -45,7 +46,7 @@ class PortalController {
     }
 
     onClose(event){
-        if (this.name === "@HOST"){
+        if (this.name === constants.names.HOST){
             window.location = "host.ejs";
         } else {
             window.location = "contestant_join.ejs";

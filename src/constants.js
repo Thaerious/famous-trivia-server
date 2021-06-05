@@ -15,6 +15,9 @@ export default {
     },
     locations : {
         HOST : "host.ejs"
+    },
+    names: {
+        HOST : "@HOST"
     }
 };
 

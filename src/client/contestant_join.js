@@ -1,4 +1,4 @@
-import GameManagerService from "./services/GameManagerService.js";
+import GameManagerService from "./modules/GameManagerService.js";
 import parseURLParameters from './modules/parseURLParameters.js';
 
 let gameManagerService = new GameManagerService();

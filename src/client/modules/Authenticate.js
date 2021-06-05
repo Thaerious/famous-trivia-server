@@ -1,8 +1,10 @@
 // see https://developers.google.com/drive/api/v3/quickstart/js?hl=en
 
+import config from '../../config';
+
 class Authenticate {
     constructor(){
-        Object.assign(this, require("./googleFields.js"));
+        Object.assign(this, config.google);
     }
 
     loadClient() {

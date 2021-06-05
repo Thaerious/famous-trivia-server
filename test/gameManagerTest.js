@@ -12,7 +12,7 @@ let gameModel = new GameModel(data);
 let game = new Game(gameModel);
 
 describe('class GameManager', async function () {
-    let gameManager = new GameManager('./assets/test.db');
+    let gameManager = new GameManager('./db/test.db');
 
     describe('#connect()', function () {
         it('has database', async function () {

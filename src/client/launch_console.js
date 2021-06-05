@@ -1,5 +1,5 @@
 import Authenticate from './modules/Authenticate.js';
-import GameManagerService from "./services/GameManagerService.js"
+import GameManagerService from "./modules/GameManagerService.js"
 
 const gameManagerService = new GameManagerService();
 

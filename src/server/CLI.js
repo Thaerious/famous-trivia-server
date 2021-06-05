@@ -1,5 +1,5 @@
 import readline from 'readline';
-import constants from "./constants.js";
+import constants from "../constants.js";
 
 class CLI {
     constructor(gameManager, sessionManager) {

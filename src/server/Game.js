@@ -1,5 +1,5 @@
 import GameModel from "./GameModel.js";
-import constants from "./constants.js";
+import constants from "../constants.js";
 import crypto from "crypto";
 
 class Timer {
@@ -114,12 +114,12 @@ class Game {
 
         switch (input.action) {
             case "next_round":
-                if (input.player !== "@HOST") return;
+                if (input.player !== constants.names.HOST) return;
                 this.model.nextRound();
                 this.startRound();
                 break;
             case "prev_round":
-                if (input.player !== "@HOST") return;
+                if (input.player !== constants.names.HOST) return;
                 this.model.prevRound();
                 this.startRound();
                 break;
@@ -334,11 +334,11 @@ class Game {
     [4](input) { // waiting for player to pick question
         switch (input.action) {
             case "select":
-                if (input.player !== "@HOST" && this.model.activePlayer.name !== input.player) return;
+                if (input.player !== constants.names.HOST && this.model.activePlayer.name !== input.player) return;
                 if (!this.model.getRound().isSpent(input.data.col, input.data.row)) {
                     this.model.getRound().setQuestionState(input.data.col, input.data.row);
                     this.updateState(5);
-                    this.notify("@HOST", {
+                    this.notify(constants.names.HOST, {
                         action: "provide_answer",
                         'id-hash': crypto.randomBytes(8).toString('hex'),
                         'time-stamp': new Date(),
@@ -354,7 +354,7 @@ class Game {
     [5](input) { // waiting for host to read question and click continue
         switch (input.action) {
             case "continue":
-                if (input.player !== "@HOST") return;
+                if (input.player !== constants.names.HOST) return;
                 this.model.getRound().setSpent();
                 this.updateState(6);
                 this.timer.start(Timer.TIMES.ANSWER);

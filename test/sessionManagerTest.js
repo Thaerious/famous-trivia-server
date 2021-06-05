@@ -11,7 +11,7 @@ describe(`Session Manager`, async () => {
     describe(`#constructor`, async () => {
         it(`sanity test`, async () => {
             // sessionManager = new SessionManager(":memory:");
-            sessionManager = new SessionManager("assets/test.db");
+            sessionManager = new SessionManager("db/test.db");
             assert.notStrictEqual(sessionManager, null);
         });
         it(`insert clean tables`, async () => {

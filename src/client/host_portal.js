@@ -5,8 +5,8 @@ import Authenticate from "./modules/Authenticate.js";
 import HostPortalView from "./modules/HostPortalView.js";
 import PortalController from "./modules/PortalController";
 import connectWebsocket from "./modules/connectWebsocket.js";
-import GameManagerService from "./services/GameManagerService";
-import constants from "../server/constants.js";
+import GameManagerService from "./modules/GameManagerService";
+import constants from "../constants.js";
 import setupSizeListener from "./modules/SetupSizeListener";
 
 let gameManagerService = new GameManagerService();

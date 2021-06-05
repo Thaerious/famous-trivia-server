@@ -92,7 +92,7 @@ class Connection{
      */
     async checkRole(){
         if (await this.req.session.get("role") === "host"){
-            this.name = "@HOST";
+            this.name = constants.names.HOST;
             await this.connect(this.name);
             if (this.game) {
                 this.send(this.game.getUpdate());

@@ -23,8 +23,8 @@ import fs from 'fs';
 const port = 8000;
 const app = Express();
 const server = http.createServer(app);
-const gameManager = await new GameManager("assets/trivia.db");
-const sessionManager = new SessionManager("assets/trivia.db");
+const gameManager = await new GameManager("db/trivia.db");
+const sessionManager = new SessionManager("db/trivia.db");
 await sessionManager.load();
 const nidgetPreprocessor = new NidgetPreprocessor("views/nidgets").setup();
 
