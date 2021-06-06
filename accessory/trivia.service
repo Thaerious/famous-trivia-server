@@ -6,9 +6,9 @@ After=network.target
 [Service]
 Environment=TRIVIA_PORT=8000
 Type=simple
-User=trivia_user
-ExecStart=/usr/bin/node /home/trivia_user/trivia/server/src/server.js
-Restart=on-failure
+User=ed
+WorkingDirectory=/home/ed/trivia/server
+ExecStart=/usr/bin/node /home/ed/trivia/server/src/server/server.js
 
 [Install]
 WantedBy=multi-user.target
