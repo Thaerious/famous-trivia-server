@@ -14,6 +14,31 @@ const config = {
 
         // Scope to use to access user's Drive items.
         scope: "https://www.googleapis.com/auth/drive.file"
+    },
+    server : {
+        // The port to start Express on.
+        port : 8000,
+
+        // The directory to server files out of
+        public_html : "public",
+
+        // Public script dir
+        public_scripts : "public/scripts/",
+
+        // Public script dir (target of JIT pre-compiler).
+        jit_scripts : "./public/scripts/jit/",
+
+        // .ejs source directory
+        ejs_src : "./views/",
+
+        // .ejs public sub-directory for .ejs root pages (pages users will browse to).
+        ejs_root : "./views/pages/",
+
+        // Path that serves JIT pages.
+        jit_path : "/jit/*.js",
+
+        // Client source files, all files in this dir get browserified unless --jit is flagged.
+        client_path : "./src/client/"
     }
 };
 export default config;
