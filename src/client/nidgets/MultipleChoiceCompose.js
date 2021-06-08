@@ -1,4 +1,4 @@
-const NidgetElement = require("@thaerious/nidget").NidgetElement;
+const NidgetElement = require("./NidgetElement");
 require("./CheckBox.js");
 
 class AnswerUpdate extends CustomEvent{

@@ -12,7 +12,11 @@ class JITBrowserify {
 
     get middleware() {
         return async (req, res, next) => {
-            this.run(req, res, next);
+            try {
+                await this.run(req, res, next);
+            }catch(err){
+                console.log(err.toString());
+            }
         }
     }
 
@@ -24,31 +28,31 @@ class JITBrowserify {
      * @param res
      * @param next
      */
-    run(req, res, next) {
+    async run(req, res, next) {
         let path = req.path.slice(5);
         let name = path.substr(0, path.length - 3);
 
         res.setHeader('Content-Type', 'text/javascript');
         let jsFilePath = './src/client/' + path;
         let htmlFilePath = './views/pages/' + name + '.ejs';
-        
-        this.browserify(jsFilePath, htmlFilePath)
-            .on('error', err => {
-                this.emit('end'); // end this stream
-                reject(err);
-            })
-            .pipe(res);
+
+        await this.syncBrowserify(jsFilePath, htmlFilePath, res);
     }
 
     /**
-     * Browserify the file found at 'filepath'
+     * Browserify the file found at 'jsFilePath'.
+     * Add any dependencies found in 'htmlFilePath'.
      * @param filepath
      * @returns {Readable}
      */
     browserify(jsFilePath, htmlFilePath){
         const b = browserify(jsFilePath, {debug: true});
+
+        console.log(`browserify(${jsFilePath}, ${htmlFilePath})`)
+
         if (htmlFilePath){
             const dependencies = this.nidgetPreprocessor.getDependencies(htmlFilePath);
+            console.log(dependencies);
             for (let dep of dependencies) {
                 let path = getScriptPath(constants.nidgets.SCRIPT_PATH, dep);
                 b.add(path);

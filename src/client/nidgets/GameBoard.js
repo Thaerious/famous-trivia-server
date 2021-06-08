@@ -8,7 +8,7 @@
         header-update (value, col, fontsize) : when the header text changes (and blurs)
  **/
 
-const NidgetElement = require("@thaerious/nidget").NidgetElement;
+const NidgetElement = require("./NidgetElement");
 
 class CellSelectEvent extends CustomEvent{
     constructor(row, col) {
@@ -53,6 +53,8 @@ class GameBoard extends NidgetElement {
             });
 
             this.getHeader(col).addEventListener("blur", (event)=>{
+                console.log(event.target);
+                window.x = event.target;
                 event.target.innerHTML = event.target.text.trim();
                 event.target.fitText.notify(fontSize=>{
                     this.dispatchEvent(new HeaderUpdateEvent(col, this.getHeader(col).text, fontSize));

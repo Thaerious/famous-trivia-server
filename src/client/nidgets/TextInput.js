@@ -1,4 +1,4 @@
-const NidgetElement = require("@thaerious/nidget").NidgetElement;
+const NidgetElement = require("./NidgetElement");
 
 class TextInput extends NidgetElement {
     constructor() {

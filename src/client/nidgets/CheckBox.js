@@ -1,4 +1,4 @@
-const NidgetElement = require("@thaerious/nidget").NidgetElement;
+const NidgetElement = require("./NidgetElement");
 
 class ValueUpdate extends  CustomEvent{
     constructor(value) {
@@ -11,6 +11,10 @@ class ValueUpdate extends  CustomEvent{
 }
 
 class CheckBox extends NidgetElement {
+
+    constructor() {
+        super("check-box-template");
+    }
     async connectedCallback(){
         await super.connectedCallback();
         this.addEventListener("click", ()=>{

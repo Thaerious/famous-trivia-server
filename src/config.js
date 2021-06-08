@@ -22,7 +22,7 @@ const config = {
         // The directory to server files out of
         public_html : "public",
 
-        // Public script dir
+        // Public script dir (target)
         public_scripts : "public/scripts/",
 
         // Public script dir (target of JIT pre-compiler).
@@ -31,6 +31,9 @@ const config = {
         // .ejs source directory
         ejs_src : "./views/",
 
+        // .ejs sub-directory for nidget template .ejs pages.
+        ejs_nidgets : "./views/nidgets/",
+
         // .ejs public sub-directory for .ejs root pages (pages users will browse to).
         ejs_root : "./views/pages/",
 
@@ -38,7 +41,10 @@ const config = {
         jit_path : "/jit/*.js",
 
         // Client source files, all files in this dir get browserified unless --jit is flagged.
-        client_path : "./src/client/"
+        client_path : "./src/client/",
+
+        // Client source files, all files in this dir get browserified unless --jit is flagged.
+        nidget_scripts : "./src/client/nidgets/"
     }
 };
 export default config;

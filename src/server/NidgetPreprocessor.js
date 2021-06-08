@@ -6,9 +6,17 @@ import constants from "../constants.js";
  * Creates lists of .js dependencies from nidget .ejs files.
  */
 class NidgetPreprocessor {
-    constructor(modulePath) {
-        this.modulePath = modulePath;
+
+    /**
+     *
+     * @param (String) templateFilePath location of the template (.ejs) files.
+     */
+    constructor(templateFilePath, scriptFilePath) {
+        this.templateFilePath = templateFilePath;
+        this.scriptFilePath = scriptFilePath;
+
         this.knownNidgets = {};
+        this.ejsNidgets = new Set(); // nidgets found in the template .ejs directory
     }
 
     /**
@@ -18,10 +26,21 @@ class NidgetPreprocessor {
      * @returns {NidgetPreprocessor}
      */
     setup(){
-        let files = fs.readdirSync(this.modulePath);
+        for (let file of fs.readdirSync(this.templateFilePath)){
+            let nidgetName = file.substr(0, file.length - 4); // .ejs
+            nidgetName = this.validateNidgetName(nidgetName);
+            this.knownNidgets[nidgetName] = {
+                dependencies: new Set()
+            }
 
-        for (let file of files){
-            const nidgetName = file.substr(0, file.length - 4);
+            this.ejsNidgets.add(nidgetName);
+        }
+
+        for (let file of fs.readdirSync(this.scriptFilePath)){
+            let nidgetName = file.substr(0, file.length - 3); // .js
+            nidgetName = this.validateNidgetName(nidgetName);
+            if (this.knownNidgets[nidgetName]) continue;
+
             this.knownNidgets[nidgetName] = {
                 dependencies: new Set()
             }
@@ -29,20 +48,75 @@ class NidgetPreprocessor {
 
         for (let nidget in this.knownNidgets){
             this.knownNidgets[nidget].dependencies.add(nidget);
-            let filePath = this.modulePath + "/" + nidget + ".ejs";
+            let filePath = this.templateFilePath + "/" + nidget + ".ejs";
             this.seekDependencies(filePath, this.knownNidgets[nidget].dependencies);
         }
+
+        for (let nidget in this.knownNidgets){
+            console.log(nidget);
+        }
+
         return this;
     }
 
+    /**
+     * Ensure that the nidget name is in the correct format.
+     * The correct format consists of two or dash (-) separated words.
+     * Will attempt to convert camelCase to dash delimited.
+     * @param nidgetName
+     */
+    validateNidgetName(nidgetName){
+        const ctdNidgetName = this.convertToDash(nidgetName);
+        if (ctdNidgetName.indexOf("-") === -1){
+            throw new Error("Invalid nidget name: " + nidgetName);
+        }
+        return ctdNidgetName;
+    }
+
+    /**
+     * Converts camelCase to dash delimited.
+     * @param string
+     */
+    convertToDash(string){
+        const llcString = string.charAt(0).toLocaleLowerCase() + string.substr(1); // leading lower case
+        return llcString.replace( /([A-Z])/g, '-$1' ).toLowerCase();
+    }
+
+    /**
+     * Retrieve only the depencies that have a template file.
+     * This is used by the ejs renderer to determine which template files to include.
+     * Browserify uses 'getDependencies' as it returns all dependencies.
+     * @param filePath
+     */
+    getTemplateDependencies(filePath){
+        let includes = new Set();
+        for (const dep of this.getDependencies(filePath)){
+            if (this.ejsNidgets.has(dep)){
+                includes.add(dep);
+            }
+        }
+        return includes;
+    }
+
+    /**
+     * Retrieve the dependencies for a specific template (.ejs) file.
+     * Searches the template for for any instance of a nidget element.
+     * Nidgets elements are those that declared in in the nidget template
+     * path (/view/nidgets) or in the nidget script path (/src/client/nidgets).
+     * @param filePath
+     * @returns {Set<any>}
+     */
     getDependencies(filePath){
         const fileString = fs.readFileSync(filePath);
         const dom = new JSDOM(fileString);
 
         let includes = new Set();
         for (let nidget in this.knownNidgets){
+            console.log("  Considering:" + nidget);
             if (dom.window.document.querySelector(nidget)){
+                console.log("    Found in DOM:" + nidget);
                 for(const dependent of this.knownNidgets[nidget].dependencies) {
+                    console.log("      Adding Dependency:" + dependent);
                     includes.add(dependent);
                 }
             }
@@ -57,6 +131,8 @@ class NidgetPreprocessor {
      * @param filename
      */
     seekDependencies(filePath, set){
+        if (!fs.existsSync(filePath)) return;
+
         const fileString = fs.readFileSync(filePath);
         const htmlString = `<html><body>${fileString}</body></html>`;
         const dom = new JSDOM(htmlString);
@@ -72,7 +148,7 @@ class NidgetPreprocessor {
 
             if (template.content.querySelector(nidget)){
                 set.add(nidget);
-                let childFilePath = this.modulePath + "/" + nidget + ".ejs";
+                let childFilePath = this.templateFilePath + "/" + nidget + ".ejs";
                 this.seekDependencies(childFilePath, set);
             }
         }

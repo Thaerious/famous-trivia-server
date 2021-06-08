@@ -1,6 +1,6 @@
 "use strict";
 
-const NidgetElement = require("@thaerious/nidget").NidgetElement;
+const NidgetElement = require("./NidgetElement");
 import PlayerPanel from "./PlayerPanel.js";
 
 class PlayerContainer extends NidgetElement {
