@@ -1,4 +1,4 @@
-const NidgetElement = require("./NidgetElement");
+import NidgetElement from "./NidgetElement.js";
 
 class MenuContainer extends NidgetElement{
 
@@ -131,4 +131,4 @@ class MenuItem extends NidgetElement{
 
 window.customElements.define('menu-item', MenuItem);
 window.customElements.define('menu-container', MenuContainer);
-module.exports = MenuContainer;
+export default MenuContainer;

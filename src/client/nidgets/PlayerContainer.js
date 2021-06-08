@@ -1,6 +1,6 @@
 "use strict";
 
-const NidgetElement = require("./NidgetElement");
+import NidgetElement from "./NidgetElement.js";
 import PlayerPanel from "./PlayerPanel.js";
 
 class PlayerContainer extends NidgetElement {
@@ -119,4 +119,4 @@ class PlayerContainer extends NidgetElement {
 }
 
 window.customElements.define('player-container', PlayerContainer);
-module.exports = PlayerContainer;
+export default PlayerContainer;

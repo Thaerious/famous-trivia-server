@@ -1,4 +1,4 @@
-const NidgetElement = require("./NidgetElement");
+import NidgetElement from "./NidgetElement.js";
 
 class ModalAlert extends NidgetElement {
 
@@ -19,4 +19,4 @@ class ModalAlert extends NidgetElement {
 }
 
 window.customElements.define('modal-alert', ModalAlert);
-module.exports = ModalAlert;
+export default ModalAlert;

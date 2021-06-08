@@ -1,4 +1,4 @@
-const NidgetElement = require("./NidgetElement");
+import NidgetElement from "./NidgetElement.js";
 require("./CheckBox.js");
 
 class ValueUpdate extends CustomEvent {
@@ -75,4 +75,4 @@ class MultipleChoicePresent extends NidgetElement {
 }
 
 window.customElements.define('multiple-choice-present', MultipleChoicePresent);
-module.exports = MultipleChoicePresent;
+export default MultipleChoicePresent;

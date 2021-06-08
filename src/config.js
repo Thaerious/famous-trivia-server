@@ -28,6 +28,9 @@ const config = {
         // Public script dir (target of JIT pre-compiler).
         jit_scripts : "./public/scripts/jit/",
 
+        // Target of .ejs precompile
+        pre_ejs : "./public/html/jit/",
+
         // .ejs source directory
         ejs_src : "./views/",
 

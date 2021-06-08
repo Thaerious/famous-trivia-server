@@ -1,4 +1,4 @@
-const NidgetElement = require("./NidgetElement");
+import NidgetElement from "./NidgetElement.js";
 require("./CheckBox.js");
 
 class AnswerUpdate extends CustomEvent{
@@ -88,4 +88,4 @@ class MultipleChoiceCompose extends NidgetElement {
 }
 
 window.customElements.define('multiple-choice-compose', MultipleChoiceCompose);
-module.exports = MultipleChoiceCompose;
+export default MultipleChoiceCompose;

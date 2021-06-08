@@ -1,4 +1,4 @@
-const NidgetElement = require("./NidgetElement");
+import NidgetElement from "./NidgetElement.js";
 
 class ValueUpdate extends  CustomEvent{
     constructor(value) {
@@ -15,6 +15,7 @@ class CheckBox extends NidgetElement {
     constructor() {
         super("check-box-template");
     }
+
     async connectedCallback(){
         await super.connectedCallback();
         this.addEventListener("click", ()=>{
@@ -67,4 +68,4 @@ class CheckBox extends NidgetElement {
 CheckBox.CHECKED_ATTRIBUTE = "checked";
 CheckBox.LOCKED_ATTRIBUTE = "locked";
 window.customElements.define('check-box', CheckBox);
-module.exports = CheckBox;
+export default CheckBox;

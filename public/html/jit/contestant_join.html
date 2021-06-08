@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<link rel="stylesheet" href="styles/generated/contestant_join.css"/>
+<script type="text/javascript" src="jit/contestant_join.js" defer></script>
+</head>
+<body>
+
+    
+    <template id="modal-alert-template">
+    <link rel="stylesheet" href="styles/generated/modal_alert.css">
+    <div class="outer">
+        <div class="inner">
+            <div id="content" class="content"></div>
+        </div>
+        <div id="ok" class="button"><div class="text">OK</div></div>
+    </div>
+</template>
+
+    
+    <template id="text-input-template">
+    <link rel="stylesheet" href="styles/generated/text_input.css">
+    <div class="text-input">
+        <nidget-text id="content" class="text" contenteditable=""></nidget-text>
+        <div id="hint" class="hint-text">Enter Name Here</div>
+    </div>
+</template>
+
+
+<modal-alert id="alert" class="hidden"></modal-alert>
+<div class="bg"></div>
+
+<div class="button-container">
+    <text-input id="name" class="ti-style-inset" spellcheck="false" hint="Enter Name Here" filter="[ a-zA-Z_-]{0,15}" tabindex="0">
+    </text-input>
+    <div class="button" id="join" tabindex="1">
+        <div class="text">
+            Join Game
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

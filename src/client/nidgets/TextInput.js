@@ -1,4 +1,4 @@
-const NidgetElement = require("./NidgetElement");
+import NidgetElement from "./NidgetElement.js";
 
 class TextInput extends NidgetElement {
     constructor() {
@@ -100,4 +100,4 @@ class TextInput extends NidgetElement {
 TextInput.FILTER = "filter";
 TextInput.HINT_ATTRIBUTE = "hint";
 window.customElements.define('text-input', TextInput);
-module.exports = TextInput;
+export default TextInput;

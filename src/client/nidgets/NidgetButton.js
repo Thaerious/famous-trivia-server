@@ -1,4 +1,4 @@
-const NidgetElement = require("./NidgetElement");
+import NidgetElement from "./NidgetElement.js";
 
 class NidgetButton extends  NidgetElement{
     constructor() {
@@ -21,4 +21,4 @@ class NidgetButton extends  NidgetElement{
 }
 
 window.customElements.define('nidget-button', NidgetButton);
-module.exports = NidgetButton;
+export default NidgetButton;

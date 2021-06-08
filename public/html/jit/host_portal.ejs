@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<link rel="stylesheet" href="styles/generated/host_portal.css"/>
+<script type="text/javascript" src="jit/host_portal.js" defer></script>
+    <meta name="google-signin-client_id" content="158823134681-98bgkangoltk636ukf8pofeis7pa7jbk.apps.googleusercontent.com">
+<script type="text/javascript" src="https://apis.google.com/js/api.js"></script>
+</head>
+<body>
+
+    
+    <template id="game-board-template">
+    <link rel="stylesheet" href="styles/generated/game_board.css">
+    <div id="game-board">
+        <div class="row">
+            <div class="column" data-row="h" data-col="0">
+                <div class="text-buffer">
+                    <nidget-text class="value" contenteditable="true"></nidget-text>
+                </div>
+            </div>
+            <div class="column" data-row="h" data-col="1">
+                <div class="text-buffer">
+                    <nidget-text class="value" contenteditable="true"></nidget-text>
+                </div>
+            </div>
+            <div class="column" data-row="h" data-col="2">
+                <div class="text-buffer">
+                    <nidget-text class="value" contenteditable="true"></nidget-text>
+                </div>
+            </div>
+            <div class="column" data-row="h" data-col="3">
+                <div class="text-buffer">
+                    <nidget-text class="value" contenteditable="true"></nidget-text>
+                </div>
+            </div>
+            <div class="column" data-row="h" data-col="4">
+                <div class="text-buffer">
+                    <nidget-text class="value" contenteditable="true"></nidget-text>
+                </div>
+            </div>
+            <div class="column" data-row="h" data-col="5">
+                <div class="text-buffer">
+                    <nidget-text class="value" contenteditable="true"></nidget-text>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column question" data-row="0" data-col="0">
+                <nidget-text class="value"></nidget-text>
+            </div>
+            <div class="column question" data-row="0" data-col="1">
+                <nidget-text class="value"></nidget-text>
+            </div>
+            <div class="column question" data-row="0" data-col="2">
+                <nidget-text class="value"></nidget-text>
+            </div>
+            <div class="column question" data-row="0" data-col="3">
+                <nidget-text class="value"></nidget-text>
+            </div>
+            <div class="column question" data-row="0" data-col="4">
+                <nidget-text class="value"></nidget-text>
+            </div>
+            <div class="column question" data-row="0" data-col="5">
+                <nidget-text class="value"></nidget-text>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column question" data-row="1" data-col="0">
+                <nidget-text class="value"></nidget-text>
+            </div>
+            <div class="column question" data-row="1" data-col="1">
+                <nidget-text class="value"></nidget-text>
+            </div>
+            <div class="column question" data-row="1" data-col="2">
+                <nidget-text class="value"></nidget-text>
+            </div>
+            <div class="column question" data-row="1" data-col="3">
+                <nidget-text class="value"></nidget-text>
+            </div>
+            <div class="column question" data-row="1" data-col="4">
+                <nidget-text class="value"></nidget-text>
+            </div>
+            <div class="column question" data-row="1" data-col="5">
+                <nidget-text class="value"></nidget-text>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column question" data-row="2" data-col="0">
+                <nidget-text class="value"></nidget-text>
+            </div>
+            <div class="column question" data-row="2" data-col="1">
+                <nidget-text class="value"></nidget-text>
+            </div>
+            <div class="column question" data-row="2" data-col="2">
+                <nidget-text class="value"></nidget-text>
+            </div>
+            <div class="column question" data-row="2" data-col="3">
+                <nidget-text class="value"></nidget-text>
+            </div>
+            <div class="column question" data-row="2" data-col="4">
+                <nidget-text class="value"></nidget-text>
+            </div>
+            <div class="column question" data-row="2" data-col="5">
+                <nidget-text class="value"></nidget-text>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column question" data-row="3" data-col="0">
+                <nidget-text class="value"></nidget-text>
+            </div>
+            <div class="column question" data-row="3" data-col="1">
+                <nidget-text class="value"></nidget-text>
+            </div>
+            <div class="column question" data-row="3" data-col="2">
+                <nidget-text class="value"></nidget-text>
+            </div>
+            <div class="column question" data-row="3" data-col="3">
+                <nidget-text class="value"></nidget-text>
+            </div>
+            <div class="column question" data-row="3" data-col="4">
+                <nidget-text class="value"></nidget-text>
+            </div>
+            <div class="column question" data-row="3" data-col="5">
+                <nidget-text class="value"></nidget-text>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column question" data-row="4" data-col="0">
+                <nidget-text class="value"></nidget-text>
+            </div>
+            <div class="column question" data-row="4" data-col="1">
+                <nidget-text class="value"></nidget-text>
+            </div>
+            <div class="column question" data-row="4" data-col="2">
+                <nidget-text class="value"></nidget-text>
+            </div>
+            <div class="column question" data-row="4" data-col="3">
+                <nidget-text class="value"></nidget-text>
+            </div>
+            <div class="column question" data-row="4" data-col="4">
+                <nidget-text class="value"></nidget-text>
+            </div>
+            <div class="column question" data-row="4" data-col="5">
+                <nidget-text class="value"></nidget-text>
+            </div>
+        </div>
+    </div>
+</template>
+
+
+    
+    <template id="menu-container-template">
+    <link rel="stylesheet" href="styles/generated/menu_container.css">
+    <img class="menu-icon" id="menu-icon" src=""/>
+    <div class="menu-area hidden" id="outer">
+    </div>
+</template>
+
+    
+    <!-- in file "/views/nidgets/check-box.ejs" -->
+<template id="check-box-template">
+    <link rel="stylesheet" href="styles/generated/check_box.css">
+    <div id="outer">
+        <div id="inner"></div>
+    </div>
+</template>
+
+<template id="multiple-choice-present-template">
+    <link rel="stylesheet" href="styles/generated/multiple_choice_present.css">
+    <div class="outer">
+        <div class="inner" data-index="0" style="--index: 0">
+            <check-box checked="false" template-id="check-box-template"></check-box>
+            <text-input tabindex="0" class="wager style-dotted" spellcheck="false" filter="[0-9]{0,4}">0</text-input>
+            <nidget-text class="answer"></nidget-text>
+        </div>
+
+        <div class="inner" data-index="1" style="--index: 1">
+            <check-box checked="false" template-id="check-box-template"></check-box>
+            <text-input tabindex="1" class="wager style-dotted" spellcheck="false" filter="[0-9]{0,4}">0</text-input>
+            <nidget-text class="answer"></nidget-text>
+        </div>
+
+        <div class="inner" data-index="2" style="--index: 2">
+            <check-box checked="false" template-id="check-box-template"></check-box>
+            <text-input tabindex="2" class="wager style-dotted" spellcheck="false" filter="[0-9]{0,4}">0</text-input>
+            <nidget-text class="answer"></nidget-text>
+        </div>
+
+        <div class="inner" data-index="3" style="--index: 3">
+            <check-box checked="false" template-id="check-box-template"></check-box>
+            <text-input tabindex="3" class="wager style-dotted" spellcheck="false" filter="[0-9]{0,4}">0</text-input>
+            <nidget-text class="answer"></nidget-text>
+        </div>
+
+        <div class="inner" data-index="4" style="--index: 4">
+            <check-box checked="false" template-id="check-box-template"></check-box>
+            <text-input tabindex="4" class="wager style-dotted" spellcheck="false" filter="[0-9]{0,4}">0</text-input>
+            <nidget-text class="answer"></nidget-text>
+        </div>
+
+        <div class="inner" data-index="5" style="--index: 5">
+            <check-box checked="false" template-id="check-box-template"></check-box>
+            <text-input tabindex="5" class="wager style-dotted" spellcheck="false" filter="[0-9]{0,4}">0</text-input>
+            <nidget-text class="answer"></nidget-text>
+        </div>
+
+        <nidget-element class="inner bonus" style="--index: 6">
+            <nidget-text class="amount">000</nidget-text>
+            <nidget-text class="label">BONUS</nidget-text>
+        </nidget-element>
+
+        <nidget-element class="inner total" style="--index: 7">
+            <nidget-text class="amount">000</nidget-text>
+            <nidget-text class="label">TOTAL</nidget-text>
+        </nidget-element>
+    </div>
+</template>
+
+    
+    <!-- in file "/views/nidgets/check-box.ejs" -->
+<template id="check-box-template">
+    <link rel="stylesheet" href="styles/generated/check_box.css">
+    <div id="outer">
+        <div id="inner"></div>
+    </div>
+</template>
+
+    
+    <template id="text-input-template">
+    <link rel="stylesheet" href="styles/generated/text_input.css">
+    <div class="text-input">
+        <nidget-text id="content" class="text" contenteditable=""></nidget-text>
+        <div id="hint" class="hint-text">Enter Name Here</div>
+    </div>
+</template>
+
+    
+    <template id="nidget-button-template">
+    <link rel="stylesheet" href="styles/generated/nidget_button.css">
+    <div class="mask"></div>
+    <div id="outer" class="button">
+        <div id="text" class="text"></div>
+    </div>
+</template>
+
+    
+    <template id="player-container-template" data-include="player-panel">
+    <link rel="stylesheet" href="styles/generated/player_container.css">
+
+    <div class="outer hide-extra">
+        <nidget-element id="expand-button" class="hidden">
+            <div class="text">&#9654;</div>
+        </nidget-element>
+        <nidget-element style="--index: 0" class="inner first" data-index="0">
+        </nidget-element>
+    </div>
+
+</template>
+
+    
+    <template id="player-panel-template">
+    <link rel="stylesheet" href="styles/generated/player_panel.css">
+
+    <div class="outer">
+        <nidget-text id="name">Name</nidget-text>
+        <nidget-text id="score">1000</nidget-text>
+        <div id="clock">
+            <div id="buzz-light"></div>
+            <div class="clock-tick" data-index="0"></div>
+            <div class="clock-tick" data-index="1"></div>
+            <div class="clock-tick" data-index="2"></div>
+            <div class="clock-tick" data-index="3"></div>
+            <div class="clock-tick" data-index="4"></div>
+        </div>
+    </div>
+
+</template>
+
+    
+    <template id="question-pane-template">
+    <link rel="stylesheet" href="styles/generated/question_pane.css">
+
+    <div id="outer">
+        <nidget-text class="text-contents" id="text-contents" contenteditable="true"></nidget-text>
+    </div>
+</template>
+
+    
+    <template id="trivia-timer-template">
+    <link rel="stylesheet" href="styles/generated/trivia_timer.css">
+    <div class="bg"></div>
+    <div id="outer" class="outer">
+        <div class="inner"></div>
+        <div class="inner" id="prev-tick"><div class="text">0</div></div>
+        <div class="inner" id="current-tick"><div class="text">0</div></div>
+        <div class="inner"></div>
+    </div>
+    <div class="mask"></div>
+</template>
+
+
+<div class="bg"></div>
+
+<div id="page-container" class="aspect-fit">
+    <div class="top-bar" id="top-bar">
+        <menu-container image-src="assets/images/menu.png">
+            <menu-item event-name="terminate">Terminate Hosting</menu-item>
+            <menu-item event-name="next">Next Round</menu-item>
+            <menu-item event-name="prev">Previous Round</menu-item>
+            <menu-item event-name="add-players">Add Players</menu-item>
+        </menu-container>
+        <nidget-text class="round-number-text">Round 1</nidget-text>
+    </div>
+
+    <div id="main-container">
+        <player-container id="player-container-left"></player-container>
+        <question-pane id="question-pane" class="hidden" template-id="question-pane-template"></question-pane>
+        <game-board id="game-board" class="hidden"></game-board>
+        <multiple-choice-present id="multiple-choice-present" class="hidden"></multiple-choice-present>
+        <nidget-text id="answer"></nidget-text>
+
+        <div class="button-container">
+            <trivia-timer class="hidden"></trivia-timer>
+
+            <nidget-button id="accept" class="round left button">ACCEPT</nidget-button>
+            <nidget-button id="reject" class="round right button">REJECT</nidget-button>
+            <nidget-button id="back" class="round left button">BACK</nidget-button>
+            <nidget-button id="continue" class="round right button">CONTINUE</nidget-button>
+            <nidget-button id="next" class="round center button">NEXT ROUND</nidget-button>
+            <nidget-button id="start" class="round center button">START</nidget-button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

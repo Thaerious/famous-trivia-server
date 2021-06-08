@@ -1,4 +1,4 @@
-const NidgetElement = require("./NidgetElement");
+import NidgetElement from "./NidgetElement.js";
 
 class TriviaTimer extends NidgetElement{
 
@@ -70,4 +70,4 @@ class TriviaTimer extends NidgetElement{
 }
 
 window.customElements.define('trivia-timer', TriviaTimer);
-module.exports = TriviaTimer;
+export default TriviaTimer;

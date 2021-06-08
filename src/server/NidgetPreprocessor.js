@@ -52,10 +52,6 @@ class NidgetPreprocessor {
             this.seekDependencies(filePath, this.knownNidgets[nidget].dependencies);
         }
 
-        for (let nidget in this.knownNidgets){
-            console.log(nidget);
-        }
-
         return this;
     }
 
@@ -112,11 +108,8 @@ class NidgetPreprocessor {
 
         let includes = new Set();
         for (let nidget in this.knownNidgets){
-            console.log("  Considering:" + nidget);
             if (dom.window.document.querySelector(nidget)){
-                console.log("    Found in DOM:" + nidget);
                 for(const dependent of this.knownNidgets[nidget].dependencies) {
-                    console.log("      Adding Dependency:" + dependent);
                     includes.add(dependent);
                 }
             }

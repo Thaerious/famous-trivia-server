@@ -6,3 +6,4 @@ logs/
 gimp/
 db/*
 coverage/
+html/jit/

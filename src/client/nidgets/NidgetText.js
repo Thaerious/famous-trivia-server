@@ -1,5 +1,5 @@
 "use strict";
-const NidgetElement = require("./NidgetElement");
+import NidgetElement from "./NidgetElement.js";
 
 /**
  * Set the font-size as a multiple of the css variable --fit-text-unit.
@@ -135,4 +135,4 @@ class NidgetText extends NidgetElement {
 if (!window.customElements.get('nidget-text')) {
     window.customElements.define('nidget-text', NidgetText);
 }
-module.exports = NidgetText;
+export default NidgetText;

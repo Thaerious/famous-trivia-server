@@ -7,9 +7,7 @@ class NidgetElement extends HTMLElement {
 
     constructor(templateId) {
         super();
-        if (templateId){
-            this.applyTemplate(templateId);
-        }
+        if (templateId) this.applyTemplate(templateId);
     }
 
     /**
@@ -189,4 +187,4 @@ if (!window.customElements.get('nidget-element')) {
     window.customElements.define('nidget-element', NidgetElement);
 }
 
-module.exports = NidgetElement;
+export default NidgetElement;

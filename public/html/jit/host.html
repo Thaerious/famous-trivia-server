@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="styles/generated/host.css"/>
+    <script type="text/javascript" src="jit/host.js"></script>
+    <meta name="google-signin-client_id" content="158823134681-98bgkangoltk636ukf8pofeis7pa7jbk.apps.googleusercontent.com">
+<script type="text/javascript" src="https://apis.google.com/js/api.js"></script>
+    <script src="scripts/static/signin-button.js"></script>
+    <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+</head>
+<body class="container">
+
+
+<div class="bg"></div>
+
+<input id="upload-anchor" onblur="console.log('booya')" class="hidden-anchor" type="file"/>
+
+<div class="button-container">
+    <div class="button disabled" id="create"><div class="text">New</div></div>
+    <div class="button disabled" id="upload"><div class="text">Upload</div></div>
+    <div class="button disabled" id="load"><div class="text">Edit</div></div>
+    <div class="button disabled" id="launch"><div class="text">Launch</div></div>
+    <div id="sign-in"></div>
+    <div class="busy-box hidden">
+        <img src="assets\images\busy.gif"/>
+    </div>
+</div>
+
+<file-list class="hidden">
+    <div id="inner-list"></div>
+    <img id="file-list-busy" class="hidden" src="assets\images\busy.gif"/>
+    <div class="close">Close</div>
+</file-list>
+
+</body>
+</html>

@@ -8,7 +8,7 @@
         header-update (value, col, fontsize) : when the header text changes (and blurs)
  **/
 
-const NidgetElement = require("./NidgetElement");
+import NidgetElement from "./NidgetElement.js";
 
 class CellSelectEvent extends CustomEvent{
     constructor(row, col) {
@@ -120,4 +120,4 @@ class GameBoard extends NidgetElement {
 }
 
 window.customElements.define('game-board', GameBoard);
-module.exports = GameBoard;
+export default GameBoard;

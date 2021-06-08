@@ -1,4 +1,4 @@
-const NidgetElement = require("./NidgetElement");
+import NidgetElement from "./NidgetElement.js";
 
 class TextUpdate extends CustomEvent {
     constructor(text) {
@@ -33,7 +33,7 @@ class QuestionPane extends NidgetElement {
 }
 
 window.customElements.define('question-pane', QuestionPane);
-module.exports = QuestionPane;
+export default QuestionPane;
 
 
 
