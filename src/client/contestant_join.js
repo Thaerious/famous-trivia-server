@@ -17,7 +17,7 @@ window.addEventListener("load", async(event)=>{
 
 async function submit(){
     const name =  document.querySelector("#name").content;
-    const response = await gameManagerService.setName(window.parameters.hash, name);
+    const response = await gameManagerService.joinGame(window.parameters.hash, name);
 
     if (response.result === "rejected"){
         document.querySelector("#alert").show(response.reason);

@@ -1,13 +1,28 @@
+// noinspection DuplicatedCode
+
 import verify from './verify.js';
 import {Game} from './Game.js';
 import GameModel from './GameModel.js';
 
+/**
+ * API for all non-websocket client-server interaction.
+ */
 class GameManagerEndpoint {
+
+    /**
+     * Create a new GameManagerEndpoint.
+     * @param {GameManager} gameManager
+     * @param {SessionManager} sessionManager
+     */
     constructor(gameManager, sessionManager) {
         this.gameManager = gameManager;
         this.sessionManager = sessionManager;
     }
 
+    /**
+     * Retrieve a new middleware callback for the endpoint.
+     * @returns {(function(*=, *=, *): Promise<void>)|*}
+     */
     get middleware() {
         return async (req, res, next) => {
             if (!req.body) {
@@ -91,7 +106,7 @@ class GameManagerEndpoint {
         }
     }
 
-    async ['set-name'](req, res) {
+    async ['join-game'](req, res) {
         if (!verifyParameter(req, res, "name")) return;
         if (!verifyParameter(req, res, "game-hash")) return;
 
@@ -117,6 +132,38 @@ class GameManagerEndpoint {
         }
     }
 
+    async ['connect-host'](req, res) {
+        let token = req.body.token;
+
+        if (!token){
+            res.json({
+                result : "launcher error",
+                text : "missing parameter: token"
+            });
+            res.end();
+            return;
+        }
+
+        try {
+            let user = await verify(token);
+            let hash = await this.gameManager.getHash(user);
+            await req.session.set("role", "host");
+            await req.session.set("game-hash", hash);
+
+            res.json({
+                result : "success"
+            });
+            res.end();
+        } catch (err) {
+            console.log(err);
+            res.json({
+                result : "launcher error",
+                text : err.toString()
+            });
+            res.end();
+        }
+    }
+
     async nameInUse(name, gameHash) {
         let sessions = await this.sessionManager.reverseLookup("game-hash", gameHash);
         for (const session of sessions) {
@@ -138,13 +185,19 @@ class GameManagerEndpoint {
         let token = req.body.token;
 
         if (!model) {
-            res.json({error: "missing field: model"});
+            res.json({
+                result : "error",
+                reason: "missing field: model"
+            });
             res.end();
             return;
         }
 
         if (!token) {
-            res.json({error: "missing field: token"});
+            res.json({
+                result : "error",
+                reason: "missing field: token"
+            });
             res.end();
             return;
         }
@@ -161,7 +214,10 @@ class GameManagerEndpoint {
             res.end();
         } catch (err) {
             console.log(err);
-            res.json({error: err.toString()});
+            res.json({
+                result : "error",
+                reason: err.toString()
+            });
             res.end();
         }
     }
@@ -189,7 +245,10 @@ class GameManagerEndpoint {
         } catch (err) {
             console.trace();
             console.log(err);
-            res.json({error: err.toString()});
+            res.json({
+                result : "error",
+                reason: err.toString()
+            });
             res.end();
         }
     }
@@ -204,7 +263,10 @@ function verifyParameter(req, res, parameter) {
     let value = req.body[parameter];
 
     if (!value) {
-        res.json({error: `missing parameter: ${parameter}`});
+        res.json({
+            result : "error",
+            reason: `missing parameter: ${parameter}`
+        });
         res.end();
         return false;
     }

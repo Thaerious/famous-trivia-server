@@ -173,6 +173,11 @@ class NidgetElement extends HTMLElement {
     }
 }
 
+/**
+ *
+ * @param input
+ * @returns {*}
+ */
 function toCamelCase(input){
     const split = input.split("-");
     for (let i = 1; i < split.length; i++) {

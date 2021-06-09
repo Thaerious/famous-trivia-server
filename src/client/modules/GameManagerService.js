@@ -10,7 +10,7 @@ class GameManagerService {
             xhttp.addEventListener("load", (event) => {
                 console.log(xhttp.responseText);
                 let response = JSON.parse(xhttp.responseText);
-                if (response.error) reject(response);
+                if (response.result === "error") reject(response);
                 else resolve(response);
             });
 
@@ -68,11 +68,28 @@ class GameManagerService {
         });
     }
 
-    async setName(hash, name) {
+    /**
+     * Create a contestant with the given name.
+     * The contestant will be associated with the current session.
+     * Each session can only have one contestant.
+     * The host can not also be a contestant.
+     * @param token Google API user token
+     * @returns {Promise<unknown>}
+     */
+    async joinGame(hash, name) {
         return await this.send({
             'game-hash': hash,
             name: name,
-            action: "set-name"
+            action: "join-game"
+        });
+    }
+
+    async connectHost() {
+        let token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
+
+        return await this.send({
+            token: token,
+            action: "connect-host"
         });
     }
 }

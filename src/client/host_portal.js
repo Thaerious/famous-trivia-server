@@ -24,7 +24,7 @@ window.onload = async () => {
     try {
         await new Authenticate().loadClient();
         await fileOps.loadClient();
-        await sendTokenToServer();
+        await gameManagerService.connectHost();
         let ws = await connectWebsocket();
         new PortalController(ws, hostView);
 
@@ -76,21 +76,4 @@ window.onload = async () => {
     let end = new Date();
     let time = end - start;
     console.log("Load Time " + time + " ms");
-}
-
-function sendTokenToServer(){
-    return new Promise((resolve, reject)=> {
-        let token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
-        let xhttp = new XMLHttpRequest();
-
-        xhttp.addEventListener("load", (event) => {
-            let response = JSON.parse(xhttp.responseText);
-            if (response.result === "success") resolve();
-            else reject(new Error("token rejected"));
-        });
-
-        xhttp.open("POST", "connect-host");
-        xhttp.setRequestHeader("Content-type", "application/json");
-        xhttp.send(JSON.stringify({token: token}));
-    });
 }

@@ -6,7 +6,6 @@ import helmet from 'helmet';
 import UserAgent from 'express-useragent';                // Request source machine details
 import cors from './cors.js';
 import BodyParser from 'body-parser';                     // Extract JSON from non-rendering endpoints
-import connectHost from './connectHost.js';
 import GameManagerEndpoint from './GameManagerEndpoint.js';
 import GameManager from "./GameManager.js";
 import CLI from './CLI.js';
@@ -33,20 +32,15 @@ app.use(helmet());            // automatic security settings (outgoing response 
 app.use(UserAgent.express()); // used to determine what the connection is using (phone,browser etc)
 
 /** Apply session manager **/
-app.use('/host_portal.ejs', sessionManager.middleware);
-app.use('/contestant_portal.ejs', sessionManager.middleware);
+app.use('/*.ejs', sessionManager.middleware);
 app.use('/game-manager-service', sessionManager.middleware);
 /** -------------------------------------------------- **/
 
 /** non-rendering end-points **/
     // called from host.js, launch_console.js
+    app.use('/game-manager-service', sessionManager.middleware);
     app.use("/game-manager-service", BodyParser.json());
     app.use("/game-manager-service", new GameManagerEndpoint(gameManager, sessionManager).middleware);
-
-    // verifies the host and marks the cookie with {role : "host"}
-    app.use('/connect-host', sessionManager.middleware);
-    app.use("/connect-host", BodyParser.json());
-    app.use("/connect-host", connectHost(gameManager));
 /** -------------------------------------------------- **/
 
 /** page rendering end-points **/

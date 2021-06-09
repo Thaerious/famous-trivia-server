@@ -7,3 +7,4 @@ gimp/
 db/*
 coverage/
 html/jit/
+out/

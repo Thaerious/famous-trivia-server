@@ -1,3 +1,10 @@
+/**
+ * Update Content Security Policy headers.
+ * Will add google to the security headers.
+ * @param req
+ * @param res
+ * @param next
+ */
 function cors(req, res, next) {
     let csp = extractCSP(res);
     csp["default-src"] = "'self' *.google.com *.googleapis.com 'unsafe-inline'";
@@ -10,8 +17,10 @@ function cors(req, res, next) {
 
 /**
  * Extract Content Security Policy from header
+ * Returns a JS object with each policy as a field-name, and the
+ * contents of that policy as the field-value.
  * @param res
- * @returns {{}}
+ * @returns {JS-Object}
  */
 function extractCSP(res){
     let csp = res.get("Content-Security-Policy").split(";");
@@ -27,11 +36,12 @@ function extractCSP(res){
 
 /**
  * Prepare Content Security Policy for header.
+ * Concatenates the JS-Object returned from #extractCSP into a string.
+ * This string can be sent in a response header under "Content-Security-Policy".
  * @param res
  * @param csp
  * @returns {string}
  */
-
 function concatCSP(res, csp){
     let policyString = "";
     for (let key in csp){
