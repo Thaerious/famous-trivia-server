@@ -1,4 +1,5 @@
 import fs from 'fs';
+import GameDescriptionModel from "../client/modules/GameDescriptionModel.js";
 
 class EndOfGame {
     constructor(parent) {
@@ -362,9 +363,9 @@ class GameModel {
         this.roundIndex = -1;
 
         for(let roundModel of this.model.rounds){
-            if (roundModel.type === "multiple_choice") {
+            if (roundModel.type === GameDescriptionModel.questionType.MULTIPLE_CHOICE) {
                 this.rounds.push(new MultipleChoiceModel(roundModel));
-            } else if (roundModel.type === "choice") {
+            } else if (roundModel.type === GameDescriptionModel.questionType.CATEGORY) {
                 this.rounds.push(new JeopardyModel(this, roundModel));
             }
         }

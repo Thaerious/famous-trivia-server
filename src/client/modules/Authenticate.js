@@ -29,7 +29,7 @@ class Authenticate {
     }
 
     isAuthorized(){
-        var user = gapi.auth2.getAuthInstance().currentUser.get();
+        let user = gapi.auth2.getAuthInstance().currentUser.get();
         return user.hasGrantedScopes(this.scope);
     }
 

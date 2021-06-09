@@ -42,7 +42,6 @@ class GameDescriptionModel {
         return this.gameModel.rounds[index];
     }
 
-    // TODO test
     setRoundIndex(from, to){
         let r = this.gameModel.rounds;
         if (r.length <= 1) return;
@@ -144,7 +143,7 @@ class GameDescriptionModel {
 }
 
 GameDescriptionModel.questionType = {
-    CATEGORY : "choice",
+    CATEGORY : "categorical",
     MULTIPLE_CHOICE : "multiple_choice"
 };
 
