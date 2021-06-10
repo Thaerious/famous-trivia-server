@@ -2,6 +2,7 @@
 node_modules/
 public/styles/generated/*
 public/scripts/jit/*
+public/html/jit/*
 logs/
 gimp/
 db/*
