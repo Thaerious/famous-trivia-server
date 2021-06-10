@@ -1,5 +1,5 @@
 import GameModel from "./GameModel.js";
-import constants from "../constants.js";
+import constants from "../../constants.js";
 import crypto from "crypto";
 
 class Timer {
@@ -262,9 +262,6 @@ class Game {
                 this.mcBetsData[name].bonus = bonus;
             }
         }
-
-        console.log(JSON.stringify(this.mcBetsData, null, 2));
-        console.log("--------------------------------------------");
     }
 
     /**

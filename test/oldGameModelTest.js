@@ -3,7 +3,7 @@
 
 import assert from 'assert';
 import fs from 'fs';
-import GameModel from '../src/server/GameModel.js';
+import GameModel from '../src/server/game/GameModel.js';
 
 const file = fs.readFileSync('./test/data/test-data-01.json');
 const data = JSON.parse(file);

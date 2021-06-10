@@ -8,3 +8,5 @@ db/*
 coverage/
 html/jit/
 out/
+.c8_output/
+.nyc_output/

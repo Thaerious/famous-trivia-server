@@ -38,73 +38,12 @@ class CLI {
             case "exit":
                 this.exit();
             break;
-            case "l":
-            case "list":
-                this.gameManager.list();
-                break;
-            case "ap":
-            case "addplayer":
-                game.gameModel.addPlayer(split[1]);
-                game.broadcast();
-                break;
-            case "session":
-            case "s":
-                this.sessionCommand(split);
-                break
-            case "player":
-            case "p":
-                this.playerCommand(split);
-                break
             case "":
                 break;
             case "help":
             case "?":
             default:
                 console.log("exit, x : terminate server");
-                console.log("list, l : list all lauched games");
-                console.log("session, s : sessions submenu");
-                console.log("player, p : player submenu");
-                break;
-        }
-    }
-
-    sessionCommand(split){
-        switch (split[1]) {
-            case "reload":
-            case "r":
-                this.sessionManager.load();
-                break;
-            case "clear":
-            case "c":
-                this.sessionManager.clearAll();
-                break;
-            case "list":
-            case "l":
-                let r = this.sessionManager.listHashes();
-                console.log(r);
-                for (let s of r) console.log(s);
-                console.log("-----------------");
-                console.log("size " + r.length);
-                break;
-            case "help":
-            case "?":
-            default:
-                console.log("clear, c : clear all sessions");
-                console.log("list, l : list all sessions");
-                break;
-        }
-    }
-
-    playerCommand(split){
-        switch (split[1]) {
-            case "list":
-            case "l":
-                // for (const player in this.game.gameModel.players)
-                break;
-            case "help":
-            case "?":
-            default:
-                console.log("list, l : list all players");
                 break;
         }
     }

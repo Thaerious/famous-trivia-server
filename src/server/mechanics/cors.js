@@ -7,7 +7,7 @@
  */
 function cors(req, res, next) {
     let csp = extractCSP(res);
-    csp["default-src"] = "'self' *.google.com *.googleapis.com 'unsafe-inline'";
+    csp["default-src"] = "'self' *.google.com *.googleapis.com 'unsafe-inline' 'unsafe-eval'";
     csp["style-src"] = "'self' *.google.com 'unsafe-inline'";
     delete csp["script-src"];
     delete csp["script-src-attr"];

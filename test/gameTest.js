@@ -3,8 +3,8 @@
 
 import assert from 'assert';
 import fs from 'fs';
-import GameModel from '../src/server/GameModel.js';
-import {Game, Timer} from '../src/server/Game.js';
+import GameModel from '../src/server/game/GameModel.js';
+import {Game, Timer} from '../src/server/game/Game.js';
 
 const file = fs.readFileSync('./test/data/test-data-00.json');
 const data = JSON.parse(file);
@@ -623,9 +623,6 @@ describe(`Game Mock-Up`, () => {
             // 500 + 200 - 100
             let update = game.getUpdate();
             assert.strictEqual(getPlayerByName(update, "Adam").score, 600);
-            console.log("------------------------");
-            console.log(JSON.stringify(update.data.bets["Adam"], null, 2));
-            console.log("------------------------");
             const bets = update.data.bets["Adam"].answers;
             assert.strictEqual(bets[0].checked, true);
             assert.strictEqual(bets[0].amount, -100);

@@ -4,21 +4,21 @@ import Express from 'express';
 import http from 'http';
 import helmet from 'helmet';
 import UserAgent from 'express-useragent';                // Request source machine details
-import cors from './cors.js';
+import cors from './mechanics/cors.js';
 import BodyParser from 'body-parser';                     // Extract JSON from non-rendering endpoints
-import GameManagerEndpoint from './GameManagerEndpoint.js';
-import GameManager from "./GameManager.js";
+import GameManagerEndpoint from './game/GameManagerEndpoint.js';
+import GameManager from "./game/GameManager.js";
 import CLI from './CLI.js';
 import WebSocket from 'ws';
-import SessionManager from "./SessionManager.js";
+import SessionManager from "./mechanics/SessionManager.js";
 import ejs from 'ejs';
 import Path from 'path';
-import Connection from "./Connection.js";
-import NidgetPreprocessor from "./NidgetPreprocessor.js";
-import JITBrowserify from "./JITBrowserify.js";
+import Connection from "./game/Connection.js";
+import NidgetPreprocessor from "./mechanics/NidgetPreprocessor.js";
+import JITBrowserify from "./mechanics/JITBrowserify.js";
 import config from "../config.js";
-
-import fs from 'fs';
+import ReportCoverage from "./mechanics/ReportCoverage.js";
+import parseArgs from "../parseArgs.js";
 
 const port = config.server.port;
 const app = Express();
@@ -31,6 +31,10 @@ const nidgetPreprocessor = new NidgetPreprocessor(config.server.ejs_nidgets, con
 app.use(helmet());            // automatic security settings (outgoing response headers)
 app.use(UserAgent.express()); // used to determine what the connection is using (phone,browser etc)
 
+const flags = parseArgs().flags;
+
+if (process.env.NODE_ENV === 'test') console.log("Test Mode");
+
 /** Apply session manager **/
 app.use('/*.ejs', sessionManager.middleware);
 app.use('/game-manager-service', sessionManager.middleware);
@@ -38,9 +42,11 @@ app.use('/game-manager-service', sessionManager.middleware);
 
 /** non-rendering end-points **/
     // called from host.js, launch_console.js
-    app.use('/game-manager-service', sessionManager.middleware);
     app.use("/game-manager-service", BodyParser.json());
     app.use("/game-manager-service", new GameManagerEndpoint(gameManager, sessionManager).middleware);
+
+    app.use("/report-coverage", BodyParser.json({limit: '50mb'}));
+    app.use("/report-coverage", new ReportCoverage().middleware);
 /** -------------------------------------------------- **/
 
 /** page rendering end-points **/
@@ -56,7 +62,7 @@ app.use('/game-manager-service', sessionManager.middleware);
 */
 
 /** Browserify & EJS Just-In-Time Transpiler **/
-if (process.argv.indexOf("--jit") !== -1) {
+if (flags['jit'] || flags['j']) {
     app.get(config.server.jit_path, new JITBrowserify(nidgetPreprocessor).middleware);
 
     app.set('view engine', 'ejs');
@@ -103,7 +109,7 @@ server.listen(port, () => {
     console.log(`HTTP listener started on port ${port}`);
 });
 
-if (process.argv.indexOf("-i") !== -1) {
+if (flags['i']) {
     new CLI(gameManager, sessionManager);
 }
 /** -------------------------------------------------- **/

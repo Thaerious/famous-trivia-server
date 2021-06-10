@@ -23,7 +23,7 @@
       "bonus": 100
     },
     {
-      "type": "choice",
+      "type": "categorical",
       "column": [
         {
           "category": "CATEGORY\n1",

@@ -1,7 +1,7 @@
 // noinspection SqlNoDataSourceInspection,SqlDialectInspection
 
 import crypto from "crypto";
-import constants from "../constants.js";
+import constants from "../../constants.js";
 import HasDB from './HasDB.js';
 
 /**

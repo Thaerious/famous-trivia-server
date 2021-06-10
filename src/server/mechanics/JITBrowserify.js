@@ -2,9 +2,9 @@
 
 import fs from 'fs';
 import browserify from 'browserify';
-import constants from '../constants.js';
+import constants from '../../constants.js';
 import Path from 'path';
-import config from "../config.js";
+import config from "../../config.js";
 import ejs from "ejs";
 
 class JITBrowserify {

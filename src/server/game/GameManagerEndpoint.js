@@ -1,6 +1,6 @@
 // noinspection DuplicatedCode
 
-import verify from './verify.js';
+import verify from '../mechanics/verify.js';
 import {Game} from './Game.js';
 import GameModel from './GameModel.js';
 

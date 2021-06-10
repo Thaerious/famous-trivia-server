@@ -1,9 +1,9 @@
 // noinspection JSUnresolvedFunction
 
 import assert from 'assert';
-import GameManager from "../src/server/GameManager.js";
-import GameModel from "../src/server/GameModel.js";
-import {Game} from "../src/server/Game.js";
+import GameManager from "../src/server/game/GameManager.js";
+import GameModel from "../src/server/game/GameModel.js";
+import {Game} from "../src/server/game/Game.js";
 import fs from "fs";
 
 const file = fs.readFileSync('./test/data/test-data-00.json');

@@ -2,7 +2,7 @@
 
 import crypto from 'crypto';
 import {Game} from './Game.js';
-import HasDB from './HasDB.js';
+import HasDB from '../mechanics/HasDB.js';
 
 class GameManager extends HasDB{
     constructor(path) {

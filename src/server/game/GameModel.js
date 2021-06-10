@@ -1,5 +1,5 @@
 import fs from 'fs';
-import GameDescriptionModel from "../client/modules/GameDescriptionModel.js";
+import GameDescriptionModel from "../../client/modules/GameDescriptionModel.js";
 
 class EndOfGame {
     constructor(parent) {
