@@ -87,11 +87,11 @@ class JITBrowserify {
         let jit = new JITBrowserify(nidgetPreprocessor);
 
         if (!fs.existsSync(config.server.jit_scripts)){
-            fs.mkdirSync(config.server.jit_scripts);
+            fs.mkdirSync(config.server.jit_scripts, {recursive : true});
         }
 
         if (!fs.existsSync(config.server.pre_ejs)){
-            fs.mkdirSync(config.server.pre_ejs);
+            fs.mkdirSync(config.server.pre_ejs, {recursive : true});
         }
 
         for (let filename of files) {
