@@ -48,6 +48,11 @@ const config = {
 
         // Client source files, all files in this dir get browserified unless --jit is flagged.
         nidget_scripts : "./src/client/nidgets/"
-    }
+    },
+    clean_dir : [
+        ".nyc_output",
+        ".c8_output",
+        "coverage"
+    ]
 };
 export default config;

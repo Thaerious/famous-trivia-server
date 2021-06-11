@@ -19,6 +19,7 @@ import JITBrowserify from "./mechanics/JITBrowserify.js";
 import config from "../config.js";
 import ReportCoverage from "./mechanics/ReportCoverage.js";
 import parseArgs from "../parseArgs.js";
+import clean from "../clean.js";
 
 const port = config.server.port;
 const app = Express();
@@ -34,6 +35,22 @@ app.use(UserAgent.express()); // used to determine what the connection is using 
 const flags = parseArgs().flags;
 
 if (process.env.NODE_ENV === 'test') console.log("Test Mode");
+
+if (flags['help'] || flags['h']){
+    console.log("server.js [opts]");
+    console.log("\n");
+    console.log("Options:");
+    console.log("-b,\t--browserify\tGenerate .js & .html files on startup");
+    console.log("-j,\t--jit\t\tGenerate .js & .html files on demand");
+    console.log("-i,\t\t\tStartup in interactive mode");
+    console.log("\t--clean\t\tRemove all generated files, do not run server.");
+    process.exit();
+}
+
+if (flags['clean']){
+    clean();
+    process.exit();
+}
 
 /** Apply session manager **/
 app.use('/*.ejs', sessionManager.middleware);
@@ -75,13 +92,16 @@ if (flags['jit'] || flags['j']) {
         });
     });
 } else {
-    await JITBrowserify.render(nidgetPreprocessor);
     app.get(config.server.jit_path, Express.static(config.server.public_scripts));
     app.get("*.ejs", Express.static(config.server.pre_ejs,
         {
             setHeaders : (res, path, stat) => res.setHeader('Content-Type', 'text/html')
         }
     ));
+}
+
+if (flags['browserify'] || flags ['b']){
+    await JITBrowserify.render(nidgetPreprocessor);
 }
 /** -------------------------------------------------- **/
 

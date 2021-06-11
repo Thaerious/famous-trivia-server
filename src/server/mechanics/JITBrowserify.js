@@ -77,6 +77,11 @@ class JITBrowserify {
         });
     }
 
+    /**
+     * Create HTML and JS files from EJS and Browserify.
+     * @param nidgetPreprocessor
+     * @returns {Promise<void>}
+     */
     static async render(nidgetPreprocessor){
         let files = fs.readdirSync(config.server.ejs_root);
         let jit = new JITBrowserify(nidgetPreprocessor);
