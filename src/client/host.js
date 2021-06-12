@@ -84,7 +84,7 @@ function addMenuListeners() {
         let model = new GameDescriptionModel().init("Game Name");
         let fp = await fileOps.create();
         await fileOps.setBody(fp, JSON.stringify(model.get(), null, 2));
-        location.href = location.origin + "/editor.ejs?action=load&fileId=" + fp;
+        location.href = location.origin + "editor.ejs?action=load&fileId=" + fp;
     });
 
     document.querySelector("#upload").addEventListener("click", async (e) => {
