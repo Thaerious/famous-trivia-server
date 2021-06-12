@@ -84,7 +84,7 @@ function addMenuListeners() {
         let model = new GameDescriptionModel().init("Game Name");
         let fp = await fileOps.create();
         await fileOps.setBody(fp, JSON.stringify(model.get(), null, 2));
-        location.href = location.origin + "editor.ejs?action=load&fileId=" + fp;
+        window.location = "editor.ejs?action=load&fileId=" + fp;
     });
 
     document.querySelector("#upload").addEventListener("click", async (e) => {
@@ -99,12 +99,11 @@ function addMenuListeners() {
                 let name = JSON.parse(e.target.result).name;
                 let fp = await fileOps.create(name + ".json");
                 await fileOps.setBody(fp, e.target.result);
-                location.href = location.origin + "/editor.ejs?action=load&fileId=" + fp;
+                window.location ="editor.ejs?action=load&fileId=" + fp;
             }
             reader.readAsText(data);
         }, {once: true});
     });
-
 
     document.querySelector("#load").addEventListener("click", async (e) => {
         await populateFileList();
