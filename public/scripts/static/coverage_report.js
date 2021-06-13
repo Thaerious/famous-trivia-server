@@ -1,4 +1,4 @@
-window.addEventListener("beforeunload", ()=>{
+function report ()=>{
     let xhttp = new XMLHttpRequest();
     xhttp.open("POST", "report-coverage");
     xhttp.setRequestHeader("Content-type", "application/json");
@@ -16,4 +16,7 @@ window.addEventListener("beforeunload", ()=>{
         date : date + "-" + time,
         coverage : window.__coverage__
     }));
-});
+};
+
+window.report = report;
+window.addEventListener("beforeunload", ()=>report());
