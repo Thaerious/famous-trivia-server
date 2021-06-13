@@ -19,4 +19,7 @@ function report(){
 };
 
 window.report = report;
-window.addEventListener("beforeunload", ()=>report());
+window.addEventListener("beforeunload", ()=>{
+    console.log("unload " + window.location.pathname.substr(1));
+    report();
+});
