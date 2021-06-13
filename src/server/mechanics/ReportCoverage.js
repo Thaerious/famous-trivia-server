@@ -18,8 +18,8 @@ class ReportCoverage {
             const root = ".nyc_output";
             if (!fs.existsSync(root)) fs.mkdirSync(root, {recursive : true});
 
-            let hash = crypto.randomBytes(4).toString('hex');
-            let filename = req.body.file.replaceAll(/[./]/g, "_") + "-" + req.body.date + "-" + hash + ".json";
+            let filename = req.body.file.replaceAll(/[./]/g, "_") + "-" + req.body.date + "-" + req.body.hash + ".json";
+            console.log("REPORT: " + filename);
 
             fs.writeFileSync(Path.join(root, filename), JSON.stringify(req.body.coverage, null, 2));
             res.end();
