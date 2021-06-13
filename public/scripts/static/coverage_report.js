@@ -1,4 +1,4 @@
-function report ()=>{
+function report(){
     let xhttp = new XMLHttpRequest();
     xhttp.open("POST", "report-coverage");
     xhttp.setRequestHeader("Content-type", "application/json");
