@@ -46,21 +46,6 @@ async function onLaunch(event) {
     }
 }
 
-async function launchVerify() {
-    let token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
-
-    let xhttp = new XMLHttpRequest();
-    xhttp.open('POST', 'verify');
-    xhttp.setRequestHeader('Content-Type', 'application/json');
-    xhttp.onload = function () {
-        console.log('response text');
-        console.log(xhttp.responseText);
-    };
-
-    let json = JSON.stringify({token: token});
-    xhttp.send(json);
-}
-
 function setupFileList() {
     let fileList = document.querySelector("file-list");
 

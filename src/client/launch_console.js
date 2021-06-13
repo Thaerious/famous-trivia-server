@@ -9,7 +9,7 @@ window.addEventListener("load", async ()=>{
 
     const response = await gameManagerService.hasGame(token);
     if (response['result'] === "failure"){
-        window.location = "/host.ejs";
+        window.location = "host.ejs";
     }
 
     const len = location.href.lastIndexOf("/");
@@ -27,7 +27,7 @@ window.addEventListener("load", async ()=>{
     document.querySelector("#terminate").addEventListener("click", async ()=>{
         // noinspection JSUnresolvedVariable,JSUnresolvedFunction
             await gameManagerService.terminate(token);
-            window.location = "/host.ejs";
+            window.location = "host.ejs";
     });
 });
 
