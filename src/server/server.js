@@ -41,6 +41,7 @@ if (flags['help'] || flags['h']){
     console.log("\n");
     console.log("Options:");
     console.log("-b,\t--browserify\tGenerate .js & .html files on startup");
+    console.log("-r,\t--render\tGenerate .js & .html files then exit");
     console.log("-j,\t--jit\t\tGenerate .js & .html files on demand");
     console.log("-i,\t\t\tStartup in interactive mode");
     console.log("\t--clean\t\tRemove all generated files, do not run server.");
@@ -49,6 +50,11 @@ if (flags['help'] || flags['h']){
 
 if (flags['clean']){
     clean();
+    process.exit();
+}
+
+if (flags['r'] || flags['render']){
+    await JITBrowserify.render(nidgetPreprocessor);
     process.exit();
 }
 

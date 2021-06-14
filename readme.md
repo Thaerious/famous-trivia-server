@@ -1,11 +1,14 @@
 # Famous-Trivia
-Small multiplayer trivia server using Express in the backend and custom html elements for the UI. [Click Here](https://opentrivia.herokuapp.com/) to view the live demo.
+Small multiplayer trivia server using the NodeJS Express server for the backend and custom html elements for the UI. 
+
+[Click Here](https://frar.ca/triva/host.ejs) to access the live server.
 
 ### How to use locally:
 
-* Clone the repository and run the following command to download all dependencies.
+* Clone the repository and run the following commands to set up the server.
 ```
- npm install
+ npm install        # install NodeJS dependencies
+ node . -r          # render html and js files
 ```
 * Now open a terminal run the following command if you just want to start the server for development.
 ```
