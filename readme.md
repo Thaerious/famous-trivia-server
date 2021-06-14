@@ -1,34 +1,18 @@
-systemctl status nginx
-systemctl start nginx
-systemctl stop nginx
-systemctl restart nginx
-systemctl enable nginx
-systemctl disable nginx
+# Famous-Trivia
+Small multiplayer trivia server using Express in the backend and custom html elements for the UI. [Click Here](https://opentrivia.herokuapp.com/) to view the live demo.
 
-npx c8 mocha [testname]
-npx c8 report -r html
+### How to use locally:
 
-Project Layout
-==============
- * accessory/ : Scripts and config files for setting up external services.
- * coverage/ : Created by c8 test coverage.
- * db/ : Database files.
- * public/ : Directory express exposes / target of generated files.
- * * assets/ : Images, sounds, etc.
- * * scripts/jit/ : Just-in-time target directory.
- * * scripts/static/ : User-created (not-generated) scripts.
- * * styles/font/ : css font files
- * * styles/generated/ : scss generated files
- * * src/client/ : Page files, must be located here as the jit-browserify targets this directory.
- * * src/client/modules/ : Non-nidget, not root, js files.
- * * src/client/nidgets/ : Nidget script files from ejs /views/nidgets.
- * * src/server/ : Server side source files.
- * * src/styles/ : SCSS source files.
- * * test/ : test files
- * * test/data/ : data files specifically for tests.
- * * test/doNotRun/ : old/obsolete test files.
- * view/ : embedded-java-script (ejs) files.
- * view/nidgets/ : ejs source files for Nidgets, these are embedded into 'view' files as templates.
- * view/partials/ : ejs included files
- * view/pages/ : root ejs files
- 
+* Clone the repository and run the following command to download all dependencies.
+```
+ npm install
+```
+* Now open a terminal run the following command if you just want to start the server for development.
+```
+npm run watch
+```
+Use the following commands if you want to manually build from src to test for production.
+```
+npm run build:prod or npm run build:dev followed by npm run serve
+```
+* Open the brower and navigate to http://localhost:3000 for the main screen and point all other devices to http://your_internal_ip:3000 and follow onscreen instructions.
