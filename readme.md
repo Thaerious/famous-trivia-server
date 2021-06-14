@@ -1,21 +1,31 @@
 # Famous-Trivia
-Small multiplayer trivia server using the NodeJS Express server for the backend and custom html elements for the UI. 
+Small multiplayer trivia server using the NodeJS Express server for the backend and custom
+html elements for the UI.  The trivia questions are stored on Google using the Google Drive
+API.  This trivia app allows a host to control players in conjunction with an external 
+voice-chat app.
 
-[Click Here](https://frar.ca/triva/host.ejs) to access the live server.
+[Click Here](https://frar.ca/trivia/host.ejs) to access the live server.
+
+### Prerequisites
+* Install NodeJS and NPM.
+* Visit https://console.cloud.google.com/apis/dashboard and create an API key for the following api.
+* * Google Drive API
+* * Google Picker API
+* * People API
 
 ### How to use locally:
 
-* Clone the repository and run the following commands to set up the server.
+* Clone the repository and run the following commands to set up & run the server.
 ```
  npm install        # install NodeJS dependencies
  node . -r          # render html and js files
+ node .             # start the server listening on port 8000
 ```
-* Now open a terminal run the following command if you just want to start the server for development.
-```
-npm run watch
-```
-Use the following commands if you want to manually build from src to test for production.
-```
-npm run build:prod or npm run build:dev followed by npm run serve
-```
-* Open the brower and navigate to http://localhost:3000 for the main screen and point all other devices to http://your_internal_ip:3000 and follow onscreen instructions.
+
+* Add http://localhost:8000 to authorized Javascript origins for the OAuth2 client ID.
+* Copy browser key, client id, and app id to /src/config.js
+
+Open the browser and navigate to http://localhost:8000/host.ejs for the main screen.
+You will need to authorize using Google login which shows up in a pop-up screen.
+
+For more information, see [DOCUMENTATION](https://thaerious.github.io/famous-trivia/).
