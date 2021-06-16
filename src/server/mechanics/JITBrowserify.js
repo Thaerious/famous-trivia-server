@@ -71,9 +71,13 @@ class JITBrowserify {
                 if (this?.emit) this.emit('end'); // end this stream
                 reject(err);
             });
-            rs.on('end', ()=>resolve());
 
             rs.pipe(outStream);
+
+            // wait for the write-stream to finish writing
+            outStream.on('finish', ()=>{
+                resolve();
+            });
         });
     }
 
