@@ -1,0 +1,20 @@
+{
+  "flags": [
+    {
+      "long": "help",
+      "short": "h"
+    },
+    {
+      "long": "render",
+      "short": "r"
+    },
+    {
+      "long": "jit",
+      "short": "j"
+    },
+    {
+      "long": "browserify",
+      "short": "b"
+    }
+  ]
+}

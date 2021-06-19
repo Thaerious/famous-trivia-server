@@ -33,6 +33,7 @@ class FileList extends HTMLElement{
         let meta = document.createElement("div");
         meta.classList.add("file-item");
         meta.setAttribute("data-id", id);
+        meta.setAttribute("data-name", filename); // let's tests find the button
         this.querySelector("#inner-list").appendChild(meta);
 
         let ele = document.createElement("span");

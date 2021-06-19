@@ -18,8 +18,9 @@ import NidgetPreprocessor from "./mechanics/NidgetPreprocessor.js";
 import JITBrowserify from "./mechanics/JITBrowserify.js";
 import config from "../config.js";
 import ReportCoverage from "./mechanics/ReportCoverage.js";
-import parseArgs from "../parseArgs.js";
+import ParseArgs from "@thaerious/parseArgs";
 import clean from "../clean.js";
+
 
 const port = config.server.port;
 const app = Express();
@@ -32,11 +33,11 @@ const nidgetPreprocessor = new NidgetPreprocessor(config.server.ejs_nidgets, con
 app.use(helmet());            // automatic security settings (outgoing response headers)
 app.use(UserAgent.express()); // used to determine what the connection is using (phone,browser etc)
 
-const flags = parseArgs().flags;
+const flags = new ParseArgs().loadOptions().run().flags;
 
 if (process.env.NODE_ENV === 'test') console.log("Test Mode");
 
-if (flags['help'] || flags['h']){
+if (flags['help']){
     console.log("server.js [opts]");
     console.log("\n");
     console.log("Options:");
@@ -53,7 +54,7 @@ if (flags['clean']){
     process.exit();
 }
 
-if (flags['r'] || flags['render']){
+if (flags['r']){
     await JITBrowserify.render(nidgetPreprocessor);
     process.exit();
 }
@@ -85,7 +86,7 @@ app.use('/game-manager-service', sessionManager.middleware);
 */
 
 /** Browserify & EJS Just-In-Time Transpiler **/
-if (flags['jit'] || flags['j']) {
+if (flags['jit']) {
     app.get(config.server.jit_path, new JITBrowserify(nidgetPreprocessor).middleware);
 
     app.set('view engine', 'ejs');
@@ -106,7 +107,7 @@ if (flags['jit'] || flags['j']) {
     ));
 }
 
-if (flags['browserify'] || flags ['b']){
+if (flags['browserify']){
     await JITBrowserify.render(nidgetPreprocessor);
 }
 /** -------------------------------------------------- **/
