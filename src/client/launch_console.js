@@ -29,6 +29,8 @@ window.addEventListener("load", async ()=>{
             await gameManagerService.terminate(token);
             window.location = "host.ejs";
     });
+
+    document.querySelector("#busy-box").classList.add("hidden");
 });
 
 function copyLink() {
@@ -39,5 +41,6 @@ function copyLink() {
     window.range = range;
     document.execCommand("copy");
     document.querySelector("#message").classList.remove("flash");
+    console.log("LINK COPIED");
     setTimeout(()=>document.querySelector("#message").classList.add("flash"), 0);
 }
