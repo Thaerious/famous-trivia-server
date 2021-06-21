@@ -13,6 +13,7 @@ const gameManagerService = new GameManagerService();
 window.main = async function () {
     await hasGame();
     await fileOps.load();
+    console.log(gapi.client?.drive);
     addMenuListeners();
     setupFileList();
     document.querySelectorAll(".button").forEach(e=>e.classList.remove("disabled"));
@@ -113,9 +114,11 @@ async function populateFileList() {
     fileList.clear();
 
     let list = await fileOps.list();
+
     for (let item of list) {
         let i = item.name.indexOf(".");
         fileList.addItem(item.name.substr(0, i), item.id);
     }
+
     fileList.busy = false;
 }

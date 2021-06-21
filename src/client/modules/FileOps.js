@@ -16,7 +16,7 @@ class FileOps {
 
     loadDrive() {
         return new Promise((resolve, reject) => {
-            gapi.client.load('drive', 'v3', resolve());
+            gapi.client.load('drive', 'v3', () => resolve());
         });
     }
 
