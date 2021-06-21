@@ -9,12 +9,13 @@ import GameManagerService from "./modules/GameManagerService.js";
 let fileOps = new FileOps();
 const gameManagerService = new GameManagerService();
 
-// main called from renderButton.js
+// main called from signin-button.js after login complete
 window.main = async function () {
     await hasGame();
     await fileOps.load();
     addMenuListeners();
     setupFileList();
+    document.querySelectorAll(".button").forEach(e=>e.classList.remove("disabled"));
 };
 
 function onLoad(event) {

@@ -11,20 +11,14 @@ function onSuccess(googleUser) {
         googleUser = gapi.auth2.getAuthInstance().currentUser.get();
         googleUser.grant(options).then(
             function (success) {
-                enableButtons();
                 window.main();
             },
             function (fail) {
                 alert(JSON.stringify({message: "fail", value: fail}));
             });
     } else {
-        enableButtons();
         window.main();
     }
-}
-
-function enableButtons(){
-    document.querySelectorAll(".button").forEach(e=>e.classList.remove("disabled"));
 }
 
 function disableButtons(){
