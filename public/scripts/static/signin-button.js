@@ -11,13 +11,13 @@ function onSuccess(googleUser) {
         googleUser = gapi.auth2.getAuthInstance().currentUser.get();
         googleUser.grant(options).then(
             function (success) {
-                window.main();
+                window.addEventListener("load", ()=>window.main());
             },
             function (fail) {
                 alert(JSON.stringify({message: "fail", value: fail}));
             });
     } else {
-        window.main();
+        window.addEventListener("load", ()=>window.main());
     }
 }
 
