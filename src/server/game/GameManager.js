@@ -4,18 +4,19 @@ import crypto from 'crypto';
 import {Game} from './Game.js';
 import HasDB from '../mechanics/HasDB.js';
 
-class GameManager extends HasDB{
-    constructor(path) {
-        super(path);
-        this.liveGames= {};
+class GameManager{
+    constructor() {
+        this.hosts = new Map(); // user -> hash
+        this.liveGames= new Map(); // hash -> game
     }
 
-    /**
-     * Remove all entries from the db.
-     * @returns {Promise<unknown>}
-     */
-    async clearAll() {
-        await this.run("DELETE FROM games");
+    get size(){
+        return this.liveGames.size;
+    }
+
+    clearAll(){
+        this.hosts = new Map(); // user -> hash
+        this.liveGames= new Map(); // hash -> game
     }
 
     /**
@@ -25,35 +26,26 @@ class GameManager extends HasDB{
      * @param game a game object from Game.js
      * @returns {boolean} true if a new game was created.
      */
-    async setGame(user, game) {
+    setGame(user, game) {
         let hash = crypto.randomBytes(20).toString('hex');
-        let cmd = `REPLACE INTO games ('userId', 'hash', 'game') VALUES (?, ?, ?)`;
-        let values = [user.userId, hash, JSON.stringify(game)];
-        await this.run(cmd, values);
+        this.liveGames.set(hash, Game.fromJSON(game));
+        this.hosts.set(user.userId, hash);
     }
 
     /**
      * List all the users with an game in the db.
      * The user will match with a userid returned from verify.js.
-     * @returns {Promise<unknown>}
      */
-    async listGames() {
-        let result = [];
-        let rows = await this.all(`SELECT userId FROM games`);
-        rows.forEach(r => result.push(r.userId));
-        return result;
+    listHosts() {
+        return Array.from(this.hosts.keys());
     }
 
     /**
      * True if the game has been saved for the given host.
      * @param user the user object returned from verify.js
-     * @returns {Promise<unknown>}
      */
-    async hasGame(user) {
-        let cmd = `SELECT userId FROM games where userId = (?)`;
-        let values = [user.userId];
-        let rows = await this.all(cmd, values);
-        return rows.length >= 1;
+    hasGame(user) {
+        return this.hosts.has(user.userId);
     }
 
     /**
@@ -61,12 +53,9 @@ class GameManager extends HasDB{
      * @param user the user object returned from verify.js
      * @returns {Promise<unknown>}
      */
-    async getGame(user) {
-        let cmd = `SELECT game FROM games where userId = (?)`;
-        let values = [user.userId];
-        let r = await this.get(cmd, values);
-        if (!r) return undefined;
-        return r.game;
+    getGame(user) {
+        const hash = this.hosts.get(user.userId);
+        return this.liveGames.get(hash);
     }
 
     /**
@@ -74,10 +63,10 @@ class GameManager extends HasDB{
      * @param user the user object returned from verify.js
      * @returns {Promise<unknown>}
      */
-    async deleteGame(user) {
-        let cmd = `DELETE from games where userId = (?)`;
-        let values = [user.userId];
-        await this.run(cmd, values);
+    deleteGame(user) {
+        const hash = this.hosts.has(user.userId);
+        this.liveGames.delete(hash);
+        this.hosts.delete(user.userId);
     }
 
     /**
@@ -85,12 +74,8 @@ class GameManager extends HasDB{
      * @param user the user object returned from verify.js
      * @returns {Promise<unknown>}
      */
-    async getHash(user) {
-        let cmd = `SELECT hash FROM games where userId = (?)`;
-        let values = [user.userId];
-        let r = await this.get(cmd, values);
-        if (!r) return undefined;
-        return r.hash;
+    getHash(user) {
+        return this.hosts.get(user.userId);
     }
 
     /**
@@ -100,20 +85,12 @@ class GameManager extends HasDB{
      * @param hash The public hash for a game.
      * @return The live game object or undefined if no game found.
      */
-    async getLive(hash){
-        if (!this.liveGames[hash]){
-            let cmd = `SELECT game FROM games where hash = (?)`;
-            let values = [hash];
-            let r = await this.get(cmd, values);
-            if (!r) return undefined;
-            this.liveGames[hash] = Game.fromJSON(r.game);
-        }
-
-        return this.liveGames[hash];
+    getLive(hash){
+        return this.liveGames.get(hash);
     }
 
-    async hasLive(hash){
-        return await this.getLive(hash) !== undefined;
+    hasLive(hash){
+        return this.liveGames.has(hash);
     }
 }
 

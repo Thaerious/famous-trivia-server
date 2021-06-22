@@ -11,87 +11,80 @@ const data = JSON.parse(file);
 let gameModel = new GameModel(data);
 let game = new Game(gameModel);
 
-describe('class GameManager', async function () {
+describe('class GameManager', function () {
     let gameManager = new GameManager('./db/test.db');
 
-    describe('#connect()', function () {
-        it('has database', async function () {
-            await gameManager.connect();
-            await gameManager.disconnect();
-        });
-    });
-
     describe('#clearAll()', function () {
-        it("doesn't throw error", async function () {
-            await gameManager.clearAll();
+        it("doesn't throw error", function () {
+             gameManager.clearAll();
         });
     });
 
     describe(`#setGame()`, function () {
-        it("doesn't throw error", async function () {
-            await gameManager.setGame({userId: "test-user"}, game);
+        it("doesn't throw error", function () {
+             gameManager.setGame({userId: "test-user"}, game);
         });
     });
 
     describe(`#hasGame()`, function () {
-        it(`has game`, async function () {
-            let r = await gameManager.hasGame({userId: "test-user"});
+        it(`has game`, function () {
+            let r =  gameManager.hasGame({userId: "test-user"});
             assert.strictEqual(r, true);
         });
-        it(`doesn't have game`, async function () {
-            let r = await gameManager.hasGame({userId: "test-user-not"});
+        it(`doesn't have game`, function () {
+            let r =  gameManager.hasGame({userId: "test-user-not"});
             assert.strictEqual(r, false);
         });
     });
 
-    describe(`#listGames()`, function () {
-        it(`one game`, async function () {
-            let r = await gameManager.listGames();
+    describe(`#listHosts()`, function () {
+        it(`one game`, function () {
+            let r =  gameManager.listHosts();
             assert.strictEqual(r.length, 1);
         });
     });
 
-    describe(`#getGame()`, function () {
-        it(`get game`, async function () {
-            let a = await gameManager.getGame({userId: "test-user"});
-            let e = JSON.stringify(game);
-            assert.strictEqual(a, e);
-        });
-    });
+    // describe(`#getGame()`, function () {
+    //     it(`get game`, function () {
+    //         console.log("HOSTS " + gameManager.listHosts());
+    //         let a = gameManager.getGame({userId: "test-user"});
+    //         assert.strictEqual(game, a);
+    //     });
+    // });
 
     describe(`#getHash()`, function () {
-        it(`has value`, async function () {
-            let r = await gameManager.getHash({userId: "test-user"});
+        it(`has value`, function () {
+            let r =  gameManager.getHash({userId: "test-user"});
             assert.notEqual(r, undefined);
         });
-        it(`does not have value`, async function () {
-            let r = await gameManager.getHash({userId: "nota-user"});
+        it(`does not have value`, function () {
+            let r =  gameManager.getHash({userId: "nota-user"});
             assert.strictEqual(r, undefined);
         });
     });
 
     describe(`#getLive()`, function () {
-        it(`has hash`, async function () {
-            let r = await gameManager.getHash({userId: "test-user"});
-            let game = await gameManager.getLive(r);
+        it(`has hash`, function () {
+            let r =  gameManager.getHash({userId: "test-user"});
+            let game =  gameManager.getLive(r);
             assert.strictEqual(game.constructor.name, "Game");
         });
-        it(`is the same object when called twice`, async function () {
-            let r = await gameManager.getHash({userId: "test-user"});
-            let game1 = await gameManager.getLive(r);
-            let game2 = await gameManager.getLive(r);
+        it(`is the same object when called twice`, function () {
+            let r =  gameManager.getHash({userId: "test-user"});
+            let game1 =  gameManager.getLive(r);
+            let game2 =  gameManager.getLive(r);
             assert.strictEqual(game1, game2);
         });
     });
 
     describe(`#deleteGame()`, function () {
-        it(`is deleted`, async function () {
-            await gameManager.deleteGame({userId: "test-user"});
-            let r = await gameManager.hasGame({userId: "test-user"});
+        it(`is deleted`, function () {
+             gameManager.deleteGame({userId: "test-user"});
+            let r =  gameManager.hasGame({userId: "test-user"});
             assert.strictEqual(r, false);
         });
-        it(`game hash deleted`, async function () {
-            let r = await gameManager.getHash({userId: "test-user"});
+        it(`game hash deleted`, function () {
+            let r =  gameManager.getHash({userId: "test-user"});
             assert.strictEqual(r, undefined);
         });
     });

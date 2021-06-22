@@ -175,6 +175,7 @@ class GameManagerEndpoint {
     }
 
     /**
+     * <b>Launch a new game from a game description model.</b>
      * Requires a model (json with game description) and a token (Google auth token),
      * responds with result : success, hash : game-hash.  The game hash is passed to
      * players so they can connect.
