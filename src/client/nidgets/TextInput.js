@@ -23,6 +23,11 @@ class TextInput extends NidgetElement {
             this.DOM['content'].focus();
         });
 
+        this.parentElement.addEventListener("click", ()=>{
+            this.DOM['hint'].innerHTML = "";
+            this.DOM['content'].focus();
+        });
+
         this.DOM['content'].addEventListener("click", ()=>{
             this.DOM['hint'].innerHTML = "";
         });
