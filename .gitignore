@@ -8,5 +8,7 @@ gimp/
 coverage/
 html/jit/
 out/
+db/
+docs/html/
 .c8_output/
 .nyc_output/
