@@ -18,7 +18,7 @@ import NidgetPreprocessor from "./mechanics/NidgetPreprocessor.js";
 import JITBrowserify from "./mechanics/JITBrowserify.js";
 import config from "../config.js";
 import ReportCoverage from "./mechanics/ReportCoverage.js";
-import ParseArgs from "@thaerious/parseArgs";
+import ParseArgs from "@thaerious/parseargs";
 import clean from "../clean.js";
 import setupDB from "./game/setupDB.js";
 
