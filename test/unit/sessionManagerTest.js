@@ -1,7 +1,7 @@
 // noinspection SqlNoDataSourceInspection,DuplicatedCode
 
 import assert from 'assert';
-import SessionManager from "../src/server/mechanics/SessionManager.js";
+import SessionManager from "../../src/server/mechanics/SessionManager.js";
 
 describe(`Session Manager`, async () => {
     let sessionManager = null;

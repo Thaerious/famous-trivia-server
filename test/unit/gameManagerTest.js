@@ -1,9 +1,9 @@
 // noinspection JSUnresolvedFunction
 
 import assert from 'assert';
-import GameManager from "../src/server/game/GameManager.js";
-import GameModel from "../src/server/game/GameModel.js";
-import {Game} from "../src/server/game/Game.js";
+import GameManager from "../../src/server/game/GameManager.js";
+import GameModel from "../../src/server/game/GameModel.js";
+import {Game} from "../../src/server/game/Game.js";
 import fs from "fs";
 
 const file = fs.readFileSync('./test/data/test-data-00.json');
@@ -37,25 +37,17 @@ describe('class GameManager', function () {
         });
     });
 
-    describe(`#listHosts()`, function () {
+    describe(`#listHostedGames()`, function () {
         it(`one game`, function () {
-            let r =  gameManager.listHosts();
+            let r =  gameManager.listHostedGames();
             assert.strictEqual(r.length, 1);
         });
     });
 
-    // describe(`#getGame()`, function () {
-    //     it(`get game`, function () {
-    //         console.log("HOSTS " + gameManager.listHosts());
-    //         let a = gameManager.getGame({userId: "test-user"});
-    //         assert.strictEqual(game, a);
-    //     });
-    // });
-
     describe(`#getHash()`, function () {
         it(`has value`, function () {
             let r =  gameManager.getHash({userId: "test-user"});
-            assert.notEqual(r, undefined);
+            assert.notStrictEqual(r, undefined);
         });
         it(`does not have value`, function () {
             let r =  gameManager.getHash({userId: "nota-user"});
@@ -79,9 +71,10 @@ describe('class GameManager', function () {
 
     describe(`#deleteGame()`, function () {
         it(`is deleted`, function () {
-             gameManager.deleteGame({userId: "test-user"});
-            let r =  gameManager.hasGame({userId: "test-user"});
-            assert.strictEqual(r, false);
+            let deleted = gameManager.deleteGame({userId: "test-user"});
+            let has =  gameManager.hasGame({userId: "test-user"});
+            assert.strictEqual(deleted, true);
+            assert.strictEqual(has, false);
         });
         it(`game hash deleted`, function () {
             let r =  gameManager.getHash({userId: "test-user"});

@@ -67,12 +67,14 @@ class GameManager{
     /**
      * Remove a hosted game from the db.
      * @param user the user object returned from verify.js
-     * @returns {Promise<unknown>}
+     * @returns {boolean}
      */
     deleteGame(user) {
         const hash = this.hosts.get(user.userId).hash;
+        if (!this.hasGame(user)) return false;
         this.liveGames.delete(hash);
         this.hosts.delete(user.userId);
+        return true;
     }
 
     /**
@@ -81,7 +83,7 @@ class GameManager{
      * @returns {Promise<unknown>}
      */
     getHash(user) {
-        return this.hosts.get(user.userId).hash;
+        return this.hosts.get(user.userId)?.hash;
     }
 
     /**
