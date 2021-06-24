@@ -331,7 +331,8 @@ class Game {
     [4](input) { // waiting for player to pick question
         switch (input.action) {
             case "select":
-                if (input.player !== constants.names.HOST && this.model.activePlayer.name !== input.player) return;
+                // if (input.player !== constants.names.HOST && this.model.activePlayer.name !== input.player) return;
+                if (input.player !== constants.names.HOST) return;
                 if (!this.model.getRound().isSpent(input.data.col, input.data.row)) {
                     this.model.getRound().setQuestionState(input.data.col, input.data.row);
                     this.updateState(5);

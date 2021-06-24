@@ -1,5 +1,4 @@
 import readline from 'readline';
-import constants from "../constants.js";
 
 class CLI {
     constructor(gameManager, sessionManager) {
@@ -38,6 +37,10 @@ class CLI {
             case "exit":
                 this.exit();
             break;
+            case "g":
+            case "games":
+                this.listGames();
+                break;
             case "":
                 break;
             case "help":
@@ -46,6 +49,14 @@ class CLI {
                 console.log("exit, x : terminate server");
                 break;
         }
+    }
+
+    listGames(){
+        const hostedGames = this.gameManager.listHostedGames();
+        for (const hostedGame of hostedGames){
+            console.log(hostedGame);
+        }
+        console.log("count : " + hostedGames.length);
     }
 }
 

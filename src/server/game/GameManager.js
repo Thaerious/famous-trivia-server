@@ -6,7 +6,7 @@ import HasDB from '../mechanics/HasDB.js';
 
 class GameManager{
     constructor() {
-        this.hosts = new Map(); // user -> hash
+        this.hosts = new Map(); // userId -> {hash, name}
         this.liveGames= new Map(); // hash -> game
     }
 
@@ -29,15 +29,21 @@ class GameManager{
     setGame(user, game) {
         let hash = crypto.randomBytes(20).toString('hex');
         this.liveGames.set(hash, Game.fromJSON(game));
-        this.hosts.set(user.userId, hash);
+        this.hosts.set(user.userId, {hash:hash, name:user.userName});
     }
 
     /**
      * List all the users with an game in the db.
      * The user will match with a userid returned from verify.js.
      */
-    listHosts() {
-        return Array.from(this.hosts.keys());
+    listHostedGames() {
+        let list = [];
+        for (let id of this.hosts.keys()){
+            const name = this.hosts.get(id).name;
+            const hash = this.hosts.get(id).hash.substr(0, 8);
+            list.push({id, name, hash});
+        }
+        return list;
     }
 
     /**
@@ -54,7 +60,7 @@ class GameManager{
      * @returns {Promise<unknown>}
      */
     getGame(user) {
-        const hash = this.hosts.get(user.userId);
+        const hash = this.hosts.get(user.userId).hash;
         return this.liveGames.get(hash);
     }
 
@@ -64,7 +70,7 @@ class GameManager{
      * @returns {Promise<unknown>}
      */
     deleteGame(user) {
-        const hash = this.hosts.has(user.userId);
+        const hash = this.hosts.get(user.userId).hash;
         this.liveGames.delete(hash);
         this.hosts.delete(user.userId);
     }
@@ -75,7 +81,7 @@ class GameManager{
      * @returns {Promise<unknown>}
      */
     getHash(user) {
-        return this.hosts.get(user.userId);
+        return this.hosts.get(user.userId).hash;
     }
 
     /**

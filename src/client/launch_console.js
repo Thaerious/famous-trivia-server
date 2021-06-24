@@ -8,6 +8,7 @@ window.addEventListener("load", async ()=>{
     const token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
 
     const response = await gameManagerService.hasGame(token);
+
     if (response['result'] === "failure"){
         window.location = "host.ejs";
     }
@@ -30,7 +31,7 @@ window.addEventListener("load", async ()=>{
             window.location = "host.ejs";
     });
 
-    document.querySelector("#busy-box").classList.add("hidden");
+    document.querySelector("#busy-box").classList.add("hidden")
 });
 
 function copyLink() {

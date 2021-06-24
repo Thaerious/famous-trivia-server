@@ -47,7 +47,13 @@ const config = {
         client_path : "./src/client/",
 
         // Client source files, all files in this dir get browserified unless --jit is flagged.
-        nidget_scripts : "./src/client/nidgets/"
+        nidget_scripts : "./src/client/nidgets/",
+
+        // Path of game database file
+        db_path : "./db/trivia.db",
+
+        // Path of game database file
+        db_script_path : "./accessory/create_tables.sql"
     },
     clean_dir : [
         ".nyc_output",

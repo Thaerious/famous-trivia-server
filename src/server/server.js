@@ -20,13 +20,15 @@ import config from "../config.js";
 import ReportCoverage from "./mechanics/ReportCoverage.js";
 import ParseArgs from "@thaerious/parseArgs";
 import clean from "../clean.js";
+import setupDB from "./game/setupDB.js";
 
+await setupDB(config.server.db_path, config.server.db_script_path);
 
 const port = config.server.port;
 const app = Express();
 const server = http.createServer(app);
-const gameManager = await new GameManager("db/trivia.db");
-const sessionManager = new SessionManager("db/trivia.db");
+const gameManager = await new GameManager();
+const sessionManager = new SessionManager(config.server.db_path);
 await sessionManager.load();
 const nidgetPreprocessor = new NidgetPreprocessor(config.server.ejs_nidgets, config.server.nidget_scripts).setup();
 

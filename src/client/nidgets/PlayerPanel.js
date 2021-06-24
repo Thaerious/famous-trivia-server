@@ -14,10 +14,12 @@ class PlayerPanel extends NidgetElement {
 
     set name(value){
         this.querySelector("#name").innerHTML = value;
+        this.setAttribute("data-name", value);
     }
 
     set score(value){
         this.querySelector("#score").innerHTML = value;
+        this.setAttribute("data-score", value);
     }
 
     get name(){
