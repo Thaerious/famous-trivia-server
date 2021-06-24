@@ -9,6 +9,8 @@ import {Game, Timer} from '../../src/server/game/Game.js';
 const file = fs.readFileSync('test/data/test-data-00.json');
 const data = JSON.parse(file);
 
+Game.settings.ALLOW_PLAYER_PICK = true;
+
 Timer.TIMES = {
     ANSWER: 1,
     BUZZ: 1,
@@ -407,8 +409,10 @@ describe(`Game Mock-Up`, () => {
     describe('Player selects question (Charlie), host goes back', function () {
         it(`state changes`, function () {
             let u = game.getUpdate().data;
+            console.log(u);
             game.onInput({action: "select", data: {col: 0, row: 4}, player: "Charles"});
             let update = game.getUpdate().data;
+            console.log(update);
             assert.strictEqual(update.state, 5);
         });
         it(`host selects back`, function () {

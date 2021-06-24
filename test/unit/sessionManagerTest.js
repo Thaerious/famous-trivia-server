@@ -14,11 +14,11 @@ describe(`Session Manager`, async () => {
             sessionManager = new SessionManager("db/test.db");
             assert.notStrictEqual(sessionManager, null);
         });
-        it(`insert clean tables`, async () => {
-            await sessionManager.run("DROP TABLE IF EXISTS parameters");
-            await sessionManager.run("DROP TABLE IF EXISTS sessions");
-            await sessionManager.run("CREATE TABLE parameters(session varchar(64), name varchar(64), value varchar(256), UNIQUE(session, name));");
-            await sessionManager.run("CREATE TABLE sessions(session varchar(64) primary key, expires int)");
+        describe(`insert clean tables`, async () => {
+            it(`drop parameters`, async ()=>await sessionManager.run("DROP TABLE IF EXISTS parameters"));
+            it(`drop sessions`, async ()=>await sessionManager.run("DROP TABLE IF EXISTS sessions"));
+            it(`create parameters`, async ()=>await sessionManager.run("CREATE TABLE parameters(session varchar(64), name varchar(64), value varchar(256), UNIQUE(session, name));"));
+            it(`create sessions`, async ()=>await sessionManager.run("CREATE TABLE sessions(session varchar(64) primary key, expires int)"));
         });
     });
 

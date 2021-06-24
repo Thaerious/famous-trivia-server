@@ -22,13 +22,13 @@ import ParseArgs from "@thaerious/parseArgs";
 import clean from "../clean.js";
 import setupDB from "./game/setupDB.js";
 
-await setupDB(config.server.db_path, config.server.db_script_path);
+await setupDB(config.server.db.dir, config.server.db.name, config.server.db.script_full_path);
 
 const port = config.server.port;
 const app = Express();
 const server = http.createServer(app);
 const gameManager = await new GameManager();
-const sessionManager = new SessionManager(config.server.db_path);
+const sessionManager = new SessionManager(Path.join(config.server.db.dir, config.server.db.name));
 await sessionManager.load();
 const nidgetPreprocessor = new NidgetPreprocessor(config.server.ejs_nidgets, config.server.nidget_scripts).setup();
 

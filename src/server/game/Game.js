@@ -187,8 +187,8 @@ class Game {
         let data = {};
         for (let player of this.model.players) {
             data[player.name] = {
-                bonus : 0,
-                answers : []
+                bonus: 0,
+                answers: []
             };
 
             for (let i = 0; i < 6; i++) {
@@ -196,7 +196,8 @@ class Game {
                     checked: false,
                     amount: 0
                 }
-            };
+            }
+            ;
         }
         return data;
     }
@@ -230,28 +231,24 @@ class Game {
 
             let bonusFlag = true;
 
-            for (let i = 0; i < 6; i++){
+            for (let i = 0; i < 6; i++) {
                 let answer = this.mcBetsData[name].answers[i];
                 let bet = parseInt(answer.amount);
 
-                if (answer.checked === true && values[i] === true){
+                if (answer.checked === true && values[i] === true) {
                     this.model.getPlayer(name).score += bet;
                     answer.result = "correct";
-                }
-                else if (answer.checked === true && values[i] === false){
+                } else if (answer.checked === true && values[i] === false) {
                     this.model.getPlayer(name).score -= bet;
                     bonusFlag = false;
                     answer.result = "incorrect";
                     answer.amount = -1 * answer.amount;
-                }
-                else if (answer.checked === false && values[i] === true){
+                } else if (answer.checked === false && values[i] === true) {
                     bonusFlag = false;
                     answer.result = "incorrect";
-                }
-                else if (answer.checked === false && values[i] === false){
+                } else if (answer.checked === false && values[i] === false) {
                     answer.result = "correct";
-                }
-                else{
+                } else {
                     throw new Error("index " + i + " failed");
                 }
             }
@@ -331,8 +328,11 @@ class Game {
     [4](input) { // waiting for player to pick question
         switch (input.action) {
             case "select":
-                // if (input.player !== constants.names.HOST && this.model.activePlayer.name !== input.player) return;
-                if (input.player !== constants.names.HOST) return;
+                let allow = false;
+                if (Game.settings.ALLOW_PLAYER_PICK && (this.model.activePlayer.name === input.player)) allow = true;
+                if (input.player === constants.names.HOST) allow = true;
+                if (!allow) return;
+
                 if (!this.model.getRound().isSpent(input.data.col, input.data.row)) {
                     this.model.getRound().setQuestionState(input.data.col, input.data.row);
                     this.updateState(5);
@@ -344,8 +344,8 @@ class Game {
                             answer: this.model.getRound().getAnswer()
                         }
                     });
+                    break;
                 }
-                break;
         }
     }
 
@@ -460,6 +460,9 @@ class Game {
     }
 }
 
+Game.settings = {
+    ALLOW_PLAYER_PICK: false
+}
 
 export {
     Game, Timer
