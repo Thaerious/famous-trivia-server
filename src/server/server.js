@@ -56,7 +56,7 @@ if (flags['clean']){
     process.exit();
 }
 
-if (flags['r']){
+if (flags['render']){
     await JITBrowserify.render(nidgetPreprocessor);
     process.exit();
 }
