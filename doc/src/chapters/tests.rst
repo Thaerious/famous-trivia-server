@@ -18,23 +18,18 @@ Overview
 Instructions
 ^^^^^^^^^^^^
 
-Set the 'NODE_ENV' environment variable to 'test'.
-
-Run the server ("node .") normally.
-Babel will add Istanbul (nyc) markup to all pages when they are compiled.
-The .ejs renderer will inject a page unload listener into all the pages (see /view/partials/head.ejs).
-This listener will call the /report-coverage service and pass it the coverage file.
-
-To generate reports enter ``npx nyc report --report-dir coverage/client -r html`` on the command line.
-
-Setting NODE_ENV
-^^^^^^^^^^^^^^^^
-
-Set the NODE_ENV variable to enable client side code coverage.  This need to be set before running the
-browserify flag (-b).
+To enable code coverage, set the 'NODE_ENV' environment variable to 'test'.
 
 * linux & mac: export NODE_ENV=test
 * windows: $env:NODE_ENV = 'test'
+
+Babel will add Istanbul (nyc) markup to all scripts when they are rendered by browserify.
+The .ejs renderer will inject a page unload listener into all the pages (see /view/partials/head.ejs).
+This listener will call the /report-coverage service and pass it the coverage file.
+
+Create the report with this command:
+
+``npx nyc report --report-dir coverage/client -r html``
 
 Server Side Coverage
 --------------------
@@ -48,7 +43,10 @@ handles require.
 * Added dev packages "c8"
 * Requires interactive mode (-i)
 
-Run the server with this command:
+Instructions
+^^^^^^^^^^^^
+
+Run the server with this command (requires interactive mode -i):
 
 ``npx c8 --temp-directory ./.c8_output/ node . -i``
 

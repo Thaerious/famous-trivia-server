@@ -4,6 +4,7 @@ function onSuccess(googleUser) {
     let user = gapi.auth2.getAuthInstance().currentUser.get();
     let hasScopes = user.hasGrantedScopes('https://www.googleapis.com/auth/drive.appdata');
 
+    console.log("has scopes: " + hasScopes);
     if (!hasScopes) {
         const options = new gapi.auth2.SigninOptionsBuilder();
         options.setScope('https://www.googleapis.com/auth/drive.appdata');
@@ -28,10 +29,12 @@ function disableButtons(){
 }
 
 function onFailure(error) {
+    console.log("render button failed");
     console.log(error);
 }
 
 function renderButton() {
+    console.log("Render Button Enter");
     gapi.signin2.render('sign-in', {
         'scope': 'profile email',
         'width': 240,
@@ -41,6 +44,7 @@ function renderButton() {
         'onsuccess': onSuccess,
         'onfailure': onFailure
     });
+    console.log("Render Button Exit");
 }
 
 function signOut(){

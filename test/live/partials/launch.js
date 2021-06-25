@@ -5,11 +5,15 @@ import login from './login.js';
 import clipboardy from "clipboardy";
 import connectContestant from "./connectContestant.mjs";
 import puppeteer from "puppeteer";
+import globals from "./prequel.js";
 
 async function launch(globals) {
 
     describe(`login and launch game`, async () => {
         it(`login to google`, async () => {
+            console.log(globals.args.flags["url"]);
+            console.log(globals.args.flags["email"]);
+            console.log(globals.args.flags["password"]);
             globals.host = await login(globals.args.flags["url"], globals.args.flags["email"], globals.args.flags["password"]);
         });
 

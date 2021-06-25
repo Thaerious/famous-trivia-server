@@ -4,15 +4,17 @@
 # You can set these variables from the command line.
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
-SOURCEDIR     = source
-BUILDDIR      = ../html
+SOURCEDIR     = src
+BUILDDIR      = .
+GITHUBDIR     = /mnt/d/project/trunk/thaerious.github.io/famous-trivia
 
 # Put it first so that "make" without argument is like "make help".
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-github:
-	sphinx-build ./source/ ../../thaerious.github.io/famous-trivia/
+copy:
+	mkdir -p $(GITHUBDIR)
+	cp -r html/* $(GITHUBDIR)
 
 .PHONY: help Makefile
 

@@ -11,12 +11,13 @@ const gameManagerService = new GameManagerService();
 
 // main called from signin-button.js after login complete
 window.main = async function () {
-    console.log(gapi.client?.drive);
+    console.log("window.main");
     await hasGame();
     await fileOps.load();
     addMenuListeners();
     setupFileList();
     document.querySelectorAll(".button").forEach(e=>e.classList.remove("disabled"));
+    console.log(gapi.client?.drive);
 };
 
 function onLoad(event) {

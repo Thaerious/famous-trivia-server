@@ -4,7 +4,7 @@ import {QueryHandler} from 'query-selector-shadow-dom/plugins/puppeteer/index.js
 
 await puppeteer.registerCustomQueryHandler('shadow', QueryHandler);
 
-let args = new ParseArgs().loadOptions().run();
+let args = new ParseArgs().loadOptions("test/live/.parseArgs").run();
 
 let globals = {
     args: args,
