@@ -1,3 +1,5 @@
+console.log("signin-button.js");
+
 function onSuccess(googleUser) {
     console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
 
@@ -35,6 +37,7 @@ function onFailure(error) {
 
 function renderButton() {
     console.log("Render Button Enter");
+    console.log(gapi.signin2.render);
     gapi.signin2.render('sign-in', {
         'scope': 'profile email',
         'width': 240,

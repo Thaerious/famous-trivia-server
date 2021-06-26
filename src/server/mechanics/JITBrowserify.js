@@ -2,7 +2,7 @@
 
 import fs from 'fs';
 import browserify from 'browserify';
-import constants from '../../constants.js';
+import constants from '../../config.js';
 import Path from 'path';
 import config from "../../config.js";
 import ejs from "ejs";

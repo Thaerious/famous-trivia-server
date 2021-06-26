@@ -19,7 +19,10 @@ async function login(url, email, password){
             popup.on("close", ()=>resolve({browser, page}));
         });
 
-        await page.click("#sign-in");
+        setTimeout(async ()=>{
+            await page.waitForSelector("#sign-in");
+            await page.click("#sign-in");
+        }, 1000);
     });
 }
 

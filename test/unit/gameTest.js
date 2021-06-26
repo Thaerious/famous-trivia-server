@@ -11,16 +11,21 @@ const data = JSON.parse(file);
 
 Game.settings.ALLOW_PLAYER_PICK = true;
 
-Timer.TIMES = {
-    ANSWER: 1,
-    BUZZ: 1,
-    MULTIPLE_CHOICE: 1
+function newGame(){
+    let gameModel = new GameModel(data);
+    let game = new Game(gameModel);
+
+    game.times = {
+        ANSWER: 1,
+        BUZZ: 1,
+        MULTIPLE_CHOICE: 1
+    }
+    return game;
 }
 
 describe(`Player joins game before it has started, host selects question, it's accepted`, () => {
     describe('situation setup', function () {
-        let gameModel = new GameModel(data);
-        let game = new Game(gameModel);
+        let game = newGame();
 
         it(`Adam joins game`, ()=> {
             game.onInput({action: "join", data: {name: "Adam"}});
@@ -54,8 +59,7 @@ describe(`Player joins game before it has started, host selects question, it's a
 
 describe(`Player joins game after it has started, host selects question, it's accepted`, () => {
     describe('situation setup', function () {
-        let gameModel = new GameModel(data);
-        let game = new Game(gameModel);
+        let game = newGame();
 
         it(`Host starts game`, ()=> {
             game.onInput({action: "start"});
@@ -89,8 +93,7 @@ describe(`Player joins game after it has started, host selects question, it's ac
 
 describe(`One player in state 6 (picked a question), answer rejected`, () => {
     describe('situation setup', function () {
-        let gameModel = new GameModel(data);
-        let game = new Game(gameModel);
+        let game = newGame();
         game.onInput({action: "join", data: {name: "Adam"}});
         game.onInput({action: "start"});
         game.onInput({action: "select", data: {col: 0, row: 1}, player: "@HOST"});
@@ -105,8 +108,7 @@ describe(`One player in state 6 (picked a question), answer rejected`, () => {
 });
 
 describe(`Game Mock-Up`, () => {
-    let gameModel = new GameModel(data);
-    let game = new Game(gameModel);
+    let game = newGame();
 
     describe('#constructor()', function () {
         it('constructor sanity test', function () {

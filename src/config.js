@@ -53,7 +53,26 @@ const config = {
             dir : "./db",
             name : "trivia.db",
             script_full_path : "./accessory/create_tables.sql"
-        }
+        },
+    },
+    TIMES : {
+        ANSWER: 10,         // time for question chooser to answer
+        BUZZ: 10,           // time to wait for buzzer
+        MULTIPLE_CHOICE: 60 // time to wait for multiple choice
+    },
+    sessions : {
+        SESSION_EXPIRE_HOURS: 24,
+        SESSION_COOKIE_NAME: "trivia-session",
+        SESSION_CLEAR_DELAY_MIN: 30
+    },
+    nidgets : {
+        SCRIPT_PATH: "./src/client/nidgets"
+    },
+    locations : {
+        HOST : "host.ejs"
+    },
+    names: {
+        HOST : "@HOST"
     },
     clean_dir : [
         ".nyc_output",

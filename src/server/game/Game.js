@@ -1,5 +1,5 @@
 import GameModel from "./GameModel.js";
-import constants from "../../constants.js";
+import constants from "../../config.js";
 import crypto from "crypto";
 
 class Timer {
@@ -58,9 +58,9 @@ class Timer {
     }
 }
 
-Timer.TIMES = {};
-Object.assign(Timer.TIMES, constants.TIMES);
-
+/**
+ * Gets the initial timer values from constants.times
+ */
 class Game {
     /**
      *
@@ -74,6 +74,9 @@ class Game {
             this.model = model;
             this.updateState(0);
         }
+        
+        this.times = {};
+        Object.assign(this.times, constants.TIMES);
     }
 
     /**
@@ -288,7 +291,7 @@ class Game {
             case "continue":
                 this.model.getRound().setAnswerState();
                 this.updateState(2);
-                this.timer.start(Timer.TIMES.MULTIPLE_CHOICE);
+                this.timer.start(this.times.MULTIPLE_CHOICE);
                 break;
         }
     }
@@ -355,7 +358,7 @@ class Game {
                 if (input.player !== constants.names.HOST) return;
                 this.model.getRound().setSpent();
                 this.updateState(6);
-                this.timer.start(Timer.TIMES.ANSWER);
+                this.timer.start(this.times.ANSWER);
                 break;
             case "back":
                 this.updateState(4);
@@ -370,7 +373,7 @@ class Game {
                 this.model.getRound().clearCurrentPlayer();
                 this.timer.stop();
                 if (this.model.getRound().countUnspentPlayers() > 0) {
-                    this.timer.start(Timer.TIMES.BUZZ);
+                    this.timer.start(this.times.BUZZ);
                     this.updateState(7);
                 } else {
                     this.model.getRound().setRevealState();
@@ -395,7 +398,7 @@ class Game {
             case "buzz":
                 if (this.model.getRound().hasPlayer(input.player)) {
                     this.model.getRound().setCurrentPlayer(input.player);
-                    this.timer.start(Timer.TIMES.ANSWER);
+                    this.timer.start(this.times.ANSWER);
                     this.updateState(8);
                 }
                 break;
@@ -419,7 +422,7 @@ class Game {
                 this.model.getRound().clearCurrentPlayer();
 
                 if (this.model.getRound().countUnspentPlayers() > 0) {
-                    this.timer.start(Timer.TIMES.BUZZ);
+                    this.timer.start(this.times.BUZZ);
                     this.updateState(7);
                 } else {
                     this.model.getRound().setRevealState();

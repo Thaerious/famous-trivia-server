@@ -7,7 +7,6 @@ class NidgetButton extends  NidgetElement{
 
     async ready(){
        await super.ready();
-       console.log(this);
        this.DOM.text.innerHTML = this.innerHTML;
        this.innerHTML = "";
     }

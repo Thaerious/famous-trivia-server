@@ -1,4 +1,4 @@
-import constants from "../../constants.js";
+import constants from "../../config.js";
 
 /**
  * All incoming messages to the server should take the form of
