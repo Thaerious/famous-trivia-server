@@ -7,7 +7,6 @@ import connectContestant from "./connectContestant.mjs";
 import puppeteer from "puppeteer";
 
 async function launch(gameEnv) {
-
     describe(`login and launch game`, async () => {
         it(`login to google`, async () => {
             console.log(gameEnv.args.flags["url"]);

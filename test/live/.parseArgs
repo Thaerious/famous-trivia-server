@@ -16,6 +16,15 @@
       "long": "url",
       "short": "u",
       "default": "http://localhost:8000/host.ejs"
+    },
+    {
+      "long": "ta"
+    },
+    {
+      "long": "tb"
+    },
+    {
+      "long": "tm"
     }
   ]
 }

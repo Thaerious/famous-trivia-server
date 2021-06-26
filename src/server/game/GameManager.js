@@ -3,11 +3,13 @@
 import crypto from 'crypto';
 import {Game} from './Game.js';
 import HasDB from '../mechanics/HasDB.js';
+import ParseArgs from "@thaerious/parseargs";
 
 class GameManager{
     constructor() {
         this.hosts = new Map(); // userId -> {hash, name}
         this.liveGames= new Map(); // hash -> game
+        this.args = new ParseArgs().loadOptions().run();
     }
 
     get size(){
@@ -26,9 +28,21 @@ class GameManager{
      * @param game a game object from Game.js
      * @returns {boolean} true if a new game was created.
      */
-    setGame(user, game) {
+    setGame(user, gameDesc) {
         let hash = crypto.randomBytes(20).toString('hex');
-        this.liveGames.set(hash, Game.fromJSON(game));
+        const liveGame = Game.fromJSON(gameDesc);
+        this.liveGames.set(hash, liveGame);
+
+        if (this.args.flags["ta"]){
+            liveGame.times.ANSWER = parseInt(this.args.flags["ta"]);
+        }
+        if (this.args.flags["tb"]){
+            liveGame.times.BUZZ = parseInt(this.args.flags["tb"]);
+        }
+        if (this.args.flags["tm"]){
+            liveGame.times.MULTIPLE_CHOICE = parseInt(this.args.flags["tm"]);
+        }
+
         this.hosts.set(user.userId, {hash:hash, name:user.userName});
     }
 

@@ -9,6 +9,7 @@ coverage/
 html/jit/
 out/
 db/
-docs/html/
+doc/html/
+doc/doctrees/
 .c8_output/
 .nyc_output/
