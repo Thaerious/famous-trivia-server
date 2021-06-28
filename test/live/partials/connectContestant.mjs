@@ -1,9 +1,9 @@
 import puppeteer from "puppeteer";
 import assert from "assert";
 
-async function connectContestant(url, name){
+async function connectContestant(url, name, headless = true){
     return new Promise(async (resolve, reject)=> {
-        const browser = await puppeteer.launch({headless: false});
+        const browser = await puppeteer.launch({headless: headless});
         const pages = await browser.pages();
         const page = pages[0];
         await page.goto(url);

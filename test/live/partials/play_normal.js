@@ -8,6 +8,13 @@ import clipboardy from "clipboardy";
 import connectContestant from "./connectContestant.mjs";
 import {QueryHandler} from 'query-selector-shadow-dom/plugins/puppeteer/index.js';
 
+const PID = {
+    ADAM : 0,
+    BETH : 1,
+    CHUCK : 2,
+    DIANNE : 3
+}
+
 async function play_normal(gameEnv) {
 
     /**
@@ -15,15 +22,15 @@ async function play_normal(gameEnv) {
      * @param cb
      * @returns {*}
      */
-    function clickContinue(cb) {
-        if (!cb) {
-            return gameEnv.host_portal.page.waitForSelector("#continue", {visible: true})
-                .then(() => gameEnv.host_portal.page.click(`#continue`));
-        } else {
-            gameEnv.host_portal.page.waitForSelector("#continue", {visible: true})
-                .then(() => gameEnv.host_portal.page.click(`#continue`))
-                .then(() => cb());
-        }
+    async function clickContinue() {
+        await gameEnv.host_portal.page.waitForSelector("#continue.shown", {visible: true});
+        await gameEnv.host_portal.page.click(`#continue`);
+    }
+
+    async function wait(sec, cb = ()=>{}){
+        return new Promise((resolve, reject)=>{
+           setTimeout(()=>{resolve(cb())}, sec * 1000);
+        });
     }
 
     async function clickAccept() {
@@ -53,8 +60,8 @@ async function play_normal(gameEnv) {
         assert.strictEqual(parseInt(score), value);
     }
 
-    it(`wait for the board`, () => {
-        gameEnv.host_portal.page.waitForSelector("#game-board", {visible: true});
+    it(`wait for the board`, async () => {
+        await gameEnv.host_portal.page.waitForSelector("#game-board", {visible: true});
     });
 
     describe(`each player picks and get the answer correct`, async () => {
@@ -88,15 +95,12 @@ async function play_normal(gameEnv) {
         });
     });
 
-    describe(`exercise the timer - accepting answers after a wait`, async () => {
+    describe(`exercise the timer - accepting all answers after waiting`, async () => {
         it(`host waits 3 seconds before accepting Adam's answer`, async () => {
             await chooseQuestion(1, 0);
             await clickContinue();
-
-            setTimeout(async () => {
-                await clickAccept();
-            }, 3000);
-
+            await wait(3);
+            await clickAccept();
             await clickContinue();
             await assertScore("ADAM", 300);
         });
@@ -104,16 +108,12 @@ async function play_normal(gameEnv) {
         it(`host waits 3 seconds before accepting Beth's answer`, async () => {
             await chooseQuestion(0, 1);
             await clickContinue();
-
-            setTimeout(async () => {
-                await clickAccept();
-            }, 3000);
-
+            await wait(3);
+            await clickAccept();
             await clickContinue();
             await assertScore("BETH", 300);
         });
     });
-
 
     /**
      * Check chooses,
@@ -164,9 +164,82 @@ async function play_normal(gameEnv) {
      */
 
     describe(`Dianne selects, times out completely, no one else buzzes in`, async () => {
+        it(`host chooses question`, async () => {
+            await chooseQuestion(0, 2);
+            await clickContinue();
+        });
 
+        it(`host rejects answer after 6 seconds (no answer)`, async () => {
+            await wait(6);
+            await clickReject();
+        });
 
+        it(`check score, doesn't change`, async () => {
+            await clickContinue();
+            await assertScore("ADAM", 800);
+        });
     });
+
+    /**
+     * Adam, Beth, Chuck, Dianne
+     * 800, 300, 300, 400
+     * - - - o o o
+     * - - o o o o
+     * o o - o o o
+     * o o o - o o
+     * - o o o o o
+     */
+
+    describe(`Adam's answer rejected. Beth buzz-in, gets the answer wrong, Chuck buzz-in gets it right`, async () => {
+        it(`host chooses question (col 1, value 300)`, async () => {
+            await chooseQuestion(2, 1);
+            await clickContinue();
+        });
+
+        it(`host rejects answer after 3 seconds`, async () => {
+            await wait(3);
+            await clickReject();
+        });
+
+        it(`adams score doesn't change`, async () => {
+            await assertScore("ADAM", 800);
+        });
+
+        it(`beth buzzes in`, async () => {
+            await clickBuzz(PID.BETH);
+        });
+
+        it(`host rejects answer after 3 seconds`, async () => {
+            await wait(3);
+            await clickReject();
+        });
+
+        it(`beth's score changes by half the value`, async () => {
+            await assertScore("BETH", 150);
+        });
+
+        it(`check buzzes in`, async () => {
+            await clickBuzz(PID.CHUCK);
+        });
+
+        it(`host accepts answer after 3 seconds`, async () => {
+            await wait(3);
+            await clickAccept();
+        });
+
+        it(`chuck's score increases by 300`, async () => {
+            await assertScore("CHUCK", 600);
+        });
+
+        it(`host clicks continue`, async () => {
+            await clickContinue();
+        });
+
+        it(`wait for the game board`, async () => {
+            await gameEnv.host_portal.page.waitForSelector("#game-board", {visible: true});
+        });
+    });
+
 };
 
 export default play_normal;

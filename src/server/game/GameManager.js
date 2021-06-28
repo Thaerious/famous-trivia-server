@@ -28,9 +28,8 @@ class GameManager{
      * @param game a game object from Game.js
      * @returns {boolean} true if a new game was created.
      */
-    setGame(user, gameDesc) {
+    setGame(user, liveGame) {
         let hash = crypto.randomBytes(20).toString('hex');
-        const liveGame = Game.fromJSON(gameDesc);
         this.liveGames.set(hash, liveGame);
 
         if (this.args.flags["ta"]){
@@ -42,7 +41,6 @@ class GameManager{
         if (this.args.flags["tm"]){
             liveGame.times.MULTIPLE_CHOICE = parseInt(this.args.flags["tm"]);
         }
-
         this.hosts.set(user.userId, {hash:hash, name:user.userName});
     }
 

@@ -69,7 +69,8 @@ class Game {
     constructor(model) {
         this.timer = new Timer(this);
         this.listeners = {};
-        this.state = 0;
+        this._state = 0;
+
         if (model) {
             this.model = model;
             this.updateState(0);
@@ -77,6 +78,16 @@ class Game {
         
         this.times = {};
         Object.assign(this.times, constants.TIMES);
+
+        console.trace(this.timer.game === this);
+    }
+
+    set state(value){
+        this._state = value;
+    }
+
+    get state(){
+        return this._state;
     }
 
     /**
@@ -112,8 +123,8 @@ class Game {
      * @param input {action : string, data : {}}
      */
     onInput(input) {
-        // console.log(`(${this.state}) - ${JSON.stringify(input)}`);
-        // console.log("-----------------------------------");
+        console.log(`(${this.state}) - ${JSON.stringify(input)}`);
+        console.log("-----------------------------------");
 
         switch (input.action) {
             case "next_round":
