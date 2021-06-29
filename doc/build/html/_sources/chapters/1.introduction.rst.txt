@@ -22,7 +22,7 @@ The following is a list of links for pages involved in the project and/or docume
 
 .. |trivia-github| raw:: html
 
-   <a href="https://github.com/Thaerious/trivia-server" target="_blank">[GO]</a>
+   <a href="https://github.com/Thaerious/trivia-index" target="_blank">[GO]</a>
 
 ==============
 Project Layout
@@ -39,7 +39,7 @@ Project Layout
  * * src/client/ : Page files, must be located here as the jit-browserify targets this directory.
  * * src/client/modules/ : Non-nidget, not root, js files.
  * * src/client/nidgets/ : Nidget script files from ejs /views/nidgets.
- * * src/server/ : Server side source files.
+ * * src/index/ : Server side source files.
  * * src/styles/ : SCSS source files.
  * * test/ : test files
  * * test/data/ : data files specifically for tests.

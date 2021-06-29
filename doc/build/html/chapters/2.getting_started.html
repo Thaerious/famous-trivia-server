@@ -204,7 +204,7 @@ Visit <a class="reference external" href="https://nodejs.org/en/">https://nodejs
 </div>
 <div class="section" id="express">
 <h2><span class="section-number">1.2. </span>Express<a class="headerlink" href="#express" title="Permalink to this headline">¶</a></h2>
-<p>The app runs on Express; a NodeJS web server.  By default, it runs on
+<p>The app runs on Express; a NodeJS web index.  By default, it runs on
 port 8000.  SSL has not been setup in the app, it is recommended that
 a reverse-proxy is used to provide SSL security.</p>
 <p><a class="reference external" href="https://expressjs.com/">https://expressjs.com/</a></p>
@@ -212,7 +212,7 @@ a reverse-proxy is used to provide SSL security.</p>
 <div class="section" id="nginx">
 <h2><span class="section-number">1.3. </span>NGINX<a class="headerlink" href="#nginx" title="Permalink to this headline">¶</a></h2>
 <p>The app is intended to run behind a proxy, and has been built with NGINX in mind.
-An example server file has been provided &lt;here&gt; and should be put in the
+An example index file has been provided &lt;here&gt; and should be put in the
 <code class="docutils literal notranslate"><span class="pre">/etc/nginx/sites-available</span></code> folder.</p>
 <p><a class="reference external" href="https://www.nginx.com/">https://www.nginx.com/</a></p>
 <div class="section" id="nginx-commands">
@@ -232,8 +232,8 @@ systemctl disable nginx
 <h1><span class="section-number">2. </span>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="overview">
 <h2><span class="section-number">2.1. </span>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="nd">@github</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="n">Thaerious</span><span class="o">/</span><span class="n">famous</span><span class="o">-</span><span class="n">trivia</span><span class="o">-</span><span class="n">server</span><span class="o">.</span><span class="n">git</span>
-<span class="n">cd</span> <span class="n">trivia</span><span class="o">-</span><span class="n">server</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="nd">@github</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="n">Thaerious</span><span class="o">/</span><span class="n">famous</span><span class="o">-</span><span class="n">trivia</span><span class="o">-</span><span class="n">index</span><span class="o">.</span><span class="n">git</span>
+<span class="n">cd</span> <span class="n">trivia</span><span class="o">-</span><span class="n">index</span>
 <span class="n">npm</span> <span class="n">i</span>
 <span class="n">npm</span> <span class="n">run</span> <span class="n">build</span><span class="o">-</span><span class="n">css</span>
 <span class="n">sudo</span> <span class="n">bash</span> <span class="n">install</span><span class="o">.</span><span class="n">bat</span> <span class="n">USERNAME</span>
@@ -244,13 +244,13 @@ systemctl disable nginx
 </div>
 <div class="section" id="details">
 <h2><span class="section-number">2.2. </span>Details<a class="headerlink" href="#details" title="Permalink to this headline">¶</a></h2>
-<p>Clone the repository onto your server.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="nd">@github</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="n">Thaerious</span><span class="o">/</span><span class="n">trivia</span><span class="o">-</span><span class="n">server</span><span class="o">.</span><span class="n">git</span>
-<span class="n">cd</span> <span class="n">trivia</span><span class="o">-</span><span class="n">server</span>
+<p>Clone the repository onto your index.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="nd">@github</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="n">Thaerious</span><span class="o">/</span><span class="n">trivia</span><span class="o">-</span><span class="n">index</span><span class="o">.</span><span class="n">git</span>
+<span class="n">cd</span> <span class="n">trivia</span><span class="o">-</span><span class="n">index</span>
 </pre></div>
 </div>
 <p>Setup the reverse proxy for NGINX.
-Add the following to the appropriate sites-available file (in the server block).</p>
+Add the following to the appropriate sites-available file (in the index block).</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>location /trivia/ {
     proxy_pass http://127.0.0.1:8000/;
 
@@ -274,10 +274,10 @@ Then copy browser key, client id, and app id to /src/config.js file.</p>
 <li><p>Google Picker API</p></li>
 <li><p>People API</p></li>
 </ul>
-<p><strong>Run the server manually.</strong></p>
+<p><strong>Run the index manually.</strong></p>
 <p>Build the style sheets with <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">run</span> <span class="pre">build-css</span></code>.  Install the node packages with <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">i</span></code>.</p>
-<p>When running the server the first time include the -r flag (<code class="docutils literal notranslate"><span class="pre">node</span> <span class="pre">.</span> <span class="pre">-r</span></code>) to render html &amp; js files.
-Then run the server (<code class="docutils literal notranslate"><span class="pre">node</span> <span class="pre">.</span></code>):</p>
+<p>When running the index the first time include the -r flag (<code class="docutils literal notranslate"><span class="pre">node</span> <span class="pre">.</span> <span class="pre">-r</span></code>) to render html &amp; js files.
+Then run the index (<code class="docutils literal notranslate"><span class="pre">node</span> <span class="pre">.</span></code>):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ node . -r
 contestant_join
 contestant_portal
@@ -290,14 +290,14 @@ $ node .
 HTTP listener started on port 8000
 </pre></div>
 </div>
-<p>Browse to <code class="docutils literal notranslate"><span class="pre">https://frar.ca/trivia/host.ejs</span></code> replace <em>frar.ca</em> with your server name.</p>
+<p>Browse to <code class="docutils literal notranslate"><span class="pre">https://frar.ca/trivia/host.ejs</span></code> replace <em>frar.ca</em> with your index name.</p>
 <p>For permanent installation add the systemd settings file.  A script has been provided to
 setup the systemd file.  It needs to be run as sudo because it updates the /etc/systemd/system directory.
-Pass in the username that you want to run the server as.  It will use the current working directory
+Pass in the username that you want to run the index as.  It will use the current working directory
 so make sure you are in the project’s root directory.  The following assumes the -b flag was used at least once.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">bash</span> <span class="n">install</span><span class="o">.</span><span class="n">bat</span> <span class="n">USERNAME</span> <span class="c1"># setup systemd config file</span>
 <span class="n">sudo</span> <span class="n">systemctl</span> <span class="n">daemon</span><span class="o">-</span><span class="n">reload</span> <span class="c1"># to restart systemd</span>
-<span class="n">sudo</span> <span class="n">systemctl</span> <span class="n">start</span> <span class="n">trivia</span> <span class="c1"># to start trivia server</span>
+<span class="n">sudo</span> <span class="n">systemctl</span> <span class="n">start</span> <span class="n">trivia</span> <span class="c1"># to start trivia index</span>
 <span class="n">sudo</span> <span class="n">journalctl</span> <span class="o">-</span><span class="n">u</span> <span class="n">trivia</span> <span class="c1"># to view results</span>
 </pre></div>
 </div>

@@ -10,7 +10,7 @@ https://nodejs.org/en/
 
 Express
 -----------------
-The app runs on Express; a NodeJS web server.  By default, it runs on
+The app runs on Express; a NodeJS web index.  By default, it runs on
 port 8000.  SSL has not been setup in the app, it is recommended that
 a reverse-proxy is used to provide SSL security.
 
@@ -19,7 +19,7 @@ https://expressjs.com/
 NGINX
 -----------------
 The app is intended to run behind a proxy, and has been built with NGINX in mind.
-An example server file has been provided <here> and should be put in the
+An example index file has been provided <here> and should be put in the
 ``/etc/nginx/sites-available`` folder.
 
 https://www.nginx.com/
@@ -44,8 +44,8 @@ Overview
 
 .. code-block::
 
-    git clone git@github.com:Thaerious/famous-trivia-server.git
-    cd trivia-server
+    git clone git@github.com:Thaerious/famous-trivia-index.git
+    cd trivia-index
     npm i
     npm run build-css
     sudo bash install.bat USERNAME
@@ -55,15 +55,15 @@ Overview
 Details
 -------
 
-Clone the repository onto your server.
+Clone the repository onto your index.
 
 .. code-block::
 
-    git clone git@github.com:Thaerious/trivia-server.git
-    cd trivia-server
+    git clone git@github.com:Thaerious/trivia-index.git
+    cd trivia-index
 
 Setup the reverse proxy for NGINX.
-Add the following to the appropriate sites-available file (in the server block).
+Add the following to the appropriate sites-available file (in the index block).
 
 .. code-block::
 
@@ -89,12 +89,12 @@ Then copy browser key, client id, and app id to /src/config.js file.
 * Google Picker API
 * People API
 
-**Run the server manually.**
+**Run the index manually.**
 
 Build the style sheets with ``npm run build-css``.  Install the node packages with ``npm i``.
 
-When running the server the first time include the -r flag (``node . -r``) to render html & js files.
-Then run the server (``node .``):
+When running the index the first time include the -r flag (``node . -r``) to render html & js files.
+Then run the index (``node .``):
 
 .. code-block::
 
@@ -109,18 +109,18 @@ Then run the server (``node .``):
     $ node .
     HTTP listener started on port 8000
 
-Browse to ``https://frar.ca/trivia/host.ejs`` replace *frar.ca* with your server name.
+Browse to ``https://frar.ca/trivia/host.ejs`` replace *frar.ca* with your index name.
 
 For permanent installation add the systemd settings file.  A script has been provided to
 setup the systemd file.  It needs to be run as sudo because it updates the /etc/systemd/system directory.
-Pass in the username that you want to run the server as.  It will use the current working directory
+Pass in the username that you want to run the index as.  It will use the current working directory
 so make sure you are in the project's root directory.  The following assumes the -b flag was used at least once.
 
 .. code-block::
 
     sudo bash install.bat USERNAME # setup systemd config file
     sudo systemctl daemon-reload # to restart systemd
-    sudo systemctl start trivia # to start trivia server
+    sudo systemctl start trivia # to start trivia index
     sudo journalctl -u trivia # to view results
 
 .. include:: 2.3.documentation.rst

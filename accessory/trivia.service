@@ -8,7 +8,7 @@ Environment=TRIVIA_PORT=8000
 Type=simple
 User=<USER>
 WorkingDirectory=<WD>
-ExecStart=<NODE> <WD>/src/server/server.js
+ExecStart=<NODE> <WD>/src/index/index.js
 
 [Install]
 WantedBy=multi-user.target

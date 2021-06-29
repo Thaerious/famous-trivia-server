@@ -32,8 +32,8 @@ release = '2021-06-06'
 
 # -- Sphinx-js configuration ------------------------------------------------
 # primary_domain = 'js'
-# root_for_relative_js_paths = '/mnt/trunk/node/trivia-server/src/'
-# js_source_path = ['/mnt/trunk/node/trivia-server/src/server/game', '/mnt/trunk/node/trivia-server/src/client']
+# root_for_relative_js_paths = '/mnt/trunk/node/trivia-index/src/'
+# js_source_path = ['/mnt/trunk/node/trivia-index/src/index/game', '/mnt/trunk/node/trivia-index/src/client']
 
 # -- General configuration ---------------------------------------------------
 

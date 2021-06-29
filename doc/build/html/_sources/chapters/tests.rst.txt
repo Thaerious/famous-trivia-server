@@ -12,7 +12,7 @@ Overview
 * Added dev packages "NYC", and "babel-plugin-istanbul".
 * Added ["istanbul"] to the .babelrc plugins under 'env.test'.
 * Added 'unsafe-eval' to cors.  Istanbul failed without it.
-* Created a new server endpoint '/report-coverage' see src/server/mechanics/ReportCoverage.js.
+* Created a new index endpoint '/report-coverage' see src/index/mechanics/ReportCoverage.js.
 * Created a new client script 'public/scripts/static/coverage_report.js'.
 
 Instructions
@@ -37,7 +37,7 @@ Server Side Coverage
 Overview
 ^^^^^^^^
 
-The server uses c8 instead of nyc because nyc doesn't handle imports, but rather
+The index uses c8 instead of nyc because nyc doesn't handle imports, but rather
 handles require.
 
 * Added dev packages "c8"
@@ -46,10 +46,10 @@ handles require.
 Instructions
 ^^^^^^^^^^^^
 
-Run the server with this command (requires interactive mode -i):
+Run the index with this command (requires interactive mode -i):
 
 ``npx c8 --temp-directory ./.c8_output/ node . -i``
 
 Create the report with this command:
 
-``npx c8 report --temp-directory .c8_output/ --report-dir coverage/server -r html``
+``npx c8 report --temp-directory .c8_output/ --report-dir coverage/index -r html``

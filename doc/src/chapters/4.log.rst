@@ -3,7 +3,7 @@
 * Added dev packages "NYC", and "babel-plugin-istanbul".
 * Added ["istanbul"] to the .babelrc plugins under 'env.test'.
 * Added 'unsafe-eval' to cors.  Istanbul failed without it.
-* Created a new server endpoint '/report-coverage' see src/server/mechanics/ReportCoverage.js.
+* Created a new index endpoint '/report-coverage' see src/index/mechanics/ReportCoverage.js.
 * Created a new client script 'public/scripts/static/coverage_report.js'.
 
 21-06-28

@@ -2,7 +2,7 @@
 Overview
 =================
 
-The program entry point is `src/server/server.js`_.
+The program entry point is `src/index/index.js`_.
 This is where the Express webserver is setup and started.
 It starts the following modules and services:
 
@@ -18,9 +18,9 @@ It starts the following modules and services:
 * Values that are not expected to change are found in: `src/constants.js`_.
 * Settings that may change are found in: `src/config.js`_.
 
-.. _src/server/server.js: https://github.com/Thaerious/trivia-server/blob/master/src/server/server.js
-.. _src/constants.js: https://github.com/Thaerious/trivia-server/blob/master/src/constants.js
-.. _src/config.js: https://github.com/Thaerious/trivia-server/blob/master/src/config.js
+.. _src/index/index.js: https://github.com/Thaerious/trivia-index/blob/master/src/index/index.js
+.. _src/constants.js: https://github.com/Thaerious/trivia-index/blob/master/src/constants.js
+.. _src/config.js: https://github.com/Thaerious/trivia-index/blob/master/src/config.js
 
 =================
 Nidgets
@@ -113,20 +113,20 @@ Perform the following steps.
 
     <%- include('../partials/nidget-templates'); %>
 
-**Add the following to the Express server.**
+**Add the following to the Express index.**
 
 Generate the html and js pages.::
 
-    const nidgetPreprocessor = new NidgetPreprocessor(config.server.ejs_nidgets, config.server.nidget_scripts).setup();
+    const nidgetPreprocessor = new NidgetPreprocessor(config.index.ejs_nidgets, config.index.nidget_scripts).setup();
     await JITBrowserify.render(nidgetPreprocessor);
 
-Setup the middleware to server Browserified .js files.::
+Setup the middleware to index Browserified .js files.::
 
-    app.get(config.server.jit_path, Express.static(config.server.public_scripts));
+    app.get(config.index.jit_path, Express.static(config.index.public_scripts));
 
 Setup the middleware to serve rendered .ejs files.::
 
-    app.get("*.ejs", Express.static(config.server.pre_ejs,
+    app.get("*.ejs", Express.static(config.index.pre_ejs,
         {
             setHeaders : (res, path, stat) => res.setHeader('Content-Type', 'text/html')
         }
@@ -150,7 +150,7 @@ This permits the automatic injection of Nidget dependencies.
 =====================
 Game Manager Endpoint
 =====================
-The GameManagerEndpoint is the main api starting point for any client interacting with the server.
+The GameManagerEndpoint is the main api starting point for any client interacting with the index.
 The endpoint url is "HOSTNAME/game-manager-service".  The format, exampled below, consists of
 a required 'action' field.  Other required fields depend on the contents of the action field.  The
 client has a corresponding  GameManagerService class which calls the endpoint actions.
