@@ -12,7 +12,7 @@ import ParseArgs from "@thaerious/parseargs";
 import clean from "../clean.js";
 import setupDB from "./game/setupDB.js";
 import Server from "./Server.js";
-import GameManagerEndpoint from "./game/GameManagerEndpoint";
+import GameManagerEndpoint from "./game/GameManagerEndpoint.js";
 
 await setupDB(config.server.db.dir, config.server.db.name, config.server.db.script_full_path);
 
