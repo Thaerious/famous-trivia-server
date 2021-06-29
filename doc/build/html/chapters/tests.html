@@ -1,0 +1,275 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Tests &mdash; Famous-Trivia 2021-06-06 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Famous-Trivia
+          
+
+          
+            
+            <img src="../_static/nflogo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="1.introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="1.introduction.html#quick-links">Quick Links</a></li>
+<li class="toctree-l1"><a class="reference internal" href="1.introduction.html#project-layout">Project Layout</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="2.getting_started.html">1. Pre-requisitesx</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2.getting_started.html#installation">2. Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2.getting_started.html#documentation">3. Documentation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Internals</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="3.internals.html">1. Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3.internals.html#nidgets">2. Nidgets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3.internals.html#root-html-pages">3. Root HTML Pages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3.internals.html#game-manager-endpoint">4. Game Manager Endpoint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3.internals.html#game-description-model">5. Game Description Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3.internals.html#tests">6. Tests</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Log</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="4.log.html">1. Log</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Famous-Trivia</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Tests</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/chapters/tests.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="tests">
+<h1>Tests<a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="client-side-coverage">
+<h2>Client Side Coverage<a class="headerlink" href="#client-side-coverage" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="overview">
+<h3>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Added dev packages “NYC”, and “babel-plugin-istanbul”.</p></li>
+<li><p>Added [“istanbul”] to the .babelrc plugins under ‘env.test’.</p></li>
+<li><p>Added ‘unsafe-eval’ to cors.  Istanbul failed without it.</p></li>
+<li><p>Created a new server endpoint ‘/report-coverage’ see src/server/mechanics/ReportCoverage.js.</p></li>
+<li><p>Created a new client script ‘public/scripts/static/coverage_report.js’.</p></li>
+</ul>
+</div>
+<div class="section" id="instructions">
+<h3>Instructions<a class="headerlink" href="#instructions" title="Permalink to this headline">¶</a></h3>
+<p>To enable code coverage, set the ‘NODE_ENV’ environment variable to ‘test’.</p>
+<ul class="simple">
+<li><p>linux &amp; mac: export NODE_ENV=test</p></li>
+<li><p>windows: $env:NODE_ENV = ‘test’</p></li>
+</ul>
+<p>Babel will add Istanbul (nyc) markup to all scripts when they are rendered by browserify.
+The .ejs renderer will inject a page unload listener into all the pages (see /view/partials/head.ejs).
+This listener will call the /report-coverage service and pass it the coverage file.</p>
+<p>Create the report with this command:</p>
+<p><code class="docutils literal notranslate"><span class="pre">npx</span> <span class="pre">nyc</span> <span class="pre">report</span> <span class="pre">--report-dir</span> <span class="pre">coverage/client</span> <span class="pre">-r</span> <span class="pre">html</span></code></p>
+</div>
+</div>
+<div class="section" id="server-side-coverage">
+<h2>Server Side Coverage<a class="headerlink" href="#server-side-coverage" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id1">
+<h3>Overview<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>The server uses c8 instead of nyc because nyc doesn’t handle imports, but rather
+handles require.</p>
+<ul class="simple">
+<li><p>Added dev packages “c8”</p></li>
+<li><p>Requires interactive mode (-i)</p></li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h3>Instructions<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>Run the server with this command (requires interactive mode -i):</p>
+<p><code class="docutils literal notranslate"><span class="pre">npx</span> <span class="pre">c8</span> <span class="pre">--temp-directory</span> <span class="pre">./.c8_output/</span> <span class="pre">node</span> <span class="pre">.</span> <span class="pre">-i</span></code></p>
+<p>Create the report with this command:</p>
+<p><code class="docutils literal notranslate"><span class="pre">npx</span> <span class="pre">c8</span> <span class="pre">report</span> <span class="pre">--temp-directory</span> <span class="pre">.c8_output/</span> <span class="pre">--report-dir</span> <span class="pre">coverage/server</span> <span class="pre">-r</span> <span class="pre">html</span></code></p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Ed Armstrong.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

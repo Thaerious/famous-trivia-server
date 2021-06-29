@@ -2,16 +2,26 @@
 Tests
 =====
 
-Client Side
------------
 
-Coverage
+Client Side Coverage
+--------------------
+
+Overview
 ^^^^^^^^
+
+* Added dev packages "NYC", and "babel-plugin-istanbul".
+* Added ["istanbul"] to the .babelrc plugins under 'env.test'.
+* Added 'unsafe-eval' to cors.  Istanbul failed without it.
+* Created a new server endpoint '/report-coverage' see src/server/mechanics/ReportCoverage.js.
+* Created a new client script 'public/scripts/static/coverage_report.js'.
+
+Instructions
+^^^^^^^^^^^^
 
 To enable code coverage, set the 'NODE_ENV' environment variable to 'test'.
 
 * linux & mac: export NODE_ENV=test
-* windows: $env:NODE_ENV = "test"
+* windows: $env:NODE_ENV = 'test'
 
 Babel will add Istanbul (nyc) markup to all scripts when they are rendered by browserify.
 The .ejs renderer will inject a page unload listener into all the pages (see /view/partials/head.ejs).
@@ -21,24 +31,10 @@ Create the report with this command:
 
 ``npx nyc report --report-dir coverage/client -r html``
 
-Live Tests
-^^^^^^^^^^
+Server Side Coverage
+--------------------
 
-The live tests simulate a game on a live server.  A google account is needed with the appropriate game description file.
-A copy of this file can be found at */test/data/demonstration_game*.
-
-Start the server with custom timeouts:
-
-``node . -ta 5 -tb 5``
-
-Execute the following to run the tests.
-
-``npx mocha .\test\live\TEST_NAME -ep EMAIL PASSWORD --bail``
-
-Server Side
------------
-
-Coverage
+Overview
 ^^^^^^^^
 
 The server uses c8 instead of nyc because nyc doesn't handle imports, but rather

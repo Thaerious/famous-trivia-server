@@ -48,6 +48,9 @@ if (flags['help']){
     console.log("-j,\t--jit\t\tGenerate .js & .html files on demand");
     console.log("-i,\t\t\tStartup in interactive mode");
     console.log("\t--clean\t\tRemove all generated files, do not run server.");
+    console.log("--ta,\t\t\tTime to answer");
+    console.log("--tb,\t\t\tTime to buzz in");
+    console.log("--tm,\t\t\tTime for multi-choice round");
     process.exit();
 }
 

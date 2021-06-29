@@ -18,6 +18,21 @@ const PID = {
 async function play_normal(gameEnv) {
 
     /**
+     * Retrieve an array of unselected cells.
+     */
+    async function availableCells(page = gameEnv.host_portal.page){
+        let r = [];
+        await page.waitForSelector(`shadow/.column.question`);
+        let cells = await page.$$(`shadow/.column.question`);
+        for (let cell of cells){
+            if (await cell.evaluate((node)=>node.innerText) !== ""){
+                r.push(cell);
+            }
+        }
+        return r;
+    }
+
+    /**
      * If a callback is not provided return a promise, otherwise execute the callback before returning.
      * @param cb
      * @returns {*}
@@ -240,6 +255,37 @@ async function play_normal(gameEnv) {
         });
     });
 
+    /**
+     * Beth, Chuck, Dianne, Adam
+     * 150, 600, 400, 800
+     * - - - o o o
+     * - - o o o o
+     * o - - o o o
+     * o o o - o o
+     * - o o o o o
+     */
+
+    describe(`Burn through the remaining questions`, async () => {
+        it(`each question gets selected and answered correctly`, async () => {
+            const page = gameEnv.host_portal.page;
+
+            const cells = await availableCells();
+            while(cells.length > 0){
+                const i = Math.trunc(Math.random() * cells.length);
+                let cell = cells.splice(i, 1)[0];
+
+                const value = await cell.evaluate((node)=>node.innerText);
+                const row = await cell.evaluate((node)=>node.getAttribute("data-row"));
+                const col = await cell.evaluate((node)=>node.getAttribute("data-col"));
+
+                console.log(`${row} ${col} ${value}`);
+
+                // await chooseQuestion(row, col);
+                // await clickAccept();
+                // await clickContinue();
+            }
+        });
+    });
 };
 
 export default play_normal;

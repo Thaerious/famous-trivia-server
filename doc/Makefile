@@ -5,7 +5,7 @@
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 SOURCEDIR     = src
-BUILDDIR      = .
+BUILDDIR      = ./build
 GITHUBDIR     = /mnt/d/project/trunk/thaerious.github.io/famous-trivia
 
 # Put it first so that "make" without argument is like "make help".
@@ -14,7 +14,7 @@ help:
 
 copy:
 	mkdir -p $(GITHUBDIR)
-	cp -r html/* $(GITHUBDIR)
+	cp -r $(BUILDDIR)/html/* $(GITHUBDIR)
 
 .PHONY: help Makefile
 

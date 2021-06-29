@@ -1,0 +1,31 @@
+Documentation
+=============
+
+The documentation made with |sphinx_documentation|.
+The following commands are used to build the documentation.
+It assumes SPHINX is installed and ``pip install sphinx-rtd-theme`` has been run.
+
+.. |sphinx_documentation| raw:: html
+
+   <a href="https://www.sphinx-doc.org/en/master/contents.html" target="_blank">[SPHINX]</a>
+
+**windows**
+
+.. code-block::
+
+    cd doc
+    .\make html # create the files and put them in the /doc/html directory
+    cp -force -r ./build/html/* ..\..\thaerious.github.io\famous-trivia\
+    echo "" > ..\..\thaerious.github.io\.nojekyll # only needed once
+
+
+**linux**
+
+    .. code-block::
+
+        cd doc
+        make html # create the files and put them in the /doc/html directory
+        make copy
+        touch ..\..\thaerious.github.io\.nojekyll # only needed once
+
+
