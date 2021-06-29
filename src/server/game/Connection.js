@@ -45,7 +45,6 @@ class Connection{
     }
 
     async connect(name){
-        console.log(`Connection.connect(${name})`)
         let hash = await this.req.session.get("game-hash");
         this.game = await this.gm.getLive(hash);
         if (!this.game){

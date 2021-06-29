@@ -78,8 +78,6 @@ class Game {
         
         this.times = {};
         Object.assign(this.times, constants.TIMES);
-
-        console.trace(this.timer.game === this);
     }
 
     set state(value){
