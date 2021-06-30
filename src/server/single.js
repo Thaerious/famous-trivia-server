@@ -60,6 +60,12 @@ if (flags['i']) {
     new CLI(gameManager, sessionManager);
 }
 
+if (!fs.existsSync(parsedArgs.args[2])){
+    console.log(`Unknown file: ${parsedArgs.args[2]}`);
+    console.log(parsedArgs);
+    process.exit();
+}
+
 const gameDescriptionModel = await fs.readFileSync(parsedArgs.args[2]);
 gameManager.load(gameDescriptionModel.toString());
 

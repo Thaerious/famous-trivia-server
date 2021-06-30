@@ -8,14 +8,13 @@ import clipboardy from "clipboardy";
 import connectContestant from "./connectContestant.mjs";
 import {QueryHandler} from 'query-selector-shadow-dom/plugins/puppeteer/index.js';
 
-const PID = {
-    ADAM : 0,
-    BETH : 1,
-    CHUCK : 2,
-    DIANNE : 3
-}
-
-async function play_normal(gameEnv) {
+export default async function play_mock_game(gameEnv) {
+    const PID = {
+        ADAM : 0,
+        BETH : 1,
+        CHUCK : 2,
+        DIANNE : 3
+    }
 
     /**
      * Retrieve an array of unselected cells.
@@ -75,8 +74,25 @@ async function play_normal(gameEnv) {
         assert.strictEqual(parseInt(score), value);
     }
 
-    it(`wait for the board`, async () => {
-        await gameEnv.host_portal.page.waitForSelector("#game-board", {visible: true});
+    describe(`game starts`, async () => {
+        it(`host starts the game`, async () => {
+            await gameEnv.host_portal.page.click("#start");
+        });
+
+        it(`host can see game board`, async () => {
+            await gameEnv.host_portal.page.waitForSelector("#game-board", {visible: true});
+        });
+
+        it(`players can see game board`, async () => {
+            await gameEnv.players[0].page.waitForSelector("#game-board", {visible: true});
+            await gameEnv.players[1].page.waitForSelector("#game-board", {visible: true});
+            await gameEnv.players[2].page.waitForSelector("#game-board", {visible: true});
+            await gameEnv.players[3].page.waitForSelector("#game-board", {visible: true});
+        });
+
+        it(`wait for the board`, async () => {
+            await gameEnv.host_portal.page.waitForSelector("#game-board", {visible: true});
+        });
     });
 
     describe(`each player picks and get the answer correct`, async () => {
@@ -280,13 +296,11 @@ async function play_normal(gameEnv) {
 
                 console.log(`${row} ${col} ${value}`);
 
-                // await chooseQuestion(row, col);
-                // await clickAccept();
-                // await clickContinue();
+                await chooseQuestion(row, col);
+                await clickContinue();
+                await clickAccept();
+                await clickContinue();
             }
         });
     });
 };
-
-export default play_normal;
-

@@ -13,3 +13,7 @@
 * * choco install sphinx
 * * C:\Python39\python.exe -m pip install --upgrade pip
 * * pip install sphinx-rtd-theme (in administrative powershell)
+
+21-06-30
+
+* added single instance server, primarily for testing

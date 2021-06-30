@@ -7,10 +7,10 @@ await puppeteer.registerCustomQueryHandler('shadow', QueryHandler);
 let args = new ParseArgs().loadOptions("test/live/.parseArgs").run();
 
 let globals = {
-    args: args,
-    host: {},
-    host_portal : {},
-    players: []
+    args: args,        // command line arguments
+    host: {},          // host launch console page
+    host_portal : {},  // host portal page
+    players: []        // contestant portal pages
 };
 
 export default globals;

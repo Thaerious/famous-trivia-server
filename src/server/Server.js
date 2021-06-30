@@ -16,6 +16,16 @@ import UserAgent from "express-useragent";
 import WebSocket from "ws";
 
 class Server{
+
+    /**
+     *
+     * @param sessionManager
+     * @param gameManager
+     * @param gameManagerEndpoint
+     * @param nidgetPreprocessor
+     * @param cors
+     * @param jitFlag
+     */
     constructor(sessionManager, gameManager, gameManagerEndpoint, nidgetPreprocessor, cors, jitFlag = false) {
         this.app = Express();
         this.index = http.createServer(this.app);

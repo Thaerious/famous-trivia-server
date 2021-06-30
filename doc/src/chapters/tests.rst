@@ -24,7 +24,7 @@ Create the report with this command:
 Live Tests
 ^^^^^^^^^^
 
-The live tests simulate a game on a live index.  A google account is needed with the appropriate game description file.
+The live tests simulate a game on a live server.  A google account is needed with the appropriate game description file.
 A copy of this file can be found at */test/data/demonstration_game*.
 
 Start the index with custom timeouts:
@@ -34,6 +34,14 @@ Start the index with custom timeouts:
 Execute the following to run the tests.
 
 ``npx mocha .\test\live\TEST_NAME -ep EMAIL PASSWORD --bail``
+
+GUI Tests
+^^^^^^^^^
+
+GUI tests runs a single instance server to test GUI components.
+
+``npx mocha .\test\live\single_instance_host_play_test.js``
+
 
 Server Side
 -----------
