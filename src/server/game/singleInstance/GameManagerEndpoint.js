@@ -1,14 +1,9 @@
 // noinspection DuplicatedCode
 
-import verify from '../mechanics/verify.js';
-import {Game} from './Game.js';
-import GameModel from './GameModel.js';
-
 /**
  * API for all non-websocket client-server interaction.
  */
 class GameManagerEndpoint {
-
     /**
      * Create a new GameManagerEndpoint.
      * @param {GameManager} gameManager
@@ -30,19 +25,17 @@ class GameManagerEndpoint {
                 return;
             }
 
-            const action = req.body.action;
-
-            if (!action) {
+            if (!req.body.action) {
                 next(new Error("Missing action from endpoint request"));
                 return;
             }
 
-            if (!this[action]) {
-                next(new Error("Unknown game-manager-endpoint action: " + action));
+            if (!this[req.body.action]) {
+                next(new Error("Unknown game-manager-endpoint action: " + req.body.action));
                 return;
             }
 
-            await this[action](req, res);
+            await this[req.body.action](req, res);
         }
     }
 
@@ -53,20 +46,11 @@ class GameManagerEndpoint {
      * @returns {Promise<void>}
      */
     async ['has-game'](req, res) {
-        let token = req.body.token;
         try {
-            let user = await verify(token);
-            if (await this.gameManager.hasGame(user)) {
-                let hash = await this.gameManager.getHash(user);
-                res.json({
-                    result: 'success',
-                    hash: hash,
-                });
-            } else {
-                res.json({
-                    result: 'failure'
-                });
-            }
+            res.json({
+                result: 'success',
+                hash: this.gameManager.getHash(),
+            });
             res.end();
         } catch (err) {
             console.log(err);
@@ -107,7 +91,7 @@ class GameManagerEndpoint {
     }
 
     /**
-     * Attempt to have a contestant join a game.
+     * Have a contestant join a game
      * @param req
      * @param res
      * @returns {Promise<void>}
@@ -138,21 +122,16 @@ class GameManagerEndpoint {
         }
     }
 
+    /**
+     * Connect the host to the game
+     * @param req
+     * @param res
+     * @returns {Promise<void>}
+     */
     async ['connect-host'](req, res) {
-        let token = req.body.token;
-
-        if (!token){
-            res.json({
-                result : "launcher error",
-                text : "missing parameter: token"
-            });
-            res.end();
-            return;
-        }
 
         try {
-            let user = await verify(token);
-            let hash = await this.gameManager.getHash(user);
+            let hash = await this.gameManager.getHash();
             await req.session.set("role", "host");
             await req.session.set("game-hash", hash);
 
@@ -185,35 +164,14 @@ class GameManagerEndpoint {
      * Requires a model (json with game description) and a token (Google auth token),
      * responds with result : success, hash : game-hash.  The game hash is passed to
      * players so they can connect.
+     *
+     * Ignored in the single instance, always successful.
+     *
      * @returns {Promise<void>}
      */
     async ['launch'](req, res) {
-        let model = req.body.model;
-        let token = req.body.token;
-
-        if (!model) {
-            res.json({
-                result : "error",
-                reason: "missing field: model"
-            });
-            res.end();
-            return;
-        }
-
-        if (!token) {
-            res.json({
-                result : "error",
-                reason: "missing field: token"
-            });
-            res.end();
-            return;
-        }
-
         try {
-            let user = await verify(token);
-            let game = new Game(new GameModel(model));
-            await this.gameManager.setGame(user, game)
-            let hash = await this.gameManager.getHash(user);
+            let hash = await this.gameManager.getHash();
             res.json({
                 result: "success",
                 hash: hash
@@ -238,9 +196,8 @@ class GameManagerEndpoint {
         if (!verifyParameter(req, res, "token")) return;
 
         try {
-            let user = await verify(req.body['token']);
-            const gameHash = await this.gameManager.getHash(user);
-            await this.gameManager.deleteGame(user);
+            const gameHash = await this.gameManager.getHash();
+            this.gameManager.clearAll();
 
             let sessionHashes = this.sessionManager.reverseLookup("game-hash", gameHash);
             for (const sessionHash of sessionHashes) {
@@ -250,7 +207,6 @@ class GameManagerEndpoint {
             res.json({result: "success"});
             res.end();
         } catch (err) {
-            console.trace();
             console.log(err);
             res.json({
                 result : "error",

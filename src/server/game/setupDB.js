@@ -24,14 +24,12 @@ async function setupDB(dbPath, dbFileName, dbScriptPath){
 
     await populateDB(db, dbScriptPath);
     db.close();
-    console.log("DONE WITH DB SETUP");
 }
 
 function populateDB(db, dbScriptPath){
     return new Promise((resolve, reject)=> {
         const sql = fs.readFileSync(dbScriptPath);
 
-        console.log(sql.toString());
         db.exec(sql.toString(), (err)=>{
             if (err) reject(err);
             resolve();

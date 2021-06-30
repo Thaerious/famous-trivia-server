@@ -1,7 +1,7 @@
-// noinspection JSCheckFunctionSignatures
+// noinspection JSCheckFunctionSignatures,DuplicatedCode
 
 import cors from './mechanics/cors.js';
-import GameManager from "./game/GameManager.js";
+import GameManager from "./game/singleInstance/GameManager.js";
 import CLI from './CLI.js';
 import SessionManager from "./mechanics/SessionManager.js";
 import Path from 'path';
@@ -12,7 +12,8 @@ import ParseArgs from "@thaerious/parseargs";
 import clean from "../clean.js";
 import setupDB from "./game/setupDB.js";
 import Server from "./Server.js";
-import GameManagerEndpoint from "./game/GameManagerEndpoint.js";
+import GameManagerEndpoint from "./game/singleInstance/GameManagerEndpoint.js";
+import fs from "fs";
 
 await setupDB(config.server.db.dir, config.server.db.name, config.server.db.script_full_path);
 
@@ -22,8 +23,8 @@ await sessionManager.load();
 const gameManagerEndpoint = new GameManagerEndpoint(gameManager, sessionManager);
 const nidgetPreprocessor = new NidgetPreprocessor(config.server.ejs_nidgets, config.server.nidget_scripts).setup();
 
-const flags = new ParseArgs().loadOptions().run().flags;
-
+const parsedArgs = new ParseArgs().loadOptions().run();
+const flags = parsedArgs.flags;
 if (process.env.NODE_ENV === 'test') console.log("Test Mode");
 
 if (flags['help']){
@@ -58,6 +59,9 @@ if (flags['browserify']){
 if (flags['i']) {
     new CLI(gameManager, sessionManager);
 }
+
+const gameDescriptionModel = await fs.readFileSync(parsedArgs.args[2]);
+gameManager.load(gameDescriptionModel.toString());
 
 gameManager.timeAnswer = flags['ta'];
 gameManager.timeBuzz = flags['tb'];

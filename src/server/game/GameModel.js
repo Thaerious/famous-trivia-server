@@ -340,6 +340,7 @@ class MultipleChoiceModel {
 
 class GameModel {
     constructor(model) {
+        if (typeof model === "string") model = JSON.parse(model);
         this.model = model;
         this._players = []; // name, score, enabled
         this.listeners = {};

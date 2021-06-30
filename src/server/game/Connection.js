@@ -21,30 +21,41 @@ class Connection{
         this.req = req;
         this.ws = ws;
         this.gm = gameManager;
-        this.checkRole();
     }
 
-    async addPlayer(){
-        let name = await this.req.session.get("name");
-        if (!this.game){
-            const msg = {
-                action : "error",
-                text : "Game not found"
-            };
-            this.ws.send(JSON.stringify(msg));
-            this.ws.close();
-            return;
-        }
+    async connect(){
+        await this.checkRole();
+    }
 
-        this.game.onInput({
-            action : "join",
-            data : {
-                name : name
+    /**
+     * Check for host in session,
+     * If host, add listener.
+     * If not host,
+     * Check for name in session.
+     * If no name, reject connection.
+     * If name, add player and listener
+     */
+    async checkRole(){
+        // The host has the session name set by 'connect-host' in game manager endpoint.
+        if (await this.req.session.get("role") === "host"){
+            this.name = constants.names.HOST;
+            await this.establishConnection(this.name);
+            if (this.game) {
+                this.send(this.game.getUpdate());
             }
-        });
+        }
+        // The player has their session name set by 'join-game' in game manager endpoint
+        else if (await this.req.session.has("name") === true){
+            this.name = await this.req.session.get("name");
+            await this.establishConnection(this.name);
+            await this.addPlayer();
+        }
+        else {
+            this.ws.close();
+        }
     }
 
-    async connect(name){
+    async establishConnection(name){
         let hash = await this.req.session.get("game-hash");
         this.game = await this.gm.getLive(hash);
         if (!this.game){
@@ -83,30 +94,24 @@ class Connection{
         setInterval(()=>this.ping(), 15000);
     }
 
-    /**
-     * Check for host in session,
-     * If host, add listener.
-     * If not host,
-     * Check for name in session.
-     * If no name, reject connection.
-     * If name, add player and listener
-     */
-    async checkRole(){
-        if (await this.req.session.get("role") === "host"){
-            this.name = constants.names.HOST;
-            await this.connect(this.name);
-            if (this.game) {
-                this.send(this.game.getUpdate());
-            }
-        }
-        else if (await this.req.session.has("name") === true){
-            this.name = await this.req.session.get("name");
-            await this.connect(this.name);
-            await this.addPlayer();
-        }
-        else {
+    async addPlayer(){
+        let name = await this.req.session.get("name");
+        if (!this.game){
+            const msg = {
+                action : "error",
+                text : "Game not found"
+            };
+            this.ws.send(JSON.stringify(msg));
             this.ws.close();
+            return;
         }
+
+        this.game.onInput({
+            action : "join",
+            data : {
+                name : name
+            }
+        });
     }
 
     ping(){

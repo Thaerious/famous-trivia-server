@@ -1,4 +1,4 @@
-import constants from "../../constants";
+import constants from "../../config.js";
 
 class PortalController {
     constructor(ws, view) {

@@ -91,7 +91,7 @@ class Server{
             await sessionManager.applyTo(req);
 
             try {
-                new Connection(ws, req, gameManager);
+                await new Connection(ws, req, gameManager).connect();
             } catch (err) {
                 console.log(err);
                 console.log("ERROR: " + err.message);

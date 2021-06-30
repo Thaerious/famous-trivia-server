@@ -1,36 +1,37 @@
 // noinspection SqlNoDataSourceInspection,SqlDialectInspection
 
 import crypto from 'crypto';
-import {Game} from './Game.js';
-import HasDB from '../mechanics/HasDB.js';
-import ParseArgs from "@thaerious/parseargs";
-import config from "../../config.js";
+import {Game} from '../Game.js';
+import GameModel from "../GameModel.js";
 
 class GameManager{
-    constructor() {
-        this.hosts = new Map(); // userId -> {hash, name}
-        this.liveGames= new Map(); // hash -> game
-    }
+
+   load(gameDescriptionModel) {
+       this.gameDescriptionModel = gameDescriptionModel;
+       const gameModel = new GameModel(gameDescriptionModel);
+       this.game = new Game(gameModel);
+       this.hash = crypto.randomBytes(20).toString('hex');
+   }
 
     get size(){
-        return this.liveGames.size;
+        return 1;
     }
 
     clearAll(){
-        this.hosts = new Map(); // user -> hash
-        this.liveGames= new Map(); // hash -> game
+        const gameModel = new GameModel(this.gameDescriptionModel);
+        this.game = new Game(gameModel);
     }
 
     set timeAnswer(value){
-        this.ta = value;
+        this.game.times.ANSWER = parseInt(value);
     }
 
     set timeBuzz(value){
-        this.tb = value;
+        this.game.times.BUZZ = parseInt(value);
     }
 
     set timeMultipleChoice(value){
-        this.tm = value;
+        this.game.times.MULTIPLE_CHOICE = parseInt(value);
     }
 
     /**
@@ -41,13 +42,7 @@ class GameManager{
      * @returns {boolean} true if a new game was created.
      */
     setGame(user, liveGame) {
-        let hash = crypto.randomBytes(20).toString('hex');
-        this.liveGames.set(hash, liveGame);
-
-        liveGame.times.ANSWER = this.ta ?? config.TIMES.ANSWER;
-        liveGame.times.BUZZ = this.tb ?? config.TIMES.BUZZ;
-        liveGame.times.MULTIPLE_CHOICE = this.tm ?? config.TIMES.MULTIPLE_CHOICE;
-        this.hosts.set(user.userId, {hash:hash, name:user.userName});
+        /* ignored */
     }
 
     /**
@@ -55,13 +50,7 @@ class GameManager{
      * The user will match with a userid returned from verify.js.
      */
     listHostedGames() {
-        let list = [];
-        for (let id of this.hosts.keys()){
-            const name = this.hosts.get(id).name;
-            const hash = this.hosts.get(id).hash.substr(0, 8);
-            list.push({id, name, hash});
-        }
-        return list;
+        throw new Error("not implemented");
     }
 
     /**
@@ -88,20 +77,16 @@ class GameManager{
      * @returns {boolean}
      */
     deleteGame(user) {
-        const hash = this.hosts.get(user.userId).hash;
-        if (!this.hasGame(user)) return false;
-        this.liveGames.delete(hash);
-        this.hosts.delete(user.userId);
-        return true;
+        throw new Error("not implemented");
     }
 
     /**
      * Retrieve the public hash for a game.
      * @param user the user object returned from verify.js
-     * @returns {Promise<unknown>}
+     * @returns {Promise<string>}
      */
     getHash(user) {
-        return this.hosts.get(user.userId)?.hash;
+        return this.hash;
     }
 
     /**
@@ -112,11 +97,11 @@ class GameManager{
      * @return The live game object or undefined if no game found.
      */
     getLive(hash){
-        return this.liveGames.get(hash);
+        return this.game;
     }
 
     hasLive(hash){
-        return this.liveGames.has(hash);
+        return true;
     }
 }
 
