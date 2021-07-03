@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!--suppress HtmlRequiredTitleElement -->
 <html lang="en">
 <head>
     <%- include('../partials/head'); %>
@@ -27,8 +28,14 @@
         <div class="button-container">
             <trivia-timer class="hidden"></trivia-timer>
             <nidget-button id="buzz" class="round raised center button">BUZZ</nidget-button>
+            <nidget-button id="show-question" class="round raised center button">Question</nidget-button>
         </div>
     </div>
+
+    <popup-panel id="question-popup" class="hidden">
+        <link rel="stylesheet" href="styles/generated/contestant_portal.css"/>
+        <nidget-text class="text-contents" id="text-contents"></nidget-text>
+    </popup-panel>
 </div>
 
 </body>

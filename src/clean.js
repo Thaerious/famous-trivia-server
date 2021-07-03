@@ -8,17 +8,13 @@ import config from "./config.js";
  * Remove all directories listed in config.clean_dir
  */
 function clean(){
-    if (fs.existsSync(config.server.jit_scripts)){
-        fs.rmdirSync(config.server.jit_scripts, { recursive: true});
-    }
-
-    if (fs.existsSync(config.server.pre_ejs)){
-        fs.rmdirSync(config.server.pre_ejs, { recursive: true});
-    }
-
     for (let dir of config.clean_dir){
         if (fs.existsSync(dir)){
+            const len = fs.readdirSync(dir).length;
+            console.log("removing " + dir + ", files removed: " + len);
             fs.rmdirSync(dir, { recursive: true});
+        } else {
+            console.log("skipped " + dir);
         }
     }
 }

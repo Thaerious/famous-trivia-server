@@ -1,6 +1,7 @@
 @import 'components/check_box';
 @import 'components/file_list';
 @import 'components/button';
+@import 'components/shared';
 
 *{
     box-sizing: border-box;
@@ -62,7 +63,7 @@ body, html {
     transform: translate(-50%, -50%);
     border: 3px solid #144369;
     border-radius: 20px;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: var(--ui-background-panel);
     height: 315px;
     width: 350px;
 

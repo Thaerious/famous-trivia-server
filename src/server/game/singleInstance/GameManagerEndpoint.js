@@ -98,7 +98,6 @@ class GameManagerEndpoint {
      */
     async ['join-game'](req, res) {
         if (!verifyParameter(req, res, "name")) return;
-        if (!verifyParameter(req, res, "game-hash")) return;
 
         let name = this.validateName(req.body['name']);
 
@@ -115,7 +114,7 @@ class GameManagerEndpoint {
             });
         } else {
             await req.session.set("name", name);
-            await req.session.set("game-hash", req.body['game-hash']);
+            await req.session.set("game-hash", this.gameManager.getHash());
             res.json({
                 result: 'success'
             });

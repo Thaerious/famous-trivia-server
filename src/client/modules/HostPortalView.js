@@ -53,9 +53,9 @@ class HostPortalView extends AbstractView{
                 this.DOM.continueButton.classList.remove("right");
                 break;
             case 2:
-                this.DOM.continueButton.show(); // todo remove
                 break;
             case 3:
+                this.DOM.timer.hide();
                 this.DOM.continueButton.show();
                 this.DOM.continueButton.classList.add("center");
                 this.DOM.continueButton.classList.remove("right");

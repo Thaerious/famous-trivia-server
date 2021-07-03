@@ -183,6 +183,25 @@ file-list {
   display: none;
 }
 
+:root {
+  --ui-border-color: #44d1dc;
+  --ui-background-hover: #3f43d8;
+  --ui-background: #1117d9;
+  --ui-background-selected: #3f43d8;
+  --ui-background-disabled: #808080;
+  --ui-background-panel: rgb(225, 245, 235, 1.0);
+  --ui-background-editable: rgb(255, 255, 255, 1.0);
+  --menu-font-family: Arial Black, serif;
+  --menu-font-size: 2vh;
+  --menu-width: 200px;
+}
+
+@font-face {
+  font-family: "OPTIKorinna-Agency";
+  src: url("../font/OPTIKorinna-Agency.ttf.woff") format("woff"), url("../font/OPTIKorinna-Agency.ttf.svg#OPTIKorinna-Agency") format("svg"), url("../font/OPTIKorinna-Agency.ttf.eot"), url("../font/OPTIKorinna-Agency.ttf.eot?#iefix") format("embedded-opentype");
+  font-weight: normal;
+  font-style: normal;
+}
 * {
   box-sizing: border-box;
   user-select: none;
@@ -243,7 +262,7 @@ body, html {
   transform: translate(-50%, -50%);
   border: 3px solid #144369;
   border-radius: 20px;
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: var(--ui-background-panel);
   height: 315px;
   width: 350px;
 }

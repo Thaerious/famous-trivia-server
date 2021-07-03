@@ -98,8 +98,7 @@ style sheet is specified by the link (style) element in the template file.
 The .js file must have the same name as the template (.ejs) file.  The name
 can be either camelCase for hyphen-delimited.  The constructor needs to invoke
 the super constructor, passing in the template id that was set in the template file.
-The custom element gets added with the hyphenated version of the name, passing in the class
-as well.
+The custom element gets added to the window with the hyphenated version of the name.
 
 Processing Nidgets
 ------------------
@@ -118,7 +117,7 @@ Perform the following steps.
 Generate the html and js pages.::
 
     const nidgetPreprocessor = new NidgetPreprocessor(config.index.ejs_nidgets, config.index.nidget_scripts).setup();
-    await JITBrowserify.render(nidgetPreprocessor);
+    await JITRender.render(nidgetPreprocessor);
 
 Setup the middleware to index Browserified .js files.::
 
@@ -299,3 +298,5 @@ Multiple choice round::
     }
 
 .. include:: tests.rst
+
+.. include:: nidgets.rst

@@ -7,7 +7,9 @@ class Timer {
         this.game = game;
     }
 
-    start(startTime = 10) {
+    start(startTime) {
+        startTime = parseInt(startTime);
+        console.log("START TIME " + startTime);
         if (startTime === 0) return;
         this.startTime = startTime;
 
@@ -137,6 +139,7 @@ class Game {
                 break;
             case "join":
                 this.model.addPlayer(input.data.name);
+                if (this.mcBetsData) this.createMCBetsDataForPlayer(input.data.name);
                 this.broadcast();
                 break;
             default:
@@ -196,28 +199,31 @@ class Game {
     }
 
     createMCBetsData() {
-        let data = {};
+        this.mcBetsData = {};
         for (let player of this.model.players) {
-            data[player.name] = {
-                bonus: 0,
-                answers: []
-            };
-
-            for (let i = 0; i < 6; i++) {
-                data[player.name].answers[i] = {
-                    checked: false,
-                    amount: 0
-                }
-            }
-            ;
+            this.createMCBetsDataForPlayer(player.name);
         }
-        return data;
+        return this.mcBetsData;
+    }
+
+    createMCBetsDataForPlayer(name){
+        this.mcBetsData[name] = {
+            bonus: 0,
+            answers: []
+        };
+
+        for (let i = 0; i < 6; i++) {
+            this.mcBetsData[name].answers[i] = {
+                checked: false,
+                amount: 0
+            }
+        }
     }
 
     startRound() {
         if (this.model.getRound().stateData.style === GameModel.STYLE.MULTIPLE_CHOICE) {
             this.model.getRound().setQuestionState();
-            this.mcBetsData = this.createMCBetsData();
+            this.createMCBetsData();
             this.updateState(1);
         } else if (this.model.getRound().stateData.style === GameModel.STYLE.JEOPARDY) {
             this.model.getRound().setBoardState();

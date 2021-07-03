@@ -77,7 +77,10 @@ const config = {
     clean_dir : [
         ".nyc_output",
         ".c8_output",
-        "coverage"
+        "coverage",
+        "./public/html/jit/",
+        "./public/scripts/jit/",
+        "./public/styles/generated"
     ]
 };
 export default config;

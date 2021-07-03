@@ -1,12 +1,16 @@
+:root{
+  --default-ui-button-color: rgb(128, 128, 128);
+}
+
 :host(nidget-button.hidden) {
   display: none !important;
 }
 
 :host(nidget-button:hover.round){
-  background-color: rgba(var(--ui-button-color), 1.0);
+  background-color: rgba(var(--ui-button-color, --default-ui-button-color), 1.0);
 
-  box-shadow: inset 1px 1px 30px 0px rgba(var(--ui-button-color), 1),
-              0px 0px 3px 1px rgba(var(--ui-button-color), 1);
+  box-shadow: inset 1px 1px 30px 0px rgba(var(--ui-button-color, --default-ui-button-color), 1),
+              0px 0px 3px 1px rgba(var(--ui-button-color, --default-ui-button-color), 1);
 
   .mask{
     border-radius: 15px;
@@ -32,9 +36,9 @@
 :host(nidget-button.round) {
   border-width: 2px;
   border-style: solid;
-  border-color: rgba(var(--ui-button-color), 0.5);
+  border-color: rgba(var(--ui-button-color, --default-ui-button-color), 0.5);
   border-radius: 15px;
-  background-color: rgba(var(--ui-button-color), 1.0);
+  background-color: rgba(var(--ui-button-color, --default-ui-button-color), 1.0);
   user-select: none;
 
   .mask{

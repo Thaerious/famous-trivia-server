@@ -1,7 +1,7 @@
 // noinspection JSCheckFunctionSignatures
 
 import config from "../config.js";
-import JITBrowserify from "./mechanics/JITBrowserify.js";
+import JITRender from "./mechanics/JITRender.js";
 import GameManagerEndpoint from "./game/GameManagerEndpoint.js";
 import ReportCoverage from "./mechanics/ReportCoverage.js";
 import Connection from "./game/Connection.js";
@@ -74,7 +74,7 @@ class Server{
 
     setupJIT(nidgetPreprocessor, jitFlag){
         if (jitFlag) {
-            this.app.get(config.server.jit_path, new JITBrowserify(nidgetPreprocessor).middleware);
+            this.app.get(config.server.jit_path, new JITRender(nidgetPreprocessor).middleware);
 
             this.app.set('view engine', 'ejs');
 

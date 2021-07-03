@@ -6,7 +6,7 @@ import CLI from './CLI.js';
 import SessionManager from "./mechanics/SessionManager.js";
 import Path from 'path';
 import NidgetPreprocessor from "./mechanics/NidgetPreprocessor.js";
-import JITBrowserify from "./mechanics/JITBrowserify.js";
+import JITRender from "./mechanics/JITRender.js";
 import config from "../config.js";
 import ParseArgs from "@thaerious/parseargs";
 import clean from "../clean.js";
@@ -47,12 +47,12 @@ if (flags['clean']){
 }
 
 if (flags['render']){
-    await JITBrowserify.render(nidgetPreprocessor);
+    await JITRender.render(nidgetPreprocessor);
     process.exit();
 }
 
 if (flags['browserify']){
-    await JITBrowserify.render(nidgetPreprocessor);
+    await JITRender.render(nidgetPreprocessor);
 }
 
 if (flags['i']) {

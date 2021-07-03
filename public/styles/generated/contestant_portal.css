@@ -220,6 +220,8 @@ body, html {
   --ui-background: #1117d9;
   --ui-background-selected: #3f43d8;
   --ui-background-disabled: #808080;
+  --ui-background-panel: rgb(225, 245, 235, 1.0);
+  --ui-background-editable: rgb(255, 255, 255, 1.0);
   --menu-font-family: Arial Black, serif;
   --menu-font-size: 2vh;
   --menu-width: 200px;
@@ -242,6 +244,22 @@ body, html {
   font-size: calc(0.75 * var(--base-font-size));
   font-variant: small-caps;
   text-shadow: 4px 4px 2px rgba(0, 0, 0, 0.75);
+}
+
+#question-popup {
+  position: absolute;
+  width: calc(0.80 * var(--width-value));
+  height: calc(0.80 * var(--height-value));
+  left: calc(0.10 * var(--width-value));
+  top: calc(0.10 * var(--height-value));
+}
+
+.popup-inner {
+  font-family: OPTIKorinna-Agency, serif;
+  text-transform: uppercase;
+  color: #eee;
+  text-align: center;
+  white-space: pre-line;
 }
 
 #buzz {

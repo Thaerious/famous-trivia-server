@@ -6,7 +6,7 @@ import CLI from './CLI.js';
 import SessionManager from "./mechanics/SessionManager.js";
 import Path from 'path';
 import NidgetPreprocessor from "./mechanics/NidgetPreprocessor.js";
-import JITBrowserify from "./mechanics/JITBrowserify.js";
+import JITRender from "./mechanics/JITRender.js";
 import config from "../config.js";
 import ParseArgs from "@thaerious/parseargs";
 import clean from "../clean.js";
@@ -48,12 +48,12 @@ if (flags['clean']){
 }
 
 if (flags['render']){
-    await JITBrowserify.render(nidgetPreprocessor);
+    await JITRender.render(nidgetPreprocessor);
     process.exit();
 }
 
 if (flags['browserify']){
-    await JITBrowserify.render(nidgetPreprocessor);
+    await JITRender.render(nidgetPreprocessor);
 }
 
 if (flags['i']) {
@@ -69,9 +69,11 @@ if (!fs.existsSync(parsedArgs.args[2])){
 const gameDescriptionModel = await fs.readFileSync(parsedArgs.args[2]);
 gameManager.load(gameDescriptionModel.toString());
 
-gameManager.timeAnswer = flags['ta'];
-gameManager.timeBuzz = flags['tb'];
-gameManager.timeMultipleChoice = flags['tm'];
+gameManager.timeAnswer = flags['ta'] ?? config.TIMES.ANSWER;
+gameManager.timeBuzz = flags['tb'] ?? config.TIMES.BUZZ;
+gameManager.timeMultipleChoice = flags['tm'] ?? config.TIMES.MULTIPLE_CHOICE;
+
+console.log(gameManager.game.times);
 
 const server = new Server(sessionManager, gameManager, gameManagerEndpoint, nidgetPreprocessor, cors, flags['jit']);
 server.start(config.server.port);

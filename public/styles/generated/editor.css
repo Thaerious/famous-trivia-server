@@ -25,6 +25,8 @@ body, html {
   --ui-background: #1117d9;
   --ui-background-selected: #3f43d8;
   --ui-background-disabled: #808080;
+  --ui-background-panel: rgb(225, 245, 235, 1.0);
+  --ui-background-editable: rgb(255, 255, 255, 1.0);
   --menu-font-family: Arial Black, serif;
   --menu-font-size: 2vh;
   --menu-width: 200px;

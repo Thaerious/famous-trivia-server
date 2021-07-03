@@ -1,1 +1,16 @@
 // index.scss
+
+@import 'components/shared';
+
+popup-panel {
+  position: absolute;
+  left: 20%;
+  top: 10%;
+  width: 300px;
+  height: 80%;
+}
+
+.blue{
+  color: blue;
+  background-color: lightblue;
+}
