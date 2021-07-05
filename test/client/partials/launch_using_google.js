@@ -16,7 +16,7 @@ async function launch_using_google(gameEnv) {
         });
 
         it(`wait for enabled launch button`, async () => {
-            await gameEnv.host.page.waitForSelector("#button-container #launch_using_google:not(.disabled)");
+            await gameEnv.host.page.waitForSelector("#button-container #launch:not(.disabled)");
         });
 
         it(`click the launch button`, async () => {

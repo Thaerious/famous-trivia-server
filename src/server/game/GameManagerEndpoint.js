@@ -6,7 +6,7 @@ import GameModel from './GameModel.js';
 import NameValidator from "./NameValidator.js";
 import NameInUseResponse from "./responses/NameInUseResponse.js";
 import InvalidNameResponse from "./responses/InvalidNameResponse.js";
-import SuccessResponse from "./responses/SuccessResponse";
+import SuccessResponse from "./responses/SuccessResponse.js";
 
 /**
  * API for all non-websocket client-server interaction.
@@ -22,6 +22,10 @@ class GameManagerEndpoint {
         this.gameManager = gameManager;
         this.sessionManager = sessionManager;
         this.validator = new NameValidator();
+        this.table = {
+            sessions : {}, // dictionary of session_hash => {name, game_hash}
+            games : {}     // dictionary of game_hash => {name, session_hash}
+        };
     }
 
     /**
@@ -47,6 +51,7 @@ class GameManagerEndpoint {
                 return;
             }
 
+            console.log("GameManagerEndpoint #" + action);
             await this[action](req, res);
         }
     }
@@ -122,14 +127,16 @@ class GameManagerEndpoint {
         if (!verifyParameter(req, res, "game-hash")) return;
 
         const name = req.body['name'];
+        const processed = this.validator.preProcess(name);
 
         if (!this.validator.validate(name)) {
+            console.log("invalid");
             res.json(new InvalidNameResponse(name).object);
-        } else if (await this.nameInUse(name, req.body['game-hash'])) {
-            const processed = this.validator.preProcess(name);
+        } else if (await this.nameInUse(processed, req.body['game-hash'])) {
+            console.log("in use");
             res.json(new NameInUseResponse(processed).object);
         } else {
-            const processed = this.validator.preProcess(name);
+            console.log("valid");
             await req.session.set("name", processed);
             await req.session.set("game-hash", req.body['game-hash']);
             res.json(new SuccessResponse().object);

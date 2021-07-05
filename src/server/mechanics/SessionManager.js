@@ -5,14 +5,17 @@ import constants from "../../config.js";
 import HasDB from './HasDB.js';
 
 /**
- * The Session Manager will add a cookie to all pages that use it.
- * This cookie will be recoded in the sessions db.
- * A "SessionInstance" will be attached to the request on "req.session";
- * this can be used to add and remove values from the session db associated with this
- * session.
- *
- * Having a session variable does not automatically mean the user is verified.
- * Other endpoints will take care of that.
+ * When the server serves a page that has the SessionManager middleware a
+ * session instance is attached to the request (see #middleware).  The response, if
+ * there is one, will have a cookie set to the session hash value.
+ * <br>
+ * A session instance can be used (via #hash) to uniquely identify the request.
+ * Any values set on the session instance (see #get) will be stored in a
+ * persistent database and retrieved across server instances (see #load).
+ * <br>
+ * When another endpoint receives a request that has already passed through the
+ * middleware the session can be accessed with 'req.session', and identified
+ * with 'req.session.hash'.
  */
 class SessionManager extends HasDB {
     constructor(path) {
