@@ -8,7 +8,7 @@ let args = new ParseArgs().loadOptions("test/client/.parseArgs").run();
 
 let globals = {
     args: args,        // command line arguments
-    host: {},          // host launch_using_google console page
+    host: {},          // host launch console page
     host_portal : {},  // host portal page
     players: []        // contestant portal pages
 };
