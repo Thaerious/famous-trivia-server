@@ -16,6 +16,9 @@ class ParseError extends Error{
     }
 }
 
+/**
+ * Create a new websocket connection to a running game.
+ */
 class Connection{
     constructor(ws, req, gameManager){
         this.req = req;
@@ -23,19 +26,16 @@ class Connection{
         this.gm = gameManager;
     }
 
-    async connect(){
-        await this.checkRole();
-    }
-
     /**
+     * Perform the connection.
      * Check for host in session,
-     * If host, add listener.
-     * If not host,
+     * - If host, add listener.
+     * - If not host,
      * Check for name in session.
-     * If no name, reject connection.
-     * If name, add player and listener
+     * - If no name, reject connection.
+     * - If name, add player and listener
      */
-    async checkRole(){
+    async connect(){
         // The host has the session name set by 'connect-host' in game manager endpoint.
         if (await this.req.session.get("role") === "host"){
             this.name = constants.names.HOST;

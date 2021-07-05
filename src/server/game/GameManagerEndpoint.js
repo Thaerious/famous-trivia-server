@@ -3,6 +3,10 @@
 import verify from '../mechanics/verify.js';
 import {Game} from './Game.js';
 import GameModel from './GameModel.js';
+import NameValidator from "./NameValidator.js";
+import NameInUseResponse from "./responses/NameInUseResponse.js";
+import InvalidNameResponse from "./responses/InvalidNameResponse.js";
+import SuccessResponse from "./responses/SuccessResponse";
 
 /**
  * API for all non-websocket client-server interaction.
@@ -17,6 +21,7 @@ class GameManagerEndpoint {
     constructor(gameManager, sessionManager) {
         this.gameManager = gameManager;
         this.sessionManager = sessionManager;
+        this.validator = new NameValidator();
     }
 
     /**
@@ -116,25 +121,18 @@ class GameManagerEndpoint {
         if (!verifyParameter(req, res, "name")) return;
         if (!verifyParameter(req, res, "game-hash")) return;
 
-        let name = this.validateName(req.body['name']);
+        const name = req.body['name'];
 
-        if (name === null) {
-            res.json({
-                result: 'rejected',
-                reason: 'invalid name'
-            });
-            return;
+        if (!this.validator.validate(name)) {
+            res.json(new InvalidNameResponse(name).object);
         } else if (await this.nameInUse(name, req.body['game-hash'])) {
-            res.json({
-                result: 'rejected',
-                reason: 'name is already in use'
-            });
+            const processed = this.validator.preProcess(name);
+            res.json(new NameInUseResponse(processed).object);
         } else {
-            await req.session.set("name", name);
+            const processed = this.validator.preProcess(name);
+            await req.session.set("name", processed);
             await req.session.set("game-hash", req.body['game-hash']);
-            res.json({
-                result: 'success'
-            });
+            res.json(new SuccessResponse().object);
         }
     }
 
@@ -258,11 +256,6 @@ class GameManagerEndpoint {
             });
             res.end();
         }
-    }
-
-    validateName(source) {
-        if (!source.match(/^[ a-zA-Z_-]{0,15}$/)) return null;
-        return source.toUpperCase();
     }
 }
 

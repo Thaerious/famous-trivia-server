@@ -6,7 +6,8 @@
   "scripts": {
     "build-css": "sass src/styles:public/styles/generated/",
     "watch-css": "sass --watch src/styles:public/styles/generated/",
-    "build": "npm run build-js && npm run build-css"
+    "build": "npm run build-js && npm run build-css",
+    "test": "mocha test/server"
   },
   "repository": {
     "type": "git",
