@@ -6,6 +6,7 @@ import {OAuth2Client} from "google-auth-library";
  * @param token
  * @returns {Promise<{userName: string, userId: string}>}
  * @see https://developers.google.com/identity/sign-in/web/backend-auth
+ * @throws error uncaught from google api
  */
 async function verify(token){
     const client = new OAuth2Client(token);

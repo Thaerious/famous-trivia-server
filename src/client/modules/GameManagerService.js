@@ -57,14 +57,14 @@ class GameManagerService {
     }
 
     /**
-     * Determine if a game as been hosted.
+     * Get the game hash associated with a game host (token).
      * @param token Google API user token
      * @returns {Promise<unknown>}
      */
-    async hasGame(token) {
+    async getHostedHash(token) {
         return await this.send({
             token: token,
-            action: "has-game"
+            action: "get-hosted-game-hash"
         });
     }
 

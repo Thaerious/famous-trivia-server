@@ -12,7 +12,7 @@ const gameManagerService = new GameManagerService();
 // main called from signin-button.js after login complete
 window.main = async function () {
     console.log("window.main");
-    await hasGame();
+    await getHostedHash();
     await fileOps.load();
     addMenuListeners();
     setupFileList();
@@ -25,9 +25,9 @@ function onLoad(event) {
     window.location = `editor.ejs?action=load&fileId=${id}`;
 }
 
-async function hasGame() {
+async function getHostedHash() {
     let token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
-    let response = await gameManagerService.hasGame(token);
+    let response = await gameManagerService.getHostedHash(token);
     if (response.result === "success") {
         window.location = `launch_console.ejs`;
     }

@@ -7,25 +7,25 @@ import NameValidator from "./NameValidator.js";
 import NameInUseResponse from "./responses/NameInUseResponse.js";
 import InvalidNameResponse from "./responses/InvalidNameResponse.js";
 import SuccessResponse from "./responses/SuccessResponse.js";
+import GetGameSuccessResponse from "./responses/GetGameSuccessResponse.js";
+import ErrorResponse from "./responses/ErrorResponse.js";
+import NotInGameResponse from "./responses/NotInGameResponse.js";
+import RejectedResponse from "./responses/RejectedResponse.js";
 
 /**
  * API for all non-websocket client-server interaction.
  */
 class GameManagerEndpoint {
-
     /**
      * Create a new GameManagerEndpoint.
      * @param {GameManager} gameManager
      * @param {SessionManager} sessionManager
+     * @param {Validator} validator a verification function that accepts
      */
-    constructor(gameManager, sessionManager) {
+    constructor(gameManager, sessionManager, validator) {
         this.gameManager = gameManager;
         this.sessionManager = sessionManager;
-        this.validator = new NameValidator();
-        this.table = {
-            sessions : {}, // dictionary of session_hash => {name, game_hash}
-            games : {}     // dictionary of game_hash => {name, session_hash}
-        };
+        this.validator = validator;
     }
 
     /**
@@ -51,38 +51,31 @@ class GameManagerEndpoint {
                 return;
             }
 
-            console.log("GameManagerEndpoint #" + action);
             await this[action](req, res);
         }
     }
 
     /**
-     * Determine if a host has started a game.
+     * Retrieve the game hash for the host.
      * @param req
      * @param res
      * @returns {Promise<void>}
      */
-    async ['has-game'](req, res) {
+    async ['get-hosted-game-hash'](req, res) {
         let token = req.body.token;
         try {
             let user = await verify(token);
+
             if (await this.gameManager.hasGame(user)) {
                 let hash = await this.gameManager.getHash(user);
-                res.json({
-                    result: 'success',
-                    hash: hash,
-                });
+                res.json(new GetGameSuccessResponse(hash).object);
             } else {
-                res.json({
-                    result: 'failure'
-                });
+                res.json(new RejectedResponse().object);
             }
             res.end();
         } catch (err) {
-            console.log(err);
-            res.json({
-                error: err.toString()
-            });
+            console.error(err);
+            res.json(new ErrorResponse(err.toString()).object);
         }
     }
 
@@ -96,23 +89,12 @@ class GameManagerEndpoint {
         if (req.session.has("game-hash")) {
             const gameHash = req.session.get("game-hash");
             if (!await this.gameManager.hasLive(gameHash)){
-                res.json({
-                    result: 'rejected',
-                    reason: 'Contestant is not in a game.',
-                    eid : 1
-                });
+                res.json(new NotInGameResponse(1).object);
             } else {
-                res.json({
-                    'result': 'success',
-                    'game-hash': gameHash
-                });
+                res.json(new GetGameSuccessResponse(gameHash).object);
             }
         } else {
-            res.json({
-                result: 'rejected',
-                reason: 'Contestant is not in a game.',
-                eid : 2
-            });
+            res.json(new NotInGameResponse(2).object);
         }
     }
 
@@ -130,13 +112,10 @@ class GameManagerEndpoint {
         const processed = this.validator.preProcess(name);
 
         if (!this.validator.validate(name)) {
-            console.log("invalid");
             res.json(new InvalidNameResponse(name).object);
         } else if (await this.nameInUse(processed, req.body['game-hash'])) {
-            console.log("in use");
             res.json(new NameInUseResponse(processed).object);
         } else {
-            console.log("valid");
             await req.session.set("name", processed);
             await req.session.set("game-hash", req.body['game-hash']);
             res.json(new SuccessResponse().object);
@@ -147,10 +126,7 @@ class GameManagerEndpoint {
         let token = req.body.token;
 
         if (!token){
-            res.json({
-                result : "launcher error",
-                text : "missing parameter: token"
-            });
+            res.json(new ErrorResponse("missing parameter: token").object);
             res.end();
             return;
         }
@@ -160,17 +136,11 @@ class GameManagerEndpoint {
             let hash = await this.gameManager.getHash(user);
             await req.session.set("role", "host");
             await req.session.set("game-hash", hash);
-
-            res.json({
-                result : "success"
-            });
+            res.json(new SuccessResponse().object);
             res.end();
         } catch (err) {
-            console.log(err);
-            res.json({
-                result : "launcher error",
-                text : err.toString()
-            });
+            console.error(err);
+            res.json(new ErrorResponse(err.toString()).object);
             res.end();
         }
     }
@@ -197,19 +167,13 @@ class GameManagerEndpoint {
         let token = req.body.token;
 
         if (!model) {
-            res.json({
-                result : "error",
-                reason: "missing field: model"
-            });
+            res.json(new ErrorResponse("missing field: model").object);
             res.end();
             return;
         }
 
         if (!token) {
-            res.json({
-                result : "error",
-                reason: "missing field: token"
-            });
+            res.json(new ErrorResponse("missing field: token").object);
             res.end();
             return;
         }
@@ -219,17 +183,11 @@ class GameManagerEndpoint {
             let game = new Game(new GameModel(model));
             await this.gameManager.setGame(user, game)
             let hash = await this.gameManager.getHash(user);
-            res.json({
-                result: "success",
-                hash: hash
-            });
+            res.json(new GetGameSuccessResponse(hash).object);
             res.end();
         } catch (err) {
-            console.log(err);
-            res.json({
-                result : "error",
-                reason: err.toString()
-            });
+            console.error(err);
+            res.json(new ErrorResponse(err.toString()).object);
             res.end();
         }
     }
@@ -255,12 +213,7 @@ class GameManagerEndpoint {
             res.json({result: "success"});
             res.end();
         } catch (err) {
-            console.trace();
-            console.log(err);
-            res.json({
-                result : "error",
-                reason: err.toString()
-            });
+            res.json(new ErrorResponse(err.toString()).object);
             res.end();
         }
     }
@@ -270,10 +223,7 @@ function verifyParameter(req, res, parameter) {
     let value = req.body[parameter];
 
     if (!value) {
-        res.json({
-            result : "error",
-            reason: `missing parameter: ${parameter}`
-        });
+        res.json(new ErrorResponse(`missing parameter: ${parameter}`).object);
         res.end();
         return false;
     }

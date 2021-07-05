@@ -7,9 +7,9 @@ window.addEventListener("load", async ()=>{
     await new Authenticate().loadClient();
     const token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
 
-    const response = await gameManagerService.hasGame(token);
+    const response = await gameManagerService.getHostedHash(token);
 
-    if (response['result'] === "failure"){
+    if (response['result'] !== "success"){
         window.location = "host.ejs";
     }
 
