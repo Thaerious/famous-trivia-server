@@ -46,6 +46,11 @@ class Server{
         });
     }
 
+    stop(cb = ()=>{}){
+        console.log("Stopping server");
+        this.index.close(cb);
+    }
+
     setupExternals(){
         this.app.use(helmet());            // automatic security settings (outgoing response headers)
         this.app.use(UserAgent.express()); // used to determine what the connection is using (phone,browser etc)

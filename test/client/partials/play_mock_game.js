@@ -270,37 +270,4 @@ export default async function play_mock_game(gameEnv) {
             await gameEnv.host_portal.page.waitForSelector("#game-board", {visible: true});
         });
     });
-
-    /**
-     * Beth, Chuck, Dianne, Adam
-     * 150, 600, 400, 800
-     * - - - o o o
-     * - - o o o o
-     * o - - o o o
-     * o o o - o o
-     * - o o o o o
-     */
-
-    describe(`Burn through the remaining questions`, async () => {
-        it(`each question gets selected and answered correctly`, async () => {
-            const page = gameEnv.host_portal.page;
-
-            const cells = await availableCells();
-            while(cells.length > 0){
-                const i = Math.trunc(Math.random() * cells.length);
-                let cell = cells.splice(i, 1)[0];
-
-                const value = await cell.evaluate((node)=>node.innerText);
-                const row = await cell.evaluate((node)=>node.getAttribute("data-row"));
-                const col = await cell.evaluate((node)=>node.getAttribute("data-col"));
-
-                console.log(`${row} ${col} ${value}`);
-
-                await chooseQuestion(row, col);
-                await clickContinue();
-                await clickAccept();
-                await clickContinue();
-            }
-        });
-    });
 };

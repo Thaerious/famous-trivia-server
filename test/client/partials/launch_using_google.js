@@ -6,7 +6,7 @@ import clipboardy from "clipboardy";
 import connectContestant from "./connectContestant.mjs";
 import puppeteer from "puppeteer";
 
-async function launch(gameEnv) {
+async function launch_using_google(gameEnv) {
     describe(`login and launch game`, async () => {
         it(`login to google`, async () => {
             console.log(gameEnv.args.flags["url"]);
@@ -16,11 +16,11 @@ async function launch(gameEnv) {
         });
 
         it(`wait for enabled launch button`, async () => {
-            await gameEnv.host.page.waitForSelector("#button-container #launch:not(.disabled)");
+            await gameEnv.host.page.waitForSelector("#button-container #launch_using_google:not(.disabled)");
         });
 
         it(`click the launch button`, async () => {
-            await gameEnv.host.page.click("#button-container #launch");
+            await gameEnv.host.page.click("#button-container #launch_using_google");
         });
 
         it(`wait for the file list dialog to appear`, async () => {
@@ -40,7 +40,7 @@ async function launch(gameEnv) {
         });
 
         it(`click the launch button`, async () => {
-            await gameEnv.host.page.click("#button-container #launch");
+            await gameEnv.host.page.click("#button-container #launch_using_google");
         });
 
         it(`wait for the file list dialog to appear`, async () => {
@@ -70,5 +70,5 @@ async function launch(gameEnv) {
     });
 };
 
-export default launch;
+export default launch_using_google;
 

@@ -7,6 +7,13 @@ const SELECTORS = {
     SUBMIT_PW_BUTTON : "#passwordNext > div > button > div"
 };
 
+/**
+ * Login to the server using a google account.
+ * @param url
+ * @param email
+ * @param password
+ * @returns {Promise<unknown>}
+ */
 async function login(url, email, password){
     return new Promise(async (resolve, reject)=> {
         const browser = await puppeteer.launch({headless: false});

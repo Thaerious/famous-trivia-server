@@ -99,7 +99,7 @@ function addMenuListeners() {
         fileList.addEventListener("select-file", onLoad, {once: true});
     });
 
-    document.querySelector("#launch").addEventListener("click", async (e) => {
+    document.querySelector("#launch_using_google").addEventListener("click", async (e) => {
         await populateFileList();
         let fileList = document.querySelector("file-list");
         fileList.addEventListener("select-file", onLaunch, {once: true});

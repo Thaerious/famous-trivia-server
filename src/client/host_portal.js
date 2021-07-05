@@ -57,18 +57,6 @@ window.onload = async () => {
             gameManagerService.terminate(token);
             window.location = constants.locations.HOST;
         });
-
-        window.addPlayers = function(){
-            ws.send(JSON.stringify({action : "join", data : {name : "Adam"}}));
-            ws.send(JSON.stringify({action : "join", data : {name : "Bert"}}));
-            ws.send(JSON.stringify({action : "join", data : {name : "Carol"}}));
-            ws.send(JSON.stringify({action : "join", data : {name : "Dave"}}));
-            ws.send(JSON.stringify({action : "join", data : {name : "Edith"}}));
-            ws.send(JSON.stringify({action : "join", data : {name : "Fran"}}));
-            ws.send(JSON.stringify({action : "join", data : {name : "Garth"}}));
-            ws.send(JSON.stringify({action : "join", data : {name : "Herbert"}}));
-        }
-
     } catch (err) {
         console.log(err);
     }
