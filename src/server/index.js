@@ -13,6 +13,7 @@ import clean from "../clean.js";
 import setupDB from "./game/setupDB.js";
 import Server from "./Server.js";
 import GameManagerEndpoint from "./game/GameManagerEndpoint.js";
+import NameValidator from "./game/NameValidator.js";
 import verify from "./mechanics/verify.js";
 
 await setupDB(config.server.db.dir, config.server.db.name, config.server.db.script_full_path);
@@ -20,7 +21,7 @@ await setupDB(config.server.db.dir, config.server.db.name, config.server.db.scri
 const gameManager = await new GameManager();
 const sessionManager = new SessionManager(Path.join(config.server.db.dir, config.server.db.name));
 await sessionManager.load();
-const gameManagerEndpoint = new GameManagerEndpoint(gameManager, sessionManager, verify);
+const gameManagerEndpoint = new GameManagerEndpoint(gameManager, sessionManager, new NameValidator(), verify);
 const nidgetPreprocessor = new NidgetPreprocessor(config.server.ejs_nidgets, config.server.nidget_scripts).setup();
 
 const flags = new ParseArgs().loadOptions().run().flags;

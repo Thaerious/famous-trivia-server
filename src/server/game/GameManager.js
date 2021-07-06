@@ -41,6 +41,9 @@ class GameManager{
      * @returns {boolean} true if a new game was created.
      */
     setGame(user, liveGame) {
+        if (!user?.userId) throw new Error("userId missing from user object");
+        if (!user?.userName) throw new Error("userId missing from user object");
+
         let hash = crypto.randomBytes(20).toString('hex');
         this.liveGames.set(hash, liveGame);
 
@@ -100,7 +103,7 @@ class GameManager{
      * @param user the user object returned from verify.js
      * @returns {Promise<unknown>}
      */
-    getHash(user) {
+    getGameHash(user) {
         return this.hosts.get(user.userId)?.hash;
     }
 

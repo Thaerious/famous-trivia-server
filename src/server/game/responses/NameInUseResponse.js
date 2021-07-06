@@ -1,14 +1,16 @@
+import RejectedResponse from "./RejectedResponse.js";
 
-export default class NameInUseResponse{
+// noinspection JSValidateTypes
+export default class NameInUseResponse extends RejectedResponse{
     constructor(name) {
+        super('name is already in use');
         this.name = name;
     }
 
     get object(){
         return {
-            result: 'rejected',
-            reason: 'name is already in use',
-            name: this.name
+            ...super.object,
+            ...{name: this.name}
         }
     }
 }

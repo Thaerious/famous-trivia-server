@@ -49,7 +49,7 @@ class GameManagerEndpoint {
         try {
             res.json({
                 result: 'success',
-                hash: this.gameManager.getHash(),
+                hash: this.gameManager.getGameHash(),
             });
             res.end();
         } catch (err) {
@@ -114,7 +114,7 @@ class GameManagerEndpoint {
             });
         } else {
             await req.session.set("name", name);
-            await req.session.set("game-hash", this.gameManager.getHash());
+            await req.session.set("game-hash", this.gameManager.getGameHash());
             res.json({
                 result: 'success'
             });
@@ -130,7 +130,7 @@ class GameManagerEndpoint {
     async ['connect-host'](req, res) {
 
         try {
-            let hash = await this.gameManager.getHash();
+            let hash = await this.gameManager.getGameHash();
             await req.session.set("role", "host");
             await req.session.set("game-hash", hash);
 
@@ -170,7 +170,7 @@ class GameManagerEndpoint {
      */
     async ['launch'](req, res) {
         try {
-            let hash = await this.gameManager.getHash();
+            let hash = await this.gameManager.getGameHash();
             res.json({
                 result: "success",
                 hash: hash
@@ -195,7 +195,7 @@ class GameManagerEndpoint {
         if (!verifyParameter(req, res, "token")) return;
 
         try {
-            const gameHash = await this.gameManager.getHash();
+            const gameHash = await this.gameManager.getGameHash();
             this.gameManager.clearAll();
 
             let sessionHashes = this.sessionManager.reverseLookup("game-hash", gameHash);

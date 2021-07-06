@@ -1,14 +1,15 @@
+import RejectedResponse from "./RejectedResponse.js";
 
-export default class InvalidNameResponse{
+export default class InvalidNameResponse extends RejectedResponse{
     constructor(name) {
+        super('invalid name');
         this.name = name;
     }
 
     get object(){
         return {
-            result: 'rejected',
-            reason: 'invalid name',
-            name: this.name
+            ...super.object,
+            ...{name: this.name}
         }
     }
 }

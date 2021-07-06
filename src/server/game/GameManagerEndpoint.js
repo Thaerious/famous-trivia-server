@@ -1,4 +1,4 @@
-// noinspection DuplicatedCode
+// noinspection DuplicatedCode,JSUnresolvedFunction
 
 import verify from '../mechanics/verify.js';
 import {Game} from './Game.js';
@@ -7,7 +7,7 @@ import NameValidator from "./NameValidator.js";
 import NameInUseResponse from "./responses/NameInUseResponse.js";
 import InvalidNameResponse from "./responses/InvalidNameResponse.js";
 import SuccessResponse from "./responses/SuccessResponse.js";
-import GetGameSuccessResponse from "./responses/GetGameSuccessResponse.js";
+import SuccessGameHashResponse from "./responses/SuccessGameHashResponse.js";
 import ErrorResponse from "./responses/ErrorResponse.js";
 import NotInGameResponse from "./responses/NotInGameResponse.js";
 import RejectedResponse from "./responses/RejectedResponse.js";
@@ -18,14 +18,25 @@ import RejectedResponse from "./responses/RejectedResponse.js";
 class GameManagerEndpoint {
     /**
      * Create a new GameManagerEndpoint.
+     *
+     * The validator is an object to validate names, has #preProcess and #validate
+     * The verify accepts a token:string and returns {userId:string, userName:string}
      * @param {GameManager} gameManager
-     * @param {SessionManager} sessionManager
-     * @param {Validator} validator a verification function that accepts
+     * @param {NameValidator} validator (name validator)
+     * @param {function} verify
      */
-    constructor(gameManager, sessionManager, validator) {
+    constructor(gameManager, validator, verify) {
         this.gameManager = gameManager;
-        this.sessionManager = sessionManager;
         this.validator = validator;
+        this.verify = verify;
+
+        this.table = {}; // gameHash : session-hash, name, role
+        // {'game-hash' : {
+        //   'session-hash' : {
+        //      name : name,
+        //      role : role
+        //   }
+        // }
     }
 
     /**
@@ -51,182 +62,239 @@ class GameManagerEndpoint {
                 return;
             }
 
-            await this[action](req, res);
-        }
-    }
-
-    /**
-     * Retrieve the game hash for the host.
-     * @param req
-     * @param res
-     * @returns {Promise<void>}
-     */
-    async ['get-hosted-game-hash'](req, res) {
-        let token = req.body.token;
-        try {
-            let user = await verify(token);
-
-            if (await this.gameManager.hasGame(user)) {
-                let hash = await this.gameManager.getHash(user);
-                res.json(new GetGameSuccessResponse(hash).object);
-            } else {
-                res.json(new RejectedResponse().object);
-            }
-            res.end();
-        } catch (err) {
-            console.error(err);
-            res.json(new ErrorResponse(err.toString()).object);
-        }
-    }
-
-    /**
-     * Retrieve a game that a contestant has joined.
-     * @param req
-     * @param res
-     * @returns {Promise<void>}
-     */
-    async ['get-game-hash'](req, res) {
-        if (req.session.has("game-hash")) {
-            const gameHash = req.session.get("game-hash");
-            if (!await this.gameManager.hasLive(gameHash)){
-                res.json(new NotInGameResponse(1).object);
-            } else {
-                res.json(new GetGameSuccessResponse(gameHash).object);
-            }
-        } else {
-            res.json(new NotInGameResponse(2).object);
-        }
-    }
-
-    /**
-     * Attempt to have a contestant join a game.
-     * @param req
-     * @param res
-     * @returns {Promise<void>}
-     */
-    async ['join-game'](req, res) {
-        if (!verifyParameter(req, res, "name")) return;
-        if (!verifyParameter(req, res, "game-hash")) return;
-
-        const name = req.body['name'];
-        const processed = this.validator.preProcess(name);
-
-        if (!this.validator.validate(name)) {
-            res.json(new InvalidNameResponse(name).object);
-        } else if (await this.nameInUse(processed, req.body['game-hash'])) {
-            res.json(new NameInUseResponse(processed).object);
-        } else {
-            await req.session.set("name", processed);
-            await req.session.set("game-hash", req.body['game-hash']);
-            res.json(new SuccessResponse().object);
-        }
-    }
-
-    async ['connect-host'](req, res) {
-        let token = req.body.token;
-
-        if (!token){
-            res.json(new ErrorResponse("missing parameter: token").object);
-            res.end();
-            return;
-        }
-
-        try {
-            let user = await verify(token);
-            let hash = await this.gameManager.getHash(user);
-            await req.session.set("role", "host");
-            await req.session.set("game-hash", hash);
-            res.json(new SuccessResponse().object);
-            res.end();
-        } catch (err) {
-            console.error(err);
-            res.json(new ErrorResponse(err.toString()).object);
+            let response = await this[action](req.body, req.session.hash);
+            res.toJSON(response.object);
             res.end();
         }
-    }
-
-    async nameInUse(name, gameHash) {
-        let sessions = await this.sessionManager.reverseLookup("game-hash", gameHash);
-        for (const session of sessions) {
-            if (await this.sessionManager.getSession(session).get("name") === name) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
      * <b>Launch a new game from a game description model.</b>
-     * Requires a model (json with game description) and a token (Google auth token),
-     * responds with result : success, hash : game-hash.  The game hash is passed to
-     * players so they can connect.
-     * @returns {Promise<void>}
+     * The 'body' requires a model field and a token field (Google auth token),
+     * The token will be tested against the 'verify' function passed into the constructor.
+     * The model will be used to instantiate the GameModel object which is returned by
+     * subsequent calls to the api, using the returned game hash as a key.
+     *
+     * @param {Object} body {token, model}
+     * @returns {Promise<SuccessGameHashResponse|ErrorResponse>}
      */
-    async ['launch'](req, res) {
-        let model = req.body.model;
-        let token = req.body.token;
-
-        if (!model) {
-            res.json(new ErrorResponse("missing field: model").object);
-            res.end();
-            return;
+    async ['launch'](body) {
+        if (!verifyParameter(body, "token")){
+            return new ErrorResponse(`missing parameter: token`);
         }
 
-        if (!token) {
-            res.json(new ErrorResponse("missing field: token").object);
-            res.end();
-            return;
+        if (!verifyParameter(body, "model")){
+            return new ErrorResponse(`missing parameter: model`);
         }
+
+        let token = body.token;
+        let model = body.model;
 
         try {
-            let user = await verify(token);
+            let user = await this.verify(token);
             let game = new Game(new GameModel(model));
+
+            if (await this.gameManager.hasGame(user)){
+                return new ErrorResponse("game already launched for token");
+            }
+
             await this.gameManager.setGame(user, game)
-            let hash = await this.gameManager.getHash(user);
-            res.json(new GetGameSuccessResponse(hash).object);
-            res.end();
+            let gameHash = await this.gameManager.getGameHash(user);
+            this.table[gameHash] = {};
+            return new SuccessGameHashResponse(gameHash);
         } catch (err) {
-            console.error(err);
-            res.json(new ErrorResponse(err.toString()).object);
-            res.end();
+            return new ErrorResponse(err.toString());
         }
+    }
+
+    /**
+     * <b>Retrieve the game-hash for a launched game.</b>
+     * The 'body' requires a token field (Google auth token).
+     * The token will be tested against the 'verify' function passed into the constructor.
+     * If a game has not been launched the a rejected response will be sent.
+     * Will send an error response if the token is rejected.
+     * @param body {token}
+     * @returns {Promise<RejectedResponse|SuccessGameHashResponse|ErrorResponse>}
+     */
+    async ['get-hosted-game-hash'](body) {
+        if (!verifyParameter(body, "token")){
+            return new ErrorResponse(`missing parameter: token`);
+        }
+
+        let token = body.token;
+
+        try {
+            let user = await this.verify(token);
+
+            if (await this.gameManager.hasGame(user)) {
+                let gameHash = await this.gameManager.getGameHash(user);
+                return new SuccessGameHashResponse(gameHash);
+            } else {
+                return new RejectedResponse();
+            }
+        } catch (err) {
+            return new ErrorResponse(err.toString());
+        }
+    }
+
+    /**
+     * <b>Join a contestant to a launched game.</b>
+     * The 'body' requires a name and a game-hash field.
+     * The name will be tested against the Validator class-object passed into the
+     * constructor.  Invalid names & already used names will receive a rejected response.
+     * Unknown game hashes will receive an error response.
+     * Sessions already in a game will return a rejected; use 'get-game-hash' to determine
+     * if the user has joined before calling 'join-game'.
+     * @param body {name, game-hash}
+     * @param sessionHash
+     * @returns {Promise<SuccessResponse|ErrorResponse|RejectedResponse>}
+     */
+    async ['join-game'](body, sessionHash) {
+        if (!verifyParameter(body, "name")){
+            return new ErrorResponse(`missing parameter: name`);
+        }
+
+        if (!verifyParameter(body, "game-hash")){
+            return new ErrorResponse(`missing parameter: game-hash`);
+        }
+
+        const name = body['name'];
+        const processed = this.validator.preProcess(name);
+        const gameHash = body['game-hash'];
+
+        if (!this.table[gameHash]){
+            return new ErrorResponse(`unknown game`);
+        }
+
+        if (this.knownSessions()[sessionHash]){
+            return new RejectedResponse("player already in game");
+        }
+
+        if (!this.validator.validate(name)) {
+            return new InvalidNameResponse(name);
+        } else if (await this.nameInUse(processed, body['game-hash'])) {
+            return new NameInUseResponse(processed);
+        } else {
+            this.table[gameHash][sessionHash] = {name : processed, role : "contestant"};
+            return new SuccessResponse();
+        }
+    }
+
+    /**
+     * <b>Retrieve a game-hash using a contestant session-hash as the key.</b>
+     * No 'body' is read for this method.
+     * Unknown session hashes will emit a rejected response.
+     * Known session hashes will emit a success response with the 'game-hash' field.
+     * @param sessionHash
+     * @returns {Promise<SuccessResponse|RejectedResponse>}
+     */
+    async ['get-game-hash'](body, sessionHash) {
+        const tableEntry = this.knownSessions()[sessionHash];
+
+        if (!tableEntry) return new RejectedResponse("no game associated with session hash");
+        return new SuccessGameHashResponse(tableEntry['game-hash']);
+    }
+
+    /**
+     * <b>Associate a session with a game as host.</b>
+     * The 'body' requires a token field (Google auth token),
+     * The token will be tested against the 'verify' function passed into the constructor.
+     * If a game has not been launched an error will be emitted.
+     * On success emits a success with a game-hash.
+     * @param body
+     * @param sessionHash
+     * @returns {Promise<SuccessResponse|ErrorResponse>}
+     */
+    async ['connect-host'](body, sessionHash) {
+        if (!verifyParameter(body, "token")){
+            return new ErrorResponse(`missing parameter: token`);
+        }
+
+        const token = body.token;
+
+        try {
+            const user = await this.verify(token);
+
+            if (!await this.gameManager.hasGame(user)){
+                return new ErrorResponse("game not launched for token");
+            }
+
+            const gameHash = await this.gameManager.getGameHash(user);
+
+            this.table[gameHash]['host'] = sessionHash;
+            return new SuccessGameHashResponse(gameHash);
+        } catch (err) {
+            return new ErrorResponse(err.toString());
+        }
+    }
+
+    async nameInUse(name, gameHash) {
+        for (const sessionHash in this.table[gameHash]){
+            if (this.table[gameHash][sessionHash].name === name) return true;
+        }
+        return false;
     }
 
     /**
      * Requires a token (Google auth token), responds with result : success.
      * Clears the game from the DB, and all associated player parameters.
-     * @returns {Promise<void>}
      */
-    async ['terminate'](req, res) {
-        if (!verifyParameter(req, res, "token")) return;
+    async ['terminate'](body, sessionHash) {
+        if (!verifyParameter(body, "token")){
+            return new ErrorResponse(`missing parameter: token`);
+        }
 
         try {
-            let user = await verify(req.body['token']);
-            const gameHash = await this.gameManager.getHash(user);
+            let user = await this.verify(body['token']);
+            const gameHash = await this.gameManager.getGameHash(user);
             await this.gameManager.deleteGame(user);
-
-            let sessionHashes = this.sessionManager.reverseLookup("game-hash", gameHash);
-            for (const sessionHash of sessionHashes) {
-                await this.sessionManager.getSession(sessionHash).clear("game-hash");
-            }
-
-            res.json({result: "success"});
-            res.end();
+            delete this.table[gameHash];
+            return new SuccessResponse();
         } catch (err) {
-            res.json(new ErrorResponse(err.toString()).object);
-            res.end();
+            return new ErrorResponse(err.toString());
         }
+    }
+
+    /**
+     * Return a table of sessionHash => {game-hash, name, role}
+     */
+    knownSessions(){
+        const table = {};
+        for (const gameHash in this.table){
+            for (const sessionHash in this.table[gameHash]){
+                const entry = this.table[gameHash][sessionHash];
+                table[sessionHash] = {'game-hash' : gameHash, 'name': entry.name, 'role': entry.role};
+            }
+        }
+        return table;
+    }
+
+    /**
+     * <b>Determine if the session hash is registered as the host of the game.</b>
+     * @param gameHash
+     * @param sessionHash
+     * @returns {boolean}
+     */
+    isHostSession(gameHash, sessionHash){
+        if (!this.table[gameHash]) return false;
+        return this.table[gameHash].host === sessionHash;
+    }
+
+    /**
+     * <b>Determine if the session hash is registered as a contestant of the game.</b>
+     * @param gameHash
+     * @param sessionHash
+     * @returns {boolean}
+     */
+    isContestantSession(gameHash, sessionHash){
+        if (!this.table[gameHash]) return false;
+        return this.table[gameHash][sessionHash] !== undefined;
     }
 }
 
-function verifyParameter(req, res, parameter) {
-    let value = req.body[parameter];
-
-    if (!value) {
-        res.json(new ErrorResponse(`missing parameter: ${parameter}`).object);
-        res.end();
-        return false;
-    }
+function verifyParameter(body, parameter) {
+    let value = body[parameter];
+    if (!value) return false;
     return true;
 }
 

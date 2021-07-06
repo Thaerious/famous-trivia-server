@@ -14,7 +14,7 @@ window.addEventListener("load", async ()=>{
     }
 
     const len = location.href.lastIndexOf("/");
-    const url = `${location.href.substr(0, len)}/contestant_join.ejs?hash=${response['hash']}`;
+    const url = `${location.href.substr(0, len)}/contestant_join.ejs?hash=${response['game-hash']}`;
     document.querySelector("#contestant_link").innerText = url;
 
     document.querySelector("#host").addEventListener("click", ()=>{

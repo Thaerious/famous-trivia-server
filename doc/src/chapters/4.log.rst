@@ -21,3 +21,7 @@ Log
 21-06-30
 
 * added single instance server, primarily for testing
+
+21-07-05
+
+* rearrange game manager endpoint to make it more easily tested
