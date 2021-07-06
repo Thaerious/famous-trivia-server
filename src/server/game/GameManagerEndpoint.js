@@ -236,10 +236,18 @@ class GameManagerEndpoint {
     }
 
     /**
-     * Requires a token (Google auth token), responds with result : success.
-     * Clears the game from the DB, and all associated player parameters.
+     * <b>Remove a game from the game manager and update all records</b>
+     * Removes host and contestants from current games.
+     * Body requires a token which will be verified against verify function passed
+     * into the constructor.
+     * If the game hash doesn't exist an error is emitted.
+     * If the token isn't verified then an error is emitted.
+     *
+     * (coupling) Calls the game manager delete function which notifies clients.
+     * @param {Object} body {token}
+     * @returns {Promise<SuccessResponse|ErrorResponse>}
      */
-    async ['terminate'](body, sessionHash) {
+    async ['terminate'](body) {
         if (!verifyParameter(body, "token")){
             return new ErrorResponse(`missing parameter: token`);
         }

@@ -46,29 +46,11 @@ class GameManager{
     }
 
     /**
-     * List all the users with an game in the db.
-     * The user will match with a userid returned from verify.js.
-     */
-    listHostedGames() {
-        throw new Error("not implemented");
-    }
-
-    /**
      * True if the game has been saved for the given host.
      * @param user the user object returned from verify.js
      */
     hasGame(user) {
         return this.hosts.has(user.userId);
-    }
-
-    /**
-     * Retrieve the saved JSON of a game for a host.
-     * @param user the user object returned from verify.js
-     * @returns {Promise<unknown>}
-     */
-    getGame(user) {
-        const hash = this.hosts.get(user.userId).hash;
-        return this.liveGames.get(hash);
     }
 
     /**

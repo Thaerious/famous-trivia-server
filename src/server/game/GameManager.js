@@ -6,6 +6,11 @@ import HasDB from '../mechanics/HasDB.js';
 import ParseArgs from "@thaerious/parseargs";
 import config from "../../config.js";
 
+/**
+ * The game manager keeps a record of all launched games.
+ *
+ *
+ */
 class GameManager{
     constructor() {
         this.hosts = new Map(); // userId -> {hash, name}
@@ -36,13 +41,13 @@ class GameManager{
     /**
      * Associate a host with a game.
      * Generates a hash value to recall the game with.
-     * @param user the user object returned from verify.js
+     * @param hostToken the user object returned from verify.js
      * @param game a game object from Game.js
      * @returns {boolean} true if a new game was created.
      */
-    setGame(user, liveGame) {
-        if (!user?.userId) throw new Error("userId missing from user object");
-        if (!user?.userName) throw new Error("userId missing from user object");
+    setGame(hostToken, liveGame) {
+        if (!hostToken?.userId) throw new Error("userId missing from user object");
+        if (!hostToken?.userName) throw new Error("userId missing from user object");
 
         let hash = crypto.randomBytes(20).toString('hex');
         this.liveGames.set(hash, liveGame);
@@ -50,76 +55,62 @@ class GameManager{
         liveGame.times.ANSWER = this.ta ?? config.TIMES.ANSWER;
         liveGame.times.BUZZ = this.tb ?? config.TIMES.BUZZ;
         liveGame.times.MULTIPLE_CHOICE = this.tm ?? config.TIMES.MULTIPLE_CHOICE;
-        this.hosts.set(user.userId, {hash:hash, name:user.userName});
-    }
-
-    /**
-     * List all the users with an game in the db.
-     * The user will match with a userid returned from verify.js.
-     */
-    listHostedGames() {
-        let list = [];
-        for (let id of this.hosts.keys()){
-            const name = this.hosts.get(id).name;
-            const hash = this.hosts.get(id).hash.substr(0, 8);
-            list.push({id, name, hash});
-        }
-        return list;
+        this.hosts.set(hostToken.userId, {hash:hash, name:hostToken.userName});
     }
 
     /**
      * True if the game has been saved for the given host.
-     * @param user the user object returned from verify.js
+     * @param hostToken the user object returned from verify.js
      */
-    hasGame(user) {
-        return this.hosts.has(user.userId);
+    hasGame(hostToken) {
+        return this.hosts.has(hostToken.userId);
     }
 
     /**
-     * Retrieve the saved JSON of a game for a host.
-     * @param user the user object returned from verify.js
+     * Retrieve a game based on the host.
+     * @param hostToken the user object returned from verify.js
      * @returns {Promise<unknown>}
      */
-    getGame(user) {
-        const hash = this.hosts.get(user.userId).hash;
+    getGame(hostToken) {
+        const hash = this.hosts.get(hostToken.userId).hash;
         return this.liveGames.get(hash);
     }
 
     /**
      * Remove a hosted game from the db.
-     * @param user the user object returned from verify.js
+     * @param hostToken the user object returned from verify.js
      * @returns {boolean}
      */
-    deleteGame(user) {
-        const hash = this.hosts.get(user.userId).hash;
-        if (!this.hasGame(user)) return false;
+    deleteGame(hostToken) {
+        const hash = this.hosts.get(hostToken.userId).hash;
+        if (!this.hasGame(hostToken)) return false;
         this.liveGames.delete(hash);
-        this.hosts.delete(user.userId);
+        this.hosts.delete(hostToken.userId);
         return true;
     }
 
     /**
      * Retrieve the public hash for a game.
-     * @param user the user object returned from verify.js
+     * @param hostToken the user object returned from verify.js
      * @returns {Promise<unknown>}
      */
-    getGameHash(user) {
-        return this.hosts.get(user.userId)?.hash;
+    getGameHash(hostToken) {
+        return this.hosts.get(hostToken.userId)?.hash;
     }
 
     /**
      * Return the live game object.
      * This will retrieve it from the database if this is the first time getLive is called
      * for the given game.
-     * @param hash The public hash for a game.
+     * @param gameHash The public hash for a game.
      * @return The live game object or undefined if no game found.
      */
-    getLive(hash){
-        return this.liveGames.get(hash);
+    getLive(gameHash){
+        return this.liveGames.get(gameHash);
     }
 
-    hasLive(hash){
-        return this.liveGames.has(hash);
+    hasLive(gameHash){
+        return this.liveGames.has(gameHash);
     }
 }
 
