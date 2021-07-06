@@ -55,9 +55,16 @@ class Connection{
         }
     }
 
-    async establishConnection(name){
+    /**
+     * Establish a connection between a client (either host or contestant) and
+     * the game.  Either GameManagerEndpoint#join-game, or GameManagerEndpoint#connect-host
+     * must be called prior to establishing this websocket connection.
+     * @returns {Promise<void>}
+     */
+    async establishConnection(){
         let hash = await this.req.session.get("game-hash");
         this.game = await this.gm.getLive(hash);
+
         if (!this.game){
             const msg = {
                 action : "error",

@@ -109,6 +109,11 @@ class GameManager{
         return this.liveGames.get(gameHash);
     }
 
+    /**
+     * Determine if 'gameHash' currently refers to a live game.
+     * @param gameHash
+     * @returns {boolean}
+     */
     hasLive(gameHash){
         return this.liveGames.has(gameHash);
     }

@@ -298,6 +298,12 @@ class GameManagerEndpoint {
         if (!this.table[gameHash]) return false;
         return this.table[gameHash][sessionHash] !== undefined;
     }
+
+    getContestantName(gameHash, sessionHash){
+        if (!this.table[gameHash]) throw new Error("unknown game");
+        if (!this.table[gameHash][sessionHash]) throw new Error("unknown session");
+        return this.table[gameHash][sessionHash].name;
+    }
 }
 
 function verifyParameter(body, parameter) {
