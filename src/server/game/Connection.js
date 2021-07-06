@@ -52,13 +52,15 @@ class Connection{
      * @returns {Promise<void>}
      */
     async establishConnection(){
-        let sessionHash = await this.req.session.get("game-hash");
+        let sessionHash = await this.req.session.hash;
 
         try {
-            this.game = await this.gm.getLive(sessionHash);
+            const gameHash = this.gme.getGameHash(sessionHash)
+            this.game = await this.gm.getLive(gameHash);
             this.name = await this.gme.getName(sessionHash);
             this.role = await this.gme.getRole(sessionHash);
         } catch (err){
+            console.error(err);
             const msg = {
                 action : "error",
                 text : err.toString()

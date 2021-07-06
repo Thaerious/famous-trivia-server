@@ -21,7 +21,7 @@ await setupDB(config.server.db.dir, config.server.db.name, config.server.db.scri
 const gameManager = await new GameManager();
 const sessionManager = new SessionManager(Path.join(config.server.db.dir, config.server.db.name));
 await sessionManager.load();
-const gameManagerEndpoint = new GameManagerEndpoint(gameManager, sessionManager, new NameValidator(), verify);
+const gameManagerEndpoint = new GameManagerEndpoint(gameManager, new NameValidator(), verify);
 const nidgetPreprocessor = new NidgetPreprocessor(config.server.ejs_nidgets, config.server.nidget_scripts).setup();
 
 const flags = new ParseArgs().loadOptions().run().flags;

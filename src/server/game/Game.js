@@ -144,8 +144,8 @@ class Game {
     }
 
     joinPlayer(name){
-        this.model.addPlayer(input.data.name);
-        if (this.mcBetsData) this.createMCBetsDataForPlayer(input.data.name);
+        this.model.addPlayer(name);
+        if (this.mcBetsData) this.createMCBetsDataForPlayer(name);
         this.broadcast();
     }
 

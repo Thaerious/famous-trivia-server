@@ -26,6 +26,10 @@ class GameManagerEndpoint {
      * @param {function} verify
      */
     constructor(gameManager, validator, verify) {
+        if (!gameManager) throw new Error("Missing parameter: gameManager");
+        if (!validator) throw new Error("Missing parameter: validator");
+        if (!verify) throw new Error("Missing parameter: verify");
+
         this.gameManager = gameManager;
         this.validator = validator;
         this.verify = verify;
@@ -33,9 +37,11 @@ class GameManagerEndpoint {
         this.table = {}; // gameHash : session-hash, name, role
         // {game-hash : {
         //   'host' : session-hash,
-        //   session-hash : {
-        //      name : name,
-        //      role : role
+        //   'sessions' : {
+        //     session-hash : {
+        //        name : name,
+        //        role : role
+        //     }
         //   }
         // }
     }
@@ -63,8 +69,9 @@ class GameManagerEndpoint {
                 return;
             }
 
+            console.log("GME " + action);
             let response = await this[action](req.body, req.session.hash);
-            res.toJSON(response.object);
+            res.json(response.object);
             res.end();
         }
     }
@@ -101,10 +108,10 @@ class GameManagerEndpoint {
 
             await this.gameManager.setGame(user, game)
             let gameHash = await this.gameManager.getGameHash(user);
-            this.table[gameHash] = {};
+            this.table[gameHash] = {sessions: {}};
             return new SuccessGameHashResponse(gameHash);
         } catch (err) {
-            return new ErrorResponse(err.toString());
+            return new ErrorResponse(err.toString(), err);
         }
     }
 
@@ -134,7 +141,7 @@ class GameManagerEndpoint {
                 return new RejectedResponse();
             }
         } catch (err) {
-            return new ErrorResponse(err.toString());
+            return new ErrorResponse(err.toString(), err);
         }
     }
 
@@ -176,7 +183,7 @@ class GameManagerEndpoint {
         } else if (await this.nameInUse(processed, body['game-hash'])) {
             return new NameInUseResponse(processed);
         } else {
-            this.table[gameHash][sessionHash] = {name : processed, role : "contestant"};
+            this.table[gameHash].sessions[sessionHash] = {name : processed, role : "contestant"};
             return new SuccessResponse();
         }
     }
@@ -191,7 +198,6 @@ class GameManagerEndpoint {
      */
     async ['get-game-hash'](body, sessionHash) {
         const tableEntry = this.knownSessions()[sessionHash];
-
         if (!tableEntry) return new RejectedResponse("no game associated with session hash");
         return new SuccessGameHashResponse(tableEntry['game-hash']);
     }
@@ -222,16 +228,16 @@ class GameManagerEndpoint {
 
             const gameHash = await this.gameManager.getGameHash(user);
 
-            this.table[gameHash]['host'] = sessionHash;
+            this.table[gameHash].host = sessionHash;
             return new SuccessGameHashResponse(gameHash);
         } catch (err) {
-            return new ErrorResponse(err.toString());
+            return new ErrorResponse(err.toString(), err);
         }
     }
 
     async nameInUse(name, gameHash) {
-        for (const sessionHash in this.table[gameHash]){
-            if (this.table[gameHash][sessionHash].name === name) return true;
+        for (const sessionHash in this.table[gameHash].sessions){
+            if (this.table[gameHash].sessions[sessionHash].name === name) return true;
         }
         return false;
     }
@@ -260,7 +266,7 @@ class GameManagerEndpoint {
             delete this.table[gameHash];
             return new SuccessResponse();
         } catch (err) {
-            return new ErrorResponse(err.toString());
+            return new ErrorResponse(err.toString(), err);
         }
     }
 
@@ -272,8 +278,8 @@ class GameManagerEndpoint {
         for (const gameHash in this.table){
             const hostHash = this.table[gameHash].host;
             sessionsTable[hostHash] = {'game-hash' : gameHash, 'name': '@HOST', 'role': 'host'};
-            for (const sessionHash in this.table[gameHash]){
-                const entry = this.table[gameHash][sessionHash];
+            for (const sessionHash in this.table[gameHash].sessions){
+                const entry = this.table[gameHash].sessions[sessionHash];
                 sessionsTable[sessionHash] = {'game-hash' : gameHash, 'name': entry.name, 'role': entry.role};
             }
         }
@@ -298,20 +304,31 @@ class GameManagerEndpoint {
      * @returns {boolean}
      */
     isContestantSession(gameHash, sessionHash){
+        if (!gameHash) throw new Error("missing parameter: gameHash");
+        if (!sessionHash) throw new Error("missing parameter: sessionHash");
         if (!this.table[gameHash]) return false;
-        return this.table[gameHash][sessionHash] !== undefined;
+        return this.table[gameHash].sessions[sessionHash] !== undefined;
     }
 
-    getContestantName(sessionHash){
+    getName(sessionHash){
+        if (!sessionHash) throw new Error("missing parameter: sessionHash");
         const tableEntry = this.knownSessions()[sessionHash];
-        if (!tableEntry) throw new Error("unknown session");
-        return tableEntry.name;
+        if (!tableEntry) throw new Error("unknown session: " + sessionHash.substr(0, 6));
+        return tableEntry['name'];
     }
 
     getRole(sessionHash){
+        if (!sessionHash) throw new Error("missing parameter: sessionHash");
         const tableEntry = this.knownSessions()[sessionHash];
-        if (!tableEntry) throw new Error("unknown session");
-        return tableEntry.role;
+        if (!tableEntry) throw new Error("unknown session: " + sessionHash.substr(0, 6));
+        return tableEntry['role'];
+    }
+
+    getGameHash(sessionHash){
+        if (!sessionHash) throw new Error("missing parameter: sessionHash");
+        const tableEntry = this.knownSessions()[sessionHash];
+        if (!tableEntry) throw new Error("unknown session: " + sessionHash.substr(0, 6));
+        return tableEntry['game-hash'];
     }
 }
 

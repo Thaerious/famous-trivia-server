@@ -9,11 +9,11 @@ import GameManager from "../../src/server/game/GameManager.js";
 const file = fs.readFileSync('test/data/test-data-00.json');
 const gameDescriptor = JSON.parse(file);
 
-function verify(token){
-    if (token.startsWith("abc")){
+function verify(token) {
+    if (token.startsWith("abc")) {
         return {
-            userId : token,
-            userName : token
+            userId: token,
+            userName: token
         }
     }
 }
@@ -29,62 +29,62 @@ await describe(`GameManagerEndpoint Unit Tests`, async () => {
      * @param {Object} body with parameters token, model
      * @returns {Promise<SuccessGameHashResponse|ErrorResponse>}
      */
-    await describe("#launch", async ()=>{
-        it("verify function returns an object without userId & userName throws an error", async ()=>{
+    await describe("#launch", async () => {
+        it("verify function returns an object without userId & userName throws an error", async () => {
             const gme = new GameManagerEndpoint(new GameManager(), new NameValidator(), (t) => t === "abc");
-            const body = {model : gameDescriptor, token : "abc"}
+            const body = {model: gameDescriptor, token: "abc"}
             let response = await gme.launch(body);
 
             assert.strictEqual(response.object['result'], "error");
         });
 
-        it("game-hash & success on a valid launch", async ()=>{
+        it("game-hash & success on a valid launch", async () => {
             const gme = new GameManagerEndpoint(new GameManager(), new NameValidator(), verify);
-            const body = {model : gameDescriptor, token : "abc"}
+            const body = {model: gameDescriptor, token: "abc"}
             let response = await gme.launch(body);
 
             assert.strictEqual(typeof response.object['game-hash'], "string");
             assert.strictEqual(response.object['result'], "success");
         });
 
-        it("game-hash & success on a second valid launch", async ()=>{
+        it("game-hash & success on a second valid launch", async () => {
             const gme = new GameManagerEndpoint(new GameManager(), new NameValidator(), verify);
-            await gme.launch({model : gameDescriptor, token : "abc1"});
-            let response = await gme.launch({model : gameDescriptor, token : "abc2"});
+            await gme.launch({model: gameDescriptor, token: "abc1"});
+            let response = await gme.launch({model: gameDescriptor, token: "abc2"});
 
             assert.strictEqual(typeof response.object['game-hash'], "string");
             assert.strictEqual(response.object['result'], "success");
         });
 
-        it("an error when the token is invalid", async ()=>{
+        it("an error when the token is invalid", async () => {
             const gme = new GameManagerEndpoint(new GameManager(), new NameValidator(), verify);
-            const body = {model : gameDescriptor, token : ""}
+            const body = {model: gameDescriptor, token: ""}
             let response = await gme.launch(body);
 
             assert.strictEqual(response.object['result'], "error");
         });
 
-        it("an error when a game has already been launched with the provided token", async ()=>{
+        it("an error when a game has already been launched with the provided token", async () => {
             const gme = new GameManagerEndpoint(new GameManager(), new NameValidator(), verify);
-            const body = {model : gameDescriptor, token : "abc"}
+            const body = {model: gameDescriptor, token: "abc"}
             await gme.launch(body);
             let response = await gme.launch(body);
 
             assert.strictEqual(response.object['result'], "error");
         });
 
-        it("an error when the token is missing", async ()=>{
+        it("an error when the token is missing", async () => {
             const gme = new GameManagerEndpoint(new GameManager(), new NameValidator(), verify);
-            const body = {model : gameDescriptor}
+            const body = {model: gameDescriptor}
             await gme.launch(body);
             let response = await gme.launch(body);
 
             assert.strictEqual(response.object['result'], "error");
         });
 
-        it("an error when the model is missing", async ()=>{
+        it("an error when the model is missing", async () => {
             const gme = new GameManagerEndpoint(new GameManager(), new NameValidator(), verify);
-            const body = {token : "abc"}
+            const body = {token: "abc"}
             await gme.launch(body);
             let response = await gme.launch(body);
 
@@ -102,7 +102,7 @@ await describe(`GameManagerEndpoint Unit Tests`, async () => {
      * @returns {Promise<RejectedResponse|SuccessGameHashResponse|ErrorResponse>}
      */
 
-    await describe("#get-hosted-game-hash", async ()=> {
+    await describe("#get-hosted-game-hash", async () => {
         it("the game-hash of a launched game", async () => {
             const gme = new GameManagerEndpoint(new GameManager(), new NameValidator(), verify);
             const body = {model: gameDescriptor, token: "abc"}
@@ -131,7 +131,7 @@ await describe(`GameManagerEndpoint Unit Tests`, async () => {
             assert.strictEqual(response.object['result'], "rejected");
         });
 
-        it("an error when the token is missing", async ()=>{
+        it("an error when the token is missing", async () => {
             const gme = new GameManagerEndpoint(new GameManager(), new NameValidator(), verify);
             const body = {model: gameDescriptor, token: "abc"}
             const launchResponse = await gme.launch(body);
@@ -155,7 +155,7 @@ await describe(`GameManagerEndpoint Unit Tests`, async () => {
      * @param sessionHash
      * @returns {Promise<InvalidNameResponse|SuccessResponse|ErrorResponse|NameInUseResponse>}
      */
-    await describe("#join-game", async ()=> {
+    await describe("#join-game", async () => {
         it("success when the user first joins", async () => {
             const gme = new GameManagerEndpoint(new GameManager(), new NameValidator(), verify);
             const launchBody = {model: gameDescriptor, token: "abc"}
@@ -205,10 +205,10 @@ await describe(`GameManagerEndpoint Unit Tests`, async () => {
             assert.strictEqual(response.object['result'], "rejected");
         });
 
-        it("an error when a different game has already been joined", async ()=>{
+        it("an error when a different game has already been joined", async () => {
             const gme = new GameManagerEndpoint(new GameManager(), new NameValidator(), verify);
-            const response1 = await gme.launch({model : gameDescriptor, token : "abc1"});
-            const response2 = await gme.launch({model : gameDescriptor, token : "abc2"});
+            const response1 = await gme.launch({model: gameDescriptor, token: "abc1"});
+            const response2 = await gme.launch({model: gameDescriptor, token: "abc2"});
             const gameHash1 = response1.object['game-hash'];
             const gameHash2 = response2.object['game-hash'];
 
@@ -217,27 +217,27 @@ await describe(`GameManagerEndpoint Unit Tests`, async () => {
             assert.strictEqual(response.object['result'], "rejected");
         });
 
-        it("an error when game hasn't been launched (unknown game hash)", async ()=>{
+        it("an error when game hasn't been launched (unknown game hash)", async () => {
             const gme = new GameManagerEndpoint(new GameManager(), new NameValidator(), verify);
-            const launchResponse = await gme.launch({model : gameDescriptor, token : "abc1"});
+            const launchResponse = await gme.launch({model: gameDescriptor, token: "abc1"});
             const gameHash = launchResponse.object['game-hash'];
 
             const response = await gme['join-game']({'game-hash': "", 'name': 'adam'}, '1A2B3C');
             assert.strictEqual(response.object['result'], "error");
         });
 
-        it("an error when the game-hash is missing", async ()=>{
+        it("an error when the game-hash is missing", async () => {
             const gme = new GameManagerEndpoint(new GameManager(), new NameValidator(), verify);
-            const launchResponse = await gme.launch({model : gameDescriptor, token : "abc1"});
+            const launchResponse = await gme.launch({model: gameDescriptor, token: "abc1"});
             const gameHash = launchResponse.object['game-hash'];
 
             const response = await gme['join-game']({'name': 'adam'}, '1A2B3C');
             assert.strictEqual(response.object['result'], "error");
         });
 
-        it("an error when the name is missing", async ()=>{
+        it("an error when the name is missing", async () => {
             const gme = new GameManagerEndpoint(new GameManager(), new NameValidator(), verify);
-            const launchResponse = await gme.launch({model : gameDescriptor, token : "abc1"});
+            const launchResponse = await gme.launch({model: gameDescriptor, token: "abc1"});
             const gameHash = launchResponse.object['game-hash'];
 
             const response = await gme['join-game']({'game-hash': gameHash}, '1A2B3C');
@@ -253,7 +253,7 @@ await describe(`GameManagerEndpoint Unit Tests`, async () => {
      * @param sessionHash
      * @returns {Promise<SuccessResponse|RejectedResponse>}
      */
-    await describe("#get-game-hash", async ()=> {
+    await describe("#get-game-hash", async () => {
         it("success with game-hash when game has been joined", async () => {
             const gme = new GameManagerEndpoint(new GameManager(), new NameValidator(), verify);
             const launchBody = {model: gameDescriptor, token: "abc"}
@@ -289,7 +289,7 @@ await describe(`GameManagerEndpoint Unit Tests`, async () => {
      * @param sessionHash
      * @returns {Promise<SuccessResponse|ErrorResponse>}
      */
-    await describe("#connect-host", async ()=> {
+    await describe("#connect-host", async () => {
         it("game-hash on success", async () => {
             const gme = new GameManagerEndpoint(new GameManager(), new NameValidator(), verify);
             const launchBody = {model: gameDescriptor, token: "abc"}
@@ -308,7 +308,7 @@ await describe(`GameManagerEndpoint Unit Tests`, async () => {
             const gameHash = launchResponse.object['game-hash'];
 
             const response = await gme['connect-host']({token: "abc"}, '1A2B3C');
-            assert.strictEqual(gme.isHostSession(gameHash,'1A2B3C'), true);
+            assert.strictEqual(gme.isHostSession(gameHash, '1A2B3C'), true);
         });
 
         it("can reassign session hash as long as the token is valid", async () => {
@@ -331,7 +331,7 @@ await describe(`GameManagerEndpoint Unit Tests`, async () => {
 
             await gme['connect-host']({token: "abc"}, '1A2B3C');
             const response = await gme['connect-host']({token: "abc"}, '2A3B4F');
-            assert.strictEqual(gme.isHostSession(gameHash,'2A3B4F'), true);
+            assert.strictEqual(gme.isHostSession(gameHash, '2A3B4F'), true);
         });
 
         it("isHostSession emits false for old hash reassign", async () => {
@@ -342,7 +342,7 @@ await describe(`GameManagerEndpoint Unit Tests`, async () => {
 
             await gme['connect-host']({token: "abc"}, '1A2B3C');
             const response = await gme['connect-host']({token: "abc"}, '2A3B4F');
-            assert.strictEqual(gme.isHostSession(gameHash,'1A2B3C'), false);
+            assert.strictEqual(gme.isHostSession(gameHash, '1A2B3C'), false);
         });
 
         it("emits error with invalid token", async () => {
@@ -379,7 +379,7 @@ await describe(`GameManagerEndpoint Unit Tests`, async () => {
      * @param {Object} body {game-hash}
      * @returns {Promise<SuccessResponse|ErrorResponse>}
      */
-    await describe("#terminate", async ()=>{
+    await describe("#terminate", async () => {
         it("success when game terminated", async () => {
             const gme = new GameManagerEndpoint(new GameManager(), new NameValidator(), verify);
             const launchBody = {model: gameDescriptor, token: "abc"}
@@ -442,7 +442,7 @@ await describe(`GameManagerEndpoint Unit Tests`, async () => {
         });
     });
 
-    await describe("#isContestantSession", async ()=>{
+    await describe("#isContestantSession", async () => {
         it("true when successfully joined", async () => {
             const gme = new GameManagerEndpoint(new GameManager(), new NameValidator(), verify);
             const launchBody = {model: gameDescriptor, token: "abc"}
@@ -480,7 +480,7 @@ await describe(`GameManagerEndpoint Unit Tests`, async () => {
         });
     });
 
-    await describe("#isHostSession", async ()=>{
+    await describe("#isHostSession", async () => {
         it("true when successfully joined", async () => {
             const gme = new GameManagerEndpoint(new GameManager(), new NameValidator(), verify);
             const launchBody = {model: gameDescriptor, token: "abc"}
@@ -518,7 +518,7 @@ await describe(`GameManagerEndpoint Unit Tests`, async () => {
         });
     });
 
-    await describe("#getContestantName", async ()=>{
+    await describe("#getName", async () => {
         it("when successfully joined returns name", async () => {
             const gme = new GameManagerEndpoint(new GameManager(), new NameValidator(), verify);
             const launchBody = {model: gameDescriptor, token: "abc"}
@@ -528,7 +528,7 @@ await describe(`GameManagerEndpoint Unit Tests`, async () => {
             const sessionHash = '1A2B3C';
 
             const response = await gme['join-game'](joinBody, sessionHash);
-            assert.strictEqual(gme.getContestantName('1A2B3C'), "ADAM");
+            assert.strictEqual(gme.getName('1A2B3C'), "ADAM");
         });
 
         it("error for unknown session", async () => {
@@ -540,11 +540,11 @@ await describe(`GameManagerEndpoint Unit Tests`, async () => {
             const sessionHash = '1A2B3C';
 
             await gme['join-game'](joinBody, sessionHash);
-            assert.throws(()=>gme.getContestantName('121245'));
+            assert.throws(() => gme.getName('121245'));
         });
     });
 
-    await describe("#getRole", async ()=>{
+    await describe("#getRole", async () => {
         it("contestant role", async () => {
             const gme = new GameManagerEndpoint(new GameManager(), new NameValidator(), verify);
             const launchBody = {model: gameDescriptor, token: "abc"}
@@ -579,7 +579,45 @@ await describe(`GameManagerEndpoint Unit Tests`, async () => {
             const sessionHash = '1A2B3C';
 
             const response = await gme['join-game'](joinBody, sessionHash);
-            assert.throws(()=>gme.getRole(gameHash, '121245'));
+            assert.throws(() => gme.getRole('121245'));
+        });
+    });
+    await describe("#getGameHash", async () => {
+        it("contestant hash", async () => {
+            const gme = new GameManagerEndpoint(new GameManager(), new NameValidator(), verify);
+            const launchBody = {model: gameDescriptor, token: "abc"}
+            const launchResponse = await gme.launch(launchBody);
+            const gameHash = launchResponse.object['game-hash'];
+            const joinBody = {'game-hash': gameHash, 'name': 'adam'};
+            const sessionHash = '1A2B3C';
+
+            await gme['join-game'](joinBody, sessionHash);
+            assert.strictEqual(gme.getGameHash('1A2B3C'), gameHash);
+        });
+
+        it("host hash", async () => {
+            const gme = new GameManagerEndpoint(new GameManager(), new NameValidator(), verify);
+            const launchBody = {model: gameDescriptor, token: "abc"}
+            const launchResponse = await gme.launch(launchBody);
+            const gameHash = launchResponse.object['game-hash'];
+            const joinBody = {'game-hash': gameHash, 'name': 'adam'};
+            const sessionHash = '1A2B3C';
+
+            await gme['connect-host']({token: "abc"}, 'AABBCC');
+            await gme['join-game'](joinBody, sessionHash);
+            assert.strictEqual(gme.getGameHash('AABBCC'), gameHash);
+        });
+
+        it("error for unknown session", async () => {
+            const gme = new GameManagerEndpoint(new GameManager(), new NameValidator(), verify);
+            const launchBody = {model: gameDescriptor, token: "abc"}
+            const launchResponse = await gme.launch(launchBody);
+            const gameHash = launchResponse.object['game-hash'];
+            const joinBody = {'game-hash': gameHash, 'name': 'adam'};
+            const sessionHash = '1A2B3C';
+
+            const response = await gme['join-game'](joinBody, sessionHash);
+            assert.throws(() => gme.getGameHash('121245'));
         });
     });
 });

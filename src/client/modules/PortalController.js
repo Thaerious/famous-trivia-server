@@ -47,9 +47,9 @@ class PortalController {
 
     onClose(event){
         if (this.name === constants.names.HOST){
-            window.location = "host.ejs";
+            // window.location = "host.ejs";
         } else {
-            window.location = "contestant_join.ejs";
+            // window.location = "contestant_join.ejs";
         }
     }
 
