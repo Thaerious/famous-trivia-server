@@ -528,7 +528,46 @@ await describe(`GameManagerEndpoint Unit Tests`, async () => {
             const sessionHash = '1A2B3C';
 
             const response = await gme['join-game'](joinBody, sessionHash);
-            assert.strictEqual(gme.getContestantName(gameHash, '1A2B3C'), "ADAM");
+            assert.strictEqual(gme.getContestantName('1A2B3C'), "ADAM");
+        });
+
+        it("error for unknown session", async () => {
+            const gme = new GameManagerEndpoint(new GameManager(), new NameValidator(), verify);
+            const launchBody = {model: gameDescriptor, token: "abc"}
+            const launchResponse = await gme.launch(launchBody);
+            const gameHash = launchResponse.object['game-hash'];
+            const joinBody = {'game-hash': gameHash, 'name': 'adam'};
+            const sessionHash = '1A2B3C';
+
+            await gme['join-game'](joinBody, sessionHash);
+            assert.throws(()=>gme.getContestantName('121245'));
+        });
+    });
+
+    await describe("#getRole", async ()=>{
+        it("contestant role", async () => {
+            const gme = new GameManagerEndpoint(new GameManager(), new NameValidator(), verify);
+            const launchBody = {model: gameDescriptor, token: "abc"}
+            const launchResponse = await gme.launch(launchBody);
+            const gameHash = launchResponse.object['game-hash'];
+            const joinBody = {'game-hash': gameHash, 'name': 'adam'};
+            const sessionHash = '1A2B3C';
+
+            await gme['join-game'](joinBody, sessionHash);
+            assert.strictEqual(gme.getRole('1A2B3C'), "contestant");
+        });
+
+        it("host role", async () => {
+            const gme = new GameManagerEndpoint(new GameManager(), new NameValidator(), verify);
+            const launchBody = {model: gameDescriptor, token: "abc"}
+            const launchResponse = await gme.launch(launchBody);
+            const gameHash = launchResponse.object['game-hash'];
+            const joinBody = {'game-hash': gameHash, 'name': 'adam'};
+            const sessionHash = '1A2B3C';
+
+            await gme['connect-host']({token: "abc"}, 'AABBCC');
+            await gme['join-game'](joinBody, sessionHash);
+            assert.strictEqual(gme.getRole('AABBCC'), "host");
         });
 
         it("error for unknown session", async () => {
@@ -540,19 +579,7 @@ await describe(`GameManagerEndpoint Unit Tests`, async () => {
             const sessionHash = '1A2B3C';
 
             const response = await gme['join-game'](joinBody, sessionHash);
-            assert.throws(()=>gme.getContestantName(gameHash, '121245'));
-        });
-
-        it("error for unknown game", async () => {
-            const gme = new GameManagerEndpoint(new GameManager(), new NameValidator(), verify);
-            const launchBody = {model: gameDescriptor, token: "abc"}
-            const launchResponse = await gme.launch(launchBody);
-            const gameHash = launchResponse.object['game-hash'];
-            const joinBody = {'game-hash': gameHash, 'name': 'adam'};
-            const sessionHash = '1A2B3C';
-
-            const response = await gme['join-game'](joinBody, sessionHash);
-            assert.throws(()=>gme.getContestantName('xxx', '1A2B3C'));
+            assert.throws(()=>gme.getRole(gameHash, '121245'));
         });
     });
 });

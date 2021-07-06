@@ -137,15 +137,16 @@ class Game {
                 this.model.prevRound();
                 this.startRound();
                 break;
-            case "join":
-                this.model.addPlayer(input.data.name);
-                if (this.mcBetsData) this.createMCBetsDataForPlayer(input.data.name);
-                this.broadcast();
-                break;
             default:
                 this[this.state](input);
                 break;
         }
+    }
+
+    joinPlayer(name){
+        this.model.addPlayer(input.data.name);
+        if (this.mcBetsData) this.createMCBetsDataForPlayer(input.data.name);
+        this.broadcast();
     }
 
     updateState(state, extraData = {}) {

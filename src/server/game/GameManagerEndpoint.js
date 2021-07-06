@@ -31,8 +31,9 @@ class GameManagerEndpoint {
         this.verify = verify;
 
         this.table = {}; // gameHash : session-hash, name, role
-        // {'game-hash' : {
-        //   'session-hash' : {
+        // {game-hash : {
+        //   'host' : session-hash,
+        //   session-hash : {
         //      name : name,
         //      role : role
         //   }
@@ -267,14 +268,16 @@ class GameManagerEndpoint {
      * Return a table of sessionHash => {game-hash, name, role}
      */
     knownSessions(){
-        const table = {};
+        const sessionsTable = {};
         for (const gameHash in this.table){
+            const hostHash = this.table[gameHash].host;
+            sessionsTable[hostHash] = {'game-hash' : gameHash, 'name': '@HOST', 'role': 'host'};
             for (const sessionHash in this.table[gameHash]){
                 const entry = this.table[gameHash][sessionHash];
-                table[sessionHash] = {'game-hash' : gameHash, 'name': entry.name, 'role': entry.role};
+                sessionsTable[sessionHash] = {'game-hash' : gameHash, 'name': entry.name, 'role': entry.role};
             }
         }
-        return table;
+        return sessionsTable;
     }
 
     /**
@@ -299,10 +302,16 @@ class GameManagerEndpoint {
         return this.table[gameHash][sessionHash] !== undefined;
     }
 
-    getContestantName(gameHash, sessionHash){
-        if (!this.table[gameHash]) throw new Error("unknown game");
-        if (!this.table[gameHash][sessionHash]) throw new Error("unknown session");
-        return this.table[gameHash][sessionHash].name;
+    getContestantName(sessionHash){
+        const tableEntry = this.knownSessions()[sessionHash];
+        if (!tableEntry) throw new Error("unknown session");
+        return tableEntry.name;
+    }
+
+    getRole(sessionHash){
+        const tableEntry = this.knownSessions()[sessionHash];
+        if (!tableEntry) throw new Error("unknown session");
+        return tableEntry.role;
     }
 }
 

@@ -36,7 +36,7 @@ class Server{
         this.setupReportCoverageEndpoint();
         this.setupPageRenderingEndpoints(cors);
         this.setupJIT(nidgetPreprocessor, jitFlag);
-        this.setupWebsocket(sessionManager, gameManager);
+        this.setupWebsocket(sessionManager, gameManager, gameManagerEndpoint);
     }
 
     start(port){
@@ -100,13 +100,13 @@ class Server{
         }
     }
 
-    setupWebsocket(sessionManager, gameManager){
+    setupWebsocket(sessionManager, gameManager, gameManagerEndpoint){
         const wss = new WebSocket.Server({server: this.index, path: "/game-service.ws"});
         wss.on('connection', async (ws, req) => {
             await sessionManager.applyTo(req);
 
             try {
-                await new Connection(ws, req, gameManager).connect();
+                await new Connection(ws, req, gameManager, gameManagerEndpoint).connect();
             } catch (err) {
                 console.log(err);
                 console.log("ERROR: " + err.message);

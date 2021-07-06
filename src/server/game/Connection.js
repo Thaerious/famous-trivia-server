@@ -20,10 +20,11 @@ class ParseError extends Error{
  * Create a new websocket connection to a running game.
  */
 class Connection{
-    constructor(ws, req, gameManager){
+    constructor(ws, req, gameManager, gameManagerEndpoint){
         this.req = req;
-        this.ws = ws;
-        this.gm = gameManager;
+        this.ws  = ws;
+        this.gm  = gameManager;
+        this.gme = gameManagerEndpoint;
     }
 
     /**
@@ -36,22 +37,11 @@ class Connection{
      * - If name, add player and listener
      */
     async connect(){
-        // The host has the session name set by 'connect-host' in game manager endpoint.
-        if (await this.req.session.get("role") === "host"){
-            this.name = constants.names.HOST;
-            await this.establishConnection(this.name);
-            if (this.game) {
-                this.send(this.game.getUpdate());
-            }
-        }
-        // The player has their session name set by 'join-game' in game manager endpoint
-        else if (await this.req.session.has("name") === true){
-            this.name = await this.req.session.get("name");
-            await this.establishConnection(this.name);
-            await this.addPlayer();
-        }
-        else {
-            this.ws.close();
+        await this.establishConnection();
+        if (this.role === "host"){
+            this.send(this.game.getUpdate());
+        } else {
+            this.game.joinPlayer(this.name);
         }
     }
 
@@ -62,20 +52,23 @@ class Connection{
      * @returns {Promise<void>}
      */
     async establishConnection(){
-        let hash = await this.req.session.get("game-hash");
-        this.game = await this.gm.getLive(hash);
+        let sessionHash = await this.req.session.get("game-hash");
 
-        if (!this.game){
+        try {
+            this.game = await this.gm.getLive(sessionHash);
+            this.name = await this.gme.getName(sessionHash);
+            this.role = await this.gme.getRole(sessionHash);
+        } catch (err){
             const msg = {
                 action : "error",
-                text : "Game not found"
+                text : err.toString()
             };
             this.ws.send(JSON.stringify(msg));
             this.ws.close();
             return;
         }
 
-        this.game.addListener(name, msg => {
+        this.game.addListener(this.name, msg => {
             this.ws.send(JSON.stringify(msg));
         });
 
@@ -95,30 +88,11 @@ class Connection{
         this.send({
             action : "connection_established",
             data : {
-                name : name
+                name : this.name,
+                role : this.role
             }
         });
         setInterval(()=>this.ping(), 15000);
-    }
-
-    async addPlayer(){
-        let name = await this.req.session.get("name");
-        if (!this.game){
-            const msg = {
-                action : "error",
-                text : "Game not found"
-            };
-            this.ws.send(JSON.stringify(msg));
-            this.ws.close();
-            return;
-        }
-
-        this.game.onInput({
-            action : "join",
-            data : {
-                name : name
-            }
-        });
     }
 
     ping(){
