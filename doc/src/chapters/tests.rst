@@ -60,10 +60,19 @@ handles require.
 Instructions
 ^^^^^^^^^^^^
 
-Run the index with this command (requires interactive mode -i):
+Running the server with coverage (requires interactive mode -i).
 
 ``npx c8 --temp-directory ./.c8_output/ node . -i``
 
-Create the report with this command:
+Create the report.
 
-``npx c8 report --temp-directory .c8_output/ --report-dir coverage/index -r html``
+``npx c8 report --temp-directory .c8_output/ --report-dir coverage/server -r html``
+
+Tests
+^^^^^
+
+Run tests with coverage.
+
+``npx c8 --temp-directory .c8_output mocha [TEST]``
+
+````

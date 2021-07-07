@@ -69,7 +69,6 @@ class GameManagerEndpoint {
                 return;
             }
 
-            console.log("GME " + action);
             let response = await this[action](req.body, req.session.hash);
             res.json(response.object);
             res.end();
@@ -106,8 +105,7 @@ class GameManagerEndpoint {
                 return new ErrorResponse("game already launched for token");
             }
 
-            await this.gameManager.setGame(user, game)
-            let gameHash = await this.gameManager.getGameHash(user);
+            let gameHash = await this.gameManager.setGame(user, game)
             this.table[gameHash] = {sessions: {}};
             return new SuccessGameHashResponse(gameHash);
         } catch (err) {
@@ -129,7 +127,7 @@ class GameManagerEndpoint {
             return new ErrorResponse(`missing parameter: token`);
         }
 
-        let token = body.token;
+        let token = body['token'];
 
         try {
             let user = await this.verify(token);

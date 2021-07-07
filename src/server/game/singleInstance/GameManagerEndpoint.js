@@ -69,18 +69,18 @@ class GameManagerEndpoint {
     async ['get-game-hash'](req, res) {
         if (req.session.has("game-hash")) {
             const gameHash = req.session.get("game-hash");
-            if (!await this.gameManager.hasLive(gameHash)){
-                res.json({
-                    result: 'rejected',
-                    reason: 'Contestant is not in a game.',
-                    eid : 1
-                });
-            } else {
-                res.json({
-                    'result': 'success',
-                    'game-hash': gameHash
-                });
-            }
+            // if (!await this.gameManager.hasLive(gameHash)){
+            //     res.json({
+            //         result: 'rejected',
+            //         reason: 'Contestant is not in a game.',
+            //         eid : 1
+            //     });
+            // } else {
+            //     res.json({
+            //         'result': 'success',
+            //         'game-hash': gameHash
+            //     });
+            // }
         } else {
             res.json({
                 result: 'rejected',

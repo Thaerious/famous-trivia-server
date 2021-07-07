@@ -21,11 +21,6 @@ class GameManager{
         return this.liveGames.size;
     }
 
-    clearAll(){
-        this.hosts = new Map(); // user -> hash
-        this.liveGames= new Map(); // hash -> game
-    }
-
     set timeAnswer(value){
         this.ta = value;
     }
@@ -41,29 +36,32 @@ class GameManager{
     /**
      * Associate a host with a game.
      * Generates a hash value to recall the game with.
-     * @param hostToken the user object returned from verify.js
+     * @param hostInfo the user object returned from verify.js
      * @param game a game object from Game.js
-     * @returns {boolean} true if a new game was created.
+     * @returns {string} the game-hash of the live game
      */
-    setGame(hostToken, liveGame) {
-        if (!hostToken?.userId) throw new Error("userId missing from user object");
-        if (!hostToken?.userName) throw new Error("userId missing from user object");
+    setGame(hostInfo, liveGame) {
+        if (!hostInfo?.userId) throw new Error("userId missing from user object");
+        if (!hostInfo?.userName) throw new Error("userName missing from user object");
+        if (this.hosts.has(hostInfo.userId)) throw new Error("duplicate host key");
 
-        let hash = crypto.randomBytes(20).toString('hex');
-        this.liveGames.set(hash, liveGame);
+        let gameHash = crypto.randomBytes(20).toString('hex');
+        this.liveGames.set(gameHash, liveGame);
 
-        liveGame.times.ANSWER = this.ta ?? config.TIMES.ANSWER;
-        liveGame.times.BUZZ = this.tb ?? config.TIMES.BUZZ;
+        liveGame.times.ANSWER          = this.ta ?? config.TIMES.ANSWER;
+        liveGame.times.BUZZ            = this.tb ?? config.TIMES.BUZZ;
         liveGame.times.MULTIPLE_CHOICE = this.tm ?? config.TIMES.MULTIPLE_CHOICE;
-        this.hosts.set(hostToken.userId, {hash:hash, name:hostToken.userName});
+
+        this.hosts.set(hostInfo.userId, {hash:gameHash, name:hostInfo.userName});
+        return gameHash;
     }
 
     /**
      * True if the game has been saved for the given host.
-     * @param hostToken the user object returned from verify.js
+     * @param hostInfo the user object returned from verify.js
      */
-    hasGame(hostToken) {
-        return this.hosts.has(hostToken.userId);
+    hasGame(hostInfo) {
+        return this.hosts.has(hostInfo.userId);
     }
 
     /**
@@ -71,21 +69,22 @@ class GameManager{
      * @param hostToken the user object returned from verify.js
      * @returns {Promise<unknown>}
      */
-    getGame(hostToken) {
-        const hash = this.hosts.get(hostToken.userId).hash;
-        return this.liveGames.get(hash);
+    getGame(hostInfo) {
+        const tableEntry = this.hosts.get(hostInfo.userId);
+        if (!tableEntry) throw new Error("no game associated with host");
+        return this.liveGames.get(tableEntry.hash);
     }
 
     /**
      * Remove a hosted game from the db.
-     * @param hostToken the user object returned from verify.js
+     * @param hostInfo the user object returned from verify.js
      * @returns {boolean}
      */
-    deleteGame(hostToken) {
-        const hash = this.hosts.get(hostToken.userId).hash;
-        if (!this.hasGame(hostToken)) return false;
+    deleteGame(hostInfo) {
+        if (!this.hosts.get(hostInfo.userId)) return false;
+        const hash = this.hosts.get(hostInfo.userId).hash;
         this.liveGames.delete(hash);
-        this.hosts.delete(hostToken.userId);
+        this.hosts.delete(hostInfo.userId);
         return true;
     }
 
@@ -94,8 +93,8 @@ class GameManager{
      * @param hostToken the user object returned from verify.js
      * @returns {Promise<unknown>}
      */
-    getGameHash(hostToken) {
-        return this.hosts.get(hostToken.userId)?.hash;
+    getGameHash(hostInfo) {
+        return this.hosts.get(hostInfo.userId)?.hash;
     }
 
     /**
@@ -107,15 +106,6 @@ class GameManager{
      */
     getLive(gameHash){
         return this.liveGames.get(gameHash);
-    }
-
-    /**
-     * Determine if 'gameHash' currently refers to a live game.
-     * @param gameHash
-     * @returns {boolean}
-     */
-    hasLive(gameHash){
-        return this.liveGames.has(gameHash);
     }
 }
 
