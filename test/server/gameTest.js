@@ -28,10 +28,11 @@ describe(`Player joins game before it has started, host selects question, it's a
         let game = newGame();
 
         it(`Adam joins game`, ()=> {
-            game.onInput({action: "join", data: {name: "Adam"}});
+            game.joinPlayer("Adam");
         });
 
         it(`Host starts game`, ()=> {
+            console.log(game.getUpdate());
             game.onInput({action: "start"});
             assert.strictEqual(game.getUpdate().data.state, 4);
         });
@@ -39,7 +40,8 @@ describe(`Player joins game before it has started, host selects question, it's a
         it(`Adam is the current player`, ()=> {
             assert.strictEqual(game.getUpdate().data.model.round.current_player, "Adam");
         });
-
+        console.clear();
+        console.log(game.getUpdate());
         it(`Host selects question`, ()=> {
             game.onInput({action: "select", data: {col: 0, row: 0}, player: "@HOST"});
             assert.strictEqual(game.getUpdate().data.state, 5);
@@ -67,7 +69,7 @@ describe(`Player joins game after it has started, host selects question, it's ac
         });
 
         it(`Adam joins game`, ()=> {
-            game.onInput({action: "join", data: {name: "Adam"}});
+            game.joinPlayer("Adam");
         });
 
         it(`Adam is the current player`, ()=> {
@@ -94,7 +96,7 @@ describe(`Player joins game after it has started, host selects question, it's ac
 describe(`One player in state 6 (picked a question), answer rejected`, () => {
     describe('situation setup', function () {
         let game = newGame();
-        game.onInput({action: "join", data: {name: "Adam"}});
+        game.joinPlayer("Adam");
         game.onInput({action: "start"});
         game.onInput({action: "select", data: {col: 0, row: 1}, player: "@HOST"});
         game.onInput({action: "continue", player: "@HOST"});
@@ -117,9 +119,9 @@ describe(`Game Mock-Up`, () => {
     });
 
     describe('Add 3 players to game', function () {
-        game.onInput({action: "join", data: {name: "Adam"}});
-        game.onInput({action: "join", data: {name: "Beth"}});
-        game.onInput({action: "join", data: {name: "Charles"}});
+        game.joinPlayer("Adam");
+        game.joinPlayer("Beth");
+        game.joinPlayer("Charles");
 
         it('has 3 players', function () {
             let update = game.getUpdate().data;
@@ -426,7 +428,7 @@ describe(`Game Mock-Up`, () => {
 
     describe(`Player joins (state 4) while waiting for question pick`, function () {
         it(`player joins`, function () {
-            game.onInput({action: "join", data: {name: "Dave"}});
+            game.joinPlayer("Dave");
             let update = game.getUpdate().data;
         });
 
@@ -448,7 +450,7 @@ describe(`Game Mock-Up`, () => {
 
     describe(`Player joins with same name (not changes made to game)`, function () {
         it(`player joins`, function () {
-            game.onInput({action: "join", data: {name: "Dave"}});
+            game.joinPlayer("Dave");
             let update = game.getUpdate().data;
         });
 
