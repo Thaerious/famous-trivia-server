@@ -1,5 +1,5 @@
 import fs from 'fs';
-import GameDescriptionModel from "../../../client/modules/GameDescriptionModel.js";
+import SCHEMA_CONSTANTS from "../../../json_schema/schema_constants.js";
 
 class GameModel {
     constructor(model) {
@@ -27,9 +27,9 @@ class GameModel {
         this.roundIndex = -1;
 
         for(let roundModel of this.model.rounds){
-            if (roundModel.type === GameDescriptionModel.questionType.MULTIPLE_CHOICE) {
+            if (roundModel.type ===  SCHEMA_CONSTANTS.MULTIPLE_CHOICE) {
                 this.rounds.push(new MultipleChoiceModel(roundModel));
-            } else if (roundModel.type === GameDescriptionModel.questionType.CATEGORY) {
+            } else if (roundModel.type ===  SCHEMA_CONSTANTS.CATEGORY) {
                 this.rounds.push(new JeopardyModel(this, roundModel));
             }
         }

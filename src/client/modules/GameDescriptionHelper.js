@@ -6,18 +6,7 @@
  * For a the game instance model, see GameModel.
  */
 
-class GameDescriptionModel {
-    init(name = "Game Name") {
-        this.currentRound = 0;
-
-        this.gameModel = {
-            name: name,
-            rounds: []
-        };
-
-        this.addCategoryRound();
-        return this;
-    }
+class GameDescriptionHelper {
 
     set name(string) {
         this.gameModel.name = string;
@@ -66,44 +55,58 @@ class GameDescriptionModel {
         if (this.currentRound >= this.roundCount) this.currentRound = this.roundCount - 1;
     }
 
-    addMultipleChoiceRound(){
-        let round = {
-            type: GameDescriptionModel.questionType.MULTIPLE_CHOICE,
-            question : "",
-            answers : ["", "", "", "", "", ""],
-            values : ["false", "false", "false", "false", "false", "false"],
-            bonus : 0
-        };
-
-        this.gameModel.rounds.push(round);
-        return round;
+    /**
+     * Add a deep copy of 'roundObject' to the end of the rounds list.
+     *
+     * On using JSON for deepcopy:
+     * This only works if you don't need to clone functions, or have undefined values. JSON will ignore all
+     * functions and undefined values.
+     * @param {object} roundObject
+     */
+    addRound(roundObject) {
+        const deepCopy = JSON.parse(JSON.stringify(roundObject));
+        console.log(deepCopy);
+        this.gameModel.rounds.push(deepCopy);
     }
 
-    addCategoryRound() {
-        let round = {
-            type: GameDescriptionModel.questionType.CATEGORY,
-            column: []
-        };
-
-        for (let i = 0; i < 6; i++) {
-            round.column[i] = {
-                category: "",
-                cell: []
-            }
-
-            for (let j = 0; j < 5; j++) {
-                round.column[i].cell[j] = {
-                    value: (j + 1) * 100,
-                    type: "text",
-                    q: "",
-                    a: ""
-                }
-            }
-        }
-
-        this.gameModel.rounds.push(round);
-        return round;
-    }
+    // addMultipleChoiceRound(){
+    //     let round = {
+    //         type:  SCHEMA_CONSTANTS.MULTIPLE_CHOICE,
+    //         question : "",
+    //         answers : ["", "", "", "", "", ""],
+    //         values : ["false", "false", "false", "false", "false", "false"],
+    //         bonus : 0
+    //     };
+    //
+    //     this.gameModel.rounds.push(round);
+    //     return round;
+    // }
+    //
+    // addCategoryRound() {
+    //     let round = {
+    //         type:  SCHEMA_CONSTANTS.CATEGORY,
+    //         column: []
+    //     };
+    //
+    //     for (let i = 0; i < 6; i++) {
+    //         round.column[i] = {
+    //             category: "",
+    //             cell: []
+    //         }
+    //
+    //         for (let j = 0; j < 5; j++) {
+    //             round.column[i].cell[j] = {
+    //                 value: (j + 1) * 100,
+    //                 type: "text",
+    //                 q: "",
+    //                 a: ""
+    //             }
+    //         }
+    //     }
+    //
+    //     this.gameModel.rounds.push(round);
+    //     return round;
+    // }
 
     get roundCount() {
         return this.gameModel.rounds.length;
@@ -146,9 +149,4 @@ class GameDescriptionModel {
     }
 }
 
-GameDescriptionModel.questionType = {
-    CATEGORY : "categorical",
-    MULTIPLE_CHOICE : "multiple_choice"
-};
-
-export default GameDescriptionModel;
+export default GameDescriptionHelper;

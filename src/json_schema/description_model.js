@@ -1,3 +1,5 @@
+import SCHEMA_CONSTANTS from "./schema_constants";
+
 const root = {
     "id": "trivia",
     "type": "object",
@@ -25,7 +27,7 @@ const category = {
     "properties": {
         "type": {
             "type": "string",
-            "enum": ["categorical"]
+            "enum": [SCHEMA_CONSTANTS.CATEGORY]
         },
         "column": {
             "type": "array",
@@ -74,7 +76,7 @@ const multipleChoice = {
     "properties": {
         "type": {
             "type": "string",
-            "enum": ["multiple-choice"]
+            "enum": [SCHEMA_CONSTANTS.MULTIPLE_CHOICE]
         },
         "bonus": {"type": "integer"},
         "correct-answer": {"type": "integer"},

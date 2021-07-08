@@ -3,7 +3,7 @@ import Authenticate from "./modules/Authenticate.js";
 import Menu from "./nidgets/MenuContainer.js";
 import QuestionPane from "./nidgets/QuestionPane.js";
 import EditorPane from "./modules/EditorPane.js";
-import GameDescriptionModel from "./modules/GameDescriptionModel";
+import GameDescriptionHelper from "./modules/GameDescriptionHelper";
 import setupSizeListener from "./modules/SetupSizeListener";
 
 let fileOps = new FileOps();
@@ -40,11 +40,12 @@ async function setup(){
     }
 
     let file = await fileOps.get(window.parameters.fileId);
-    let model = new GameDescriptionModel(fileOps).set(JSON.parse(file.body));
-    window.model = model;
+    let gameDescriptionHelper = new GameDescriptionHelper();
+    gameDescriptionHelper.set(JSON.parse(file.body))
+    window.gameDescriptionHelper = gameDescriptionHelper;
 
-    document.querySelector("#game-name").textContent = model.name;
-    editorPane = new EditorPane(model, fileOps, window.parameters.fileId);
+    document.querySelector("#game-name").textContent = gameDescriptionHelper.name;
+    editorPane = new EditorPane(gameDescriptionHelper, fileOps, window.parameters.fileId);
     window.editorPane = editorPane;
 
     let end = new Date();

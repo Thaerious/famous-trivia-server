@@ -1,10 +1,12 @@
 import Picker from "./modules/Picker.js";
 import FilePicker from "./modules/FilePicker.js";
-import GameDescriptionModel from "./modules/GameDescriptionModel.js";
+import GameDescriptionHelper from "./modules/GameDescriptionHelper.js";
 import FileOps from "./modules/FileOps.js";
 import Parameters from "./modules/Parameters.js";
 import FileList from "./modules/FileList.js";
 import GameManagerService from "./modules/GameManagerService.js";
+import emptyRoot from "../json_schema/empty_root.js";
+import emptyCategory from "../json_schema/empty_categorical.js";
 
 let fileOps = new FileOps();
 const gameManagerService = new GameManagerService();
@@ -69,9 +71,12 @@ function addMenuListeners() {
 
     document.querySelector("#create").addEventListener("click", async (e) => {
         busyBox.classList.remove("hidden");
-        let gameDescriptionModel = new GameDescriptionModel().init("Game Name");
+        let gameDescriptionHelper = new GameDescriptionHelper();
+        gameDescriptionHelper.set(emptyRoot);
+        gameDescriptionHelper.addRound(emptyCategory);
+        gameDescriptionHelper.name = "New Game";
         let fp = await fileOps.create();
-        await fileOps.setBody(fp, JSON.stringify(gameDescriptionModel.get(), null, 2));
+        await fileOps.setBody(fp, JSON.stringify(gameDescriptionHelper.get(), null, 2));
         window.location = "editor.ejs?action=load&fileId=" + fp;
     });
 

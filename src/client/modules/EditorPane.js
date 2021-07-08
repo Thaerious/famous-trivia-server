@@ -1,4 +1,6 @@
-import GameDescriptionModel from "./GameDescriptionModel.js";
+import emptyCategory from "../../json_schema/empty_categorical.js";
+import emptyMC from "../../json_schema/empty_mulitple_choice.js";
+import SCHEMA_CONSTANTS from "../../json_schema/schema_constants.js";
 
 const DOM = {/* see EditorPane.constructor */};
 
@@ -38,7 +40,6 @@ class MCAnswerCtrl {
     }
 
     static textList(event) {
-        console.log(event);
         let index = parseInt(event.detail.index);
         MCAnswerCtrl.model.answers[index] = event.detail.text;
         MCAnswerCtrl.saveCB();
@@ -51,7 +52,6 @@ class MCAnswerCtrl {
     }
 
     static bonusList(event) {
-        console.log(event);
         MCAnswerCtrl.model.bonus = event.detail.value;
         MCAnswerCtrl.saveCB();
     }
@@ -246,8 +246,8 @@ class JeopardyBoardCtrl {
 }
 
 class EditorPane {
-    constructor(model, fileOps, fileId) {
-        this.model = model;
+    constructor(gameDescriptionHelper, fileOps, fileId) {
+        this.gameDescriptionHelper = gameDescriptionHelper;
         this.fileOps = fileOps;
         this.fileId = fileId;
         this.DOM = DOM;
@@ -271,33 +271,33 @@ class EditorPane {
         DOM.buttonShowQuestion.hide();
 
         DOM.menu.addEventListener("menu-download", () => {
-            const json = JSON.stringify(this.model.gameModel, null, 2);
+            const json = JSON.stringify(this.gameDescriptionHelper.get, null, 2);
             const blob = new Blob([json], {type: "application/json"});
             const url = window.URL.createObjectURL(blob);
             const anchor = document.querySelector("#download-anchor");
             anchor.href = url;
-            anchor.download = this.model.name;
+            anchor.download = this.gameDescriptionHelper.name;
             anchor.click();
         });
 
         DOM.menu.addEventListener("menu-move-right", () => {
-            if (this.model.currentRound >= this.model.roundCount - 1) return;
-            this.model.setRoundIndex(this.model.currentRound, this.model.currentRound + 1);
-            this.model.incrementRound();
+            if (this.gameDescriptionHelper.currentRound >= this.gameDescriptionHelper.roundCount - 1) return;
+            this.gameDescriptionHelper.setRoundIndex(this.gameDescriptionHelper.currentRound, this.gameDescriptionHelper.currentRound + 1);
+            this.gameDescriptionHelper.incrementRound();
             this.updateView();
             this.onSave();
         });
 
         DOM.menu.addEventListener("menu-move-left", () => {
-            if (this.model.currentRound <= 0) return;
-            this.model.setRoundIndex(this.model.currentRound, this.model.currentRound - 1);
-            this.model.decrementRound();
+            if (this.gameDescriptionHelper.currentRound <= 0) return;
+            this.gameDescriptionHelper.setRoundIndex(this.gameDescriptionHelper.currentRound, this.gameDescriptionHelper.currentRound - 1);
+            this.gameDescriptionHelper.decrementRound();
             this.updateView();
             this.onSave();
         });
 
         DOM.menu.addEventListener("menu-remove-round", () => {
-            this.model.removeRound();
+            this.gameDescriptionHelper.removeRound();
             this.updateTriangleView();
             this.onSave();
             this.updateView();
@@ -308,36 +308,36 @@ class EditorPane {
         });
 
         DOM.menu.addEventListener("menu-increase-value", () => {
-            this.model.increaseValue();
+            this.gameDescriptionHelper.increaseValue();
             this.onSave();
             this.updateView();
         });
 
         DOM.menu.addEventListener("menu-decrease-value", () => {
-            this.model.decreaseValue();
+            this.gameDescriptionHelper.decreaseValue();
             this.onSave();
             this.updateView();
         });
 
         DOM.menu.addEventListener("menu-add-jeopardy", () => {
-            this.model.addCategoryRound();
+            this.gameDescriptionHelper.addRound(emptyCategory);
             this.updateView();
             this.onSave();
         });
 
         DOM.menu.addEventListener("menu-add-mc", () => {
-            this.model.addMultipleChoiceRound();
+            this.gameDescriptionHelper.addRound(emptyMC);
             this.updateView();
             this.onSave();
         });
 
         DOM.triangleRight.addEventListener("click", () => {
-            this.model.incrementRound();
+            this.gameDescriptionHelper.incrementRound();
             this.updateView();
         });
 
         DOM.triangleLeft.addEventListener("click", () => {
-            this.model.decrementRound();
+            this.gameDescriptionHelper.decrementRound();
             this.updateView();
         });
 
@@ -358,8 +358,8 @@ class EditorPane {
         // game-board change category text
         DOM.gameBoard.addEventListener("header-update", event => {
             let col = event.detail.col;
-            this.model.getColumn(col).category = event.detail.value;
-            this.model.getColumn(col).fontSize = event.detail.fontSize;
+            this.gameDescriptionHelper.getColumn(col).category = event.detail.value;
+            this.gameDescriptionHelper.getColumn(col).fontSize = event.detail.fontSize;
             this.onSave();
         });
 
@@ -376,7 +376,7 @@ class EditorPane {
 
             JeopardyCtrl.run(
                 'question',
-                this.model.getCell(row, col),
+                this.gameDescriptionHelper.getCell(row, col),
                 () => this.onSave(),
                 () => this.updateView()
             );
@@ -388,7 +388,7 @@ class EditorPane {
     loadURLState(){
 
         if (window.parameters.round) {
-            this.model.setRound(window.parameters.round);
+            this.gameDescriptionHelper.setRound(window.parameters.round);
         } else {
             window.parameters.round = 0;
             pushParameters();
@@ -404,7 +404,7 @@ class EditorPane {
                 const col = window.parameters.col;
                 JeopardyCtrl.run(
                     'question',
-                    this.model.getCell(row, col),
+                    this.gameDescriptionHelper.getCell(row, col),
                     () => this.onSave(),
                     () => this.updateView()
                 );
@@ -413,7 +413,7 @@ class EditorPane {
                 const col = window.parameters.col;
                 JeopardyCtrl.run(
                     'answer',
-                    this.model.getCell(row, col),
+                    this.gameDescriptionHelper.getCell(row, col),
                     () => this.onSave(),
                     () => this.updateView()
                 );
@@ -422,21 +422,21 @@ class EditorPane {
             }
         } else {
             if (window.parameters.subtype === 'answer') {
-                MCAnswerCtrl.run(this.model.getRound(), () => this.onSave());
+                MCAnswerCtrl.run(this.gameDescriptionHelper.getRound(), () => this.onSave());
             } else if (window.parameters.subtype === 'question') {
-                MCQuestionCtrl.run(this.model.getRound(), () => this.onSave());
+                MCQuestionCtrl.run(this.gameDescriptionHelper.getRound(), () => this.onSave());
             }
         }
     }
 
     async rename(newName) {
-        this.model.name = newName;
+        this.gameDescriptionHelper.name = newName;
         await this.fileOps.rename(this.fileId, newName + ".json");
         await this.onSave();
     }
 
     async onSave() {
-        await this.fileOps.setBody(this.fileId, JSON.stringify(this.model.get(), null, 2));
+        await this.fileOps.setBody(this.fileId, JSON.stringify(this.gameDescriptionHelper.get(), null, 2));
     }
 
     hideNavigation() {
@@ -445,25 +445,25 @@ class EditorPane {
     }
 
     updateView(model) {
-        model = model ?? this.model;
+        model = model ?? this.gameDescriptionHelper;
         this.updateTriangleView();
 
         window.parameters.round = model.currentRound;
 
-        if (model.getRound().type === GameDescriptionModel.questionType.CATEGORY){
+        if (model.getRound().type ===  SCHEMA_CONSTANTS.CATEGORY){
             JeopardyBoardCtrl.run(model);
         }
-        if (model.getRound().type === GameDescriptionModel.questionType.MULTIPLE_CHOICE){
-            MCQuestionCtrl.run(this.model.getRound(), () => this.onSave());
+        if (model.getRound().type ===  SCHEMA_CONSTANTS.MULTIPLE_CHOICE){
+            MCQuestionCtrl.run(this.gameDescriptionHelper.getRound(), () => this.onSave());
         }
     }
 
     updateTriangleView() {
         DOM.triangleLeft.classList.remove("hidden");
         DOM.triangleRight.classList.remove("hidden");
-        if (this.model.currentRound === 0) DOM.triangleLeft.classList.add("hidden");
-        if (this.model.currentRound >= this.model.roundCount - 1) DOM.triangleRight.classList.add("hidden");
-        DOM.roundLabel.textContent = "Round " + (this.model.currentRound + 1);
+        if (this.gameDescriptionHelper.currentRound === 0) DOM.triangleLeft.classList.add("hidden");
+        if (this.gameDescriptionHelper.currentRound >= this.gameDescriptionHelper.roundCount - 1) DOM.triangleRight.classList.add("hidden");
+        DOM.roundLabel.textContent = "Round " + (this.gameDescriptionHelper.currentRound + 1);
     }
 }
 
