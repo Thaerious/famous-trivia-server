@@ -2,7 +2,7 @@
 
 import assert from 'assert';
 import GameManager from "../../src/server/game/GameManager.js";
-import GameModel from "../../src/server/game/GameModel.js";
+import GameModel from "../../src/server/game/model/GameModel.js";
 import {Game} from "../../src/server/game/Game.js";
 import fs from "fs";
 

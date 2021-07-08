@@ -37,6 +37,10 @@ class GameDescriptionModel {
         return this.gameModel;
     }
 
+    toJSON(){
+        return JSON.stringify(this.get, null, 2);
+    }
+
     getRound(index) {
         index = index ?? this.currentRound;
         return this.gameModel.rounds[index];

@@ -16,7 +16,7 @@
             {
               "value": 200,
               "type": "text",
-              "q": "I HAVE BRANCHES\nBUT NO TRUNK OR LEAVES",
+              "q": "I HAVE BRANCHES\nBUT NO TRUNK OR LEAVES",
               "a": "A BANK"
             },
             {
@@ -100,7 +100,7 @@
             {
               "value": 400,
               "type": "text",
-              "q": "I PUT YOU ON THE BACK\nOF MY BIKE\nAND WE WENT RIDING \nDOWN BY\nOLD MAN JOHNSON'S FARM",
+              "q": "I PUT YOU ON THE BACK\nOF MY BIKE\nAND WE WENT RIDING \nDOWN BY\nOLD MAN JOHNSON'S FARM",
               "a": "GIRL IN A\nRASPBERRY BERET"
             },
             {
@@ -160,7 +160,7 @@
             {
               "value": 200,
               "type": "text",
-              "q": "NAMED AFTER THE LONDON\nTRAIN STATION\nHE WAS FOUND IN",
+              "q": "NAMED AFTER THE LONDON\nTRAIN STATION\nHE WAS FOUND IN",
               "a": "PADDINGTON BEAR"
             },
             {
@@ -172,13 +172,13 @@
             {
               "value": 400,
               "type": "text",
-              "q": "THIS SLEEPY \nBROWN SLOTH BEAR\nRESIDES IN A FOREST IN\nINDIA",
+              "q": "THIS SLEEPY \nBROWN SLOTH BEAR\nRESIDES IN A FOREST IN\nINDIA",
               "a": "BALOO"
             },
             {
               "value": 500,
               "type": "text",
-              "q": "THIS INUIT PLOAR BEAR\nDECIDES IF HUNTERS WILL\nBE SUCCESSFUL\nON THEIR HUNTS",
+              "q": "THIS INUIT PLOAR BEAR\nDECIDES IF HUNTERS WILL\nBE SUCCESSFUL\nON THEIR HUNTS",
               "a": "NANOOK"
             }
           ],
@@ -243,7 +243,7 @@
             {
               "value": 600,
               "type": "text",
-              "q": "A BEER IS CALLED THIS\nWHEN THE HOPS ARE ADDED\nDURING THE FERMENTATION PROCESS",
+              "q": "A BEER IS CALLED THIS\nWHEN THE HOPS ARE ADDED\nDURING THE FERMENTATION PROCESS",
               "a": "DRY HOPPED"
             },
             {
@@ -255,7 +255,7 @@
             {
               "value": 1000,
               "type": "text",
-              "q": "WHAT INGREDIENT DOES BUDWEISER USE\n THAT IS NOT INCLUDED \nIN THE\nGERMAN PURITY LAWS",
+              "q": "WHAT INGREDIENT DOES BUDWEISER USE\n THAT IS NOT INCLUDED \nIN THE\nGERMAN PURITY LAWS",
               "a": "RICE"
             }
           ],
@@ -273,13 +273,13 @@
             {
               "value": 400,
               "type": "text",
-              "q": "THE TERM MARSUPIUM\nREFERS TO THIS",
+              "q": "THE TERM MARSUPIUM\nREFERS TO THIS",
               "a": "POUCH"
             },
             {
               "value": 600,
               "type": "text",
-              "q": "AMONG MARSUPIALS \nTHE YAPOK,\nA TYPE OF OPPOSUM,\n IS UNIQUE FOR\nLIVING IN THIS HABITAT",
+              "q": "AMONG MARSUPIALS \nTHE YAPOK,\nA TYPE OF OPPOSUM,\n IS UNIQUE FOR\nLIVING IN THIS HABITAT",
               "a": "AQUATIC"
             },
             {
@@ -291,7 +291,7 @@
             {
               "value": 1000,
               "type": "text",
-              "q": "THE RECENTLY EXINCT\nTHYLACINE IS COMMONLY \nKNOWN AS THIS",
+              "q": "THE RECENTLY EXINCT\nTHYLACINE IS COMMONLY \nKNOWN AS THIS",
               "a": "TASMANIAN TIGER\nTASMANIAN WOLF"
             }
           ],
@@ -345,7 +345,7 @@
             {
               "value": 400,
               "type": "text",
-              "q": "KNOWLEDGE \nOR INFORMATION \nBASED ON REAL \nOCCURRENCES",
+              "q": "KNOWLEDGE \nOR INFORMATION \nBASED ON REAL \nOCCURRENCES",
               "a": "FACT"
             },
             {
@@ -363,7 +363,7 @@
             {
               "value": 1000,
               "type": "text",
-              "q": "YOU DO THIS IN \nYOUR POCKETS OR IN\nA POND",
+              "q": "YOU DO THIS IN \nYOUR POCKETS OR IN\nA POND",
               "a": "FISH"
             }
           ],
@@ -375,7 +375,7 @@
             {
               "value": 200,
               "type": "text",
-              "q": "FORMED FROM THE \nALMALGAMATION OF\nGALT, PRESTON, AND HESPELER",
+              "q": "FORMED FROM THE \nALMALGAMATION OF\nGALT, PRESTON, AND HESPELER",
               "a": "CAMBRIDGE"
             },
             {
@@ -656,6 +656,19 @@
             }
           ]
         }
+      ]
+    },
+    {
+      "type": "multiple-choice",
+      "bonus": 100,
+      "correct-answer": 0,
+      "question" : "which is what",
+      "options" : [
+        "what",
+        "where",
+        "who",
+        "when",
+        "why"
       ]
     }
   ]

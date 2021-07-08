@@ -69,9 +69,9 @@ function addMenuListeners() {
 
     document.querySelector("#create").addEventListener("click", async (e) => {
         busyBox.classList.remove("hidden");
-        let model = new GameDescriptionModel().init("Game Name");
+        let gameDescriptionModel = new GameDescriptionModel().init("Game Name");
         let fp = await fileOps.create();
-        await fileOps.setBody(fp, JSON.stringify(model.get(), null, 2));
+        await fileOps.setBody(fp, JSON.stringify(gameDescriptionModel.get(), null, 2));
         window.location = "editor.ejs?action=load&fileId=" + fp;
     });
 

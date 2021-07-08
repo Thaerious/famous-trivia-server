@@ -1,4 +1,4 @@
-import GameModel from "./GameModel.js";
+import GameModel from "./model/GameModel.js";
 import constants from "../../config.js";
 import crypto from "crypto";
 

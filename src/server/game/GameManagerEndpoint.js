@@ -2,7 +2,7 @@
 
 import verify from '../mechanics/verify.js';
 import {Game} from './Game.js';
-import GameModel from './GameModel.js';
+import GameModel from './model/GameModel.js';
 import NameValidator from "./NameValidator.js";
 import NameInUseResponse from "./responses/NameInUseResponse.js";
 import InvalidNameResponse from "./responses/InvalidNameResponse.js";

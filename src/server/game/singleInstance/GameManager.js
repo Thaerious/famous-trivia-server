@@ -2,7 +2,7 @@
 
 import crypto from 'crypto';
 import {Game} from '../Game.js';
-import GameModel from "../GameModel.js";
+import GameModel from "../model/GameModel.js";
 
 class GameManager{
 
