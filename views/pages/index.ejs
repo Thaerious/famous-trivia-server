@@ -8,15 +8,13 @@
 <body>
     <%- include('../partials/nidget-templates'); %>
 
-    <popup-panel>
-        <link rel="stylesheet" href="styles/generated/index.css">
-        <div class="blue">
-            I am a popup panel!
-        </div>
-        <div class="blue">
-            I am a popup panel too!
-        </div>
-    </popup-panel>
+    <nidget-radio-group>
+        <nidget-radio-button id="option1"></nidget-radio-button>
+        <nidget-radio-button id="option2"></nidget-radio-button>
+        <nidget-radio-button nidget-disabled="true" id="option3" selected="false"></nidget-radio-button>
+        <nidget-radio-button id="option4"></nidget-radio-button>
+    </nidget-radio-group>
+
 </body>
 </html>
 
