@@ -1,46 +1,112 @@
-=======
+=================
 Nidgets
-=======
+=================
+The term "Nidget" stands for "Not-a-Widget", which is a little tongue in cheek as it is a widget.
+A Widget (and a Nidget) being a reusable GUI element.  I chose Nidget as the term Widget is used quite often
+already.
 
-Sizing Components
------------------
+A Nidget consists of 3 files:
 
-The *style/components/_page_container.scss* file contains variables to dynamically size
-components.  Place all components inside the '#page-container' and import the 'setupSizeListener'
-into the .js file.  This will add resize listener that dynamically updates the 'height-value', 'width-value'
-and 'base-font-size' variables.  Variables can be sized to these variables using 'calc'.  It will always keep the
-#page-container at a 9:16 aspect ratio.
+* A template .ejs file.
+* A style file (either .css or .scss).
+* A .js file.
 
-JavaScript Example.::
+Nidgets are a solution to automatically reusing template elements.  A template element holds HTML code
+without actually inserting it into the DOM.  Each nidget template lives in it's own .ejs file located in the
+``/views/nidgets/`` directory.
 
-    import setupSizeListener from "./modules/SetupSizeListener";
-    setupSizeListener();
+**Template File** (/views/nidgets/check-box.ejs)::
 
-CSS Example.::
+    <template id="check-box-template">
+        <link rel="stylesheet" href="styles/generated/check_box.css">
+        <div id="outer">
+            <div id="inner"></div>
+        </div>
+    </template>
 
-    #css {
-      width: calc(0.08 * var(--width-value));
-      height: calc(0.08 * var(--width-value));
-      font-size: calc(1.2 * var(--base-font-size));
+The template name must match the .ejs filename with dashes between words, appended with *"-template"*.
+For example the "check-box-template" above would be located in the file *"check-box.ejs"*.
+The root element of a Nidget template must be the html *<template>* element.
+It's good practice to separate the template styling into it's own file with a stylesheet *<link>* element.
+
+**Style File** (/src/styles/check-box.scss)::
+
+    :host(check-box.hidden){
+        display: none;
     }
 
-* --height-value: 100vh;
-* --width-value: 16/9 * 100vh;
+    :host([nidget-disabled='true']){
+        #outer{
+            background-color: var(--ui-background-disabled);
+        }
+    }
+
+    #outer{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+
+        #inner{
+            position: absolute;
+        }
+    }
+
+You can access host CSS selectors with the *:host* pseudo-class function.  It is generally good practice
+to have the outermost element (besides <template>) contain the entirety of the encapsulating element.
+Then you can position all child elements according to this *#outer* element.  The file name of the
+style sheet is specified by the link (style) element in the template file.
+
+**JavaScript File** (/src/client/nidgets/check-box.js)::
+
+    import NidgetElement from "./NidgetElement.js";
+
+    class CheckBox extends NidgetElement {
+        constructor() {
+            super("check-box-template");
+        }
+    }
+
+    window.customElements.define('check-box', CheckBox);
+    export default CheckBox;
+
+The .js file must have the same name as the template (.ejs) file.  The name
+can be either camelCase for hyphen-delimited.  The constructor needs to invoke
+the super constructor, passing in the template id that was set in the template file.
+The custom element gets added to the window with the hyphenated version of the name.
+
+Processing Nidgets
+------------------
+While you could add Nidget imports manually, to prevent repetition a built
+`browserify <https://browserify.org/>`_ function
+is provided.  This will not only browserify (and babelify) the .ejs source file,
+it will also automatically inject Nidget template (.ejs) and script (.js) files.
+Perform the following steps.
+
+**Insert templates into the .ejs files (add to all root .ejs files)**::
+
+    <%- include('../partials/nidget-templates'); %>
+
+**Add the following to the Express index.**
+
+Generate the html and js pages.::
+
+    const nidgetPreprocessor = new NidgetPreprocessor(config.index.ejs_nidgets, config.index.nidget_scripts).setup();
+    await JITRender.render(nidgetPreprocessor);
+
+Setup the middleware to index Browserified .js files.::
+
+    app.get(config.index.jit_path, Express.static(config.index.public_scripts));
+
+Setup the middleware to serve rendered .ejs files.::
+
+    app.get("*.ejs", Express.static(config.index.pre_ejs,
+        {
+            setHeaders : (res, path, stat) => res.setHeader('Content-Type', 'text/html')
+        }
+    ));
 
 Information details on individual nidgets.
 
-Nidget Button
--------------
-
-``<nidget-button class="round">CLOSE</nidget-button>``
-
-* Requires a button style class.
-* * round (currently the only one available)
-* The host element .css needs to specify height and width.
-* The button will take it's text from the host element text.
-* The element utilized the following .css variables.
-
-CSS variables
-^^^^^^^^^^^^^
-
-* --ui-button-color: ###, ###, ###;
+.. include:: nidget-list.rst

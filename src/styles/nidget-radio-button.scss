@@ -2,10 +2,6 @@
   box-sizing: border-box;
 }
 
-:root {
-  --default-ui-button-color: rgb(128, 128, 128);
-}
-
 :host(nidget-radio-button.hidden) {
   display: none !important;
 }

@@ -17,13 +17,14 @@ class TextInput extends NidgetElement {
         const hint = this.getAttribute(TextInput.HINT_ATTRIBUTE);
         this.DOM['hint'].innerHTML = hint;
 
-        this.content = this.sourceInnerHTML;
+        this.content = this.textContent.trim();
+        this.innerHTML = "";
 
         this.addEventListener("focus", ()=>{
             this.DOM['content'].focus();
         });
 
-        this.parentElement.addEventListener("click", ()=>{
+        this.addEventListener("click", ()=>{
             this.DOM['hint'].innerHTML = "";
             this.DOM['content'].focus();
         });
@@ -39,7 +40,7 @@ class TextInput extends NidgetElement {
         });
 
         this.DOM['content'].addEventListener("keypress", (event)=>this.onKeypress(event));
-        this.DOM['content'].addEventListener("input", (event)=>this.onInput(event));
+        // this.DOM['content'].addEventListener("input", (event)=>this.onInput(event));
     }
 
     get content(){
@@ -63,24 +64,7 @@ class TextInput extends NidgetElement {
     }
 
     onInput(event){
-        if (this.filter === "") return;
-        const check = this.content.trim();
-        let r = check.match("^" + this.filter + "$");
-        if (!check.match("^" + this.filter + "$")){
-            this.content = this.prevContent;
-            this.setCaret(this.prevCaret);
-            event.stopPropagation();
-            event.preventDefault();
-        } else {
-            this.dispatchEvent(new CustomEvent(
-                "text-update",
-                {
-                    bubbles : true,
-                    composed : true,
-                    detail : {content : this.content}
-                }
-            ));
-        }
+        this.dispatchEvent(event);
     }
 
     onKeypress(event) {
