@@ -84,6 +84,7 @@ class Server{
             this.app.set('view engine', 'ejs');
 
             this.app.get('*.ejs', (req, res) => {
+                nidgetPreprocessor.setup();
                 let nidgetDependencies = nidgetPreprocessor.getTemplateDependencies(config.server.ejs_root + req.path);
                 res.render(`pages/${req.path}`, {
                     filename: Path.basename(req.path.slice(0, -4)),

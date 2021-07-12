@@ -22,16 +22,6 @@
   background-repeat: no-repeat;
   background-size: cover;
 
-  check-box, .answer {
-    top: calc((var(--index) * 12%) + 7.5%);
-  }
-
-  check-box {
-    position: absolute;
-    width: calc(0.06 * var(--height-value));
-    height: calc(0.06 * var(--height-value));
-    left: 4%;
-  }
 
   .answer {
     position: absolute;

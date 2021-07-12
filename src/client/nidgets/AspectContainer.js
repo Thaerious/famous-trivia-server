@@ -35,11 +35,11 @@ class AspectContainer extends NidgetElement {
         const target = aspectW / aspectH;
 
         if (ratio >= target) {
-            this.classList.add("vert-dominant");
-            this.classList.remove("horz-dominant");
+            this.classList.add("fill-vertical");
+            this.classList.remove("fill-horizontal");
         } else {
-            this.classList.remove("vert-dominant");
-            this.classList.add("horz-dominant");
+            this.classList.remove("fill-vertical");
+            this.classList.add("fill-horizontal");
         }
     }
 }

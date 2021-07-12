@@ -19,6 +19,13 @@ class NidgetPreprocessor {
         this.ejsNidgets = new Set(); // nidgets found in the template .ejs directory
     }
 
+    identifyNidget(nidgetName) {
+        nidgetName = this.validateNidgetName(nidgetName);
+        this.knownNidgets[nidgetName] = {
+            dependencies: new Set()
+        }
+    }
+
     /**
      * Look at all files in the module path to determine which nidgets will
      * be used.  Lists of nidget (js) dependencies are placed in the
@@ -26,28 +33,21 @@ class NidgetPreprocessor {
      * @returns {NidgetPreprocessor}
      */
     setup(){
+        /** look through .ejs files to identify nidgets (in templateFilePath directory)  */
         for (let file of fs.readdirSync(this.templateFilePath)){
             let nidgetName = file.substr(0, file.length - 4); // .ejs
-            nidgetName = this.validateNidgetName(nidgetName);
-            this.knownNidgets[nidgetName] = {
-                dependencies: new Set()
-            }
-
+            this.identifyNidget(nidgetName);
             this.ejsNidgets.add(nidgetName);
         }
 
+        /** look through .js files to identify nidgets (in templateFilePath directory)  */
         for (let file of fs.readdirSync(this.scriptFilePath)){
             let nidgetName = file.substr(0, file.length - 3); // .js
-            nidgetName = this.validateNidgetName(nidgetName);
-            if (this.knownNidgets[nidgetName]) continue;
-
-            this.knownNidgets[nidgetName] = {
-                dependencies: new Set()
-            }
+            this.identifyNidget(nidgetName);
         }
 
         for (let nidget in this.knownNidgets){
-            this.knownNidgets[nidget].dependencies.add(nidget);
+            this.knownNidgets[nidget].dependencies.add(nidget); // add self
             let filePath = this.templateFilePath + "/" + nidget + ".ejs";
             this.seekDependencies(filePath, this.knownNidgets[nidget].dependencies);
         }
@@ -57,8 +57,9 @@ class NidgetPreprocessor {
 
     /**
      * Ensure that the nidget name is in the correct format.
-     * The correct format consists of two or dash (-) separated words.
+     * The correct format consists of two or more dash (-) separated words.
      * Will attempt to convert camelCase to dash delimited.
+     * Converts camelcase names to dash delimited names.
      * @param nidgetName
      */
     validateNidgetName(nidgetName){
@@ -79,7 +80,7 @@ class NidgetPreprocessor {
     }
 
     /**
-     * Retrieve only the depencies that have a template file.
+     * Retrieve only the dependencies that have a template file.
      * This is used by the ejs renderer to determine which template files to include.
      * Browserify uses 'getDependencies' as it returns all dependencies.
      * @param filePath
