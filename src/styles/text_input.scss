@@ -22,7 +22,11 @@
   left: 0;
   top: 0;
   cursor: text;
-  line-height: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
 
   border: 2px solid black;
   border-radius: 5px;
@@ -36,11 +40,11 @@
     position: absolute;
     top: 0;
     left: 0;
-    height: calc(100% - 10px);
-    width: calc(100% - 10px);
-    margin: 5px;
+    height: 100%;
+    width: 100%;
     overflow: hidden;
     white-space: nowrap;
+    //vertical-align: center;
 
     &:focus {
       outline: none;
