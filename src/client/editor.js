@@ -5,6 +5,8 @@ import QuestionPane from "./nidgets/QuestionPane.js";
 import EditorPane from "./modules/EditorPane.js";
 import GameDescriptionHelper from "./modules/GameDescriptionHelper";
 import setupSizeListener from "./modules/SetupSizeListener";
+import emptyCategory from "../json_schema/empty_categorical.js";
+import emptyRoot from "../json_schema/empty_root";
 
 let fileOps = new FileOps();
 let model = null;
@@ -39,10 +41,16 @@ async function setup(){
         console.log(err);
     }
 
-    let file = await fileOps.get(window.parameters.fileId);
     let gameDescriptionHelper = new GameDescriptionHelper();
-    gameDescriptionHelper.set(JSON.parse(file.body))
-    window.gameDescriptionHelper = gameDescriptionHelper;
+
+    if (window.parameters.fileId) {
+        let file = await fileOps.get(window.parameters.fileId);
+        gameDescriptionHelper.set(JSON.parse(file.body))
+        window.gameDescriptionHelper = gameDescriptionHelper;
+    } else {
+        gameDescriptionHelper.set(emptyRoot);
+        gameDescriptionHelper.addRound(emptyCategory);
+    }
 
     document.querySelector("#game-name").textContent = gameDescriptionHelper.name;
     editorPane = new EditorPane(gameDescriptionHelper, fileOps, window.parameters.fileId);

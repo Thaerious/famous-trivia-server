@@ -8,240 +8,290 @@ const DOM = {/* see EditorPane.constructor */};
  * Multiple Choice Answer State Controller
  */
 class MCAnswerCtrl {
-    static run(model, saveCB) {
-        MCAnswerCtrl.model = model;
-        MCAnswerCtrl.saveCB = saveCB;
-
-        DOM.menuDecreaseValue.hide();
-        DOM.menuIncreaseValue.hide();
-        DOM.multipleChoicePane.show();
-        DOM.questionPane.hide();
-
-        for (let i = 0; i < 6; i++) {
-            DOM.multipleChoicePane.setText(i, model.answers[i]);
-            DOM.multipleChoicePane.setChecked(i, model.values[i]);
-        }
-
-        DOM.multipleChoicePane.setBonus(model.bonus);
-
-        DOM.triangleRight.addEventListener("click", MCAnswerCtrl.cleanup);
-        DOM.triangleLeft.addEventListener("click", MCAnswerCtrl.cleanup);
-        DOM.multipleChoicePane.addEventListener("answer-update", MCAnswerCtrl.textList);
-        DOM.multipleChoicePane.addEventListener("value-update", MCAnswerCtrl.valueList);
-        DOM.multipleChoicePane.addEventListener("bonus-update", MCAnswerCtrl.bonusList);
-        DOM.buttonShowQuestion.addEventListener("click", MCAnswerCtrl.questList);
-
-        DOM.buttonShowQuestion.show();
-        DOM.buttonShowAnswer.show();
-        DOM.buttonShowBoard.hide();
-
-        DOM.buttonShowQuestion.enable();
-        DOM.buttonShowAnswer.disable();
-    }
-
-    static textList(event) {
-        let index = parseInt(event.detail.index);
-        MCAnswerCtrl.model.answers[index] = event.detail.text;
-        MCAnswerCtrl.saveCB();
-    }
-
-    static valueList(event) {
-        let index = parseInt(event.detail.index);
-        MCAnswerCtrl.model.values[index] = event.detail.value;
-        MCAnswerCtrl.saveCB();
-    }
-
-    static bonusList(event) {
-        MCAnswerCtrl.model.bonus = event.detail.value;
-        MCAnswerCtrl.saveCB();
-    }
-
-    static questList(event) {
-        MCAnswerCtrl.saveCB();
-        MCAnswerCtrl.cleanup();
-        MCQuestionCtrl.run(MCAnswerCtrl.model, MCAnswerCtrl.saveCB);
-        window.parameters.subtype = "question";
-        pushParameters();
-    }
-
-    static cleanup() {
-        DOM.multipleChoicePane.hide();
-        DOM.multipleChoicePane.removeEventListener("answer-update", MCAnswerCtrl.textList);
-        DOM.multipleChoicePane.removeEventListener("value-update", MCAnswerCtrl.valueList);
-        DOM.multipleChoicePane.removeEventListener("bonus-update", MCAnswerCtrl.bonusList);
-        DOM.buttonShowQuestion.removeEventListener("click", MCAnswerCtrl.questList);
-        DOM.triangleRight.removeEventListener("click", MCAnswerCtrl.cleanup);
-        DOM.triangleLeft.removeEventListener("click", MCAnswerCtrl.cleanup);
-    }
-}
-
-/**
- * Multiple Choice Question State Controller
- */
-class MCQuestionCtrl {
-    static run(model, saveCB) {
-        window.parameters.type = "mc";
-        window.parameters.subtype = "question";
-        pushParameters();
-
-        MCQuestionCtrl.model = model;
-        MCQuestionCtrl.saveCB = saveCB;
-
-        DOM.menuDecreaseValue.hide();
-        DOM.menuIncreaseValue.hide();
-
-        DOM.questionPane.setText(model.question);
-        DOM.gameBoard.hide();
-        DOM.questionPane.show();
-
-        DOM.triangleRight.addEventListener("click", MCQuestionCtrl.cleanup);
-        DOM.triangleLeft.addEventListener("click", MCQuestionCtrl.cleanup);
-        DOM.questionPane.addEventListener("text-update", MCQuestionCtrl.textList);
-        DOM.buttonShowAnswer.addEventListener("click", MCQuestionCtrl.answerList);
-
-        DOM.buttonShowAnswer.show();
-        DOM.buttonShowQuestion.show();
-        DOM.buttonShowAnswer.enable();
-        DOM.buttonShowQuestion.disable();
-        DOM.buttonShowBoard.hide();
-    }
-
-    static textList(event) {
-        MCQuestionCtrl.model.question = event.detail.text;
-        MCQuestionCtrl.saveCB();
-    }
-
-    static answerList() {
-        MCQuestionCtrl.cleanup();
-        MCAnswerCtrl.run(MCQuestionCtrl.model, MCQuestionCtrl.saveCB);
-        window.parameters.subtype = "answer";
-        pushParameters();
-    }
-
-    static cleanup() {
-        DOM.questionPane.removeEventListener("text-update", MCQuestionCtrl.textList);
-        DOM.buttonShowAnswer.removeEventListener("click", MCQuestionCtrl.answerList);
-        DOM.triangleRight.removeEventListener("click", MCQuestionCtrl.cleanup);
-        DOM.triangleLeft.removeEventListener("click", MCQuestionCtrl.cleanup);
-        pushParameters();
-    }
-}
-
-/**
- * Jeopardy Question & Answer State Controller
- */
-class JeopardyCtrl {
-
     /**
-     * @param model - the question model object
-     * @param field - which model field to read/write from {'answer', 'question'}
-     * @param saveCB - call this method to save the model
-     * @param closeCB - call this method when controller is terminated.
+     *
+     * @param {NidgetElement} element
+     * @param {function} saveCB
      */
-    static run(field, model, saveCB, closeCB) {
-        JeopardyCtrl.model = model ?? JeopardyCtrl.model;
-        JeopardyCtrl.field = field ?? JeopardyCtrl.field;
-        JeopardyCtrl.saveCB = saveCB ?? JeopardyCtrl.saveCB;
-        JeopardyCtrl.closeCB = closeCB ?? JeopardyCtrl.closeCB;
+    constructor(saveCB, mcQuestionCtrl) {
+        this.saveCB = saveCB;
+        this.setupListeners();
+        this.mcQuestionCtrl = mcQuestionCtrl;
+    }
 
-        DOM.menuDecreaseValue.show();
-        DOM.menuIncreaseValue.show();
+    show(model) {
+        this.model = model;
+        console.log(model);
 
-        DOM.questionPane.setText(JeopardyCtrl.model[JeopardyCtrl.field.substr(0, 1)]);
-        DOM.questionPane.show();
-        DOM.gameBoard.hide();
+        document.querySelector("#mc").show();
+        document.querySelector("#jp").hide();
+        document.querySelector("#mc .answer-pane").show();
+        document.querySelector("#mc .question-pane").hide();
+        document.querySelector("#mc .button-container").show();
+        document.querySelector("#mc .show-question").enable();
+        document.querySelector("#mc .show-answer").disable();
 
-        DOM.questionPane.addEventListener("text-update", JeopardyCtrl.textList);
-        DOM.buttonShowBoard.addEventListener("click", JeopardyCtrl.boardList);
-        DOM.buttonShowQuestion.addEventListener(`click`, JeopardyCtrl.questionList);
-        DOM.buttonShowAnswer.addEventListener(`click`, JeopardyCtrl.answerList);
+        document.querySelector("#menu").querySelector("#menu-decrease-value").hide();
+        document.querySelector("#menu").querySelector("#menu-increase-value").hide();
 
-        DOM.buttonShowBoard.show();
-        DOM.buttonShowQuestion.show();
-        DOM.buttonShowAnswer.show();
+        window.parameters.type = "multiple_choice";
+        window.parameters.subtype = "answer";
+        pushParameters();
 
-        if (field === 'answer') {
-            DOM.buttonShowAnswer.disable();
-            DOM.buttonShowQuestion.enable();
-        } else {
-            DOM.buttonShowAnswer.enable();
-            DOM.buttonShowQuestion.disable();
+        const radioButtons = document.querySelector("#mc .answer-pane").querySelector("#radio-group");
+        radioButtons.selected = `radio-${model['correct-answer']}`;
+
+        const pane = document.querySelector("#mc .answer-pane");
+        for (let i = 0; i < 5; i++) {
+            const textInput = pane.querySelector(`#txt-${i}`);
+            textInput.content = this.model.options[i];
         }
     }
 
-    static textList(event) {
-        JeopardyCtrl.model[JeopardyCtrl.field.substr(0, 1)] = event.detail.text;
-        JeopardyCtrl.saveCB();
+    setupListeners() {
+        const pane = document.querySelector("#mc .answer-pane");
+
+        document.querySelector("#mc .show-question").addEventListener("click", event=> {
+            this.mcQuestionCtrl.show(this.model);
+            window.parameters.subtype = "answer";
+            pushParameters();
+        });
+
+        document.querySelector("#mc .question-pane").addEventListener("text-update", event => {
+            this.model.question = event.detail.text;
+            console.log(this.model);
+        });
+
+        const radioButtons = pane.querySelector("#radio-group");
+        radioButtons.addEventListener("selection-changed", event=> {
+            this.model["correct-answer"] = event.detail.element.parentElement.getAttribute("data-index");
+            this.saveCB();
+        });
+
+        for (let i = 0; i < 5; i++) {
+            const textInput = pane.querySelector(`#txt-${i}`);
+            textInput.addEventListener("text-enter", event=> {
+                this.model.options[i] = textInput.content;
+            });
+            textInput.addEventListener("blur", event=> {
+                this.model.options[i] = textInput.content;
+            });
+        }
     }
 
-    static boardList(event) {
-        JeopardyCtrl.cleanup();
-        JeopardyCtrl.closeCB();
-
-        delete window.parameters.subtype;
-        delete window.parameters.row;
-        delete window.parameters.col;
-        pushParameters();
-    }
-
-    static answerList(event) {
-        JeopardyCtrl.cleanup();
-        JeopardyCtrl.run('answer');
-
-        window.parameters.subtype = "answer";
-        pushParameters();
-    }
-
-    static questionList(vent) {
-        JeopardyCtrl.cleanup();
-        JeopardyCtrl.run('question');
-
-        window.parameters.subtype = "question";
-        pushParameters();
-    }
-
-    static cleanup() {
-        DOM.questionPane.removeEventListener("text-update", JeopardyCtrl.textList);
-        DOM.buttonShowBoard.removeEventListener("click", JeopardyCtrl.boardList);
-        DOM.buttonShowAnswer.removeEventListener("click", JeopardyCtrl.answerList);
-        DOM.buttonShowQuestion.removeEventListener("click", JeopardyCtrl.questionList);
-
-        DOM.buttonShowBoard.hide();
-        DOM.buttonShowAnswer.hide();
-        DOM.buttonShowQuestion.hide();
+    textList(event) {
+        this.model.question = event.detail.text;
+        this.saveCB();
     }
 }
 
-class JeopardyBoardCtrl {
+class MCQuestionCtrl {
+    /**
+     *
+     * @param {NidgetElement} element
+     * @param {function} saveCB
+     */
+    constructor(saveCB) {
+        this.saveCB = saveCB;
+        this.setupListeners();
+        this.mcAnswerControl = new MCAnswerCtrl(saveCB, this);
+    }
 
-    static run(model) {
-        DOM.questionPane.hide();
-        DOM.gameBoard.hide();
-        DOM.multipleChoicePane.hide();
+    show(model) {
+        this.model = model;
+        console.log(model);
 
-        DOM.menuDecreaseValue.show();
-        DOM.menuIncreaseValue.show();
-        DOM.gameBoard.show();
+        document.querySelector("#mc").show();
+        document.querySelector("#jp").hide();
+        document.querySelector("#mc .answer-pane").hide();
+        document.querySelector("#mc .question-pane").show();
+        document.querySelector("#mc .button-container").show();
+        document.querySelector("#mc .show-question").disable();
+        document.querySelector("#mc .show-answer").enable();
 
-        DOM.buttonShowAnswer.hide();
-        DOM.buttonShowQuestion.hide();
-        DOM.buttonShowBoard.hide();
+        document.querySelector("#menu").querySelector("#menu-decrease-value").hide();
+        document.querySelector("#menu").querySelector("#menu-increase-value").hide();
+
+        window.parameters.type = "multiple_choice";
+        window.parameters.subtype = "question";
+        pushParameters();
+
+        document.querySelector("#mc .question-pane").setText(this.model.question);
+    }
+
+    setupListeners() {
+        document.querySelector("#mc .question-pane").addEventListener("text-update", event => {
+            this.model.question = event.detail.text;
+            console.log(this.model);
+        });
+
+        document.querySelector("#mc .show-answer").addEventListener("click", event=> {
+            this.mcAnswerControl.show(this.model);
+            window.parameters.subtype = "answer";
+            pushParameters();
+        });
+    }
+
+    textList(event) {
+        this.model.question = event.detail.text;
+        this.saveCB();
+    }
+}
+
+class JPBoardCtrl {
+    constructor(saveCB) {
+        this.saveCB = saveCB;
+        this.jpQuestionControl = new JPQuestionCtrl(this);
+        this.jpAnswerControl = new JPAnswerCtrl(this);
+        this.gameBoard = document.querySelector("#jp .game-board");
+        this.setupListeners();
+    }
+
+    setupListeners() {
+        document.querySelector("#jp .show-board").addEventListener("click", event=> {
+            this.show(this.model);
+        });
+
+        // game-board select cell
+        this.gameBoard.addEventListener("cell-select", event => {
+            let row = event.detail.row;
+            let col = event.detail.col;
+
+            window.parameters.subtype = "question";
+            window.parameters.row = row;
+            window.parameters.col = col;
+            pushParameters();
+
+            this.saveCB();
+            this.jpQuestionControl.show(this.model.column[col].cell[row]);
+        });
+    }
+
+    setModel(model) {
+        this.model = model ?? this.model;
+    }
+
+    show(model) {
+        console.log(model);
+        this.model = model ?? this.model;
+
+        document.querySelector("#mc").hide();
+        document.querySelector("#jp").show();
+        document.querySelector("#jp .game-board").show();
+        document.querySelector("#jp .answer-pane").hide();
+        document.querySelector("#jp .question-pane").hide();
+        document.querySelector("#jp .button-container").hide();
+        document.querySelector("#jp .show-question").enable();
+        document.querySelector("#jp .show-answer").enable();
+        document.querySelector("#jp .show-board").disable();
+
+        document.querySelector("#menu").querySelector("#menu-decrease-value").show();
+        document.querySelector("#menu").querySelector("#menu-increase-value").show();
 
         window.parameters.type = "jeopardy";
         delete window.parameters.subtype;
         pushParameters();
 
         for (let col = 0; col < 6; col++) {
-            let column = model.getColumn(col);
-            DOM.gameBoard.setHeader(col, column.category, column.fontSize);
+            let column = this.model.column[col];
+            this.gameBoard.setHeader(col, column.category, column.fontSize);
 
             for (let row = 0; row < 5; row++) {
-                DOM.gameBoard.setCell(row, col, column.cell[row].value);
-                if (column.cell[row].q === "") DOM.gameBoard.setComplete(row, col, "false");
-                else if (column.cell[row].a === "") DOM.gameBoard.setComplete(row, col, "partial");
-                else DOM.gameBoard.setComplete(row, col, "true");
+                this.gameBoard.setCell(row, col, column.cell[row].value);
+                if (column.cell[row].q === "") {
+                    this.gameBoard.setComplete(row, col, "false");
+                }
+                else if (column.cell[row].a === "") {
+                    this.gameBoard.setComplete(row, col, "partial");
+                }
+                else {
+                    this.gameBoard.setComplete(row, col, "true");
+                }
             }
         }
+    }
+}
+
+class JPQuestionCtrl {
+    constructor(boardCtrl) {
+        this.boardCtrl = boardCtrl;
+        this.setupListeners();
+    }
+
+    setupListeners() {
+        document.querySelector("#jp .show-answer").addEventListener("click", event=> {
+            this.boardCtrl.jpAnswerControl.show(this.model);
+            window.parameters.subtype = "answer";
+            pushParameters();
+        });
+
+        document.querySelector("#jp .question-pane").addEventListener("text-update", event => {
+            this.model.q = event.detail.text;
+            this.boardCtrl.saveCB();
+            console.log(this.model);
+        });
+    }
+
+    show(model) {
+        this.model = model;
+        console.log(this.model);
+
+        document.querySelector("#mc").hide();
+        document.querySelector("#jp").show();
+        document.querySelector("#jp .game-board").hide();
+        document.querySelector("#jp .answer-pane").hide();
+        document.querySelector("#jp .question-pane").show();
+        document.querySelector("#jp .button-container").show();
+        document.querySelector("#jp .show-question").disable();
+        document.querySelector("#jp .show-answer").enable();
+        document.querySelector("#jp .show-board").enable();
+
+        document.querySelector("#menu").querySelector("#menu-decrease-value").hide();
+        document.querySelector("#menu").querySelector("#menu-increase-value").hide();
+
+        document.querySelector("#jp .question-pane").setText(this.model.q);
+    }
+}
+
+class JPAnswerCtrl {
+    constructor(boardCtrl) {
+        this.boardCtrl = boardCtrl;
+        this.setupListeners();
+    }
+
+    setupListeners() {
+        document.querySelector("#jp .show-question").addEventListener("click", event=> {
+            this.boardCtrl.jpQuestionControl.show(this.model);
+            window.parameters.subtype = "question";
+            pushParameters();
+        });
+
+        document.querySelector("#jp .answer-pane").addEventListener("text-update", event => {
+            this.model.a = event.detail.text;
+            this.boardCtrl.saveCB();
+            console.log(this.model);
+        });
+    }
+
+    show(model) {
+        this.model = model;
+        console.log("JP Answer");
+        console.log(this.model);
+
+        document.querySelector("#mc").hide();
+        document.querySelector("#jp").show();
+        document.querySelector("#jp .game-board").hide();
+        document.querySelector("#jp .answer-pane").show();
+        document.querySelector("#jp .question-pane").hide();
+        document.querySelector("#jp .button-container").show();
+        document.querySelector("#jp .show-question").enable();
+        document.querySelector("#jp .show-answer").disable();
+        document.querySelector("#jp .show-board").enable();
+
+        document.querySelector("#menu").querySelector("#menu-decrease-value").hide();
+        document.querySelector("#menu").querySelector("#menu-increase-value").hide();
+
+        document.querySelector("#jp .answer-pane").setText(this.model.a);
     }
 }
 
@@ -252,25 +302,19 @@ class EditorPane {
         this.fileId = fileId;
         this.DOM = DOM;
 
-        DOM.multipleChoicePane = document.querySelector("#multiple-choice-compose");
-        DOM.triangleRight = document.querySelector("#triangle-right");
-        DOM.triangleLeft = document.querySelector("#triangle-left");
-        DOM.roundLabel = document.querySelector("#round-number > .text");
-        DOM.gameName = document.querySelector("#game-name");
-        DOM.gameBoard = document.querySelector("#game-board");
-        DOM.questionPane = document.querySelector("#question-pane");
-        DOM.menu = document.querySelector("#menu");
-        DOM.menuIncreaseValue = DOM.menu.querySelector("#menu-increase-value");
-        DOM.menuDecreaseValue = DOM.menu.querySelector("#menu-decrease-value");
-        DOM.buttonShowQuestion = document.querySelector("#show-question");
-        DOM.buttonShowAnswer = document.querySelector("#show-answer");
-        DOM.buttonShowBoard = document.querySelector("#show-board");
+        this.DOM.menu = document.querySelector("#menu");
+        this.DOM.triangleRight = document.querySelector("#triangle-right");
+        this.DOM.triangleLeft = document.querySelector("#triangle-left");
+        this.DOM.gameName = document.querySelector("#game-name");
+        this.DOM.gameBoard = document.querySelector("#game-board");
 
-        DOM.buttonShowBoard.hide();
-        DOM.buttonShowAnswer.hide();
-        DOM.buttonShowQuestion.hide();
+        this.mcQuestionCtrl = new MCQuestionCtrl(()=>this.onSave());
 
-        DOM.menu.addEventListener("menu-download", () => {
+        this.mcAnswerCtrl = this.mcQuestionCtrl.mcAnswerControl;
+
+        this.jeopardyBoardCtrl = new JPBoardCtrl(()=>this.onSave());
+
+        this.DOM.menu.addEventListener("menu-download", () => {
             const json = JSON.stringify(this.gameDescriptionHelper.get, null, 2);
             const blob = new Blob([json], {type: "application/json"});
             const url = window.URL.createObjectURL(blob);
@@ -280,7 +324,7 @@ class EditorPane {
             anchor.click();
         });
 
-        DOM.menu.addEventListener("menu-move-right", () => {
+        this.DOM.menu.addEventListener("menu-move-right", () => {
             if (this.gameDescriptionHelper.currentRound >= this.gameDescriptionHelper.roundCount - 1) return;
             this.gameDescriptionHelper.setRoundIndex(this.gameDescriptionHelper.currentRound, this.gameDescriptionHelper.currentRound + 1);
             this.gameDescriptionHelper.incrementRound();
@@ -288,7 +332,7 @@ class EditorPane {
             this.onSave();
         });
 
-        DOM.menu.addEventListener("menu-move-left", () => {
+        this.DOM.menu.addEventListener("menu-move-left", () => {
             if (this.gameDescriptionHelper.currentRound <= 0) return;
             this.gameDescriptionHelper.setRoundIndex(this.gameDescriptionHelper.currentRound, this.gameDescriptionHelper.currentRound - 1);
             this.gameDescriptionHelper.decrementRound();
@@ -296,52 +340,54 @@ class EditorPane {
             this.onSave();
         });
 
-        DOM.menu.addEventListener("menu-remove-round", () => {
+        this.DOM.menu.addEventListener("menu-remove-round", () => {
             this.gameDescriptionHelper.removeRound();
             this.updateTriangleView();
             this.onSave();
             this.updateView();
         });
 
-        DOM.menu.addEventListener("menu-home-screen", () => {
+        this.DOM.menu.addEventListener("menu-home-screen", () => {
             location.href = "host.ejs";
         });
 
-        DOM.menu.addEventListener("menu-increase-value", () => {
+        this.DOM.menu.addEventListener("menu-increase-value", () => {
             this.gameDescriptionHelper.increaseValue();
             this.onSave();
             this.updateView();
         });
 
-        DOM.menu.addEventListener("menu-decrease-value", () => {
+        this.DOM.menu.addEventListener("menu-decrease-value", () => {
             this.gameDescriptionHelper.decreaseValue();
             this.onSave();
             this.updateView();
         });
 
-        DOM.menu.addEventListener("menu-add-jeopardy", () => {
+        this.DOM.menu.addEventListener("menu-add-jeopardy", () => {
             this.gameDescriptionHelper.addRound(emptyCategory);
             this.updateView();
             this.onSave();
         });
 
-        DOM.menu.addEventListener("menu-add-mc", () => {
+        this.DOM.menu.addEventListener("menu-add-mc", () => {
             this.gameDescriptionHelper.addRound(emptyMC);
             this.updateView();
             this.onSave();
         });
 
-        DOM.triangleRight.addEventListener("click", () => {
+        this.DOM.triangleRight.addEventListener("click", () => {
             this.gameDescriptionHelper.incrementRound();
+            window.parameters.round = this.gameDescriptionHelper.currentRound;
             this.updateView();
         });
 
-        DOM.triangleLeft.addEventListener("click", () => {
+        this.DOM.triangleLeft.addEventListener("click", () => {
             this.gameDescriptionHelper.decrementRound();
+            window.parameters.round = this.gameDescriptionHelper.currentRound;
             this.updateView();
         });
 
-        DOM.gameName.addEventListener("keypress", async (event) => {
+        this.DOM.gameName.addEventListener("keypress", async (event) => {
             if (event.which === 13) {
                 event.stopPropagation();
                 event.preventDefault();
@@ -351,42 +397,34 @@ class EditorPane {
             }
         });
 
-        DOM.gameName.addEventListener("blur", async (event) => {
+        this.DOM.gameName.addEventListener("blur", async (event) => {
             await this.rename(DOM.gameName.innerText);
         });
 
         // game-board change category text
-        DOM.gameBoard.addEventListener("header-update", event => {
+        this.DOM.gameBoard.addEventListener("header-update", event => {
             let col = event.detail.col;
             this.gameDescriptionHelper.getColumn(col).category = event.detail.value;
             this.gameDescriptionHelper.getColumn(col).fontSize = event.detail.fontSize;
             this.onSave();
         });
 
-        // game-board select cell
-        DOM.gameBoard.addEventListener("cell-select", event => {
-            let row = event.detail.row;
-            let col = event.detail.col;
-            this.hideNavigation();
-
-            window.parameters.subtype = "question";
-            window.parameters.row = row;
-            window.parameters.col = col;
-            pushParameters();
-
-            JeopardyCtrl.run(
-                'question',
-                this.gameDescriptionHelper.getCell(row, col),
-                () => this.onSave(),
-                () => this.updateView()
-            );
-        });
-
         this.loadURLState();
+        this.updateTriangleView();
+    }
+
+    updateView() {
+        const currentRound = this.gameDescriptionHelper.getRound();
+        if (currentRound.type === SCHEMA_CONSTANTS.CATEGORY){
+            this.jeopardyBoardCtrl.show(currentRound);
+        }
+        if (currentRound.type === SCHEMA_CONSTANTS.MULTIPLE_CHOICE){
+            this.mcQuestionCtrl.show(currentRound);
+        }
+        this.updateTriangleView();
     }
 
     loadURLState(){
-
         if (window.parameters.round) {
             this.gameDescriptionHelper.setRound(window.parameters.round);
         } else {
@@ -394,76 +432,59 @@ class EditorPane {
             pushParameters();
         }
 
+        const currentRound = this.gameDescriptionHelper.getRound();
         if (!window.parameters.type) {
             this.updateView();
         }
 
         if (window.parameters.type === "jeopardy") {
+            this.jeopardyBoardCtrl.setModel(currentRound);
+            const row = window.parameters.row;
+            const col = window.parameters.col;
             if (window.parameters.subtype === 'question') {
-                const row = window.parameters.row;
-                const col = window.parameters.col;
-                JeopardyCtrl.run(
-                    'question',
-                    this.gameDescriptionHelper.getCell(row, col),
-                    () => this.onSave(),
-                    () => this.updateView()
+                this.jeopardyBoardCtrl.jpQuestionControl.show(
+                    this.gameDescriptionHelper.getRound().column[col].cell[row]
                 );
             } else if (window.parameters.subtype === 'answer') {
-                const row = window.parameters.row;
-                const col = window.parameters.col;
-                JeopardyCtrl.run(
-                    'answer',
-                    this.gameDescriptionHelper.getCell(row, col),
-                    () => this.onSave(),
-                    () => this.updateView()
+                this.jeopardyBoardCtrl.jpAnswerControl.show(
+                    this.gameDescriptionHelper.getRound().column[col].cell[row]
                 );
             } else {
-                this.updateView();
+                this.jeopardyBoardCtrl.show();
             }
         } else {
             if (window.parameters.subtype === 'answer') {
-                MCAnswerCtrl.run(this.gameDescriptionHelper.getRound(), () => this.onSave());
+                this.mcAnswerCtrl.show(currentRound);
             } else if (window.parameters.subtype === 'question') {
-                MCQuestionCtrl.run(this.gameDescriptionHelper.getRound(), () => this.onSave());
+                this.mcQuestionCtrl.show(currentRound);
             }
         }
     }
 
     async rename(newName) {
         this.gameDescriptionHelper.name = newName;
-        await this.fileOps.rename(this.fileId, newName + ".json");
+        if (this.fileId) await this.fileOps.rename(this.fileId, newName + ".json");
         await this.onSave();
     }
 
     async onSave() {
-        await this.fileOps.setBody(this.fileId, JSON.stringify(this.gameDescriptionHelper.get(), null, 2));
-    }
-
-    hideNavigation() {
-        DOM.triangleLeft.classList.add("hidden");
-        DOM.triangleRight.classList.add("hidden");
-    }
-
-    updateView(model) {
-        model = model ?? this.gameDescriptionHelper;
-        this.updateTriangleView();
-
-        window.parameters.round = model.currentRound;
-
-        if (model.getRound().type ===  SCHEMA_CONSTANTS.CATEGORY){
-            JeopardyBoardCtrl.run(model);
-        }
-        if (model.getRound().type ===  SCHEMA_CONSTANTS.MULTIPLE_CHOICE){
-            MCQuestionCtrl.run(this.gameDescriptionHelper.getRound(), () => this.onSave());
+        if (this.fileId) {
+            let jsonString = JSON.stringify(this.gameDescriptionHelper.get(), null, 2);
+            await this.fileOps.setBody(this.fileId, jsonString);
         }
     }
 
     updateTriangleView() {
-        DOM.triangleLeft.classList.remove("hidden");
-        DOM.triangleRight.classList.remove("hidden");
-        if (this.gameDescriptionHelper.currentRound === 0) DOM.triangleLeft.classList.add("hidden");
-        if (this.gameDescriptionHelper.currentRound >= this.gameDescriptionHelper.roundCount - 1) DOM.triangleRight.classList.add("hidden");
-        DOM.roundLabel.textContent = "Round " + (this.gameDescriptionHelper.currentRound + 1);
+        this.DOM.triangleLeft.classList.remove("hidden");
+        this.DOM.triangleRight.classList.remove("hidden");
+
+        if (this.gameDescriptionHelper.currentRound <= 0) {
+            this.DOM.triangleLeft.classList.add("hidden");
+        }
+        if (this.gameDescriptionHelper.currentRound >= this.gameDescriptionHelper.roundCount - 1) {
+            this.DOM.triangleRight.classList.add("hidden");
+        }
+        document.querySelector("#round-number > .text").textContent = "Round " + (parseInt(this.gameDescriptionHelper.currentRound) + 1);
     }
 }
 

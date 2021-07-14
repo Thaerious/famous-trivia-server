@@ -50,12 +50,12 @@
     }
   }
 
-  &.hide-extra .inner.extra{
+  &.hide-extra .row.extra{
     opacity: 0;
     pointer-events: none;
   }
 
-  .inner {
+  .row {
     position: absolute;
     width: 100%;
     height: 100%;

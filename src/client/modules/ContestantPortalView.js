@@ -46,15 +46,15 @@ class ContestantPortalView extends AbstractView {
                 break;
             case 3:
                 this.DOM.multipleChoice.setMode("data-enter");
-                this.DOM.multipleChoice.querySelector(".inner.total").show();
+                this.DOM.multipleChoice.querySelector(".row.total").show();
                 let total = 0;
 
                 if (update.bets[this.name].bonus !== 0) {
-                    this.DOM.multipleChoice.querySelector(".inner.bonus > .amount").text = update.bets[this.name].bonus;
+                    this.DOM.multipleChoice.querySelector(".row.bonus > .amount").text = update.bets[this.name].bonus;
                     total += update.bets[this.name].bonus;
                 }
                 else {
-                    this.DOM.multipleChoice.querySelector(".inner.bonus > .amount").text = 0;
+                    this.DOM.multipleChoice.querySelector(".row.bonus > .amount").text = 0;
                 }
 
                 for (let i = 0; i < 6; i++) {
@@ -64,7 +64,7 @@ class ContestantPortalView extends AbstractView {
                     total += value;
                 }
 
-                this.DOM.multipleChoice.querySelector(".inner.total > .amount").text = total;
+                this.DOM.multipleChoice.querySelector(".row.total > .amount").text = total;
                 break;
             case 7:
                 let check = update.model.round.spentPlayers.indexOf(this.name);

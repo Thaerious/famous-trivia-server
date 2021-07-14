@@ -49,6 +49,13 @@ class TextInput extends NidgetElement {
     }
 
     set content(value){
+        if (value.trim() === ""){
+            this.DOM['hint'].innerHTML = this.getAttribute(TextInput.HINT_ATTRIBUTE);
+        }
+        else {
+            this.DOM['hint'].innerHTML = "";
+        }
+
         return this.DOM['content'].text = value;
     }
 

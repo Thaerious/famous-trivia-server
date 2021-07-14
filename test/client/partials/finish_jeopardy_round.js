@@ -37,7 +37,7 @@ export default async function finish_jeopardy_round(gameEnv) {
      * @returns {*}
      */
     async function clickContinue() {
-        await gameEnv.host_portal.page.waitForSelector("#continue.shown", {visible: true});
+        await gameEnv.host_portal.page.waitForSelector("#continue.visible", {visible: true});
         await gameEnv.host_portal.page.click(`#continue`);
     }
 

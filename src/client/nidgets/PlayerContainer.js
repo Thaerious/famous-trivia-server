@@ -47,7 +47,7 @@ class PlayerContainer extends NidgetElement {
 
     addInner(){
         const outer = this.querySelector(".outer");
-        const nextIndex = this.querySelectorAll(".inner").length;
+        const nextIndex = this.querySelectorAll(".row").length;
 
         const element = document.createElement("nidget-element");
         element.classList.add("inner");
@@ -59,11 +59,11 @@ class PlayerContainer extends NidgetElement {
     }
 
     getInner(index){
-        while (this.querySelectorAll(".inner").length <= index){
+        while (this.querySelectorAll(".row").length <= index){
             this.addInner();
         }
         let selector = `.inner[data-index='${index}']`
-        const element = this.querySelector(`.inner[data-index='${index}']`);
+        const element = this.querySelector(`.row[data-index='${index}']`);
         return element;
     }
 
@@ -79,7 +79,7 @@ class PlayerContainer extends NidgetElement {
     }
 
     topPlayer(){
-        let currentInner = this.querySelector(".inner.first");
+        let currentInner = this.querySelector(".row.first");
         return currentInner.querySelector("player-panel");
     }
 
@@ -114,7 +114,7 @@ class PlayerContainer extends NidgetElement {
             inner.detach();
         }
 
-        this.querySelector(".inner").textContent = "";
+        this.querySelector(".row").textContent = "";
     }
 }
 

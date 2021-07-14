@@ -3,7 +3,7 @@
 @import "./nidget-styles/text_input_inset";
 
 :host(text-input) {
-  display: block;
+  display: inline-block;
 }
 
 :host(text-input.hidden) {
@@ -22,6 +22,7 @@
   left: 0;
   top: 0;
   cursor: text;
+  line-height: 100%;
 
   border: 2px solid black;
   border-radius: 5px;
@@ -33,10 +34,13 @@
 
   .text, .hint-text {
     position: absolute;
-    left: 2.5%;
-    top: 50%;
-    width: 95%;
-    transform: translateY(-50%);
+    top: 0;
+    left: 0;
+    height: calc(100% - 10px);
+    width: calc(100% - 10px);
+    margin: 5px;
+    overflow: hidden;
+    white-space: nowrap;
 
     &:focus {
       outline: none;

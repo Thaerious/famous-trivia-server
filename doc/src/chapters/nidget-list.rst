@@ -34,11 +34,11 @@ nidget-radio-button
         "prev-element": this.getSelectedElement()
     }
 
+**Fields**
+
+NidgetRadioGroup.selected : selector of button
 
 
-.. |ima thing| raw:: html
-
-   <div class="blue">Here is the thing</div>
 
 **HTML Example**::
 

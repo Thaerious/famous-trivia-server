@@ -65,48 +65,8 @@ class GameDescriptionHelper {
      */
     addRound(roundObject) {
         const deepCopy = JSON.parse(JSON.stringify(roundObject));
-        console.log(deepCopy);
         this.gameModel.rounds.push(deepCopy);
     }
-
-    // addMultipleChoiceRound(){
-    //     let round = {
-    //         type:  SCHEMA_CONSTANTS.MULTIPLE_CHOICE,
-    //         question : "",
-    //         answers : ["", "", "", "", "", ""],
-    //         values : ["false", "false", "false", "false", "false", "false"],
-    //         bonus : 0
-    //     };
-    //
-    //     this.gameModel.rounds.push(round);
-    //     return round;
-    // }
-    //
-    // addCategoryRound() {
-    //     let round = {
-    //         type:  SCHEMA_CONSTANTS.CATEGORY,
-    //         column: []
-    //     };
-    //
-    //     for (let i = 0; i < 6; i++) {
-    //         round.column[i] = {
-    //             category: "",
-    //             cell: []
-    //         }
-    //
-    //         for (let j = 0; j < 5; j++) {
-    //             round.column[i].cell[j] = {
-    //                 value: (j + 1) * 100,
-    //                 type: "text",
-    //                 q: "",
-    //                 a: ""
-    //             }
-    //         }
-    //     }
-    //
-    //     this.gameModel.rounds.push(round);
-    //     return round;
-    // }
 
     get roundCount() {
         return this.gameModel.rounds.length;

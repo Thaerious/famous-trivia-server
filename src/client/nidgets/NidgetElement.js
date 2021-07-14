@@ -16,6 +16,8 @@ class NidgetElement extends HTMLElement {
     async connectedCallback() {
         this.detectDOM();
         await this.ready();
+
+        if (!this.classList.contains("hidden")) this.classList.add("visible");
     }
 
     detectDOM(){
@@ -65,19 +67,28 @@ class NidgetElement extends HTMLElement {
 
     async ready(){}
 
+    get visible() {
+        const v = this.classList.contains("visible") === true;
+        const h = this.classList.contains("hidden") === true;
+
+        if (v && !h) return true;
+        if (h && !v) return false;
+        return undefined;
+    }
+
     /**
      * Remove 'hidden' class.
      */
     show() {
         this.classList.remove("hidden");
-        this.classList.add("shown");
+        this.classList.add("visible");
     }
 
     /**
      * Add 'hidden' class.
      */
     hide() {
-        this.classList.remove("shown");
+        this.classList.remove("visible");
         this.classList.add("hidden");
     }
 

@@ -66,11 +66,11 @@ class MultipleChoicePresent extends NidgetElement {
     }
 
     setAnswerText(index, text) {
-        this.querySelector(`.inner[data-index="${index}"] .answer`).text = text;
+        this.querySelector(`.row[data-index="${index}"] .answer`).text = text;
     }
 
     setChecked(index, value) {
-        this.querySelector(`.inner[data-index="${index}"] check-box`).checked = value;
+        this.querySelector(`.row[data-index="${index}"] check-box`).checked = value;
     }
 }
 

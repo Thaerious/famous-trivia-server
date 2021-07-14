@@ -18,6 +18,10 @@ class NidgetButton extends  NidgetElement{
     enable(){
         this.classList.remove("disabled");
     }
+
+    get disabled() {
+        return this.classList.contains("disabled");
+    }
 }
 
 window.customElements.define('nidget-button', NidgetButton);

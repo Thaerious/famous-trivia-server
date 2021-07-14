@@ -78,7 +78,6 @@ const multipleChoice = {
             "type": "string",
             "enum": [SCHEMA_CONSTANTS.MULTIPLE_CHOICE]
         },
-        "bonus": {"type": "integer"},
         "correct-answer": {"type": "integer"},
         "question" : {"type" : "string"},
         "options": {

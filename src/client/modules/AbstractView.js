@@ -53,8 +53,8 @@ class AbstractView extends EventTarget{
                 this.DOM.questionPane.hide();
                 this.DOM.multipleChoice.show();
                 this.DOM.multipleChoice.setMode("show");
-                this.DOM.multipleChoice.querySelector(".inner.total").hide();
-                this.DOM.multipleChoice.querySelector(".inner.bonus > .amount").text = update.model.round.bonus;
+                this.DOM.multipleChoice.querySelector(".row.total").hide();
+                this.DOM.multipleChoice.querySelector(".row.bonus > .amount").text = update.model.round.bonus;
                 for (let i = 0; i < 6; i++) {
                     this.DOM.multipleChoice.querySelector(`[data-index="${i}"] check-box`).checked = false;
                     this.DOM.multipleChoice.setAnswerText(i, update.model.round.answers[i]);

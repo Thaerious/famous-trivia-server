@@ -27,12 +27,12 @@
   border: 3px solid black;
   padding: 2px;
 
-  &.cycle .inner{
+  &.cycle .row{
     animation-name: cycle-down;
     animation-duration: 0.5s;
   }
 
-  .inner {
+  .row {
     position: relative;
     border: 3px solid black;
     border-radius: 5px;

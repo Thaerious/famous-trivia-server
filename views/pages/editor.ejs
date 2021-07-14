@@ -31,19 +31,34 @@
             <menu-item id="menu-decrease-value" event-name="menu-decrease-value">Decrease Value</menu-item>
         </menu-container>
     </div>
+
     <div class="round-number" id="round-number">
         <img class="triangle-indicator" id="triangle-right" src="assets/images/right_triangle.png"/>
         <nidget-text class="text">Round 1</nidget-text>
         <img class="triangle-indicator" id="triangle-left" src="assets/images/left_triangle.png"/>
     </div>
-    <question-pane id="question-pane" class="hidden"></question-pane>
-    <game-board id="game-board" class="hidden"></game-board>
-    <multiple-choice-compose id="multiple-choice-compose" class="hidden"></multiple-choice-compose>
-    <div class="button-container">
-        <nidget-button id="show-question" class="round">Show Question</nidget-button>
-        <nidget-button id="show-answer" class="round">Show Answer</nidget-button>
-        <nidget-button id="show-board" class="round">Show Board</nidget-button>
-    </div>
+
+    <nidget-element id="jp">
+        <question-pane id="jp-question-pane" class="question-pane hidden"></question-pane>
+        <question-pane id="jp-answer-pane"   class="answer-pane hidden"></question-pane>
+        <game-board id="game-board" class="game-board hidden"></game-board>
+
+        <nidget-element class="button-container">
+            <nidget-button id="show-question" class="show-question round">Show Question</nidget-button>
+            <nidget-button id="show-answer" class="show-answer round">Show Answer</nidget-button>
+            <nidget-button id="show-board" class="show-board round">Show Board</nidget-button>
+        </nidget-element>
+    </nidget-element>
+
+    <nidget-element id="mc">
+        <multiple-choice-compose id="multiple-choice-compose" class="answer-pane hidden"></multiple-choice-compose>
+        <question-pane id="mc-question-pane" class="question-pane hidden"></question-pane>
+
+        <nidget-element class="hidden button-container">
+            <nidget-button id="show-question" class="show-question round">Show Question</nidget-button>
+            <nidget-button id="show-answer" class="show-answer round">Show Answer</nidget-button>
+        </nidget-element>
+    </nidget-element>
 </div>
 
 </body>
