@@ -2,6 +2,32 @@ import GameModel from "./model/GameModel.js";
 import constants from "../../config.js";
 import crypto from "crypto";
 
+/**
+ * Use PlayerValues to record possibly transient values between
+ * states.  Each value has an associated player NAME, KEY, and
+ * VALUE.
+ */
+class TransientValues {
+    constructor() {
+        this.table = {};
+    }
+
+    set(name, key, value) {
+        if (!this.table[name]) this.table[name] = {};
+        this.table[name][key] = value;
+    }
+
+    get(name, key, def = undefined) {
+        if (!this.table[name]) return def;
+        if (!this.table[name][key]) return def;
+        return this.table[name][key];
+    }
+
+    clear() {
+        this.table = {};
+    }
+}
+
 class Timer {
     constructor(game) {
         this.game = game;
@@ -66,15 +92,16 @@ class Timer {
 class Game {
     /**
      *
-     * @param model GameDescriptionModel
+     * @param gameModel GameDescriptionModel
      */
-    constructor(model) {
+    constructor(gameModel) {
         this.timer = new Timer(this);
         this.listeners = {};
         this._state = 0;
+        this.transientValues = new TransientValues();
 
-        if (model) {
-            this.model = model;
+        if (gameModel) {
+            this.gameModel = gameModel;
             this.updateState(0);
         }
         
@@ -113,7 +140,7 @@ class Game {
 
         let game = new Game();
         Object.assign(game, json);
-        game.model = GameModel.fromJSON(game.model);
+        game.gameModel = GameModel.fromJSON(game.gameModel);
         game.lastUpdate = game.getUpdate();
 
         return game;
@@ -127,14 +154,19 @@ class Game {
         console.log("-----------------------------------");
 
         switch (input.action) {
+            case "set_score":
+                if (input.player !== constants.names.HOST) return;
+                const player = this.getPlayerByName(input.data.name);
+                player.score = input.data.score;
+                break;
             case "next_round":
                 if (input.player !== constants.names.HOST) return;
-                this.model.nextRound();
+                this.gameModel.nextRound();
                 this.startRound();
                 break;
             case "prev_round":
                 if (input.player !== constants.names.HOST) return;
-                this.model.prevRound();
+                this.gameModel.prevRound();
                 this.startRound();
                 break;
             default:
@@ -144,8 +176,7 @@ class Game {
     }
 
     joinPlayer(name){
-        this.model.addPlayer(name);
-        if (this.mcBetsData) this.createMCBetsDataForPlayer(name);
+        this.gameModel.addPlayer(name);
         this.broadcast();
     }
 
@@ -157,7 +188,7 @@ class Game {
             'id-hash': crypto.randomBytes(8).toString('hex'),
             'time-stamp': new Date(),
             data: {
-                model: this.model.getUpdate(),
+                model: this.gameModel.getUpdate(),
                 state: this.state,
                 ...extraData
             }
@@ -173,7 +204,7 @@ class Game {
      */
     getUpdate() {
         const update = {...this.lastUpdate};
-        update.data.model = this.model.getUpdate();
+        update.data.model = this.gameModel.getUpdate();
         return this.lastUpdate;
     }
 
@@ -199,37 +230,14 @@ class Game {
         }
     }
 
-    createMCBetsData() {
-        this.mcBetsData = {};
-        for (let player of this.model.players) {
-            this.createMCBetsDataForPlayer(player.name);
-        }
-        return this.mcBetsData;
-    }
-
-    createMCBetsDataForPlayer(name){
-        this.mcBetsData[name] = {
-            bonus: 0,
-            answers: []
-        };
-
-        for (let i = 0; i < 6; i++) {
-            this.mcBetsData[name].answers[i] = {
-                checked: false,
-                amount: 0
-            }
-        }
-    }
-
     startRound() {
-        if (this.model.getRound().stateData.style === GameModel.STYLE.MULTIPLE_CHOICE) {
-            this.model.getRound().setQuestionState();
-            this.createMCBetsData();
+        if (this.gameModel.getRound().stateData.style === GameModel.STYLE.MULTIPLE_CHOICE) {
             this.updateState(1);
-        } else if (this.model.getRound().stateData.style === GameModel.STYLE.JEOPARDY) {
-            this.model.getRound().setBoardState();
+            this.gameModel.getRound().setQuestionState();
+        } else if (this.gameModel.getRound().stateData.style === GameModel.STYLE.JEOPARDY) {
+            this.gameModel.getRound().setBoardState();
             this.updateState(4);
-        } else if (this.model.getRound().stateData.style === GameModel.STYLE.END_OF_GAME) {
+        } else if (this.gameModel.getRound().stateData.style === GameModel.STYLE.END_OF_GAME) {
             this.updateState(10);
         }
     }
@@ -240,43 +248,16 @@ class Game {
      * >= 0 are considered to be true.
      */
     updateMCScores() {
-        let values = this.model.getRound().getValues();
+        let answer = this.gameModel.getRound().getAnswer();
 
-        for (let name in this.mcBetsData) {
-            // the sum of bets must be <= the players available score
-            if (this.sumMCBet(name) > this.model.getPlayer(name).score) {
-                continue;
-            }
+        for (let player of this.gameModel.players) {
+            const name = player.name;
+            const index = parseInt(this.transientValues.get(name, "mc_index", 0));
+            let bet = parseInt(this.transientValues.get(name, "mc_bet", 0));
 
-            let bonusFlag = true;
-
-            for (let i = 0; i < 6; i++) {
-                let answer = this.mcBetsData[name].answers[i];
-                let bet = parseInt(answer.amount);
-
-                if (answer.checked === true && values[i] === true) {
-                    this.model.getPlayer(name).score += bet;
-                    answer.result = "correct";
-                } else if (answer.checked === true && values[i] === false) {
-                    this.model.getPlayer(name).score -= bet;
-                    bonusFlag = false;
-                    answer.result = "incorrect";
-                    answer.amount = -1 * answer.amount;
-                } else if (answer.checked === false && values[i] === true) {
-                    bonusFlag = false;
-                    answer.result = "incorrect";
-                } else if (answer.checked === false && values[i] === false) {
-                    answer.result = "correct";
-                } else {
-                    throw new Error("index " + i + " failed");
-                }
-            }
-
-            if (bonusFlag) {
-                let bonus = parseInt(this.model.getUpdate().round.bonus);
-                this.model.getPlayer(name).score += bonus;
-                this.mcBetsData[name].bonus = bonus;
-            }
+            if (bet > player.score) bet = player.score;
+            if (index === answer) player.score = parseInt(player.score) + bet;
+            else player.score = parseInt(player.score) - bet;
         }
     }
 
@@ -296,7 +277,7 @@ class Game {
         switch (input.action) {
             case "start":
                 this.broadcast({action: "start_game"});
-                this.model.setRound(0);
+                this.gameModel.setRound(0);
                 this.startRound();
                 break;
         }
@@ -305,7 +286,8 @@ class Game {
     [1](input) {
         switch (input.action) {
             case "continue":
-                this.model.getRound().setAnswerState();
+                this.gameModel.getRound().setAnswerState();
+                this.transientValues.clear();
                 this.updateState(2);
                 this.timer.start(this.times.MULTIPLE_CHOICE);
                 break;
@@ -316,29 +298,30 @@ class Game {
         switch (input.action) {
             case "continue":
             case "expire":
-                this.model.getRound().setRevealState();
+                this.gameModel.getRound().setRevealState();
                 this.updateMCScores();
-                this.updateState(3, {bets: this.mcBetsData});
-                break;
-            case "update":
+                this.updateState(3);
+            break;
+            case "update_index": {
                 let name = input.player;
                 let index = parseInt(input.data.index);
+                this.transientValues.set(name, "mc_index", index);
+            }
+            break;
+            case "update_bet": {
+                let name = input.player;
+                let bet = parseInt(input.data.bet);
+                this.transientValues.set(name, "mc_bet", bet);
+            }
+            break;
 
-                if (typeof input.data.checked === "string") input.data.checked = (input.data.checked === "true");
-                if (typeof input.data.value === "string") input.data.value = parseInt(input.data.value);
-
-                this.mcBetsData[name].answers[index] = {
-                    checked: input.data.checked,
-                    amount: input.data.value
-                }
-                break;
         }
     }
 
     [3](input) {
         switch (input.action) {
             case "continue":
-                this.model.nextRound();
+                this.gameModel.nextRound();
                 this.startRound();
                 break;
         }
@@ -348,19 +331,19 @@ class Game {
         switch (input.action) {
             case "select":
                 let allow = false;
-                if (Game.settings.ALLOW_PLAYER_PICK && (this.model.activePlayer.name === input.player)) allow = true;
+                if (Game.settings.ALLOW_PLAYER_PICK && (this.gameModel.activePlayer.name === input.player)) allow = true;
                 if (input.player === constants.names.HOST) allow = true;
                 if (!allow) return;
 
-                if (!this.model.getRound().isSpent(input.data.col, input.data.row)) {
-                    this.model.getRound().setQuestionState(input.data.col, input.data.row);
+                if (!this.gameModel.getRound().isSpent(input.data.col, input.data.row)) {
+                    this.gameModel.getRound().setQuestionState(input.data.col, input.data.row);
                     this.updateState(5);
                     this.notify(constants.names.HOST, {
                         action: "provide_answer",
                         'id-hash': crypto.randomBytes(8).toString('hex'),
                         'time-stamp': new Date(),
                         data: {
-                            answer: this.model.getRound().getAnswer()
+                            answer: this.gameModel.getRound().getAnswer()
                         }
                     });
                     break;
@@ -372,7 +355,7 @@ class Game {
         switch (input.action) {
             case "continue":
                 if (input.player !== constants.names.HOST) return;
-                this.model.getRound().setSpent();
+                this.gameModel.getRound().setSpent();
                 this.updateState(6);
                 this.timer.start(this.times.ANSWER);
                 break;
@@ -385,24 +368,24 @@ class Game {
     [6](input) { // timer not expired awaiting answer
         switch (input.action) {
             case "reject":
-                this.model.getRound().setPlayerSpent();
-                this.model.getRound().clearCurrentPlayer();
+                this.gameModel.getRound().setPlayerSpent();
+                this.gameModel.getRound().clearCurrentPlayer();
                 this.timer.stop();
-                if (this.model.getRound().countUnspentPlayers() > 0) {
+                if (this.gameModel.getRound().countUnspentPlayers() > 0) {
                     this.timer.start(this.times.BUZZ);
                     this.updateState(7);
                 } else {
-                    this.model.getRound().setRevealState();
+                    this.gameModel.getRound().setRevealState();
                     this.updateState(9);
                 }
                 break;
             case "expire":
                 break;
             case "accept":
-                let currentPlayer = this.model.getRound().getCurrentPlayer();
+                let currentPlayer = this.gameModel.getRound().getCurrentPlayer();
                 if (!currentPlayer) return;
-                this.model.getPlayer(currentPlayer).score += this.model.getRound().getValue();
-                this.model.getRound().setRevealState();
+                this.gameModel.getPlayer(currentPlayer).score += this.gameModel.getRound().getValue();
+                this.gameModel.getRound().setRevealState();
                 this.timer.stop();
                 this.updateState(9);
                 break;
@@ -412,15 +395,15 @@ class Game {
     [7](input) { // waiting for buzzer
         switch (input.action) {
             case "buzz":
-                if (this.model.getRound().hasPlayer(input.player)) {
-                    this.model.getRound().setCurrentPlayer(input.player);
+                if (this.gameModel.getRound().hasPlayer(input.player)) {
+                    this.gameModel.getRound().setCurrentPlayer(input.player);
                     this.timer.start(this.times.ANSWER);
                     this.updateState(8);
                 }
                 break;
             case "expire":
                 this.broadcast({action: "stop_timer"});
-                this.model.getRound().setRevealState();
+                this.gameModel.getRound().setRevealState();
                 this.updateState(9);
                 break;
         }
@@ -429,27 +412,27 @@ class Game {
     [8](input) { // awaiting answer to jeopardy question
         switch (input.action) {
             case "reject":
-                let currentPlayer = this.model.getRound().getCurrentPlayer();
-                let player = this.model.getPlayer(currentPlayer);
-                player.score -= (this.model.getRound().getValue() / 2);
+                let currentPlayer = this.gameModel.getRound().getCurrentPlayer();
+                let player = this.gameModel.getPlayer(currentPlayer);
+                player.score -= (this.gameModel.getRound().getValue() / 2);
                 this.timer.stop();
 
-                this.model.getRound().setPlayerSpent();
-                this.model.getRound().clearCurrentPlayer();
+                this.gameModel.getRound().setPlayerSpent();
+                this.gameModel.getRound().clearCurrentPlayer();
 
-                if (this.model.getRound().countUnspentPlayers() > 0) {
+                if (this.gameModel.getRound().countUnspentPlayers() > 0) {
                     this.timer.start(this.times.BUZZ);
                     this.updateState(7);
                 } else {
-                    this.model.getRound().setRevealState();
+                    this.gameModel.getRound().setRevealState();
                     this.updateState(9);
                 }
                 break;
             case "expire":
                 break;
             case "accept":
-                this.model.getPlayer(this.model.getRound().getCurrentPlayer()).score += this.model.getRound().getValue();
-                this.model.getRound().setRevealState();
+                this.gameModel.getPlayer(this.gameModel.getRound().getCurrentPlayer()).score += this.gameModel.getRound().getValue();
+                this.gameModel.getRound().setRevealState();
                 this.timer.stop();
                 this.updateState(9);
                 break;
@@ -459,13 +442,13 @@ class Game {
     [9](input) { // awaiting answer
         switch (input.action) {
             case "continue":
-                if (this.model.getRound().hasUnspent()) {
-                    this.model.nextActivePlayer();
-                    this.model.getRound().setBoardState();
-                    this.model.getRound().resetSpentAndCurrentPlayers();
+                if (this.gameModel.getRound().hasUnspent()) {
+                    this.gameModel.nextActivePlayer();
+                    this.gameModel.getRound().setBoardState();
+                    this.gameModel.getRound().resetSpentAndCurrentPlayers();
                     this.updateState(4);
                 } else {
-                    this.model.nextRound();
+                    this.gameModel.nextRound();
                     this.startRound();
                 }
                 break;
@@ -476,6 +459,14 @@ class Game {
         switch (input.action) {
             /* no accepted inputs */
         }
+    }
+
+
+    getPlayerByName(name){
+        for (let p of this.gameModel.players){
+            if (p.name === name) return p;
+        }
+        return undefined;
     }
 }
 

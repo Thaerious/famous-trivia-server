@@ -1,12 +1,11 @@
-import GameModel from "./GameModel";
+import GameModel from "./GameModel.js";
 
 class MultipleChoiceModel {
-    constructor(model) {
-        this.model = model;
+    constructor(descriptionModel) {
+        this.descriptionModel = descriptionModel;
         this.stateData = {
             style: GameModel.STYLE.MULTIPLE_CHOICE,
         };
-        this.setQuestionState();
     }
 
     /**
@@ -18,18 +17,10 @@ class MultipleChoiceModel {
     setQuestionState() {
         Object.assign(this.stateData, {
             state: GameModel.STATES.QUESTION,
-            question: this.model.question
+            question: this.descriptionModel.question
         });
 
-        return this.state;
-    }
-
-    getAnswers() {
-        return [...this.model.answers];
-    }
-
-    getValues() {
-        return [...this.model.values];
+        return this.stateData;
     }
 
     /**
@@ -41,9 +32,8 @@ class MultipleChoiceModel {
      */
     setAnswerState() {
         Object.assign(this.stateData, {
-            state: GameModel.STATES.ANSWER,
-            answers: this.getAnswers(),
-            bonus: this.model.bonus
+            'state': GameModel.STATES.ANSWER,
+            'answers': this.descriptionModel.options
         });
 
         return this.stateData;
@@ -56,13 +46,19 @@ class MultipleChoiceModel {
         this.setAnswerState();
         Object.assign(this.stateData, {
             state: GameModel.STATES.REVEAL,
-            values: this.getValues(),
-            bonus: this.model.bonus
+            'correct-answer': this.getAnswer()
         });
         return this.stateData;
     }
 
-    getUpdate() {
+    getAnswer() {
+        return parseInt(this.descriptionModel['correct-answer']);
+    }
+
+    /**
+     * Retrieve an update with all information.
+     */
+   getUpdate() {
         return JSON.parse(JSON.stringify(this.stateData));
     }
 }

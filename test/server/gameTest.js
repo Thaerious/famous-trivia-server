@@ -610,10 +610,10 @@ describe(`Game Mock-Up`, () => {
 
     describe('timer expires after bets submitted', function(){
         it('mock up scores', function(){
-            game.model.getPlayer("Adam").score = 500;
-            game.model.getPlayer("Beth").score = 400;
-            game.model.getPlayer("Charles").score = 500;
-            game.model.getPlayer("Dave").score = 100;
+            game.gameModel.getPlayer("Adam").score = 500;
+            game.gameModel.getPlayer("Beth").score = 400;
+            game.gameModel.getPlayer("Charles").score = 500;
+            game.gameModel.getPlayer("Dave").score = 100;
         });
 
         it('state changes', function(done){

@@ -1,52 +1,23 @@
-<%- include('check-box'); %>
-
+<!--suppress ALL -->
 <template id="multiple-choice-present-template">
     <link rel="stylesheet" href="styles/generated/multiple_choice_present.css">
     <div class="outer">
-        <div class="row" data-index="0" style="--index: 0">
-            <check-box checked="false" template-id="check-box-template"></check-box>
-            <text-input tabindex="0" class="wager style-dotted" spellcheck="false" filter="[0-9]{0,4}">0</text-input>
-            <nidget-text class="answer"></nidget-text>
+        <div class="choices">
+            <nidget-radio-group id="radio-group" class="column left">
+                <div class="row" data-index="0"><nidget-radio-button selected="true" id="radio-0"/></div>
+                <div class="row" data-index="1"><nidget-radio-button id="radio-1"/></div>
+                <div class="row" data-index="2"><nidget-radio-button id="radio-2"/></div>
+                <div class="row" data-index="3"><nidget-radio-button id="radio-3"/></div>
+                <div class="row" data-index="4"><nidget-radio-button id="radio-4"/></div>
+            </nidget-radio-group>
+            <div class="column right">
+                <div class="row" data-index="0"><div class="text" id="txt-0"></div></div>
+                <div class="row" data-index="1"><div class="text" id="txt-1"></div></div>
+                <div class="row" data-index="2"><div class="text" id="txt-2"></div></div>
+                <div class="row" data-index="3"><div class="text" id="txt-3"></div></div>
+                <div class="row" data-index="4"><div class="text" id="txt-4"></div></div>
+            </div>
         </div>
-
-        <div class="row" data-index="1" style="--index: 1">
-            <check-box checked="false" template-id="check-box-template"></check-box>
-            <text-input tabindex="1" class="wager style-dotted" spellcheck="false" filter="[0-9]{0,4}">0</text-input>
-            <nidget-text class="answer"></nidget-text>
-        </div>
-
-        <div class="row" data-index="2" style="--index: 2">
-            <check-box checked="false" template-id="check-box-template"></check-box>
-            <text-input tabindex="2" class="wager style-dotted" spellcheck="false" filter="[0-9]{0,4}">0</text-input>
-            <nidget-text class="answer"></nidget-text>
-        </div>
-
-        <div class="row" data-index="3" style="--index: 3">
-            <check-box checked="false" template-id="check-box-template"></check-box>
-            <text-input tabindex="3" class="wager style-dotted" spellcheck="false" filter="[0-9]{0,4}">0</text-input>
-            <nidget-text class="answer"></nidget-text>
-        </div>
-
-        <div class="row" data-index="4" style="--index: 4">
-            <check-box checked="false" template-id="check-box-template"></check-box>
-            <text-input tabindex="4" class="wager style-dotted" spellcheck="false" filter="[0-9]{0,4}">0</text-input>
-            <nidget-text class="answer"></nidget-text>
-        </div>
-
-        <div class="row" data-index="5" style="--index: 5">
-            <check-box checked="false" template-id="check-box-template"></check-box>
-            <text-input tabindex="5" class="wager style-dotted" spellcheck="false" filter="[0-9]{0,4}">0</text-input>
-            <nidget-text class="answer"></nidget-text>
-        </div>
-
-        <nidget-element class="row bonus" style="--index: 6">
-            <nidget-text class="amount">000</nidget-text>
-            <nidget-text class="label">BONUS</nidget-text>
-        </nidget-element>
-
-        <nidget-element class="row total" style="--index: 7">
-            <nidget-text class="amount">000</nidget-text>
-            <nidget-text class="label">TOTAL</nidget-text>
-        </nidget-element>
+        <text-input id="wager" class="text wager" hint="enter wager"/>
     </div>
 </template>

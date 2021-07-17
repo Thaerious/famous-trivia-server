@@ -1,13 +1,16 @@
 import fs from 'fs';
 import SCHEMA_CONSTANTS from "../../../json_schema/schema_constants.js";
+import JeopardyModel from "./JeopardyModel.js";
+import MultipleChoiceModel from "./MultipleChoiceModel.js";
+import EndOfGame from "./EndOfGame.js";
 
 class GameModel {
-    constructor(model) {
-        if (typeof model === "string") model = JSON.parse(model);
-        this.model = model;
+    constructor(gameDescription) {
+        if (typeof gameDescription === "string") gameDescription = JSON.parse(gameDescription);
+        this.gameDescription = gameDescription;
         this._players = []; // name, score, enabled
         this.listeners = {};
-        if (model) this.setupRounds();
+        if (gameDescription) this.setupRounds();
     }
 
     addListener(event, cb){
@@ -26,7 +29,9 @@ class GameModel {
         this.rounds = [];
         this.roundIndex = -1;
 
-        for(let roundModel of this.model.rounds){
+        console.log("SETUP ROUNDS");
+        for(let roundModel of this.gameDescription.rounds){
+            console.log(roundModel.type);
             if (roundModel.type ===  SCHEMA_CONSTANTS.MULTIPLE_CHOICE) {
                 this.rounds.push(new MultipleChoiceModel(roundModel));
             } else if (roundModel.type ===  SCHEMA_CONSTANTS.CATEGORY) {
@@ -66,7 +71,17 @@ class GameModel {
             players: this._players
         }
         if (this.getRound()) {
-            result.round = this.getRound().getUpdate()
+            result.round = this.getRound().getUpdate();
+        }
+        return result;
+    }
+
+    getSanitizedUpdate() {
+        let result = {
+            players: this._players
+        }
+        if (this.getRound()) {
+            result.round = this.getRound().getSanitizedUpdate();
         }
         return result;
     }
@@ -87,7 +102,7 @@ class GameModel {
      * @return current round object.
      */
     setRound(index) {
-        if (index < 0 || index > this.model.rounds.length) return this.getRound();
+        if (index < 0 || index > this.gameDescription.rounds.length) return this.getRound();
         this.roundIndex = index;
         return this.getRound();
     }
@@ -139,6 +154,8 @@ class GameModel {
 
     /**
      * Get a non-reflective list of players.
+     * Each player is an object with:
+     * { name, score, enabled}
      * @returns {*[]}
      */
     get players() {
