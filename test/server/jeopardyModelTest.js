@@ -184,14 +184,12 @@ describe(`Jeopardy Model Unit Tests`, ()=> {
             gameModel.getRound(0).setQuestionState(0, 0)
             const expected = true;
             const actual = gameModel.getRound(0).setPlayerSpent();
-            console.log(gameModel.getRound(0));
             assert.strictEqual(actual, expected);
         });
 
         it(`returns true when player is spent`, ()=> {
             const expected = true;
             const actual = gameModel.getRound(0).setPlayerSpent();
-            console.log(gameModel.getRound(0));
             assert.strictEqual(actual, expected);
         });
 

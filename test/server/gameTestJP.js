@@ -87,7 +87,7 @@ function post(game) {
     });
 };
 
-describe(`Test category only game`, () => {
+describe(`gameTestJP.js : functionality test`, () => {
 
     describe("player is only spent when a question is selected #SPENT", () => {
         const game = situationSetup('test/data/test-data-04.json');

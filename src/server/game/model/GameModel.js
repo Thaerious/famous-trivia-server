@@ -72,16 +72,6 @@ class GameModel {
         }
     }
 
-    getSanitizedUpdate() {
-        let result = {
-            players: this._players
-        }
-        if (this.getRound()) {
-            result.round = this.getRound().getSanitizedUpdate();
-        }
-        return result;
-    }
-
     /**
      * Get the current round or the round by index.
      * @param index

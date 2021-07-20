@@ -52,8 +52,6 @@ class JeopardyModel {
      */
     setPlayerSpent() {
         const name = this.getCurrentPlayer();
-        console.log(`${this.stateData.state} !== ${GameModel.STATES.QUESTION}`);
-        console.log(this.stateData.state !== GameModel.STATES.QUESTION);
         if (this.stateData.state !== GameModel.STATES.QUESTION) return false;
         if (!name) return false;
         if (this.isPlayerSpent(name)) return true;
