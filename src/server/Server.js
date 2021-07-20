@@ -15,7 +15,7 @@ import helmet from "helmet";
 import UserAgent from "express-useragent";
 import WebSocket from "ws";
 
-class Server{
+class Server {
 
     /**
      *
@@ -39,19 +39,20 @@ class Server{
         this.setupWebsocket(sessionManager, gameManager, gameManagerEndpoint);
     }
 
-    start(port){
+    start(port) {
         /** Start the index **/
         this.index.listen(port, () => {
             console.log(`HTTP listener started on port ${port}`);
         });
     }
 
-    stop(cb = ()=>{}){
+    stop(cb = () => {
+    }) {
         console.log("Stopping server");
         this.index.close(cb);
     }
 
-    setupExternals(){
+    setupExternals() {
         this.app.use(helmet());            // automatic security settings (outgoing response headers)
         this.app.use(UserAgent.express()); // used to determine what the connection is using (phone,browser etc)
     }
@@ -61,23 +62,27 @@ class Server{
         this.app.use('/game-manager-service', sessionManager.middleware);
     }
 
-    setupGameManagerEndpoint(sessionManager, gameManagerEndpoint){
+    setupGameManagerEndpoint(sessionManager, gameManagerEndpoint) {
         this.app.use("/game-manager-service", BodyParser.json());
         this.app.use("/game-manager-service", gameManagerEndpoint.middleware);
     }
 
-    setupReportCoverageEndpoint(){
+    setupReportCoverageEndpoint() {
         this.app.use("/report-coverage", BodyParser.json({limit: '50mb'}));
         this.app.use("/report-coverage", new ReportCoverage().middleware);
     }
 
-    setupPageRenderingEndpoints(){
+    setupPageRenderingEndpoints() {
+        this.app.get("", cors);
+        this.app.get('/', (req, res) => {
+            res.sendFile('index.html', {root: "./public/html/static/"});
+        });
         this.app.use("/*.ejs", cors);
         this.app.get("/*.html", cors);
         this.app.use(Express.static(config.server.public_html));
     }
 
-    setupJIT(nidgetPreprocessor, jitFlag){
+    setupJIT(nidgetPreprocessor, jitFlag) {
         if (jitFlag) {
             this.app.get(config.server.jit_path, new JITRender(nidgetPreprocessor).middleware);
 
@@ -88,20 +93,20 @@ class Server{
                 let nidgetDependencies = nidgetPreprocessor.getTemplateDependencies(config.server.ejs_root + req.path);
                 res.render(`pages/${req.path}`, {
                     filename: Path.basename(req.path.slice(0, -4)),
-                    nidgets : nidgetDependencies
+                    nidgets: nidgetDependencies
                 });
             });
         } else {
             this.app.get(config.server.jit_path, Express.static(config.server.public_scripts));
             this.app.get("*.ejs", Express.static(config.server.pre_ejs,
                 {
-                    setHeaders : (res, path, stat) => res.setHeader('Content-Type', 'text/html')
+                    setHeaders: (res, path, stat) => res.setHeader('Content-Type', 'text/html')
                 }
             ));
         }
     }
 
-    setupWebsocket(sessionManager, gameManager, gameManagerEndpoint){
+    setupWebsocket(sessionManager, gameManager, gameManagerEndpoint) {
         const wss = new WebSocket.Server({server: this.index, path: "/game-service.ws"});
         wss.on('connection', async (ws, req) => {
             await sessionManager.applyTo(req);
