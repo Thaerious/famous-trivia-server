@@ -3,6 +3,7 @@ import SCHEMA_CONSTANTS from "../../../json_schema/schema_constants.js";
 import JeopardyModel from "./JeopardyModel.js";
 import MultipleChoiceModel from "./MultipleChoiceModel.js";
 import EndOfGame from "./EndOfGame.js";
+import GameNotStarted from "./GameNotStarted.js";
 
 class GameModel {
     constructor(gameDescription) {
@@ -65,13 +66,10 @@ class GameModel {
      * @returns {{players: []}}
      */
     getUpdate() {
-        let result = {
-            players: this._players
+        return {
+            players: this._players,
+            round  : this.getRound().getUpdate()
         }
-        if (this.getRound()) {
-            result.round = this.getRound().getUpdate();
-        }
-        return result;
     }
 
     getSanitizedUpdate() {
@@ -91,6 +89,7 @@ class GameModel {
      */
     getRound(index) {
         index = index ?? this.roundIndex;
+        if (index < 0) return new GameNotStarted();
         return this.rounds[index];
     }
 
@@ -231,6 +230,7 @@ GameModel.STATES = {
 }
 
 GameModel.STYLE = {
+    NOT_STARTED: "ns",
     MULTIPLE_CHOICE: "mc",
     JEOPARDY: "j",
     END_OF_GAME: "end"

@@ -37,8 +37,10 @@ function playerJoinsGame(game, name) {
     });
 }
 
-function assertState(game, state) {
-    describe(`assert state`, ()=> {
+function assertState(game, state, desc) {
+    if (!desc) desc = `assert state`
+
+    describe(desc, ()=> {
         it(`update->data->state is ${state}`, () => {
             assert.strictEqual(game.getUpdate().data.state, state);
         });
@@ -92,6 +94,19 @@ function test(desc, fn) {
     });
 }
 
+/**
+ * Assert that all fields in expected are equal to any paired field in actual
+ * @param actual
+ * @param expected
+ */
+function assertFields(actual, expected) {
+    for (let parameter in expected) {
+        const exp = expected[parameter];
+        const acp = actual[parameter];
+        assert.deepStrictEqual(acp, exp);
+    };
+}
+
 export {
     newGame,
     getPlayerByName,
@@ -100,5 +115,6 @@ export {
     hackPlayerScore,
     verifyScores,
     test,
-    verifyRound
+    verifyRound,
+    assertFields
 };

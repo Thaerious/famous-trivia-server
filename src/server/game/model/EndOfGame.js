@@ -2,18 +2,14 @@ import GameModel from "./GameModel.js";
 
 class EndOfGame {
     constructor(parent) {
-        this.parent = parent;
-
         this.stateData = {
-            style: GameModel.STYLE.END_OF_GAME,
-            players: parent.players
+            style: GameModel.STYLE.END_OF_GAME
         }
     }
 
     getUpdate() {
         return {
-            style: GameModel.STYLE.END_OF_GAME,
-            players: this.parent.players
+            style: GameModel.STYLE.END_OF_GAME
         }
     }
 }

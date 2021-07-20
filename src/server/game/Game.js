@@ -278,6 +278,7 @@ class Game {
     [0](input) {
         switch (input.action) {
             case "start":
+                if (this.gameModel.players.length === 0) return;
                 this.broadcast({action: "start_game"});
                 this.gameModel.setRound(0);
                 this.startRound();
@@ -358,7 +359,6 @@ class Game {
         switch (input.action) {
             case "continue":
                 if (input.player !== constants.names.HOST) return;
-                this.gameModel.getRound().setSpent();
                 this.updateState(6);
                 this.timer.start(this.times.ANSWER);
                 break;
@@ -401,7 +401,7 @@ class Game {
             case "buzz":
                 if (this.gameModel.getRound().hasPlayer(input.player)) {
                     this.gameModel.getRound().setCurrentPlayer(input.player);
-                    this.gameModel.getRound().setPlayerSpent(input.player);
+                    this.gameModel.getRound().setPlayerSpent();
                     this.timer.start(this.times.ANSWER);
                     this.updateState(8);
                 }
@@ -447,14 +447,9 @@ class Game {
     [9](input) { // awaiting answer
         switch (input.action) {
             case "continue":
-                if (this.gameModel.getRound().hasUnspent()) {
-                    this.gameModel.nextActivePlayer();
-                    this.gameModel.getRound().setBoardState();
-                    this.updateState(4);
-                } else {
-                    this.gameModel.nextRound();
-                    this.startRound();
-                }
+                this.gameModel.nextActivePlayer();
+                this.gameModel.getRound().setBoardState();
+                this.updateState(4);
                 break;
         }
     }

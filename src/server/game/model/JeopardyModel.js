@@ -40,39 +40,35 @@ class JeopardyModel {
                 valueCol.push(cell.value);
             }
         }
-
-        /* todo remove listener */
-        this.parent.addListener("player-added", (index, player)=>this.addPlayer(index, player));
-    }
-
-    addPlayer(index, player){
-        /* do nothing */
-        /* todo remove listener */
     }
 
     isPlayerSpent(name) {
         return this.spentPlayers.indexOf(name) !== -1;
     }
 
-    setPlayerSpent(name) {
-        name = name ?? this.currentPlayer;
-        if (!this.parent.hasPlayer(name)) return false;
-        if (this.isPlayerSpent(name)) return false;
+    /**
+     * Mark the current player as spent.
+     * @returns {boolean}
+     */
+    setPlayerSpent() {
+        const name = this.getCurrentPlayer();
+        console.log(`${this.stateData.state} !== ${GameModel.STATES.QUESTION}`);
+        console.log(this.stateData.state !== GameModel.STATES.QUESTION);
+        if (this.stateData.state !== GameModel.STATES.QUESTION) return false;
+        if (!name) return false;
+        if (this.isPlayerSpent(name)) return true;
         this.spentPlayers.push(name);
         return true;
     }
 
     setCurrentPlayer(name) {
         if (!this.parent.hasPlayer(name)) return false;
-        if (this.currentPlayer === name) return false;
         this.currentPlayer = name;
         return true;
     }
 
     clearCurrentPlayer() {
-        if (this.currentPlayer === '') return false;
         this.currentPlayer = '';
-        return true;
     }
 
     /** return true if name is unspent and is a name*/
@@ -93,23 +89,9 @@ class JeopardyModel {
         return this.parent.players.length - this.spentPlayers.length;
     }
 
-    hasUnspent() { // TODO TEST
-        for (let col of this.spent) {
-            for (let row of col) {
-                if (!row) return true;
-            }
-        }
-        return false;
-    }
-
     isSpent(col, row) {
         [col, row] = this.checkTableBounds(col, row);
         return this.spent[col][row];
-    }
-
-    setSpent(col, row) {
-        [col, row] = this.checkTableBounds(col, row);
-        this.spent[col][row] = true;
     }
 
     /**
@@ -142,22 +124,20 @@ class JeopardyModel {
     setQuestionState(col, row) {
         [col, row] = this.checkTableBounds(col, row);
 
+        this.currentPlayer = this.parent.players[0].name;
+        this.spentPlayers = [];
+
         this.stateData = {
             style: GameModel.STYLE.JEOPARDY,
             state: GameModel.STATES.QUESTION,
             col: col,
             row: row,
             type: this.getType(col, row),
-            question: this.getQuestion(col, row),
+            question: this.model.column[col].cell[row].q,
             spent: this.spent
         };
 
         return this.stateData;
-    }
-
-    getQuestion(col, row) {
-        [col, row] = this.checkTableBounds(col, row);
-        return this.model.column[col].cell[row].q;
     }
 
     /**
@@ -171,11 +151,22 @@ class JeopardyModel {
     setRevealState(col, row) {
         [col, row] = this.checkTableBounds(col, row);
 
-        this.setQuestionState(col, row);
-        Object.assign(this.stateData, {
+        this.spent[col][row] = true;
+
+        this.currentPlayer = this.parent.players[0].name;
+        this.spentPlayers = [];
+
+        this.stateData = {
+            style: GameModel.STYLE.JEOPARDY,
             state: GameModel.STATES.REVEAL,
-            answer: this.getAnswer()
-        });
+            col: col,
+            row: row,
+            type: this.getType(col, row),
+            question: this.model.column[col].cell[row].q,
+            answer: this.getAnswer(),
+            spent: this.spent
+        };
+
         return this.stateData;
     }
 
@@ -195,7 +186,7 @@ class JeopardyModel {
     /**
      * Retrieve the point value for the specified question.
      * If row and column are omitted, use the row/col from the
-     * most recent previous getQuestion.
+     * most recent previous setQuestionState.
      * @param col
      * @param row
      * @returns {*}
@@ -232,6 +223,12 @@ class JeopardyModel {
         return r;
     }
 
+    /**
+     * Ensure that col is between 0 ... 6 & row is between 0 ... 5
+     * @param col
+     * @param row
+     * @returns {*[]}
+     */
     checkTableBounds(col, row){
         col = col ?? this.stateData.col;
         row = row ?? this.stateData.row;

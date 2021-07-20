@@ -235,7 +235,7 @@ describe(`Test category only game`, () => {
             hostContinues(game);
             Partials.assertState(game, 6);
 
-            describe("Host rejects the answer, advancing state", ()=> {
+            describe("Host rejects the answer, advancing state", () => {
                 hostRejectsAnswer(game);
                 Partials.assertState(game, 7);
 
@@ -245,7 +245,7 @@ describe(`Test category only game`, () => {
                 })
             });
 
-            describe("Chuck buzzes in and has answer rejected", ()=> {
+            describe("Chuck buzzes in and has answer rejected", () => {
                 playerBuzzes(game, "Chuck");
                 Partials.assertState(game, 8);
 
@@ -301,15 +301,28 @@ describe(`Test category only game`, () => {
             hostRejectsAnswer(game);
             Partials.assertState(game, 9);
 
-            Partials.verifyRound(game, {
-                spentPlayers: ['Barkley', 'Davidson', 'Chuck', 'Adam'],
-                current_player: '',
+            Partials.verifyRound(game, "in reveal state", {
                 col: 0,
                 row: 0,
-                question: 'Q 1.1.1'
+                question: 'Q 1.1.1',
+                answer: 'A 1.1.1'
             });
+        });
+    });
 
-            post(game);
+    describe("game starts without any players #NO_PLAYERS", () => {
+        const game = Partials.newGame('test/data/test-data-04.json');
+
+        Partials.assertState(game, 0);
+
+        Partials.test(`Host starts game`, () => {
+            game.onInput({action: "start"});
+        });
+        Partials.assertState(game, 0, `state doesn't change when started w/o players`);
+
+        Partials.test(`Game type is not started`, () => {
+            const type = game.getUpdate().data.model.round.style;
+            assert.strictEqual(type, GameModel.STYLE.NOT_STARTED);
         });
     });
 });
