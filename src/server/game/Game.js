@@ -35,7 +35,6 @@ class Timer {
 
     start(startTime) {
         startTime = parseInt(startTime);
-        console.log("START TIME " + startTime);
         if (startTime === 0) return;
         this.startTime = startTime;
 
@@ -99,21 +98,22 @@ class Game {
         this.listeners = {};
         this._state = 0;
         this.transientValues = new TransientValues();
+        this.verbose = 0;
 
         if (gameModel) {
             this.gameModel = gameModel;
             this.updateState(0);
         }
-        
+
         this.times = {};
         Object.assign(this.times, constants.TIMES);
     }
 
-    set state(value){
+    set state(value) {
         this._state = value;
     }
 
-    get state(){
+    get state() {
         return this._state;
     }
 
@@ -150,8 +150,10 @@ class Game {
      * @param input {action : string, data : {}}
      */
     onInput(input) {
-        console.log(`(${this.state}) - ${JSON.stringify(input)}`);
-        console.log("-----------------------------------");
+        if (this.verbose > 0) {
+            console.log(`(${this.state}) - ${JSON.stringify(input)}`);
+            console.log("-----------------------------------");
+        }
 
         switch (input.action) {
             case "set_score":
@@ -175,7 +177,7 @@ class Game {
         }
     }
 
-    joinPlayer(name){
+    joinPlayer(name) {
         this.gameModel.addPlayer(name);
         this.broadcast();
     }
@@ -301,19 +303,19 @@ class Game {
                 this.gameModel.getRound().setRevealState();
                 this.updateMCScores();
                 this.updateState(3);
-            break;
+                break;
             case "update_index": {
                 let name = input.player;
                 let index = parseInt(input.data.index);
                 this.transientValues.set(name, "mc_index", index);
             }
-            break;
+                break;
             case "update_bet": {
                 let name = input.player;
                 let bet = parseInt(input.data.bet);
                 this.transientValues.set(name, "mc_bet", bet);
             }
-            break;
+                break;
 
         }
     }
@@ -337,6 +339,7 @@ class Game {
 
                 if (!this.gameModel.getRound().isSpent(input.data.col, input.data.row)) {
                     this.gameModel.getRound().setQuestionState(input.data.col, input.data.row);
+                    this.gameModel.getRound().setPlayerSpent();
                     this.updateState(5);
                     this.notify(constants.names.HOST, {
                         action: "provide_answer",
@@ -360,6 +363,7 @@ class Game {
                 this.timer.start(this.times.ANSWER);
                 break;
             case "back":
+                this.gameModel.getRound().setBoardState();
                 this.updateState(4);
                 break;
         }
@@ -397,6 +401,7 @@ class Game {
             case "buzz":
                 if (this.gameModel.getRound().hasPlayer(input.player)) {
                     this.gameModel.getRound().setCurrentPlayer(input.player);
+                    this.gameModel.getRound().setPlayerSpent(input.player);
                     this.timer.start(this.times.ANSWER);
                     this.updateState(8);
                 }
@@ -445,7 +450,6 @@ class Game {
                 if (this.gameModel.getRound().hasUnspent()) {
                     this.gameModel.nextActivePlayer();
                     this.gameModel.getRound().setBoardState();
-                    this.gameModel.getRound().resetSpentAndCurrentPlayers();
                     this.updateState(4);
                 } else {
                     this.gameModel.nextRound();
@@ -462,8 +466,8 @@ class Game {
     }
 
 
-    getPlayerByName(name){
-        for (let p of this.gameModel.players){
+    getPlayerByName(name) {
+        for (let p of this.gameModel.players) {
             if (p.name === name) return p;
         }
         return undefined;

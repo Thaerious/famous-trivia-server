@@ -29,9 +29,7 @@ class GameModel {
         this.rounds = [];
         this.roundIndex = -1;
 
-        console.log("SETUP ROUNDS");
         for(let roundModel of this.gameDescription.rounds){
-            console.log(roundModel.type);
             if (roundModel.type ===  SCHEMA_CONSTANTS.MULTIPLE_CHOICE) {
                 this.rounds.push(new MultipleChoiceModel(roundModel));
             } else if (roundModel.type ===  SCHEMA_CONSTANTS.CATEGORY) {

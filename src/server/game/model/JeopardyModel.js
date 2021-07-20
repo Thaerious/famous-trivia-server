@@ -10,11 +10,6 @@ class JeopardyModel {
         this.model = model;
         this.spentPlayers = [];
 
-        if (this.parent.players.length > 0) {
-            this.spentPlayers = [this.parent.players[0].name];
-            this.currentPlayer = this.parent.players[0].name;
-        }
-
         /** matrix of which questions have already been answered **/
         this.spent = [];
         for (let col of this.model.column) {
@@ -46,14 +41,13 @@ class JeopardyModel {
             }
         }
 
+        /* todo remove listener */
         this.parent.addListener("player-added", (index, player)=>this.addPlayer(index, player));
     }
 
     addPlayer(index, player){
-        if (index == 0){
-            this.spentPlayers = [player.name];
-            this.currentPlayer = player.name;
-        }
+        /* do nothing */
+        /* todo remove listener */
     }
 
     isPlayerSpent(name) {
@@ -79,13 +73,6 @@ class JeopardyModel {
         if (this.currentPlayer === '') return false;
         this.currentPlayer = '';
         return true;
-    }
-
-    resetSpentAndCurrentPlayers() {
-        if (this.parent.players.length > 0) {
-            this.spentPlayers = [this.parent.players[0].name];
-            this.currentPlayer = this.parent.players[0].name;
-        }
     }
 
     /** return true if name is unspent and is a name*/
@@ -126,13 +113,16 @@ class JeopardyModel {
     }
 
     /**
-     * Set the state data for the specified question question.
+     * State indicating no question has been selected.
      * @param col
      * @param row
      * @returns question text
      */
     setBoardState(col, row) {
         [col, row] = this.checkTableBounds(col, row);
+
+        this.currentPlayer = this.parent.players[0].name;
+        this.spentPlayers = [];
 
         this.stateData = {
             style: GameModel.STYLE.JEOPARDY,
@@ -144,7 +134,7 @@ class JeopardyModel {
     }
 
     /**
-     * Set the state data for the specified question question.
+     * State indicating that a question has been selected.
      * @param col
      * @param row
      * @returns question text
