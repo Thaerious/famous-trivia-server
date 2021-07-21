@@ -25,3 +25,12 @@ Log
 21-07-05
 
 * rearrange game manager endpoint to make it more easily tested
+
+21-07-21
+
+Notes moved from tests.rst
+
+Using c8 instead of nyc because nyc doesn't handle imports, but rather handles require.
+
+* Added dev packages "c8"
+* Requires interactive mode (-i)

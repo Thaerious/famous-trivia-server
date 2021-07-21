@@ -29,13 +29,13 @@ Live Tests
 The live tests simulate a game on a live server.  A google account is needed with the appropriate game description file.
 A copy of this file can be found at */test/data/demonstration_game.json*.
 
-Start the index with custom timeouts:
+Start the server with custom timeouts:
 
 ``node . -ta 5 -tb 5``
 
 Execute the following to run the tests.
 
-``npx mocha .\test\client\TEST_NAME -ep EMAIL PASSWORD --bail``
+``npx mocha .\test\client\live\google_live_test.js -ep EMAIL PASSWORD --bail``
 
 GUI Tests
 ^^^^^^^^^
@@ -43,36 +43,23 @@ GUI Tests
 The GUI tests are similar to the live tests except they do not use Google.
 The tests run on a single game instance.
 
-``npx mocha .\test\client\single_instance_host_play_test.js``
+``npx mocha .\test\client\instance_live_test.js``
 
 Server Side
 -----------
-
-Coverage
-^^^^^^^^
-
-The index uses c8 instead of nyc because nyc doesn't handle imports, but rather
-handles require.
-
-* Added dev packages "c8"
-* Requires interactive mode (-i)
-
-Instructions
-^^^^^^^^^^^^
 
 Running the server with coverage (requires interactive mode -i).
 
 ``npx c8 --temp-directory ./.c8_output/ node . -i``
 
-Create the report.
-
-``npx c8 report --temp-directory .c8_output/ --report-dir coverage/server -r html``
-
-Tests
-^^^^^
-
 Run tests with coverage.
 
 ``npx c8 --temp-directory .c8_output mocha [TEST]``
 
-````
+Run all server tests with coverage.
+
+``npx c8 --temp-directory .c8_output mocha test/server``
+
+Create the coverage report.
+
+``npx c8 report --temp-directory .c8_output/ --report-dir coverage/server -r html``
