@@ -8,9 +8,8 @@ class AspectContainer extends NidgetElement {
 
     async ready() {
         await super.ready();
-        console.log("READY");
         window.addEventListener("resize", e => this.reportWindowSize());
-        this.copyChildElements();
+        // this.copyChildElements();
         this.reportWindowSize();
     }
 

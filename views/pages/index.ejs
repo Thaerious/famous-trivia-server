@@ -9,9 +9,28 @@
     <%- include('../partials/nidget-templates'); %>
 
     <aspect-container>
-        <multiple-choice-present/>
+        <player-container slot="contents"></player-container>
     </aspect-container>
 
+    <script async defer>
+        window.addEventListener("load", ()=> {
+            document.querySelector("player-container").setPlayers([
+                {name: "STEVE", score: 0, active: true, light_state: "highlight"},
+                {name: "STEVE", score: 0, active: true, light_state: "dim"},
+                {name: "STEVE", score: 0, active: true, light_state: "normal"},
+                {name: "STEVE", score: 0, active: true, light_state: "normal"},
+                {name: "STEVE", score: 0, active: true, light_state: "normal"},
+                {name: "STEVE", score: 0, active: true, light_state: "normal"},
+                {name: "STEVE", score: 0, active: true, light_state: "normal"},
+                {name: "STEVE", score: 0, active: true, light_state: "normal"},
+                {name: "STEVE", score: 0, active: true, light_state: "normal"},
+                {name: "STEVE", score: 0, active: true, light_state: "normal"},
+                {name: "STEVE", score: 0, active: true, light_state: "normal"},
+                {name: "STEVE", score: 0, active: true, light_state: "normal"},
+                {name: "STEVE", score: 0, active: true, light_state: "normal"}
+            ]);
+        });
+    </script>
 </body>
 </html>
 

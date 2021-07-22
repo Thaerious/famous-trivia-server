@@ -3,7 +3,7 @@
   box-sizing: border-box;
 }
 
-:host(player-panel.hidden) {
+:host(player-card.hidden) {
   visibility: hidden;
 }
 

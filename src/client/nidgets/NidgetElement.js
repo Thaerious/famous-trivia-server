@@ -76,6 +76,11 @@ class NidgetElement extends HTMLElement {
         return undefined;
     }
 
+    set visible(value) {
+        if (value) this.show();
+        else this.hide();
+    }
+
     /**
      * Remove 'hidden' class.
      */

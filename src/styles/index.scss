@@ -4,51 +4,19 @@
 
 aspect-container {
   background-color: blue;
+  color: green;
 }
 
-nidget-radio-group {
+player-container {
   position: absolute;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  width: 60px;
-  height: 300px;
-}
+  width: 13.5%;
+  height: 80%;
+  top: 10%;
+  left: 10%;
+  z-index: 100;
 
-nidget-radio-button {
-  position: relative;
-  width: 60px;
-  height: 60px;
-  margin: 2px;
-}
-
-//noinspection ALL
-.imadiv, .imadiv-too {
-  position: relative;
-  left: 20%;
-  width: 400px;
-  height: 50px;
-
-  .im-inside {
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 100%;
-  }
-}
-
-.top1 {
-  top: 55%;
-}
-
-.top2 {
-  top: 60%;
-  background-color: red;
-}
-
-.top3 {
-  top: 65%;
-  background-color: red;
+  font-family: Arial Black, serif;
+  font-size: calc(0.75 * var(--base-font-size));
+  font-variant: small-caps;
+  text-shadow: 4px 4px 2px rgba(0, 0, 0, 0.75);
 }
