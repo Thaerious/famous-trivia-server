@@ -63,13 +63,12 @@ class GameModel {
     /**
      * Return a new object that is intended to be sent to the client.
      * This object will be used to update the client view.
-     * @returns {{players: []}}
+     * @returns {{round: *}}
      */
     getUpdate() {
-        return {
-            players: this._players,
-            round  : this.getRound().getUpdate()
-        }
+        const update = this.getRound().getUpdate();
+        if (!update.players) Object.assign(update, {players : this.players});
+        return update;
     }
 
     /**
@@ -209,21 +208,6 @@ class GameModel {
 
         return this._players[0];
     }
-}
-
-GameModel.STATES = {
-    NOT_SET: "notset",
-    QUESTION: "question",
-    ANSWER: "answer",
-    REVEAL: "reveal",
-    BOARD: "board"
-}
-
-GameModel.STYLE = {
-    NOT_STARTED: "ns",
-    MULTIPLE_CHOICE: "mc",
-    JEOPARDY: "j",
-    END_OF_GAME: "end"
 }
 
 export default GameModel;

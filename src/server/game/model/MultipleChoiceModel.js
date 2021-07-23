@@ -1,10 +1,10 @@
-import GameModel from "./GameModel.js";
+import {GAME_MODEL_STYLE, GAME_MODEL_STATES} from "../../../constants.js";
 
 class MultipleChoiceModel {
     constructor(descriptionModel) {
         this.descriptionModel = descriptionModel;
         this.stateData = {
-            style: GameModel.STYLE.MULTIPLE_CHOICE,
+            style: GAME_MODEL_STYLE.MULTIPLE_CHOICE,
         };
     }
 
@@ -16,7 +16,7 @@ class MultipleChoiceModel {
      */
     setQuestionState() {
         Object.assign(this.stateData, {
-            state: GameModel.STATES.QUESTION,
+            state: GAME_MODEL_STATES.QUESTION,
             question: this.descriptionModel.question
         });
 
@@ -32,7 +32,7 @@ class MultipleChoiceModel {
      */
     setAnswerState() {
         Object.assign(this.stateData, {
-            'state': GameModel.STATES.ANSWER,
+            'state': GAME_MODEL_STATES.ANSWER,
             'answers': this.descriptionModel.options
         });
 
@@ -45,7 +45,7 @@ class MultipleChoiceModel {
     setRevealState() {
         this.setAnswerState();
         Object.assign(this.stateData, {
-            state: GameModel.STATES.REVEAL,
+            state: GAME_MODEL_STATES.REVEAL,
             'correct-answer': this.getAnswer()
         });
         return this.stateData;
@@ -59,7 +59,10 @@ class MultipleChoiceModel {
      * Retrieve an update with all information.
      */
    getUpdate() {
-        return JSON.parse(JSON.stringify(this.stateData));
+       const r = {
+           round : this.stateData
+       }
+        return JSON.parse(JSON.stringify(r));
     }
 }
 

@@ -1,6 +1,7 @@
 import GameModel from "./model/GameModel.js";
 import constants from "../../config.js";
 import crypto from "crypto";
+import {GAME_MODEL_STYLE, GAME_MODEL_STATES} from "../../constants.js";
 
 /**
  * Use PlayerValues to record possibly transient values between
@@ -233,13 +234,13 @@ class Game {
     }
 
     startRound() {
-        if (this.gameModel.getRound().stateData.style === GameModel.STYLE.MULTIPLE_CHOICE) {
+        if (this.gameModel.getRound().stateData.style === GAME_MODEL_STYLE.MULTIPLE_CHOICE) {
             this.updateState(1);
             this.gameModel.getRound().setQuestionState();
-        } else if (this.gameModel.getRound().stateData.style === GameModel.STYLE.JEOPARDY) {
+        } else if (this.gameModel.getRound().stateData.style === GAME_MODEL_STYLE.JEOPARDY) {
             this.gameModel.getRound().setBoardState();
             this.updateState(4);
-        } else if (this.gameModel.getRound().stateData.style === GameModel.STYLE.END_OF_GAME) {
+        } else if (this.gameModel.getRound().stateData.style === GAME_MODEL_STYLE.END_OF_GAME) {
             this.updateState(10);
         }
     }

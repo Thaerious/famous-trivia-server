@@ -5,6 +5,7 @@ import assert from 'assert';
 import fs from 'fs';
 import GameModel from '../../src/server/game/model/GameModel.js';
 import {Game, Timer} from '../../src/server/game/Game.js';
+import {GAME_MODEL_STYLE, GAME_MODEL_STATES} from "../../src/constants.js";
 
 const file = fs.readFileSync('test/data/test-data-00.json');
 const data = JSON.parse(file);
@@ -139,9 +140,10 @@ describe(`gameTest.js`, () => {
             it('The game starts in state 4 - jeopardy select question', function () {
                 assert.strictEqual(update.state, 4);
             });
-            it('Loads correct (jeopardy) round', function () {
+            it(`Loads correct (jeopardy) round. update->model->round->style is ${GAME_MODEL_STYLE.JEOPARDY}`, function () {
                 let update = game.getUpdate().data;
-                assert.strictEqual(update.model.round.style, GameModel.STYLE.JEOPARDY);
+                console.log(update);
+                assert.strictEqual(update.model.round.style, GAME_MODEL_STYLE.JEOPARDY);
             });
             it('No questions are blanked', function () {
                 let update = game.getUpdate().data;
@@ -150,10 +152,6 @@ describe(`gameTest.js`, () => {
             it(`The first player 'Adam' is the current player for the round`, function () {
                 let update = game.getUpdate().data;
                 assert.strictEqual(update.model.round.current_player, "Adam");
-            });
-            it(`Spent list is empty until a question is picked`, function () {
-                let update = game.getUpdate().data;
-                assert.strictEqual(update.model.round.spentPlayers.indexOf("Adam"), -1);
             });
         });
 
@@ -176,7 +174,7 @@ describe(`gameTest.js`, () => {
 
             it('loads correct (jeop) round', function () {
                 let update = game.getUpdate().data;
-                assert.strictEqual(update.model.round.style, GameModel.STYLE.JEOPARDY);
+                assert.strictEqual(update.model.round.style, GAME_MODEL_STYLE.JEOPARDY);
             });
             it('column set to 0', function () {
                 let update = game.getUpdate().data;
@@ -239,7 +237,7 @@ describe(`gameTest.js`, () => {
             });
             it('loads correct (jeop) round', function () {
                 let update = game.getUpdate().data;
-                assert.strictEqual(update.model.round.style, GameModel.STYLE.JEOPARDY);
+                assert.strictEqual(update.model.round.style, GAME_MODEL_STYLE.JEOPARDY);
             });
             it('one option spent', function () {
                 let update = game.getUpdate().data;
@@ -254,10 +252,6 @@ describe(`gameTest.js`, () => {
             it('current player is \'active player\'', function () {
                 let update = game.getUpdate().data;
                 assert.strictEqual(update.model.round.current_player, "Beth");
-            });
-            it('spent is empty until host selects a question', function () {
-                let update = game.getUpdate().data;
-                assert.strictEqual(update.model.round.spentPlayers.indexOf("Beth"), -1);
             });
         });
 
@@ -281,7 +275,7 @@ describe(`gameTest.js`, () => {
             });
             it('loads correct (jeop) round', function () {
                 let update = game.getUpdate().data;
-                assert.strictEqual(update.model.round.style, GameModel.STYLE.JEOPARDY);
+                assert.strictEqual(update.model.round.style, GAME_MODEL_STYLE.JEOPARDY);
             });
             it('column set to 0', function () {
                 let update = game.getUpdate().data;
@@ -352,10 +346,6 @@ describe(`gameTest.js`, () => {
                 it('the current player is updated to Charles', function () {
                     let update = game.getUpdate().data;
                     assert.strictEqual(update.model.round.current_player, "Charles");
-                });
-                it('charles is now spent', function () {
-                    let update = game.getUpdate().data;
-                    assert.notStrictEqual(update.model.round.spentPlayers.indexOf("Charles"), -1);
                 });
             });
         });
@@ -507,9 +497,6 @@ describe(`gameTest.js`, () => {
                     game.onInput({action: "reject", player: "@HOST"});
                     assert.strictEqual(game.getUpdate().data.state, 7);
                 });
-                it(`Adam becomes spent`, () => {
-                    assert.notStrictEqual(game.getUpdate().data.model.round.spentPlayers.indexOf("Adam"), -1);
-                });
                 it(`Adam has 500 less points (200 - 500 = -300)`, () => {
                     const player = getPlayerByName(game.getUpdate(), "Adam");
                     assert.notStrictEqual(player.score, -300);
@@ -569,12 +556,12 @@ describe(`gameTest.js`, () => {
             it('loads correct (mc) round', function () {
                 game.onInput({action: "start"});
                 let update = game.getUpdate().data;
-                assert.strictEqual(update.model.round.style, GameModel.STYLE.MULTIPLE_CHOICE);
+                assert.strictEqual(update.model.round.style, GAME_MODEL_STYLE.MULTIPLE_CHOICE);
             });
             it('multiple choice starts in question state', function () {
                 game.onInput({action: "start"});
                 let update = game.getUpdate().data;
-                assert.strictEqual(update.model.round.state, GameModel.STATES.QUESTION);
+                assert.strictEqual(update.model.round.state, GAME_MODEL_STATES.QUESTION);
             });
             it('has correct question from file', function () {
                 game.onInput({action: "start"});

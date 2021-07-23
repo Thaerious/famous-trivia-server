@@ -4,6 +4,7 @@
 import assert from 'assert';
 import GameModel from "../../src/server/game/model/GameModel.js";
 import * as Partials from "./partials/game_partials.js"
+import {GAME_MODEL_STYLE, GAME_MODEL_STATES} from "../../src/constants.js";
 
 function playerUpdateIndex(game, player, index) {
     describe('player update index', function () {
@@ -40,7 +41,7 @@ function situationSetup(path) {
         describe(`check update values`, () => {
             it(`Game type is multiple choice`, () => {
                 const type = game.getUpdate().data.model.round.style
-                assert.strictEqual(type, GameModel.STYLE.MULTIPLE_CHOICE);
+                assert.strictEqual(type, GAME_MODEL_STYLE.MULTIPLE_CHOICE);
             });
 
             it(`Question matches the data file`, () => {

@@ -1,9 +1,11 @@
-import GameModel from "./GameModel.js";
+import {GAME_MODEL_STYLE} from "../../../constants.js";
 
 class GameNotStarted {
     getUpdate() {
         return {
-            style: GameModel.STYLE.NOT_STARTED
+            round : {
+                style: GAME_MODEL_STYLE.NOT_STARTED
+            }
         }
     }
 }

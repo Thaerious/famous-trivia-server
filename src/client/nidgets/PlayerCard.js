@@ -2,7 +2,7 @@
 
 import NidgetElement from "./NidgetElement.js";
 import "./PlayerCard.js";
-import PlayerContainer from "./PlayerContainer";
+import {LIGHT_STATE} from "../../constants.js";
 
 class PlayerCard extends NidgetElement {
     constructor(templateId = "player-card-template") {
@@ -25,17 +25,17 @@ class PlayerCard extends NidgetElement {
         this.name = player.name;
         this.score = player.score;
         switch (player.light_state) {
-            case PlayerCard.LIGHT_STATE.HIGHLIGHT:
+            case LIGHT_STATE.HIGHLIGHT:
                 this.highlight = true;
                 this.active = true;
                 this.dim = false;
                 break;
-            case PlayerCard.LIGHT_STATE.NORMAL:
+            case LIGHT_STATE.NORMAL:
                 this.highlight = false;
                 this.active = false;
                 this.dim = false;
                 break;
-            case PlayerCard.LIGHT_STATE.DIM:
+            case LIGHT_STATE.DIM:
                 this.highlight = false;
                 this.active = false;
                 this.dim = true;
@@ -104,12 +104,6 @@ class PlayerCard extends NidgetElement {
         if (percent <= 20) this.querySelector(".clock-tick[data-index='1']").classList.add("spent");
         if (percent <= 0) this.querySelector(".clock-tick[data-index='0']").classList.add("spent");
     }
-}
-
-PlayerCard.LIGHT_STATE = {
-    HIGHLIGHT: "highlight",
-    NORMAL: "normal",
-    DIM: "dim"
 }
 
 window.customElements.define('player-card', PlayerCard);

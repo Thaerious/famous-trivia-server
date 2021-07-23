@@ -1,9 +1,11 @@
-import GameModel from "./GameModel.js";
+import {GAME_MODEL_STYLE} from "../../../constants.js";
 
 class EndOfGame {
     getUpdate() {
         return {
-            style: GameModel.STYLE.END_OF_GAME
+            round : {
+                style: GAME_MODEL_STYLE.END_OF_GAME
+            }
         }
     }
 }

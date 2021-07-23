@@ -5,6 +5,7 @@ import assert from 'assert';
 import GameModel from "../../src/server/game/model/GameModel.js";
 import * as Partials from "./partials/game_partials.js"
 import {getPlayerByName} from "./partials/game_partials.js";
+import {GAME_MODEL_STYLE, GAME_MODEL_STATES} from "../../src/constants.js";
 
 function situationSetup(path) {
     const game = Partials.newGame(path);
@@ -23,7 +24,7 @@ function situationSetup(path) {
 
         Partials.test(`Game type is categorical`, () => {
             const type = game.getUpdate().data.model.round.style;
-            assert.strictEqual(type, GameModel.STYLE.JEOPARDY);
+            assert.strictEqual(type, GAME_MODEL_STYLE.JEOPARDY);
         });
     });
 
@@ -93,14 +94,12 @@ describe(`gameTestJP.js : functionality test`, () => {
         const game = situationSetup('test/data/test-data-04.json');
 
         Partials.verifyRound(game, {
-            spentPlayers: [],
             current_player: 'Adam',
         });
 
         hostSelectsQuestion(game, 0, 0);
 
         Partials.verifyRound(game, {
-            spentPlayers: ['Adam'],
             current_player: 'Adam',
         });
     });
@@ -110,7 +109,6 @@ describe(`gameTestJP.js : functionality test`, () => {
 
         describe("turn 1", () => {
             Partials.verifyRound(game, "before question is selected", {
-                spentPlayers: [],
                 current_player: 'Adam',
             });
 
@@ -118,7 +116,6 @@ describe(`gameTestJP.js : functionality test`, () => {
             Partials.assertState(game, 5);
 
             Partials.verifyRound(game, "after question is selected", {
-                spentPlayers: ['Adam'],
                 current_player: 'Adam',
                 col: 0,
                 row: 0,
@@ -130,7 +127,6 @@ describe(`gameTestJP.js : functionality test`, () => {
             });
 
             Partials.verifyRound(game, "after back is pressed", {
-                spentPlayers: [],
                 current_player: 'Adam',
             });
 
@@ -146,7 +142,6 @@ describe(`gameTestJP.js : functionality test`, () => {
             Partials.assertState(game, 5);
 
             Partials.verifyRound(game, "question has been selected", {
-                spentPlayers: ['Adam'],
                 current_player: 'Adam',
                 col: 0,
                 row: 0,
@@ -161,7 +156,6 @@ describe(`gameTestJP.js : functionality test`, () => {
             Partials.assertState(game, 4);
 
             Partials.verifyRound(game, "after question asked and answered", {
-                spentPlayers: [],
                 current_player: 'Barkley',
             })
 
@@ -179,7 +173,6 @@ describe(`gameTestJP.js : functionality test`, () => {
             });
 
             Partials.verifyRound(game, "after advancing the round", {
-                spentPlayers: [],
                 current_player: 'Barkley',
             })
         });
@@ -193,7 +186,6 @@ describe(`gameTestJP.js : functionality test`, () => {
             Partials.assertState(game, 5);
 
             Partials.verifyRound(game, {
-                spentPlayers: ['Adam'],
                 current_player: 'Adam',
                 col: 0,
                 row: 0,
@@ -208,7 +200,6 @@ describe(`gameTestJP.js : functionality test`, () => {
             Partials.assertState(game, 4);
 
             Partials.verifyRound(game, {
-                spentPlayers: [],
                 current_player: 'Barkley',
             })
 
@@ -225,7 +216,6 @@ describe(`gameTestJP.js : functionality test`, () => {
             Partials.assertState(game, 5);
 
             Partials.verifyRound(game, {
-                spentPlayers: ['Barkley'],
                 current_player: 'Barkley',
                 col: 1,
                 row: 0,
@@ -240,7 +230,6 @@ describe(`gameTestJP.js : functionality test`, () => {
                 Partials.assertState(game, 7);
 
                 Partials.verifyRound(game, "Barkley becomes spent, no current player", {
-                    spentPlayers: ["Barkley"],
                     current_player: '',
                 })
             });
@@ -250,7 +239,6 @@ describe(`gameTestJP.js : functionality test`, () => {
                 Partials.assertState(game, 8);
 
                 Partials.verifyRound(game, "Chuck is now spent as well", {
-                    spentPlayers: ['Chuck', 'Barkley'],
                     current_player: 'Chuck',
                     col: 1,
                     row: 0,
@@ -277,7 +265,6 @@ describe(`gameTestJP.js : functionality test`, () => {
             Partials.assertState(game, 5);
 
             Partials.verifyRound(game, {
-                spentPlayers: ['Adam'],
                 current_player: 'Adam',
                 col: 0,
                 row: 0,
@@ -322,7 +309,7 @@ describe(`gameTestJP.js : functionality test`, () => {
 
         Partials.test(`Game type is not started`, () => {
             const type = game.getUpdate().data.model.round.style;
-            assert.strictEqual(type, GameModel.STYLE.NOT_STARTED);
+            assert.strictEqual(type, GAME_MODEL_STYLE.NOT_STARTED);
         });
     });
 });

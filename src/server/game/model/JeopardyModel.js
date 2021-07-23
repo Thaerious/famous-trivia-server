@@ -1,4 +1,5 @@
-import GameModel from "./GameModel.js";
+import {GAME_MODEL_STYLE, GAME_MODEL_STATES} from "../../../constants.js";
+import {LIGHT_STATE} from "../../../constants.js";
 
 class JeopardyModel {
     /**
@@ -21,8 +22,8 @@ class JeopardyModel {
         }
 
         this.stateData = {
-            style: GameModel.STYLE.JEOPARDY,
-            state: GameModel.STATES.BOARD,
+            style: GAME_MODEL_STYLE.JEOPARDY,
+            state: GAME_MODEL_STATES.BOARD,
             spent: this.spent
         };
 
@@ -52,7 +53,7 @@ class JeopardyModel {
      */
     setPlayerSpent() {
         const name = this.getCurrentPlayer();
-        if (this.stateData.state !== GameModel.STATES.QUESTION) return false;
+        if (this.stateData.state !== GAME_MODEL_STATES.QUESTION) return false;
         if (!name) return false;
         if (this.isPlayerSpent(name)) return true;
         this.spentPlayers.push(name);
@@ -105,8 +106,8 @@ class JeopardyModel {
         this.spentPlayers = [];
 
         this.stateData = {
-            style: GameModel.STYLE.JEOPARDY,
-            state: GameModel.STATES.BOARD,
+            style: GAME_MODEL_STYLE.JEOPARDY,
+            state: GAME_MODEL_STATES.BOARD,
             spent: this.spent
         };
 
@@ -126,8 +127,8 @@ class JeopardyModel {
         this.spentPlayers = [];
 
         this.stateData = {
-            style: GameModel.STYLE.JEOPARDY,
-            state: GameModel.STATES.QUESTION,
+            style: GAME_MODEL_STYLE.JEOPARDY,
+            state: GAME_MODEL_STATES.QUESTION,
             col: col,
             row: row,
             type: this.getType(col, row),
@@ -155,8 +156,8 @@ class JeopardyModel {
         this.spentPlayers = [];
 
         this.stateData = {
-            style: GameModel.STYLE.JEOPARDY,
-            state: GameModel.STATES.REVEAL,
+            style: GAME_MODEL_STYLE.JEOPARDY,
+            state: GAME_MODEL_STATES.REVEAL,
             col: col,
             row: row,
             type: this.getType(col, row),
@@ -208,16 +209,30 @@ class JeopardyModel {
     }
 
     getUpdate() {
-        let r = Object.assign({}, this.stateData);
-        r.spentPlayers = [];
-        if (this.spentPlayers) {
-            for (let p of this.spentPlayers) {
-                r.spentPlayers.unshift(p);
+        const players = this.parent.players;
+
+        for (let player of players) {
+            if (player.name === this.currentPlayer) {
+                player.light_state = LIGHT_STATE.HIGHLIGHT;
+            }
+            else if (this.spentPlayers.indexOf(player.name) !== -1) {
+                player.light_state = LIGHT_STATE.DIM;
+            }
+            else {
+                player.light_state = LIGHT_STATE.NORMAL;
             }
         }
-        r.current_player = this.currentPlayer;
-        r.categories = this.categories;
-        r.values = this.values;
+
+        const r = {
+            round : {
+                current_player : this.currentPlayer,
+                categories : this.categories,
+                values : this.values
+            },
+            players : players
+        }
+
+        Object.assign(r.round, this.stateData);
         return r;
     }
 

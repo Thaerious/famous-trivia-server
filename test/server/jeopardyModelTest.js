@@ -4,6 +4,7 @@ import fs from "fs";
 import GameModel from "../../src/server/game/model/GameModel.js";
 import assert from "assert";
 import {assertFields} from "./partials/game_partials.js";
+import {GAME_MODEL_STYLE, GAME_MODEL_STATES} from "../../src/constants.js";
 
 function loadModel() {
     const file = fs.readFileSync('test/data/test-data-04.json');
@@ -11,7 +12,7 @@ function loadModel() {
     return new GameModel(data);
 }
 
-describe(`Jeopardy Model Unit Tests`, ()=> {
+describe(`Jeopardy Model Unit Tests (jeopardyModelTest.js)`, ()=> {
 
     describe(`#checkTableBounds`, ()=> {
         const gameModel = loadModel();
@@ -57,11 +58,10 @@ describe(`Jeopardy Model Unit Tests`, ()=> {
 
         it(`check state data`, ()=> {
             const expected = {
-                style: GameModel.STYLE.JEOPARDY,
-                state: GameModel.STATES.BOARD
+                style: GAME_MODEL_STYLE.JEOPARDY,
+                state: GAME_MODEL_STATES.BOARD
             };
-
-            const actual = gameModel.getRound(0).getUpdate();
+            const actual = gameModel.getRound(0).getUpdate().round;
             assertFields(actual, expected);
         });
     });
@@ -93,7 +93,7 @@ describe(`Jeopardy Model Unit Tests`, ()=> {
                 question: "Q 1.1.1"
             };
 
-            const actual = gameModel.getRound(0).getUpdate();
+            const actual = gameModel.getRound(0).getUpdate().round;
             assertFields(actual, expected);
         });
 
@@ -103,17 +103,17 @@ describe(`Jeopardy Model Unit Tests`, ()=> {
                 row: 0
             };
 
-            const actual = gameModel.getRound(0).getUpdate();
+            const actual = gameModel.getRound(0).getUpdate().round;
             assertFields(actual, expected);
         });
 
         it(`check state data`, ()=> {
             const expected = {
-                style: GameModel.STYLE.JEOPARDY,
-                state: GameModel.STATES.QUESTION
+                style: GAME_MODEL_STYLE.JEOPARDY,
+                state: GAME_MODEL_STATES.QUESTION
             };
 
-            const actual = gameModel.getRound(0).getUpdate();
+            const actual = gameModel.getRound(0).getUpdate().round;
             assertFields(actual, expected);
         });
     });
@@ -138,17 +138,17 @@ describe(`Jeopardy Model Unit Tests`, ()=> {
                 answer: "A 1.1.1"
             };
 
-            const actual = gameModel.getRound(0).getUpdate();
+            const actual = gameModel.getRound(0).getUpdate().round;
             assertFields(actual, expected);
         });
 
         it(`check state data`, ()=> {
             const expected = {
-                style: GameModel.STYLE.JEOPARDY,
-                state: GameModel.STATES.REVEAL
+                style: GAME_MODEL_STYLE.JEOPARDY,
+                state: GAME_MODEL_STATES.REVEAL
             };
 
-            const actual = gameModel.getRound(0).getUpdate();
+            const actual = gameModel.getRound(0).getUpdate().round;
             assertFields(actual, expected);
         });
 
@@ -205,27 +205,6 @@ describe(`Jeopardy Model Unit Tests`, ()=> {
             const expected = false;
             const actual = gameModel.getRound(0).setPlayerSpent();
             assert.strictEqual(actual, expected);
-        });
-
-        it(`update has spent players`, ()=> {
-            const expected = {
-                spentPlayers: ["Adam"]
-            };
-
-            const actual = gameModel.getRound(0).getUpdate();
-            assertFields(actual, expected);
-        });
-
-        it(`update has spent players (more than 1)`, ()=> {
-            gameModel.getRound(0).setCurrentPlayer("Eve");
-            gameModel.getRound(0).setPlayerSpent();
-
-            const expected = {
-                spentPlayers: ["Eve", "Adam"]
-            };
-
-            const actual = gameModel.getRound(0).getUpdate();
-            assertFields(actual, expected);
         });
     });
 

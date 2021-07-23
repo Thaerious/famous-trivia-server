@@ -224,4 +224,22 @@ Multiple choice round::
         ]
     }
 
+=================
+Game Update Model
+=================
+
+Basic object must have a players and a round field.  The round field my have a type field.::
+
+    {
+        players : [{
+            name : string,
+            score : number,
+            active : boolean,
+            light_state : constants.LIGHT_STATE
+        },
+        round {
+            type :
+        }
+    }
+
 .. include:: nidgets.rst

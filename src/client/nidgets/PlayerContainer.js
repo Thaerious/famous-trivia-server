@@ -1,7 +1,6 @@
 "use strict";
 
 import NidgetElement from "./NidgetElement.js";
-import PlayerPanel from "./PlayerCard.js";
 
 class PlayerContainer extends NidgetElement {
     constructor(templateId = "player-container-template") {
