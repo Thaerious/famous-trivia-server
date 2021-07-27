@@ -222,9 +222,15 @@ class Game {
     broadcast(msg) {
         msg = msg ?? this.lastUpdate;
 
+        let i = 0;
         for (let name in this.listeners) {
+            i = i + 1;
             this.listeners[name](msg);
         }
+        console.log("Server Broadcast");
+        console.log(msg);
+        console.log("Recipients: " + i );
+        console.log("");
     }
 
     notify(name, msg) {

@@ -1,9 +1,9 @@
 import fs from "fs";
 import Path from "path";
-import GameManager from "../../../src/server/game/singleInstance/GameManager.js";
+import SingleGameManager from "../../../src/server/game/singleInstance/SingleGameManager.js";
 import SessionManager from "../../../src/server/mechanics/SessionManager.js";
 import config from "../../../src/config.js";
-import GameManagerEndpoint from "../../../src/server/game/singleInstance/GameManagerEndpoint.js";
+import SingleGameManagerEndpoint from "../../../src/server/game/singleInstance/SingleGameManagerEndpoint.js";
 import NidgetPreprocessor from "../../../src/server/mechanics/NidgetPreprocessor.js";
 import cors from "../../../src/server/mechanics/cors.js";
 import Server from "../../../src/server/Server.js";
@@ -13,10 +13,10 @@ async function launch(gameEnv) {
     describe("Launch server and browse to host page", async()=> {
         it(`start singular host server`, async () => {
             const gameDescriptionModel = await fs.readFileSync("test/data/demonstration-game.json");
-            const gameManager = await new GameManager();
+            const gameManager = await new SingleGameManager();
             const sessionManager = new SessionManager(Path.join(config.server.db.dir, config.server.db.name));
             await sessionManager.load();
-            const gameManagerEndpoint = new GameManagerEndpoint(gameManager, sessionManager);
+            const gameManagerEndpoint = new SingleGameManagerEndpoint(gameManager, sessionManager);
             const nidgetPreprocessor = new NidgetPreprocessor(config.server.ejs_nidgets, config.server.nidget_scripts).setup();
 
             gameManager.load(gameDescriptionModel.toString());

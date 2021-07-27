@@ -99,12 +99,12 @@ class GameManager{
 
     /**
      * Return the live game object.
-     * This will retrieve it from the database if this is the first time getLive is called
+     * This will retrieve it from the database if this is the first time getLiveGame is called
      * for the given game.
      * @param gameHash The public hash for a game.
      * @return The live game object or undefined if no game found.
      */
-    getLive(gameHash){
+    getLiveGame(gameHash){
         return this.liveGames.get(gameHash);
     }
 }

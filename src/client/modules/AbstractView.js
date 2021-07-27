@@ -14,7 +14,7 @@ class AbstractView extends EventTarget{
         this.DOM.menuArea = document.querySelector("#menu-area");
         this.DOM.menuLogout = document.querySelector("#menu-logout");
 
-        this.DOM.playerContainer = document.querySelector("#player-container-left");
+        this.DOM.playerContainer = document.querySelector("#player-container");
     }
 
     startTimer(update){
@@ -34,7 +34,7 @@ class AbstractView extends EventTarget{
     }
 
     updateModel(update){
-        this.fillPlayers(update);
+        this.DOM.playerContainer.setPlayers(update.model.players);
         this.lastUpdate = update;
 
         this.DOM.multipleChoice.hide();
@@ -115,25 +115,6 @@ class AbstractView extends EventTarget{
                 break;
             default:
                 break;
-        }
-    }
-
-    fillPlayers(update){
-        this.DOM.playerContainer.clear();
-        if (update.model.players.length <= 0) return;
-
-        for (let player of update.model.players){
-            this.DOM.playerContainer.addPlayer(player.name, player.score);
-
-            if (update.model.round && update.model.round.style === 'j') { // TODO remove magic string
-                if (update.model.round.current_player === player.name) {
-                    this.DOM.playerContainer.getPlayer(player.name).highlight = true;
-                    this.DOM.playerContainer.getPlayer(player.name).active = true;
-                } else if (update.model.round.spentPlayers.indexOf(player.name) !== -1) {
-                    this.DOM.playerContainer.getPlayer(player.name).dim = true;
-                    window.x = this.DOM.playerContainer.getPlayer(player.name);
-                }
-            }
         }
     }
 

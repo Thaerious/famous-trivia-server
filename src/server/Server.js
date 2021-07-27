@@ -112,6 +112,7 @@ class Server {
             await sessionManager.applyTo(req);
 
             try {
+                console.log("ws.on.connection");
                 await new Connection(ws, req, gameManager, gameManagerEndpoint).connect();
             } catch (err) {
                 console.log(err);

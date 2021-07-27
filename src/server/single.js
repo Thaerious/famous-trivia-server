@@ -1,7 +1,7 @@
 // noinspection JSCheckFunctionSignatures,DuplicatedCode
 
 import cors from './mechanics/cors.js';
-import GameManager from "./game/singleInstance/GameManager.js";
+import SingleGameManager from "./game/singleInstance/SingleGameManager.js";
 import CLI from './CLI.js';
 import SessionManager from "./mechanics/SessionManager.js";
 import Path from 'path';
@@ -12,17 +12,17 @@ import ParseArgs from "@thaerious/parseargs";
 import clean from "../clean.js";
 import setupDB from "./game/setupDB.js";
 import Server from "./Server.js";
-import GameManagerEndpoint from "./game/singleInstance/GameManagerEndpoint.js";
+import SingleGameManagerEndpoint from "./game/singleInstance/SingleGameManagerEndpoint.js";
 import fs from "fs";
 import NameValidator from "./game/NameValidator.js";
 import verify from "./mechanics/verify.js";
 
 await setupDB(config.server.db.dir, config.server.db.name, config.server.db.script_full_path);
 
-const gameManager = await new GameManager();
+const gameManager = await new SingleGameManager();
 const sessionManager = new SessionManager(Path.join(config.server.db.dir, config.server.db.name));
 await sessionManager.load();
-const gameManagerEndpoint = new GameManagerEndpoint(gameManager, sessionManager, new NameValidator(), verify);
+const gameManagerEndpoint = new SingleGameManagerEndpoint(gameManager, sessionManager, new NameValidator(), verify);
 const nidgetPreprocessor = new NidgetPreprocessor(config.server.ejs_nidgets, config.server.nidget_scripts).setup();
 
 const parsedArgs = new ParseArgs().loadOptions().run();

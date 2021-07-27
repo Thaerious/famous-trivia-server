@@ -1,4 +1,5 @@
 import constants from "../../config.js";
+import ErrorResponse from "./responses/ErrorResponse.js";
 
 /**
  * All incoming messages to the server should take the form of
@@ -25,6 +26,10 @@ class Connection{
         this.ws  = ws;
         this.gm  = gameManager;
         this.gme = gameManagerEndpoint;
+
+        this.game = undefined;
+        this.name = undefined;
+        this.role = undefined;
     }
 
     /**
@@ -37,6 +42,7 @@ class Connection{
      * - If name, add player and listener
      */
     async connect(){
+        console.log("connect");
         await this.establishConnection();
         if (this.role === "host"){
             this.send(this.game.getUpdate());
@@ -52,23 +58,18 @@ class Connection{
      * @returns {Promise<void>}
      */
     async establishConnection(){
-        let sessionHash = await this.req.session.hash;
+        let sessionHash = this.req.session.hash;
+        console.log("establishConnection " + sessionHash);
 
-        try {
-            const gameHash = this.gme.getGameHash(sessionHash)
-            this.game = await this.gm.getLive(gameHash);
-            this.name = await this.gme.getName(sessionHash);
-            this.role = await this.gme.getRole(sessionHash);
-        } catch (err){
-            console.error(err);
-            const msg = {
-                action : "error",
-                text : err.toString()
-            };
-            this.ws.send(JSON.stringify(msg));
-            this.ws.close();
-            return;
-        }
+        [this.game, this.name, this.role] = this.connectionInfo(sessionHash);
+        this.addListeners();
+        console.log("establishConnection() " + sessionHash);
+        console.log([this.name, this.role]);
+    }
+
+    addListeners() {
+        if (!this.game) throw new Error("Uninitialized Connection");
+        if (!this.name) throw new Error("Uninitialized Connection");
 
         this.game.addListener(this.name, msg => {
             this.ws.send(JSON.stringify(msg));
@@ -95,6 +96,22 @@ class Connection{
             }
         });
         setInterval(()=>this.ping(), 15000);
+    }
+
+    connectionInfo(sessionHash) {
+        try {
+            const gameHash = this.gme.getGameHash(sessionHash)
+            const game = this.gm.getLiveGame(gameHash);
+            const name = this.gme.getName(sessionHash);
+            const role = this.gme.getRole(sessionHash);
+            return [game, name, role];
+        } catch (err){
+            console.error(err);
+            const response = new ErrorResponse(err.toString(), err);
+            this.ws.send(JSON.stringify(response.object));
+            this.ws.close();
+            return;
+        }
     }
 
     ping(){

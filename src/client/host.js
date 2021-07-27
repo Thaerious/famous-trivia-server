@@ -30,6 +30,7 @@ function onLoad(event) {
 async function getHostedHash() {
     let token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
     let response = await gameManagerService.getHostedHash(token);
+    console.log(response);
     if (response.result === "success") {
         window.location = `launch_console.ejs`;
     }

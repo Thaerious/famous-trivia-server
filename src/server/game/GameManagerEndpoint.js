@@ -23,7 +23,7 @@ class GameManagerEndpoint {
      * The verify accepts a token:string and returns {userId:string, userName:string}
      * @param {GameManager} gameManager
      * @param {NameValidator} validator (name validator)
-     * @param {function} verify
+     * @param {function} verify function to verify the host google credentials
      */
     constructor(gameManager, validator, verify) {
         if (!gameManager) throw new Error("Missing parameter: gameManager");
@@ -106,7 +106,7 @@ class GameManagerEndpoint {
             }
 
             let gameHash = await this.gameManager.setGame(user, game)
-            this.table[gameHash] = {sessions: {}};
+            this.table[gameHash] = {host: "", sessions: {}};
             return new SuccessGameHashResponse(gameHash);
         } catch (err) {
             return new ErrorResponse(err.toString(), err);
@@ -187,7 +187,7 @@ class GameManagerEndpoint {
     }
 
     /**
-     * <b>Retrieve a game-hash using a contestant session-hash as the key.</b>
+     * <b>Retrieve a game-hash that is associated with a contestant session-hash.</b>
      * No 'body' is read for this method.
      * Unknown session hashes will emit a rejected response.
      * Known session hashes will emit a success response with the 'game-hash' field.

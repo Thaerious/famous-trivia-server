@@ -4,7 +4,7 @@ import crypto from 'crypto';
 import {Game} from '../Game.js';
 import GameModel from "../model/GameModel.js";
 
-class GameManager{
+class SingleGameManager {
 
    load(gameDescriptionModel) {
        this.gameDescriptionModel = gameDescriptionModel;
@@ -50,7 +50,7 @@ class GameManager{
      * @param user the user object returned from verify.js
      */
     hasGame(user) {
-        return this.hosts.has(user.userId);
+        return true;
     }
 
     /**
@@ -67,18 +67,18 @@ class GameManager{
      * @param user the user object returned from verify.js
      * @returns {Promise<string>}
      */
-    getHash(user) {
+    getGameHash() {
         return this.hash;
     }
 
     /**
      * Return the live game object.
-     * This will retrieve it from the database if this is the first time getLive is called
+     * This will retrieve it from the database if this is the first time getLiveGame is called
      * for the given game.
      * @param hash The public hash for a game.
      * @return The live game object or undefined if no game found.
      */
-    getLive(hash){
+    getLiveGame(hash){
         return this.game;
     }
 
@@ -87,4 +87,4 @@ class GameManager{
     }
 }
 
-export default GameManager;
+export default SingleGameManager;

@@ -43,6 +43,8 @@ class HostPortalView extends AbstractView{
         this.DOM.continueButton.classList.remove("center");
         this.DOM.continueButton.classList.add("right");
 
+        this.DOM.playerContainerLeft
+
         switch (update.state) {
             case 0:
                 this.DOM.startButton.show();

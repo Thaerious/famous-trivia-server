@@ -55,19 +55,19 @@ describe('class GameManager (GM)', function () {
         });
     });
 
-    describe(`#getLive()`, function () {
+    describe(`#getLiveGame()`, function () {
         it(`get live retrieves game that set with set game`, function () {
             const gm = new GameManager();
             const game = new Game(gameModel);
             const gameHash = gm.setGame(hostInfo1, game);
-            assert.strictEqual(gm.getLive(gameHash), game);
+            assert.strictEqual(gm.getLiveGame(gameHash), game);
         });
         it(`is the same object when called twice`, function () {
             const gm = new GameManager();
             const game = new Game(gameModel);
             const gameHash = gm.setGame(hostInfo1, game);
-            const game1 = gm.getLive(gameHash);
-            const game2 = gm.getLive(gameHash);
+            const game1 = gm.getLiveGame(gameHash);
+            const game2 = gm.getLiveGame(gameHash);
             assert.strictEqual(game1, game2);
         });
     });
