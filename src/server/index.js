@@ -1,5 +1,4 @@
 // noinspection JSCheckFunctionSignatures
-
 import cors from './mechanics/cors.js';
 import GameManager from "./game/GameManager.js";
 import CLI from './CLI.js';
@@ -15,18 +14,9 @@ import Server from "./Server.js";
 import GameManagerEndpoint from "./game/GameManagerEndpoint.js";
 import NameValidator from "./game/NameValidator.js";
 import verify from "./mechanics/verify.js";
+import parseArgsOptions from './parseArgsOptions.js';
 
-await setupDB(config.server.db.dir, config.server.db.name, config.server.db.script_full_path);
-
-const gameManager = await new GameManager();
-const sessionManager = new SessionManager(Path.join(config.server.db.dir, config.server.db.name));
-await sessionManager.load();
-const gameManagerEndpoint = new GameManagerEndpoint(gameManager, new NameValidator(), verify);
-const nidgetPreprocessor = new NidgetPreprocessor(config.server.ejs_nidgets, config.server.nidget_scripts).setup();
-
-const flags = new ParseArgs().loadOptions().run().flags;
-
-if (process.env.NODE_ENV === 'test') console.log("Test Mode");
+const flags = new ParseArgs().loadOptions(parseArgsOptions).run().flags;
 
 if (flags['help']){
     console.log("index.js [opts]");
@@ -41,6 +31,16 @@ if (flags['help']){
     console.log("--tm,\t\t\tTime for multi-choice round");
     process.exit();
 }
+
+await setupDB(config.server.db.dir, config.server.db.name, config.server.db.script_full_path);
+
+const gameManager = await new GameManager();
+const sessionManager = new SessionManager(Path.join(config.server.db.dir, config.server.db.name));
+await sessionManager.load();
+const gameManagerEndpoint = new GameManagerEndpoint(gameManager, new NameValidator(), verify);
+const nidgetPreprocessor = new NidgetPreprocessor(config.server.ejs_nidgets, config.server.nidget_scripts).setup();
+
+if (process.env.NODE_ENV === 'test') console.log("Test Mode");
 
 if (flags['clean']){
     clean();
