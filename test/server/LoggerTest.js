@@ -1,8 +1,6 @@
 import assert from "assert";
 import Logger from "../../src/server/Logger.js";
 
-Logger.traceOffset = 3;
-
 const cl = console.log;
 console.lg = console.log;
 let lastMessage = null;
@@ -77,7 +75,7 @@ describe(`Logger Test - Logger.js`, () => {
                       return `${f}:${l}:${o} `;
                   };
                   logger.channel("log").log("hello world!");
-                  assert.strictEqual(lastMessage, "LoggerTest.js:79:41 hello world!");
+                  assert.strictEqual(lastMessage, "LoggerTest.js:77:41 hello world!"); 
               });
         });
         describe(`#enabled - enabled controls output`, () => {

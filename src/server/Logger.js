@@ -1,4 +1,3 @@
-
 class Channel{
       constructor(){
             this._enabled = true;
@@ -49,11 +48,21 @@ class Channel{
 
       process(string){
             if (this._prefix.length > 0){
-                  const stack = new Error().stack.split("\n");
-                  const parsed = /\/([^/:]+):(\d+):(\d+)/.exec(stack[Logger.traceOffset]);
-                  return this._prefix(parsed[1], parsed[2], parsed[3]) + string;
+                  return this._prefix(...this.getPos()) + string;
             } else {
                   return this._prefix() + string;
+            }
+      }
+
+      getPos(){
+            const stack = new Error().stack.split("\n");
+            stack.shift();
+
+            for (const line of stack){
+                  if (line.indexOf("/Logger.js:") === -1){
+                        const parsed = /\/([^/:]+):(\d+):(\d+)/.exec(line);
+                        return [parsed[1], parsed[2], parsed[3]];
+                  }
             }
       }
 }
@@ -90,7 +99,5 @@ class Logger{
             this.last.warn(string);
       }     
 }
-
-Logger.traceOffset = 4;
 
 export default Logger;
