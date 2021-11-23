@@ -76,6 +76,10 @@ class Logger{
             this.last = this.channels["log"];
       }
 
+      static getLogger(){
+            return Logger.logger = Logger.logger ?? new Logger();
+      }
+
       channel(name){
             name = name ?? "log";
             if (!this.channels[name]) this.channels[name] = new Channel();

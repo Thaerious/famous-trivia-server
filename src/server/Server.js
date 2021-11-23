@@ -2,7 +2,6 @@
 
 import config from "../config.js";
 import JITRender from "./mechanics/JITRender.js";
-import GameManagerEndpoint from "./game/GameManagerEndpoint.js";
 import ReportCoverage from "./mechanics/ReportCoverage.js";
 import Connection from "./game/Connection.js";
 import cors from "./mechanics/cors.js";
@@ -15,10 +14,13 @@ import helmet from "helmet";
 import UserAgent from "express-useragent";
 import WebSocket from "ws";
 
+
+import Logger from './Logger.js';
+const logger = Logger.getLogger();
+
 class Server {
 
     /**
-     *
      * @param sessionManager
      * @param gameManager
      * @param gameManagerEndpoint
@@ -46,8 +48,7 @@ class Server {
         });
     }
 
-    stop(cb = () => {
-    }) {
+    stop(cb = () => {}) {
         console.log("Stopping server");
         this.index.close(cb);
     }
@@ -73,6 +74,10 @@ class Server {
     }
 
     setupPageRenderingEndpoints() {
+        this.app.use("*", (req, res)=>{
+            Logger.channel("verbose").log(req);
+        });
+        
         this.app.get("", cors);
         this.app.get('/', (req, res) => {
             res.sendFile('index.html', {root: "./public/html/static/"});

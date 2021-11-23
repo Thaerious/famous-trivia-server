@@ -15,8 +15,14 @@ import GameManagerEndpoint from "./game/GameManagerEndpoint.js";
 import NameValidator from "./game/NameValidator.js";
 import verify from "./mechanics/verify.js";
 import parseArgsOptions from './parseArgsOptions.js';
+import Logger from './Logger.js';
 
 const flags = new ParseArgs().loadOptions(parseArgsOptions).run().flags;
+const logger = Logger.getLogger();
+logger.channel("log").prefix = (f, l)=>`l ${f}:${l}\t `;
+logger.channel("verbose").prefix = (f, l)=>`v ${f}:${l}\t `;
+logger.channel('verbose').enabled = flags['verbose'];
+logger.channel('verbose').log("Starting Trivia Server")
 
 if (flags['help']){
     console.log("index.js [opts]");
@@ -32,27 +38,42 @@ if (flags['help']){
     process.exit();
 }
 
+logger.channel('verbose').log("setting up database");
 await setupDB(config.server.db.dir, config.server.db.name, config.server.db.script_full_path);
 
-const gameManager = await new GameManager();
+logger.channel('verbose').log("initializing game manager");
+const gameManager = new GameManager();
+
+logger.channel('verbose').log("initializing session manager");
 const sessionManager = new SessionManager(Path.join(config.server.db.dir, config.server.db.name));
+
+logger.channel('verbose').log("loading session manager");
 await sessionManager.load();
+
+logger.channel('verbose').log("initializing end point");
 const gameManagerEndpoint = new GameManagerEndpoint(gameManager, new NameValidator(), verify);
+
+logger.channel('verbose').log("initializing pre processor");
 const nidgetPreprocessor = new NidgetPreprocessor(config.server.ejs_nidgets, config.server.nidget_scripts).setup();
 
-if (process.env.NODE_ENV === 'test') console.log("Test Mode");
+if (process.env.NODE_ENV === 'test'){
+    logger.channel('log').log("initializing pre processor");
+} 
 
 if (flags['clean']){
+    logger.channel('verbose').log("operation clean");
     clean();
     process.exit();
 }
 
 if (flags['render']){
+    logger.channel('verbose').log("operation render");
     await JITRender.render(nidgetPreprocessor);
     process.exit();
 }
 
 if (flags['i']) {
+    logger.channel('verbose').log("interactive mode");
     new CLI(gameManager, sessionManager);
 }
 
@@ -60,5 +81,6 @@ gameManager.timeAnswer = flags['ta'];
 gameManager.timeBuzz = flags['tb'];
 gameManager.timeMultipleChoice = flags['tm'];
 
+logger.channel('verbose').log("starting server");
 const server = new Server(sessionManager, gameManager, gameManagerEndpoint, nidgetPreprocessor, cors, flags['jit']);
 server.start(config.server.port);

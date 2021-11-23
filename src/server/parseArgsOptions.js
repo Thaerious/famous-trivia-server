@@ -25,5 +25,11 @@ export default {
             short: "i",
             boolean: "true",
         },
+        {
+            long: "verbose",
+            short: "v",
+            default: false,
+            boolean: "true",
+        },        
     ],
 };
